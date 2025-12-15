@@ -1,20 +1,10 @@
 "use client";
 
+import AreaChartComponent from "@/components/app/dashboard/area-chart";
+import BarChartComponent from "@/components/app/dashboard/bar-chart";
+import TaskCards from "@/components/app/dashboard/task-cards";
 import PageComponent from "@/components/layouts/page-component";
-import { cn } from "@/lib/utils";
-import { PlusCircleIcon } from "@heroicons/react/24/outline";
 import { Alert, Button } from "@heroui/react";
-import Link from "next/link";
-
-const dashboardTasks = [
-  {
-    id: 1,
-    icon: PlusCircleIcon,
-    title: "Create new waitlist",
-    description: "Select a plan to start collecting signups.",
-    href: "/app/launch/waitlist",
-  },
-];
 
 export default function Dashboard() {
   return (
@@ -47,28 +37,25 @@ export default function Dashboard() {
       </PageComponent>
       <hr />
 
-      <PageComponent className="flex flex-col">
-        {dashboardTasks.map((task, index) => (
-          <Link key={task.id} href={task.href}>
-            <div
-              className={`flex items-center gap-4 ${index === 0 ? "pb-4" : "py-4"}`}
-            >
-              <div
-                className={cn(
-                  "size-8 rounded-md bg-default flex items-center justify-center",
-                  index == 0 && "!bg-primary-200"
-                )}
-              >
-                <task.icon className="size-4" />
-              </div>
-              <div className="flex flex-col">
-                <p>{task.title}</p>
-                <p className="text-muted-foreground">{task.description}</p>
-              </div>
-            </div>
-            {index < dashboardTasks.length - 1 && <hr />}
-          </Link>
-        ))}
+      <PageComponent className="grid grid-cols-3 gap-4">
+        <TaskCards />
+      </PageComponent>
+
+      <hr />
+
+      <PageComponent>
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-col">
+            <h2 className="text-base font-medium">Analytics Overview</h2>
+            <h4 className="text-sm text-muted-foreground">
+              Track your performance over time
+            </h4>
+          </div>
+          <div className="grid grid-cols-5 gap-4 mt-4">
+            <AreaChartComponent />
+            <BarChartComponent />
+          </div>
+        </div>
       </PageComponent>
     </>
   );
