@@ -44,14 +44,14 @@ export default function LaunchWaitList() {
   };
 
   return (
-    <PageComponent className="bg-accent/30 border rounded m-8 p-8">
+    <PageComponent className="bg-content1 border rounded w-4/6 mx-auto mt-8">
       <Form
         onSubmit={handleSubmit(onSubmit)}
         className="flex flex-col gap-8"
         error={error}
       >
         <FormField
-          title="Waitlist Name"
+          title="Wait-List Name"
           description="This shows up to Signups in the no-code widget, when they sign up, and in any emails."
           error={errors.name}
           isRequired
@@ -67,8 +67,13 @@ export default function LaunchWaitList() {
         <hr />
 
         <FormField
-          title="Waitlist URL"
-          description="Widget will be accessible through this URL"
+          title="Wait-List URL"
+          description={
+            <>
+              Widget will be accessible through this URL.{" "}
+              <Type variant="link">See example.</Type>
+            </>
+          }
           error={errors.url}
         >
           <InputComponent

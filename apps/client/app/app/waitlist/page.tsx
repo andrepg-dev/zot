@@ -84,9 +84,14 @@ export default function WaitListPage() {
 
   return (
     <PageComponent>
-      <Type variant="h1" className="mb-8 font-medium">
-        WaitList
-      </Type>
+      <div className="flex flex-col mb-6">
+        <Type variant="h2" className="font-medium">
+          Wait-List
+        </Type>
+        <p className="text-muted-foreground">
+          Setup your wait-list to launch your product
+        </p>
+      </div>
 
       <div className="flex flex-col gap-4">
         <div className="flex justify-between">
@@ -206,12 +211,13 @@ export default function WaitListPage() {
                   isPressable
                   onPress={() => handleCardClick(item.key)}
                   className="hover:bg-default-100 transition-all cursor-pointer border"
+                  radius="sm"
                 >
                   <CardBody className="p-5">
                     <div className="flex flex-col gap-3">
                       <div className="flex items-start justify-between">
                         <div className="flex flex-col gap-1 flex-1">
-                          <h3 className="font-medium text-base">{item.name}</h3>
+                          <h3 className="font-medium text-sm">{item.name}</h3>
                           <p className="text-sm text-default-500">
                             {item.role}
                           </p>

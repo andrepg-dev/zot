@@ -4,7 +4,7 @@ import Type from "./type";
 
 interface FormFieldProps {
   title: string;
-  description: string;
+  description: ReactNode;
   children: ReactNode;
   isRequired?: boolean;
   isPremiumFeature?: boolean;
