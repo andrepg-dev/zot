@@ -1,10 +1,10 @@
 import Title from "@/components/global/title";
 import PageComponent from "@/components/layouts/page-component";
 
-export default async function Page() {
+export default function Automations() {
   return (
     <PageComponent>
-      <Title>Widget Builder</Title>
+      <Title>Automations</Title>
     </PageComponent>
   );
 }

@@ -38,7 +38,7 @@ export default function Dashboard() {
 
         <Title
           description="Below are some tasks to get you started."
-          className="my-6"
+          className="my-8"
         >
           No active waitlist
         </Title>
