@@ -46,7 +46,7 @@ export default function Sidebar() {
               href={"/docs"}
               target="_blank"
               className={clsx(
-                "flex items-center gap-2 py-1.5 px-5 h-[45px] text-muted-foreground hover:bg-default/60 text-sm"
+                "flex items-center gap-2 py-1.5 px-5 h-[45px] text-muted-foreground hover:bg-default/60 text-sm",
               )}
             >
               <BookOpenIcon className={cn("size-5")} /> Docs

@@ -5,6 +5,7 @@ import BarChartComponent from "@/components/app/dashboard/bar-chart";
 import TaskCards from "@/components/app/dashboard/task-cards";
 import PageComponent from "@/components/layouts/page-component";
 import { Alert, Button } from "@heroui/react";
+import Link from "next/link";
 
 export default function Dashboard() {
   return (
@@ -20,7 +21,13 @@ export default function Dashboard() {
             variant="faded"
             isClosable
             endContent={
-              <Button size="sm" className="mx-4" variant="faded">
+              <Button
+                as={Link}
+                href="/pricing"
+                size="sm"
+                className="mx-4"
+                variant="faded"
+              >
                 Upgrade now
               </Button>
             }

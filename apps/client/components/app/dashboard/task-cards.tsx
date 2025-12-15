@@ -19,16 +19,15 @@ const dashboardTasks = [
   {
     id: 2,
     icon: LinkIcon,
-    title: "Integrate waitlist",
-    description: "Select a plan to start collecting signups.",
+    title: "Integrate waiting list",
+    description: "Start collecting signups.",
     href: "/app/launch/waitlist",
   },
   {
     id: 3,
     icon: EnvelopeIcon,
     title: "Send email campaigns",
-    description:
-      "Time to launch seriously and tell to your clients about your creation.",
+    description: "Time to execute seriously your creation.",
     href: "/app/launch/waitlist",
   },
 ];
@@ -40,7 +39,7 @@ export default function TaskCards() {
         <Link key={task.id} href={task.href}>
           <div
             className={cn(
-              "flex flex-col gap-4 p-6 rounded-lg border bg-background transition-all duration-200",
+              "flex flex-col gap-4 py-5 px-5 rounded-lg border bg-background transition-all duration-200",
               "hover:bg-primary/20",
               "hover:shadow-md h-full",
               index === 0 &&
@@ -49,12 +48,12 @@ export default function TaskCards() {
           >
             <div
               className={cn(
-                "size-12 rounded-md bg-default-100 flex items-center justify-center transition-colors",
+                "size-10 rounded-md bg-default-100 flex items-center justify-center transition-colors",
                 index === 0 && "!bg-primary-200",
                 "group-hover:bg-primary-200",
               )}
             >
-              <task.icon className="size-6" />
+              <task.icon className="size-5" />
             </div>
             <div className="flex flex-col flex-1">
               <p className="font-medium text-base">{task.title}</p>

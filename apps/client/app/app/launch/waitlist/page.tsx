@@ -99,8 +99,6 @@ export default function LaunchWaitList() {
           </Checkbox>
         </FormField>
 
-        <hr />
-
         <div className="flex gap-2 justify-end">
           <Button
             as={Link}
