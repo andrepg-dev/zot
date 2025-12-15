@@ -1,7 +1,6 @@
 "use client";
 
 import PageComponent from "@/components/layouts/page-component";
-import Type from "@/components/type";
 import {
   FunnelIcon,
   ListBulletIcon,
@@ -24,6 +23,7 @@ import {
   getKeyValue,
 } from "@heroui/react";
 
+import Title from "@/components/global/title";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -84,14 +84,12 @@ export default function WaitListPage() {
 
   return (
     <PageComponent>
-      <div className="flex flex-col mb-6">
-        <Type variant="h2" className="font-medium">
-          Wait-List
-        </Type>
-        <p className="text-muted-foreground">
-          Setup your wait-list to launch your product
-        </p>
-      </div>
+      <Title
+        description="Setup your wait-list to launch your product"
+        className="mb-6"
+      >
+        Wait-List
+      </Title>
 
       <div className="flex flex-col gap-4">
         <div className="flex justify-between">
@@ -230,7 +228,7 @@ export default function WaitListPage() {
                             item.status === "Paused" &&
                               "bg-warning/20 text-warning",
                             item.status === "Vacation" &&
-                              "bg-default/20 text-default-600",
+                              "bg-default/20 text-default-600"
                           )}
                         >
                           {item.status}
