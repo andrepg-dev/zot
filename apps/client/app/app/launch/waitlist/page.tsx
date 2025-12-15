@@ -32,8 +32,8 @@ export default function LaunchWaitList() {
     mutationFn: submitWaitListAction,
     onSuccess: () => {
       addToast({
-        title: "Successful",
-        description: "Your waitlist has been created",
+        title: "Wait-List created",
+        description: "Your Wait-List has been created",
         color: "primary",
       });
     },
