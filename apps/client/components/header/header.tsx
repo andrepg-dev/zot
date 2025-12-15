@@ -27,9 +27,9 @@ export default function Header() {
         </Link>
 
         {navigationItems &&
-          navigationItems?.map((value) => (
+          navigationItems?.map((value, idx) => (
             <div
-              key={value.pathname}
+              key={idx}
               className="flex items-center text-sm font-bold gap-2"
             >
               <span className="text-muted-foreground">

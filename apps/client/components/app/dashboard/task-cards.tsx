@@ -14,7 +14,7 @@ const dashboardTasks = [
     icon: RectangleStackIcon,
     title: "Start creating landing page",
     description: "Create a landing page using templates + AI.",
-    href: "/app/launch/waitlist",
+    href: "/app/landing-page",
   },
   {
     id: 2,
@@ -28,7 +28,7 @@ const dashboardTasks = [
     icon: EnvelopeIcon,
     title: "Send email campaigns",
     description: "Time to execute seriously your creation.",
-    href: "/app/launch/waitlist",
+    href: "/app/emails",
   },
 ];
 
@@ -43,14 +43,14 @@ export default function TaskCards() {
               "hover:bg-primary/20",
               "hover:shadow-md h-full",
               index === 0 &&
-                "from-primary/5 to-background bg-linear-to-r border-r border-b border-t border-l-4 !border-l-primary/70 rounded-l-none !border-r-zinc-800",
+                "from-primary/5 to-background bg-linear-to-r border-r border-b border-t border-l-4 !border-l-primary/70 rounded-l-none !border-r-zinc-800"
             )}
           >
             <div
               className={cn(
                 "size-10 rounded-md bg-default-100 flex items-center justify-center transition-colors",
                 index === 0 && "!bg-primary-200",
-                "group-hover:bg-primary-200",
+                "group-hover:bg-primary-200"
               )}
             >
               <task.icon className="size-5" />

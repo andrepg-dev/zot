@@ -2,9 +2,10 @@ import {
   ChartBarIcon,
   CreditCardIcon,
   CursorArrowRippleIcon,
+  EnvelopeIcon,
   GlobeAltIcon,
   KeyIcon,
-  NewspaperIcon
+  NewspaperIcon,
 } from "@heroicons/react/24/outline";
 
 export const defaultNavItems = [
@@ -27,6 +28,11 @@ export const defaultNavItems = [
     href: "/app/google-search",
     label: "Google Search",
     icon: KeyIcon,
+  },
+  {
+    href: "/app/emails",
+    label: "Emails",
+    icon: EnvelopeIcon,
   },
   {
     href: "/app/landing-page",

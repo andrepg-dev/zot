@@ -1,5 +1,6 @@
 "use client";
 
+import HeaderNavigation from "@/components/navigation/header.navigation";
 import SidebarNavigation from "@/components/navigation/sidebar.navigation";
 import {
   BoltIcon,
@@ -55,6 +56,15 @@ export default function WaitListLayout({
         ]}
       />
 
+      <HeaderNavigation
+        navigationItems={[
+          { label: "Wait-List", pathname: "/app/waitlist" },
+          {
+            label: `Launch ${String(id)}`,
+            pathname: "",
+          },
+        ]}
+      />
       {children}
     </>
   );
