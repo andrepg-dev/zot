@@ -39,18 +39,17 @@ export default function TaskCards() {
         <Link key={task.id} href={task.href}>
           <div
             className={cn(
-              "flex flex-col gap-4 py-5 px-5 rounded-lg border bg-background transition-all duration-200",
-              "hover:bg-primary/20",
-              "hover:shadow-md h-full",
-              index === 0 &&
-                "from-primary/5 to-background bg-linear-to-r border-r border-b border-t border-l-4 !border-l-primary/70 rounded-l-none !border-r-zinc-800"
+              "flex flex-col gap-4 py-5 px-5 rounded-lg border bg-background",
+              index === 0
+                ? "from-primary/5 to-background bg-linear-to-r border-r border-b border-t border-l-4 !border-l-primary/70 hover:!border-l-primary rounded-l-none !border-r-zinc-800"
+                : "hover:!border-zinc-700",
             )}
           >
             <div
               className={cn(
                 "size-10 rounded-md bg-default-100 flex items-center justify-center transition-colors",
                 index === 0 && "!bg-primary-200",
-                "group-hover:bg-primary-200"
+                "group-hover:bg-primary-200",
               )}
             >
               <task.icon className="size-5" />

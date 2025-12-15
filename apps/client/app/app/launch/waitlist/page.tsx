@@ -45,7 +45,7 @@ export default function LaunchWaitList() {
   };
 
   return (
-    <PageComponent className="bg-content1 border rounded w-4/6 mx-auto mt-8">
+    <PageComponent className="bg-background border rounded w-3/6 mx-auto mt-8">
       <HeaderNavigation
         navigationItems={[
           {
@@ -73,8 +73,6 @@ export default function LaunchWaitList() {
             autoFocus
           />
         </FormField>
-
-        <hr />
 
         <FormField
           title="Wait-List URL"
