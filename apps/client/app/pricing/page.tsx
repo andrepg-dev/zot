@@ -73,13 +73,13 @@ export default function PricingPage() {
     <PageComponent className="max-w-6xl mx-auto text-foreground">
       <div className="flex flex-col gap-8">
         <div className="text-center space-y-3">
-          <p className="text-xs tracking-[0.25em] uppercase text-blue-300/80">
+          <p className="text-xs tracking-[0.25em] uppercase text-emerald-400/80">
             Pricing
           </p>
           <h1 className="text-3xl font-semibold">Choose the plan that fits</h1>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Transparent pricing with zero surprises. Upgrade when you need more
-            room to scale launches, emails, and domains.
+            Predictable pricing, no hidden limits. Upgrade when you are ready to
+            scale your launches, emails, and domains.
           </p>
         </div>
 
@@ -89,18 +89,18 @@ export default function PricingPage() {
               key={plan.name}
               className={`relative flex flex-col rounded-2xl border bg-card/80 p-6 shadow-lg backdrop-blur ${
                 plan.popular
-                  ? "border-blue-500/60 ring-1 ring-blue-500/40 shadow-blue-500/15"
+                  ? "border-emerald-500/60 ring-1 ring-emerald-500/40 shadow-emerald-500/15"
                   : "border-white/10"
               }`}
             >
               {plan.popular && (
-                <span className="absolute right-4 top-4 rounded-full bg-blue-500/20 px-3 py-1 text-xs font-semibold text-blue-100">
+                <span className="absolute right-4 top-4 rounded-full bg-emerald-500/20 px-3 py-1 text-xs font-semibold text-emerald-200">
                   Most popular
                 </span>
               )}
 
               <div className="space-y-2">
-                <p className="text-xs uppercase tracking-wide text-blue-300/80">
+                <p className="text-xs uppercase tracking-wide text-emerald-400/80">
                   {plan.name}
                 </p>
                 <p className="text-lg font-semibold">{plan.blurb}</p>
@@ -116,8 +116,8 @@ export default function PricingPage() {
                 href={plan.ctaHref}
                 className={`mt-6 inline-flex h-11 items-center justify-center rounded-md border px-4 text-sm font-semibold transition-colors ${
                   plan.popular
-                    ? "bg-blue-500 text-black border-blue-500 hover:bg-blue-400"
-                    : "border-blue-500/50 text-blue-100 hover:border-blue-400 hover:bg-blue-500/10"
+                    ? "bg-emerald-500 text-black border-emerald-500 hover:bg-emerald-400"
+                    : "border-white/20 hover:border-emerald-400 hover:text-emerald-300"
                 }`}
               >
                 {plan.ctaLabel}
@@ -126,8 +126,8 @@ export default function PricingPage() {
               <div className="mt-6 flex-1 space-y-3">
                 {plan.features.map((feature) => (
                   <div key={feature} className="flex items-start gap-3">
-                    <span className="mt-0.5 inline-flex rounded-full bg-blue-500/15 p-1 text-blue-100">
-                      <CheckIcon className="size-4" />
+                    <span className="mt-0.5 inline-flex rounded-full bg-emerald-500/15 p-1 text-emerald-300">
+                      <CheckIcon className="size-4 text-emerald-400" />
                     </span>
                     <span className="text-sm leading-relaxed text-foreground">
                       {feature}
