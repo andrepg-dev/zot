@@ -4,6 +4,7 @@ import { submitWaitListAction } from "@/actions/submit-waitlist";
 import Form from "@/components/form";
 import FormField from "@/components/form-field";
 import PageComponent from "@/components/layouts/page-component";
+import HeaderNavigation from "@/components/navigation/header.navigation";
 import Type from "@/components/type";
 import InputComponent from "@/components/ui/input";
 import { addToast, Button, Checkbox } from "@heroui/react";
@@ -45,6 +46,15 @@ export default function LaunchWaitList() {
 
   return (
     <PageComponent className="bg-content1 border rounded w-4/6 mx-auto mt-8">
+      <HeaderNavigation
+        navigationItems={[
+          {
+            label: "New Launch",
+            pathname: "",
+          },
+        ]}
+      />
+
       <Form
         onSubmit={handleSubmit(onSubmit)}
         className="flex flex-col gap-8"

@@ -6,17 +6,21 @@ import { useEffect, type ReactNode } from "react";
 
 export default function HeaderNavigation({
   children,
+  navigationItems,
 }: {
   children?: ReactNode;
+  navigationItems?: Array<{ label: string; pathname: string }>;
 }) {
-  const { setChildren } = useHeaderStore();
+  const { setChildren, setNavigationItems } = useHeaderStore();
   const pathname = usePathname();
 
   useEffect(() => {
     setChildren(children ?? null);
+    setNavigationItems(navigationItems ?? null);
 
     return () => {
       setChildren(null);
+      setNavigationItems(null);
     };
   }, [children, setChildren, pathname]);
 

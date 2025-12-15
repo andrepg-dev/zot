@@ -1,14 +1,14 @@
 "use client";
 
 import useHeaderStore from "@/store/header/header.store";
-import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { MagnifyingGlassIcon, SlashIcon } from "@heroicons/react/24/outline";
 import { Button } from "@heroui/button";
 import { Kbd } from "@heroui/kbd";
 import Image from "next/image";
 import Link from "next/link";
 
 export default function Header() {
-  const { children } = useHeaderStore();
+  const { children, navigationItems } = useHeaderStore();
 
   return (
     <header
@@ -25,6 +25,22 @@ export default function Header() {
         <Link href={"/app/dashboard"}>
           <span className="font-bold">Kue</span>
         </Link>
+
+        {navigationItems &&
+          navigationItems?.map((value) => (
+            <div
+              key={value.pathname}
+              className="flex items-center text-sm font-bold gap-2"
+            >
+              <span className="text-muted-foreground">
+                <SlashIcon className="size-4 text-muted-foreground" />
+              </span>
+
+              <Link href={value.pathname} className="hover:underline-2">
+                {value.label}
+              </Link>
+            </div>
+          ))}
 
         {children}
       </div>
@@ -58,8 +74,4 @@ export default function Header() {
       </div>
     </header>
   );
-}
-
-function DefaultHeaderContent() {
-  return <></>;
 }
