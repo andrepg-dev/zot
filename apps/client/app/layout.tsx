@@ -1,4 +1,3 @@
-import Background from "@/components/background";
 import Header from "@/components/header/header";
 import QueryProvider from "@/components/query-provider";
 import Sidebar from "@/components/sidebar/sidebar";
@@ -50,7 +49,7 @@ export default function RootLayout({
               <div className="flex flex-row flex-1 overflow-hidden bg-[#060606]">
                 <Sidebar />
                 {/* Content */}
-                <main className="w-full overflow-y-auto bg-black m-2 mb-0 rounded-t-xl ml-0 border">
+                <main className="w-full overflow-y-hidden bg-black m-2 mb-0 rounded-t-xl ml-0 border">
                   {children}
                 </main>{" "}
               </div>

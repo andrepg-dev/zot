@@ -18,7 +18,7 @@ export default function LandingPage() {
 
       {/* List of cards of templates */}
 
-      <div className="flex justify-between mt-6">
+      <div className="flex justify-between my-6">
         <div className="flex gap-2">
           <Input
             placeholder="Search by name..."
@@ -45,7 +45,7 @@ export default function LandingPage() {
 
         <Button
           as={Link}
-          href="/app/launch/waitlist"
+          href="/app/new/landing-page"
           className="bg-primary border-transparent border transition-none"
           startContent={<PlusIcon className="size-5" />}
           size="sm"
@@ -54,6 +54,22 @@ export default function LandingPage() {
         >
           Landing Page
         </Button>
+      </div>
+
+      {/* Cards */}
+      <div className="grid grid-cols-4 gap-4">
+        <div className="border rounded-lg aspect-video"></div>
+        <div className="border rounded-lg aspect-video"></div>
+        <div className="border rounded-lg aspect-video"></div>
+        <div className="border rounded-lg aspect-video"></div>
+        <div className="border rounded-lg aspect-video"></div>
+        <div className="border rounded-lg aspect-video"></div>
+        <div className="border rounded-lg aspect-video"></div>
+        <div className="border rounded-lg aspect-video"></div>
+        <div className="border rounded-lg aspect-video"></div>
+        <div className="border rounded-lg aspect-video"></div>
+        <div className="border rounded-lg aspect-video"></div>
+        <div className="border rounded-lg aspect-video"></div>
       </div>
     </PageComponent>
   );

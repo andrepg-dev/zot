@@ -1,18 +1,18 @@
 import {
-  ChartBarIcon,
   CreditCardIcon,
   CursorArrowRippleIcon,
   EnvelopeIcon,
   GlobeAltIcon,
   KeyIcon,
-  NewspaperIcon,
+  Square3Stack3DIcon,
+  Squares2X2Icon,
 } from "@heroicons/react/24/outline";
 
 export const defaultNavItems = [
   {
     href: "/app/dashboard",
     label: "Dashboard",
-    icon: ChartBarIcon,
+    icon: Squares2X2Icon,
   },
   {
     href: "/app/domains",
@@ -37,7 +37,7 @@ export const defaultNavItems = [
   {
     href: "/app/landing-page",
     label: "Landing page",
-    icon: NewspaperIcon,
+    icon: Square3Stack3DIcon,
   },
   {
     href: "/app/waitlist",

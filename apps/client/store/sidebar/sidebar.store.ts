@@ -4,8 +4,10 @@ import { defaultNavItems, NavItemsI } from "./sidebar.constants";
 interface SidebarStateI {
   navItems?: NavItemsI | null;
   children?: React.ReactNode | null;
+  hidden?: boolean;
   setNavItems: (navItems: NavItemsI | null) => void;
   setChildren: (children: React.ReactNode | null) => void;
+  setHidden: (hidden: boolean) => void;
 }
 
 const useSidebarStore = create<SidebarStateI>((set) => ({
@@ -15,6 +17,9 @@ const useSidebarStore = create<SidebarStateI>((set) => ({
   },
   setChildren: (children) => {
     set({ children });
+  },
+  setHidden: (hidden) => {
+    set({ hidden });
   },
 }));
 

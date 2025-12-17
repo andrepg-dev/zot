@@ -23,11 +23,16 @@ import {
 import ItemList from "./items-list";
 
 export default function Sidebar() {
-  const { navItems, children } = useSidebarStore();
+  const { navItems, children, hidden } = useSidebarStore();
 
   return (
-    <aside className="min-w-[220px] bg-sidebar backdrop-blur-md flex flex-col">
-      <div className="flex flex-col justify-between flex-1">
+    <aside
+      className={cn(
+        "overflow-hidden bg-sidebar backdrop-blur-md flex flex-col transition-all duration-250",
+        hidden ? "w-[8px]" : "w-[280px]",
+      )}
+    >
+      <div className="flex flex-col justify-between flex-1 min-w-[230px]">
         {!navItems && children && <>{children}</>}
 
         {navItems && !children && <ItemList navItems={navItems} />}
@@ -39,14 +44,14 @@ export default function Sidebar() {
         )}
 
         <div className="w-full">
-          <hr />
+          {!hidden ? <hr /> : null}
 
           <div className="my-4">
             <Link
               href={"/docs"}
               target="_blank"
               className={clsx(
-                "flex items-center gap-2 py-1.5 px-5 h-[45px] text-muted-foreground hover:bg-default/60 text-sm"
+                "flex items-center gap-2 py-1.5 px-5 h-[45px] text-muted-foreground hover:bg-default/60 text-sm",
               )}
             >
               <BookOpenIcon className={cn("size-5")} /> Docs

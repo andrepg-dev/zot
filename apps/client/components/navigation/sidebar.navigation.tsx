@@ -8,20 +8,21 @@ import { useEffect } from "react";
 export default function SidebarNavigation({
   children,
   navItems,
+  hidden,
 }: {
   children?: React.ReactNode;
   navItems?: NavItemsI;
+  hidden?: boolean;
 }) {
-  const { setNavItems, setChildren } = useSidebarStore();
+  const { setNavItems, setChildren, setHidden } = useSidebarStore();
   const pathname = usePathname();
 
   // Reset values
   useEffect(() => {
     return () => {
-      console.log("Resetting sidebar navigation store");
-
       setNavItems(defaultNavItems);
       setChildren(null);
+      setHidden(false);
     };
   }, [pathname]);
 
@@ -32,6 +33,12 @@ export default function SidebarNavigation({
   useEffect(() => {
     setNavItems(navItems || null);
   }, [navItems, setNavItems]);
+
+  useEffect(() => {
+    if (hidden != undefined) {
+      setHidden(hidden);
+    }
+  }, [hidden, setHidden]);
 
   return null;
 }
