@@ -45,7 +45,7 @@ export default function LaunchWaitList() {
   };
 
   return (
-    <PageComponent className="bg-background border rounded w-4/6 mx-auto mt-8">
+    <PageComponent className="bg-background border border-dashed rounded-lg w-5/6 mx-auto mt-8">
       <HeaderNavigation
         navigationItems={[
           {

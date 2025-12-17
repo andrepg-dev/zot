@@ -228,7 +228,7 @@ export default function WaitListPage() {
                             item.status === "Paused" &&
                               "bg-warning/20 text-warning",
                             item.status === "Vacation" &&
-                              "bg-default/20 text-default-600"
+                              "bg-default/20 text-default-600",
                           )}
                         >
                           {item.status}

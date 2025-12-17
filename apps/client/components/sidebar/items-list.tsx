@@ -19,7 +19,7 @@ export default function ItemList({ navItems }: { navItems: any }) {
             <Link
               href={item.href}
               className={clsx(
-                "flex items-center gap-2 py-1.5 px-2 h-[35px] text-muted-foreground rounded-sm hover:bg-default-100",
+                "flex items-center gap-2 py-1.5 px-2 h-[35px] text-muted-foreground rounded-sm hover:bg-default-50",
                 {
                   "text-white bg-default-100": isActive,
                 },

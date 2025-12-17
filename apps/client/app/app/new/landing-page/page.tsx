@@ -71,8 +71,8 @@ export default function NewLandingPage() {
               </div>
             </div>
 
-            <footer className="bg-sidebar flex-shrink-0 sticky bottom-0">
-              <div className="bg-default-100 mb-4 rounded-lg border">
+            <footer className="bg-sidebar flex-shrink-0 sticky bottom-0 shadow-[0_-2px_10px_rgba(0,0,0,0.80)]">
+              <div className="bg-default-50 mb-4 rounded-lg border">
                 <textarea
                   className="w-full p-4 text-sm resize-none outline-none "
                   placeholder="Describe your business here"
@@ -99,8 +99,8 @@ export default function NewLandingPage() {
       <div className="flex flex-col text-muted-foreground items-center gap-2">
         <PaintBrushIcon className="size-5" />
 
-        <footer className="absolute bottom-4 mx-auto flex gap-4 text-muted-foreground/50">
-          Let your mind explore
+        <footer className="absolute bottom-4 mx-auto flex gap-4 text-muted-foreground/40">
+          Let's explore
         </footer>
       </div>
     </PageComponent>
