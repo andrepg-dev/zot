@@ -5,13 +5,15 @@ import HeaderNavigation from "@/components/navigation/header.navigation";
 import SidebarNavigation from "@/components/navigation/sidebar.navigation";
 import {
   ChevronRightIcon,
+  CodeBracketIcon,
+  EyeIcon,
   PaintBrushIcon,
   PlusIcon,
 } from "@heroicons/react/24/outline";
 
 export default function NewLandingPage() {
   return (
-    <PageComponent className="flex justify-center h-full items-center">
+    <PageComponent className="flex flex-1 h-full p-0">
       <HeaderNavigation
         navigationItems={[
           { label: "Landing Page", pathname: "/app/landing-page" },
@@ -96,12 +98,29 @@ export default function NewLandingPage() {
         }
       />
 
-      <div className="flex flex-col text-muted-foreground items-center gap-2">
-        <PaintBrushIcon className="size-5" />
+      <div className="h-full flex-1 w-full relative">
+        <div className="border-b px-4 py-2 z-50 relative">
+          <div className="flex text-xs items-center gap-2">
+            <span>Edition type:</span>
 
-        <footer className="absolute bottom-4 mx-auto flex gap-4 text-muted-foreground/40">
-          Let's explore
-        </footer>
+            <div className="border rounded-md w-max flex bg-default-100 overflow-hidden text-xs">
+              <button className="p-1 px-2 rounded !cursor-pointer text-xs bg-default-50">
+                AI
+              </button>
+              <button className="p-1 px-2 rounded !cursor-pointer text-xs">
+                Manually
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex flex-col text-muted-foreground absolute w-full h-full justify-center items-center gap-2 bottom-0 -z-0">
+          <PaintBrushIcon className="size-5" />
+
+          <footer className="absolute bottom-4 mx-auto flex gap-4 text-muted-foreground/40">
+            Let's explore
+          </footer>
+        </div>
       </div>
     </PageComponent>
   );
