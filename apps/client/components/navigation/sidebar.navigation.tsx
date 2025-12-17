@@ -9,12 +9,15 @@ export default function SidebarNavigation({
   children,
   navItems,
   hidden,
+  className,
 }: {
   children?: React.ReactNode;
   navItems?: NavItemsI;
   hidden?: boolean;
+  className?: string;
 }) {
-  const { setNavItems, setChildren, setHidden } = useSidebarStore();
+  const { setNavItems, setChildren, setHidden, setClassName } =
+    useSidebarStore();
   const pathname = usePathname();
 
   // Reset values
@@ -23,6 +26,7 @@ export default function SidebarNavigation({
       setNavItems(defaultNavItems);
       setChildren(null);
       setHidden(false);
+      setClassName(null);
     };
   }, [pathname]);
 
@@ -39,6 +43,12 @@ export default function SidebarNavigation({
       setHidden(hidden);
     }
   }, [hidden, setHidden]);
+
+  useEffect(() => {
+    if (className) {
+      setClassName(className);
+    }
+  }, [className, setClassName]);
 
   return null;
 }

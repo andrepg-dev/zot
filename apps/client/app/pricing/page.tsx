@@ -1,4 +1,5 @@
 import PageComponent from "@/components/layouts/page-component";
+import SidebarNavigation from "@/components/navigation/sidebar.navigation";
 import { CheckIcon } from "@heroicons/react/24/solid";
 import Link from "next/link";
 
@@ -71,6 +72,8 @@ const plans = [
 export default function PricingPage() {
   return (
     <PageComponent className="max-w-6xl mx-auto text-foreground relative">
+      <SidebarNavigation hidden />
+
       <div
         className="fixed inset-0 -z-10 w-full"
         style={{

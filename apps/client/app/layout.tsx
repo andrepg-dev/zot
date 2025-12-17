@@ -31,7 +31,7 @@ export default function RootLayout({
       <body
         className={clsx(
           "min-h-screen text-foreground font-sans antialiased bg-black relative dark",
-          fontSans.variable
+          fontSans.variable,
         )}
       >
         <ToastProvider />
@@ -43,15 +43,15 @@ export default function RootLayout({
             zIndex={100000}
           />
           <QueryProvider>
-            <div className="relative z-10 flex flex-col h-screen">
+            <div className="relative z-10 flex flex-col h-screen overflow-hidden">
               <Header />
 
-              <div className="flex flex-row flex-1 overflow-hidden bg-[#060606]">
+              <div className="flex flex-row flex-1  bg-[#060606] overflow-hidden">
                 <Sidebar />
                 {/* Content */}
-                <main className="w-full overflow-y-hidden bg-black m-2 mb-0 rounded-t-xl ml-0 border">
+                <main className="w-full overflow-y-auto bg-black m-2 mb-0 rounded-t-xl ml-0 border">
                   {children}
-                </main>{" "}
+                </main>
               </div>
             </div>
           </QueryProvider>
