@@ -1,14 +1,8 @@
 "use client";
 
-import { Badge } from "@heroui/react";
 import { ArrowTrendingUpIcon } from "@heroicons/react/24/outline";
-import {
-  Bar,
-  BarChart,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-} from "recharts";
+import { Badge } from "@heroui/react";
+import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis } from "recharts";
 import CustomGradientBar from "./custom-gradient-bar";
 
 const barChartData = [
@@ -28,7 +22,7 @@ const strokeColor = "#006fee";
 
 export default function BarChartComponent() {
   return (
-    <div className="col-span-2 flex flex-col rounded-lg border p-6 bg-background">
+    <div className="col-span-2 flex flex-col rounded-lg border border-dashed p-6 bg-background">
       <div className="flex flex-col gap-2 mb-4">
         <div className="flex items-center gap-2">
           <h3 className="text-base font-medium">Bar Chart</h3>
@@ -40,9 +34,7 @@ export default function BarChartComponent() {
             <span>5.2%</span>
           </Badge>
         </div>
-        <p className="text-sm text-muted-foreground">
-          January - June 2025
-        </p>
+        <p className="text-sm text-muted-foreground">January - June 2025</p>
       </div>
       <div className="h-64 w-full">
         <ResponsiveContainer width="100%" height="100%">
@@ -66,8 +58,9 @@ export default function BarChartComponent() {
               contentStyle={{
                 backgroundColor: tooltipBg,
                 border: `1px solid ${tooltipBorder}`,
-                borderRadius: "8px",
+                borderRadius: "4px",
                 color: tooltipText,
+                padding: "8px 12px",
               }}
             />
             <Bar

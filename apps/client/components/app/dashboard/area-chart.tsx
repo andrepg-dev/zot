@@ -31,7 +31,7 @@ const mobileColor = "#10b981";
 
 export default function AreaChartComponent() {
   return (
-    <div className="col-span-3 flex flex-col rounded-lg border p-6 bg-background">
+    <div className="col-span-3 flex flex-col rounded-lg border border-dashed p-6 bg-background">
       <div className="flex flex-col gap-2 mb-4">
         <div className="flex items-center gap-2">
           <h3 className="text-base font-medium">Analitycs overview</h3>
@@ -105,8 +105,9 @@ export default function AreaChartComponent() {
               contentStyle={{
                 backgroundColor: tooltipBg,
                 border: `1px solid ${tooltipBorder}`,
-                borderRadius: "8px",
+                borderRadius: "4px",
                 color: tooltipText,
+                padding: "8px 12px",
               }}
             />
             <Area

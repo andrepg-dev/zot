@@ -42,10 +42,10 @@ export default function Dashboard() {
         >
           No active waitlist
         </Title>
-      </PageComponent>
 
-      <PageComponent className="grid grid-cols-3 gap-4">
-        <TaskCards />
+        <div className="grid grid-cols-3 gap-4 my-6">
+          <TaskCards />
+        </div>
       </PageComponent>
 
       <PageComponent className="pt-0">
