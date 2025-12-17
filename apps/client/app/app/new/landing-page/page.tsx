@@ -70,10 +70,10 @@ export default function NewLandingPage() {
               </div>
             </div>
 
-            <footer className="bg-sidebar min-h-32 flex-shrink-0 sticky bottom-0">
+            <footer className="bg-sidebar flex-shrink-0 sticky bottom-0">
               <div className="bg-default-100 mb-4 rounded-lg border">
                 <textarea
-                  className="w-full p-4 text-sm resize-none outline-none min-h-20"
+                  className="w-full p-4 text-sm resize-none outline-none "
                   placeholder="Describe your business here"
                 />
 
@@ -82,7 +82,10 @@ export default function NewLandingPage() {
                     <PlusIcon className="size-4" />
                   </button>
 
-                  <button disabled className="disabled:opacity-60 bg-primary p-1.5 rounded-full cursor-pointer hover:ring-2 ring-primary/30">
+                  <button
+                    disabled
+                    className="disabled:opacity-60 bg-primary p-1.5 rounded-full cursor-pointer hover:ring-2 ring-primary/30"
+                  >
                     <ChevronRightIcon className="size-4" />
                   </button>
                 </div>

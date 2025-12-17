@@ -1,78 +1,81 @@
+"use client";
+
 import PageComponent from "@/components/layouts/page-component";
 import SidebarNavigation from "@/components/navigation/sidebar.navigation";
+import { defaultNavItems } from "@/store/sidebar/sidebar.constants";
 import { CheckIcon } from "@heroicons/react/24/solid";
 import Link from "next/link";
 
-const plans = [
-  {
-    name: "Free",
-    price: "$0",
-    frequency: "/ month",
-    blurb: "Perfect to validate an idea and run simple launches.",
-    ctaLabel: "Start for free",
-    ctaHref: "/app/launch/waitlist",
-    popular: false,
-    features: [
-      "15,000 users signup limit",
-      "3 waitlists maximum",
-      "3 landing pages maximum",
-      "2,000 users emailed per month",
-      "10 email templates",
-      "Custom email creation",
-      "1 domain for branded emails and landing pages",
-      "Analytics for signups and sent emails",
-      "Trend search powered by Google Search",
-    ],
-  },
-  {
-    name: "Premium",
-    price: "$25",
-    frequency: "/ month",
-    blurb: "For products in production that need headroom and support.",
-    ctaLabel: "Upgrade now",
-    ctaHref: "/app/billing",
-    popular: true,
-    features: [
-      "75,000 users signup limit",
-      "15 waitlists maximum",
-      "15 landing pages maximum",
-      "30,000 users emailed per month",
-      "30 email templates",
-      "Custom email creation",
-      "10 domains for emails and landing pages",
-      "Extra security to block fake or disposable emails",
-      "Analytics for sent emails and registered users",
-      "Trend search with Google Search",
-      "Use more powerful AI models",
-    ],
-  },
-  {
-    name: "Scale",
-    price: "$90",
-    frequency: "/ month",
-    blurb: "Built for fast-growing teams with heavy launch pipelines.",
-    ctaLabel: "Contact sales",
-    ctaHref: "/app/billing",
-    popular: false,
-    features: [
-      "500,000 users per month signup limit",
-      "100 waitlists maximum",
-      "100 landing pages maximum",
-      "200 email templates",
-      "100,000 users emailed per month",
-      "500 domains for emails and landing pages",
-      "Extra security to block fake or disposable emails",
-      "Analytics for sent emails and registered users",
-      "Google Search included",
-      "Use more powerful AI models",
-    ],
-  },
-];
-
 export default function PricingPage() {
+  const plans = [
+    {
+      name: "Free",
+      price: "$0",
+      frequency: "/ month",
+      blurb: "Perfect to validate an idea and run simple launches.",
+      ctaLabel: "Start for free",
+      ctaHref: "/app/launch/waitlist",
+      popular: false,
+      features: [
+        "15,000 users signup limit",
+        "3 waitlists maximum",
+        "3 landing pages maximum",
+        "2,000 users emailed per month",
+        "10 email templates",
+        "Custom email creation",
+        "1 domain for branded emails and landing pages",
+        "Analytics for signups and sent emails",
+        "Trend search powered by Google Search",
+      ],
+    },
+    {
+      name: "Premium",
+      price: "$25",
+      frequency: "/ month",
+      blurb: "For products in production that need headroom and support.",
+      ctaLabel: "Upgrade now",
+      ctaHref: "/app/billing",
+      popular: true,
+      features: [
+        "75,000 users signup limit",
+        "15 waitlists maximum",
+        "15 landing pages maximum",
+        "30,000 users emailed per month",
+        "30 email templates",
+        "Custom email creation",
+        "10 domains for emails and landing pages",
+        "Extra security to block fake or disposable emails",
+        "Analytics for sent emails and registered users",
+        "Trend search with Google Search",
+        "Use more powerful AI models",
+      ],
+    },
+    {
+      name: "Scale",
+      price: "$90",
+      frequency: "/ month",
+      blurb: "Built for fast-growing teams with heavy launch pipelines.",
+      ctaLabel: "Contact sales",
+      ctaHref: "/app/billing",
+      popular: false,
+      features: [
+        "500,000 users per month signup limit",
+        "100 waitlists maximum",
+        "100 landing pages maximum",
+        "200 email templates",
+        "100,000 users emailed per month",
+        "500 domains for emails and landing pages",
+        "Extra security to block fake or disposable emails",
+        "Analytics for sent emails and registered users",
+        "Google Search included",
+        "Use more powerful AI models",
+      ],
+    },
+  ];
+
   return (
     <PageComponent className="max-w-6xl mx-auto text-foreground relative">
-      <SidebarNavigation hidden />
+      <SidebarNavigation hidden navItems={defaultNavItems} />
 
       <div
         className="fixed inset-0 -z-10 w-full"
