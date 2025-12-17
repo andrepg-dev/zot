@@ -138,7 +138,7 @@ export default function WaitListPage() {
             <Button
               as={Link}
               href="/app/launch/waitlist"
-              className="bg-primary hover:border-red-500 border-transparent border transition-none"
+              className="bg-primary border-transparent border transition-none"
               startContent={<PlusIcon className="size-5" />}
               size="sm"
               variant="shadow"
