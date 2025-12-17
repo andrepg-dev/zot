@@ -18,9 +18,9 @@ export default function NewLandingPage() {
       {/* <SidebarNavigation hidden navItems={defaultNavItems} /> */}
 
       <SidebarNavigation
-        className="w-[600px] overflow-y-auto z-50"
+        className="w-[620px] overflow-y-auto z-50"
         children={
-          <div className="p-4 pb-0 flex flex-col h-full flex-1 text-sm gap-2 w-[425px]">
+          <div className="p-4 pb-0 flex flex-col h-full flex-1 text-sm gap-2 w-[435px]">
             <div className="flex flex-col gap-2.5 flex-1 min-h-0 pb-52">
               <div className="bg-default-100 p-2 border rounded-lg max-w-4/5 ml-auto ">
                 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab

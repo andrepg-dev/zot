@@ -30,13 +30,16 @@ export default function Header() {
           navigationItems?.map((value, idx) => (
             <div
               key={idx}
-              className="flex items-center text-sm font-bold gap-2"
+              className="flex items-center text-sm font-bold gap-1"
             >
               <span className="text-muted-foreground">
-                <SlashIcon className="size-4 text-muted-foreground" />
+                <SlashIcon className="size-4 text-default-100" />
               </span>
 
-              <Link href={value.pathname} className="hover:underline-2">
+              <Link
+                href={value.pathname}
+                className="hover:underline-2 font-medium p-1 px-2 hover:bg-default-100/60 rounded-md"
+              >
                 {value.label}
               </Link>
             </div>
