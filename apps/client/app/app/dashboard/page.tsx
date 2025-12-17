@@ -38,25 +38,18 @@ export default function Dashboard() {
 
         <Title
           description="Below are some tasks to get you started."
-          className="my-8"
+          className="mt-8"
         >
           No active waitlist
         </Title>
       </PageComponent>
-      <hr />
 
       <PageComponent className="grid grid-cols-3 gap-4">
         <TaskCards />
       </PageComponent>
 
-      <hr />
-
-      <PageComponent className="pt-6">
+      <PageComponent className="pt-0">
         <div className="flex flex-col gap-8">
-          <Title description="Track your performance over time">
-            Analytics Overview
-          </Title>
-
           <div className="grid grid-cols-5 gap-4">
             <AreaChartComponent />
             <BarChartComponent />

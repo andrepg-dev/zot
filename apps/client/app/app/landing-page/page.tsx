@@ -4,7 +4,11 @@ import PageComponent from "@/components/layouts/page-component";
 export default function LandingPage() {
   return (
     <PageComponent>
-      <Title description="Build and manage your landing pages">Landing Page</Title>
+      <Title description="Build and manage your landing pages">
+        Landing Page
+      </Title>
+
+      {/* List of cards of templates */}
     </PageComponent>
   );
 }

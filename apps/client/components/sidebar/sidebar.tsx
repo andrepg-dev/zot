@@ -26,7 +26,7 @@ export default function Sidebar() {
   const { navItems, children } = useSidebarStore();
 
   return (
-    <aside className="min-w-[220px] border-r bg-sidebar backdrop-blur-md flex flex-col">
+    <aside className="min-w-[220px] bg-sidebar backdrop-blur-md flex flex-col">
       <div className="flex flex-col justify-between flex-1">
         {!navItems && children && <>{children}</>}
 

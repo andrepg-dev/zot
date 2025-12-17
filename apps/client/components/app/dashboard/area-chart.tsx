@@ -1,7 +1,7 @@
 "use client";
 
-import { Badge } from "@heroui/react";
 import { ArrowTrendingUpIcon } from "@heroicons/react/24/outline";
+import { Badge } from "@heroui/react";
 import {
   Area,
   AreaChart,
@@ -9,6 +9,7 @@ import {
   ResponsiveContainer,
   Tooltip,
   XAxis,
+  YAxis,
 } from "recharts";
 
 const chartData = [
@@ -33,7 +34,7 @@ export default function AreaChartComponent() {
     <div className="col-span-3 flex flex-col rounded-lg border p-6 bg-background">
       <div className="flex flex-col gap-2 mb-4">
         <div className="flex items-center gap-2">
-          <h3 className="text-base font-medium">Area Chart</h3>
+          <h3 className="text-base font-medium">Analitycs overview</h3>
           <Badge
             variant="flat"
             className="text-green-500 bg-green-500/10 border-none flex items-center gap-1"
@@ -50,7 +51,7 @@ export default function AreaChartComponent() {
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart
             data={chartData}
-            margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
+            margin={{ top: 15, right: 10, left: -15, bottom: 0 }}
           >
             <defs>
               <linearGradient
@@ -60,16 +61,8 @@ export default function AreaChartComponent() {
                 x2="0"
                 y2="1"
               >
-                <stop
-                  offset="5%"
-                  stopColor={desktopColor}
-                  stopOpacity={0.5}
-                />
-                <stop
-                  offset="95%"
-                  stopColor={desktopColor}
-                  stopOpacity={0.1}
-                />
+                <stop offset="5%" stopColor={desktopColor} stopOpacity={0.5} />
+                <stop offset="95%" stopColor={desktopColor} stopOpacity={0.1} />
               </linearGradient>
               <linearGradient
                 id="gradient-chart-mobile"
@@ -78,16 +71,8 @@ export default function AreaChartComponent() {
                 x2="0"
                 y2="1"
               >
-                <stop
-                  offset="5%"
-                  stopColor={mobileColor}
-                  stopOpacity={0.5}
-                />
-                <stop
-                  offset="95%"
-                  stopColor={mobileColor}
-                  stopOpacity={0.1}
-                />
+                <stop offset="5%" stopColor={mobileColor} stopOpacity={0.5} />
+                <stop offset="95%" stopColor={mobileColor} stopOpacity={0.1} />
               </linearGradient>
             </defs>
             <CartesianGrid
@@ -105,6 +90,14 @@ export default function AreaChartComponent() {
               fontSize={12}
               tick={{ fill: axisColor }}
               tickFormatter={(value: string) => value.slice(0, 3)}
+            />
+            <YAxis
+              tickLine={false}
+              axisLine={false}
+              tickMargin={8}
+              stroke={axisColor}
+              fontSize={12}
+              tick={{ fill: axisColor }}
             />
             <Tooltip
               cursor={false}

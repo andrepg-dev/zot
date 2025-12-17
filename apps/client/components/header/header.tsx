@@ -13,7 +13,7 @@ export default function Header() {
   return (
     <header
       id="header"
-      className="shrink-0 border-b bg-sidebar p-4 flex items-center justify-between h-14"
+      className="shrink-0 bg-sidebar p-4 flex items-center justify-between h-12"
     >
       <div className="flex gap-2 items-center">
         <Image

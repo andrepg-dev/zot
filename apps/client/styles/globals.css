@@ -4,8 +4,8 @@
 @source '../../../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}';
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: #EDEEF0;
+  --background: oklch(0% 0 0);
+  --foreground: #edeef0;
   --card: oklch(0.205 0 0);
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.205 0 0);
@@ -26,7 +26,7 @@
   --chart-3: oklch(0.769 0.188 70.08);
   --chart-4: oklch(0.627 0.265 303.9);
   --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: #0A0A0A;
+  --sidebar: #060606;
 }
 
 * {
