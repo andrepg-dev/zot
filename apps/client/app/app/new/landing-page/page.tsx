@@ -5,8 +5,6 @@ import HeaderNavigation from "@/components/navigation/header.navigation";
 import SidebarNavigation from "@/components/navigation/sidebar.navigation";
 import {
   ChevronRightIcon,
-  CodeBracketIcon,
-  EyeIcon,
   PaintBrushIcon,
   PlusIcon,
 } from "@heroicons/react/24/outline";
@@ -80,8 +78,8 @@ export default function NewLandingPage() {
                   placeholder="Describe your business here"
                 />
 
-                <div className="flex px-2 pb-2 pt-1 items-center justify-between">
-                  <button className="bg-default p-1.5 rounded-full cursor-pointer hover:ring-2 ring-default/30">
+                <div className="flex px-3 pb-2 pt-1 items-center justify-between">
+                  <button className="p-1.5 rounded-full cursor-pointer hover:ring-2 ring-default/30">
                     <PlusIcon className="size-4" />
                   </button>
 
