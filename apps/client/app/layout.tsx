@@ -49,7 +49,7 @@ export default function RootLayout({
               <div className="flex flex-row flex-1  bg-[#060606] overflow-hidden">
                 <Sidebar />
                 {/* Content */}
-                <main className="w-full overflow-y-auto bg-black m-2 mb-0 rounded-t-xl ml-0 border">
+                <main className="w-full overflow-y-auto bg-black m-2 mb-0 rounded-t-xl ml-0 border border-b-0">
                   {children}
                 </main>
               </div>

@@ -3,20 +3,21 @@
 import PageComponent from "@/components/layouts/page-component";
 import HeaderNavigation from "@/components/navigation/header.navigation";
 import SidebarNavigation from "@/components/navigation/sidebar.navigation";
-import { ChevronRightIcon, PlusIcon } from "@heroicons/react/24/outline";
+import {
+  ChevronRightIcon,
+  PaintBrushIcon,
+  PlusIcon,
+} from "@heroicons/react/24/outline";
 
 export default function NewLandingPage() {
   return (
-    <PageComponent>
+    <PageComponent className="flex justify-center h-full items-center">
       <HeaderNavigation
         navigationItems={[
           { label: "Landing Page", pathname: "/app/landing-page" },
           { label: "Create", pathname: "" },
         ]}
       />
-
-      {/* <SidebarNavigation hidden navItems={defaultNavItems} /> */}
-
       <SidebarNavigation
         className="w-[620px] overflow-y-auto z-50"
         children={
@@ -94,6 +95,14 @@ export default function NewLandingPage() {
           </div>
         }
       />
+
+      <div className="flex flex-col text-muted-foreground items-center gap-2">
+        <PaintBrushIcon className="size-5" />
+
+        <footer className="absolute bottom-4 mx-auto flex gap-4 text-muted-foreground/50">
+          Let your mind explore
+        </footer>
+      </div>
     </PageComponent>
   );
 }
