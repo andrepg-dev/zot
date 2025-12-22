@@ -3,7 +3,6 @@ import {
   CursorArrowRippleIcon,
   EnvelopeIcon,
   GlobeAltIcon,
-  KeyIcon,
   Square3Stack3DIcon,
   Squares2X2Icon,
 } from "@heroicons/react/24/outline";
@@ -23,11 +22,6 @@ export const defaultNavItems = [
     href: "/app/billing",
     label: "Billing",
     icon: CreditCardIcon,
-  },
-  {
-    href: "/app/google-search",
-    label: "Google Search",
-    icon: KeyIcon,
   },
   {
     href: "/app/emails",
