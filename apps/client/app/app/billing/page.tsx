@@ -125,8 +125,11 @@ export default function BillingPage() {
 
               <div className="mt-6 flex-1 space-y-3">
                 {plan.features.map((feature) => (
-                  <div key={feature} className="flex items-start gap-3">
-                    <span className="mt-0.5 inline-flex rounded-full bg- p-1 text-blue-100">
+                  <div
+                    key={`${plan.name}-${feature}`}
+                    className="flex items-start gap-3"
+                  >
+                    <span className="mt-0.5 inline-flex rounded-full p-1 text-blue-100">
                       <CheckIcon className="size-4" />
                     </span>
                     <span className="text-sm leading-relaxed text-foreground">

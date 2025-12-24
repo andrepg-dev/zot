@@ -39,11 +39,6 @@ export default function WaitListLayout({
             label: "Analitycs",
           },
           {
-            href: `/app/launch/waitlist/${id}/emails`,
-            icon: InboxStackIcon,
-            label: "Emails",
-          },
-          {
             href: `/app/launch/waitlist/${id}/automations`,
             icon: BoltIcon,
             label: "Automations",

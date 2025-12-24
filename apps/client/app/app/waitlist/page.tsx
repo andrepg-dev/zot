@@ -36,43 +36,43 @@ export default function WaitListPage() {
 
   const rows = [
     {
-      key: "1",
-      name: "Tony Reichert",
-      role: "CEO",
+      id: "a898324j-23487-123",
+      name: "Brocoli Launch",
+      "email-sending-quantity": 300,
       status: "Active",
-    },
-    {
-      key: "2",
-      name: "Zoey Lang",
-      role: "Technical Lead",
-      status: "Paused",
-    },
-    {
-      key: "3",
-      name: "Jane Fisher",
-      role: "Senior Developer",
-      status: "Active",
-    },
-    {
-      key: "4",
-      name: "William Howard",
-      role: "Community Manager",
-      status: "Vacation",
+      users: `403 registration`,
+      "referal-emails": `343 referal emails`,
     },
   ];
 
   const columns = [
     {
-      key: "name",
-      label: "NAME",
+      key: "id",
+      label: "ID",
     },
     {
-      key: "role",
-      label: "ROLE",
+      key: "name",
+      label: "Name",
+    },
+    {
+      key: "email-sending-quantity",
+      label: "Email Sending Quantity",
     },
     {
       key: "status",
-      label: "STATUS",
+      label: "Status",
+    },
+    {
+      key: "users",
+      label: "User registered",
+    },
+    {
+      key: "referal-emails",
+      label: "Referal emails",
+    },
+    {
+      key: "actions",
+      label: "Actions",
     },
   ];
 
@@ -205,9 +205,9 @@ export default function WaitListPage() {
             ) : (
               rows.map((item) => (
                 <Card
-                  key={item.key}
+                  key={item.id}
                   isPressable
-                  onPress={() => handleCardClick(item.key)}
+                  onPress={() => handleCardClick(item.id)}
                   className="hover:bg-default-100 transition-all cursor-pointer border"
                   radius="sm"
                 >
@@ -216,8 +216,8 @@ export default function WaitListPage() {
                       <div className="flex items-start justify-between">
                         <div className="flex flex-col gap-1 flex-1">
                           <h3 className="font-medium text-sm">{item.name}</h3>
-                          <p className="text-sm text-default-500">
-                            {item.role}
+                          <p className="text-xs text-default-500">
+                            ID: {item.id}
                           </p>
                         </div>
                         <span
@@ -228,11 +228,35 @@ export default function WaitListPage() {
                             item.status === "Paused" &&
                               "bg-warning/20 text-warning",
                             item.status === "Vacation" &&
-                              "bg-default/20 text-default-600"
+                              "bg-default/20 text-default-600",
                           )}
                         >
                           {item.status}
                         </span>
+                      </div>
+                      <div className="flex flex-col gap-2 pt-2 border-t border-default-200">
+                        <div className="flex justify-between items-center">
+                          <span className="text-xs text-default-500">
+                            Email Sending Quantity:
+                          </span>
+                          <span className="text-xs ">
+                            {item["email-sending-quantity"]}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-xs text-default-500">
+                            Users registered:
+                          </span>
+                          <span className="text-xs ">{item.users}</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-xs text-default-500">
+                            Referal emails:
+                          </span>
+                          <span className="text-xs ">
+                            {item["referal-emails"]}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </CardBody>
