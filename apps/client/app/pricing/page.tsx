@@ -3,17 +3,22 @@
 import PageComponent from "@/components/layouts/page-component";
 import SidebarNavigation from "@/components/navigation/sidebar.navigation";
 import { defaultNavItems } from "@/store/sidebar/sidebar.constants";
+import { XMarkIcon } from "@heroicons/react/24/outline";
 import { CheckIcon } from "@heroicons/react/24/solid";
+import { Button } from "@heroui/button";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function PricingPage() {
+  const router = useRouter();
+
   const plans = [
     {
       name: "Free",
       price: "$0",
       frequency: "/ month",
       blurb: "Perfect to validate an idea and run simple launches.",
-      ctaLabel: "Start for free",
+      ctaLabel: "Current plan",
       ctaHref: "/app/launch/waitlist",
       popular: false,
       features: [
@@ -76,6 +81,19 @@ export default function PricingPage() {
   return (
     <PageComponent className="max-w-6xl mx-auto text-foreground relative">
       <SidebarNavigation hidden navItems={defaultNavItems} />
+
+      <div className="fixed top-20 right-10">
+        <Button
+          isIconOnly
+          radius="full"
+          className="bg-default-100"
+          onPress={() => {
+            router.back();
+          }}
+        >
+          <XMarkIcon className="size-5" />
+        </Button>
+      </div>
 
       <div
         className="fixed inset-0 -z-10 w-full"

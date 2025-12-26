@@ -98,7 +98,6 @@ export default function WaitListPage() {
 
   const handleDelete = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    // TODO: Implementar lógica de eliminación
     console.log("Delete:", id);
   };
 

@@ -23,7 +23,7 @@ export default function Header() {
           alt={"Waitlean logo"}
         />
         <Link href={"/app/dashboard"}>
-          <span className="font-bold">Kue</span>
+          <span className="font-bold">WaitList + Landing Page</span>
         </Link>
 
         {navigationItems &&
