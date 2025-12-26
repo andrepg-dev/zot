@@ -2,10 +2,13 @@
 
 import PageComponent from "@/components/layouts/page-component";
 import {
+  EyeIcon,
   FunnelIcon,
   ListBulletIcon,
   MagnifyingGlassIcon,
+  PencilIcon,
   PlusIcon,
+  TrashIcon,
   ViewColumnsIcon,
 } from "@heroicons/react/24/outline";
 
@@ -20,6 +23,7 @@ import {
   TableColumn,
   TableHeader,
   TableRow,
+  Tooltip,
   getKeyValue,
 } from "@heroui/react";
 
@@ -80,6 +84,22 @@ export default function WaitListPage() {
 
   const handleCardClick = (key: string) => {
     router.push(`/app/launch/waitlist/${key}`);
+  };
+
+  const handleView = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    router.push(`/app/launch/waitlist/${id}`);
+  };
+
+  const handleEdit = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    router.push(`/app/launch/waitlist/${id}/edit`);
+  };
+
+  const handleDelete = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    // TODO: Implementar lógica de eliminación
+    console.log("Delete:", id);
   };
 
   return (
@@ -188,9 +208,49 @@ export default function WaitListPage() {
 
             <TableBody items={rows} emptyContent={"No rows to display."}>
               {(item: any) => (
-                <TableRow key={item.key} className="hover:bg-default-200">
+                <TableRow key={item.id} className="hover:bg-default-200">
                   {(columnKey: any) => (
-                    <TableCell>{getKeyValue(item, columnKey)}</TableCell>
+                    <TableCell>
+                      {columnKey === "actions" ? (
+                        <div className="flex items-center gap-2">
+                          <Tooltip content="View">
+                            <Button
+                              isIconOnly
+                              size="sm"
+                              variant="light"
+                              onPress={(e) => handleView(item.id, e as any)}
+                              className="min-w-unit-6 w-unit-6 h-unit-6"
+                            >
+                              <EyeIcon className="size-4 text-default-500" />
+                            </Button>
+                          </Tooltip>
+                          <Tooltip content="Edit">
+                            <Button
+                              isIconOnly
+                              size="sm"
+                              variant="light"
+                              onPress={(e) => handleEdit(item.id, e as any)}
+                              className="min-w-unit-6 w-unit-6 h-unit-6"
+                            >
+                              <PencilIcon className="size-4 text-default-500" />
+                            </Button>
+                          </Tooltip>
+                          <Tooltip content="Delete">
+                            <Button
+                              isIconOnly
+                              size="sm"
+                              variant="light"
+                              onPress={(e) => handleDelete(item.id, e as any)}
+                              className="min-w-unit-6 w-unit-6 h-unit-6"
+                            >
+                              <TrashIcon className="size-4 text-danger" />
+                            </Button>
+                          </Tooltip>
+                        </div>
+                      ) : (
+                        getKeyValue(item, columnKey)
+                      )}
+                    </TableCell>
                   )}
                 </TableRow>
               )}
@@ -228,7 +288,7 @@ export default function WaitListPage() {
                             item.status === "Paused" &&
                               "bg-warning/20 text-warning",
                             item.status === "Vacation" &&
-                              "bg-default/20 text-default-600",
+                              "bg-default/20 text-default-600"
                           )}
                         >
                           {item.status}

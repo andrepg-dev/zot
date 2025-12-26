@@ -13,6 +13,9 @@ const config = {
         sans: ["var(--font-sans)"],
         mono: ["var(--font-mono)"],
       },
+      borderRadius: {
+        default: "var(--radius-default)",
+      },
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",

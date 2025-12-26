@@ -8,7 +8,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 export default function Header() {
-  const { children, navigationItems } = useHeaderStore();
+  const { children, navigationItems, postNavigationItems } = useHeaderStore();
 
   return (
     <header

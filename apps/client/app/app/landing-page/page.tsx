@@ -58,18 +58,18 @@ export default function LandingPage() {
 
       {/* Cards */}
       <div className="grid grid-cols-4 gap-4">
-        <div className="border rounded-lg aspect-video bg-default-50 hover:bg-default-100"></div>
-        <div className="border rounded-lg aspect-video bg-default-50 hover:bg-default-100"></div>
-        <div className="border rounded-lg aspect-video bg-default-50 hover:bg-default-100"></div>
-        <div className="border rounded-lg aspect-video bg-default-50 hover:bg-default-100"></div>
-        <div className="border rounded-lg aspect-video bg-default-50 hover:bg-default-100"></div>
-        <div className="border rounded-lg aspect-video bg-default-50 hover:bg-default-100"></div>
-        <div className="border rounded-lg aspect-video bg-default-50 hover:bg-default-100"></div>
-        <div className="border rounded-lg aspect-video bg-default-50 hover:bg-default-100"></div>
-        <div className="border rounded-lg aspect-video bg-default-50 hover:bg-default-100"></div>
-        <div className="border rounded-lg aspect-video bg-default-50 hover:bg-default-100"></div>
-        <div className="border rounded-lg aspect-video bg-default-50 hover:bg-default-100"></div>
-        <div className="border rounded-lg aspect-video bg-default-50 hover:bg-default-100"></div>
+        <div className="border rounded-default aspect-video bg-default-50 hover:bg-default-100"></div>
+        <div className="border rounded-default aspect-video bg-default-50 hover:bg-default-100"></div>
+        <div className="border rounded-default aspect-video bg-default-50 hover:bg-default-100"></div>
+        <div className="border rounded-default aspect-video bg-default-50 hover:bg-default-100"></div>
+        <div className="border rounded-default aspect-video bg-default-50 hover:bg-default-100"></div>
+        <div className="border rounded-default aspect-video bg-default-50 hover:bg-default-100"></div>
+        <div className="border rounded-default aspect-video bg-default-50 hover:bg-default-100"></div>
+        <div className="border rounded-default aspect-video bg-default-50 hover:bg-default-100"></div>
+        <div className="border rounded-default aspect-video bg-default-50 hover:bg-default-100"></div>
+        <div className="border rounded-default aspect-video bg-default-50 hover:bg-default-100"></div>
+        <div className="border rounded-default aspect-video bg-default-50 hover:bg-default-100"></div>
+        <div className="border rounded-default aspect-video bg-default-50 hover:bg-default-100"></div>
       </div>
     </PageComponent>
   );

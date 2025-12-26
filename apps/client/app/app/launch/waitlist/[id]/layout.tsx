@@ -7,7 +7,6 @@ import {
   ChartBarIcon,
   Cog6ToothIcon,
   HomeIcon,
-  InboxStackIcon,
   WrenchScrewdriverIcon,
 } from "@heroicons/react/24/outline";
 import { useParams } from "next/navigation";
@@ -34,14 +33,9 @@ export default function WaitListLayout({
             label: "Widget Builder",
           },
           {
-            href: `/app/launch/waitlist/${id}/analitycs`,
-            icon: ChartBarIcon,
-            label: "Analitycs",
-          },
-          {
-            href: `/app/launch/waitlist/${id}/automations`,
+            href: `/app/launch/waitlist/${id}/webhooks`,
             icon: BoltIcon,
-            label: "Automations",
+            label: "Webhooks",
           },
           {
             href: `/app/launch/waitlist/${id}/settings`,
