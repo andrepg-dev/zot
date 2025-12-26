@@ -2,13 +2,10 @@
 
 import PageComponent from "@/components/layouts/page-component";
 import {
-  EyeIcon,
   FunnelIcon,
   ListBulletIcon,
   MagnifyingGlassIcon,
-  PencilIcon,
   PlusIcon,
-  TrashIcon,
   ViewColumnsIcon,
 } from "@heroicons/react/24/outline";
 
@@ -23,12 +20,11 @@ import {
   TableColumn,
   TableHeader,
   TableRow,
-  Tooltip,
   getKeyValue,
 } from "@heroui/react";
 
 import Title from "@/components/global/title";
-import { cn } from "@/lib/utils";
+import Chip from "@/components/ui/chip";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -73,10 +69,6 @@ export default function WaitListPage() {
     {
       key: "referal-emails",
       label: "Referal emails",
-    },
-    {
-      key: "actions",
-      label: "Actions",
     },
   ];
 
@@ -209,47 +201,7 @@ export default function WaitListPage() {
               {(item: any) => (
                 <TableRow key={item.id} className="hover:bg-default-200">
                   {(columnKey: any) => (
-                    <TableCell>
-                      {columnKey === "actions" ? (
-                        <div className="flex items-center gap-2">
-                          <Tooltip content="View">
-                            <Button
-                              isIconOnly
-                              size="sm"
-                              variant="light"
-                              onPress={(e) => handleView(item.id, e as any)}
-                              className="min-w-unit-6 w-unit-6 h-unit-6"
-                            >
-                              <EyeIcon className="size-4 text-default-500" />
-                            </Button>
-                          </Tooltip>
-                          <Tooltip content="Edit">
-                            <Button
-                              isIconOnly
-                              size="sm"
-                              variant="light"
-                              onPress={(e) => handleEdit(item.id, e as any)}
-                              className="min-w-unit-6 w-unit-6 h-unit-6"
-                            >
-                              <PencilIcon className="size-4 text-default-500" />
-                            </Button>
-                          </Tooltip>
-                          <Tooltip content="Delete">
-                            <Button
-                              isIconOnly
-                              size="sm"
-                              variant="light"
-                              onPress={(e) => handleDelete(item.id, e as any)}
-                              className="min-w-unit-6 w-unit-6 h-unit-6"
-                            >
-                              <TrashIcon className="size-4 text-danger" />
-                            </Button>
-                          </Tooltip>
-                        </div>
-                      ) : (
-                        getKeyValue(item, columnKey)
-                      )}
-                    </TableCell>
+                    <TableCell>{getKeyValue(item, columnKey)}</TableCell>
                   )}
                 </TableRow>
               )}
@@ -267,7 +219,7 @@ export default function WaitListPage() {
                   key={item.id}
                   isPressable
                   onPress={() => handleCardClick(item.id)}
-                  className="hover:bg-default-100 transition-all cursor-pointer border"
+                  className="hover:bg-default-100 transition cursor-pointer border"
                   radius="sm"
                 >
                   <CardBody className="p-5">
@@ -275,27 +227,15 @@ export default function WaitListPage() {
                       <div className="flex items-start justify-between">
                         <div className="flex flex-col gap-1 flex-1">
                           <h3 className="font-medium text-sm">{item.name}</h3>
-                          <p className="text-xs text-default-500">
+                          <p className="text-xs text-muted-foreground">
                             ID: {item.id}
                           </p>
                         </div>
-                        <span
-                          className={cn(
-                            "px-2 py-1 rounded-full text-xs font-medium",
-                            item.status === "Active" &&
-                              "bg-success/20 text-success",
-                            item.status === "Paused" &&
-                              "bg-warning/20 text-warning",
-                            item.status === "Vacation" &&
-                              "bg-default/20 text-default-600"
-                          )}
-                        >
-                          {item.status}
-                        </span>
+                        <Chip label={item.status} status={"active"} />
                       </div>
                       <div className="flex flex-col gap-2 pt-2 border-t border-default-200">
                         <div className="flex justify-between items-center">
-                          <span className="text-xs text-default-500">
+                          <span className="text-xs text-muted-foreground">
                             Email Sending Quantity:
                           </span>
                           <span className="text-xs ">
@@ -303,13 +243,13 @@ export default function WaitListPage() {
                           </span>
                         </div>
                         <div className="flex justify-between items-center">
-                          <span className="text-xs text-default-500">
+                          <span className="text-xs text-muted-foreground">
                             Users registered:
                           </span>
                           <span className="text-xs ">{item.users}</span>
                         </div>
                         <div className="flex justify-between items-center">
-                          <span className="text-xs text-default-500">
+                          <span className="text-xs text-muted-foreground">
                             Referal emails:
                           </span>
                           <span className="text-xs ">
