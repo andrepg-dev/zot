@@ -53,6 +53,7 @@
     "@heroui/tooltip": "2.2.24",
     "@heroui/user": "2.2.22",
     "@hookform/resolvers": "^5.2.2",
+    "@number-flow/react": "^0.5.10",
     "@react-aria/ssr": "3.9.10",
     "@react-aria/visually-hidden": "3.8.28",
     "@tanstack/react-query": "^5.90.10",

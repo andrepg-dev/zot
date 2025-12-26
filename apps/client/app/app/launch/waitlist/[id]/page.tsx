@@ -3,7 +3,6 @@
 import Title from "@/components/global/title";
 import PageComponent from "@/components/layouts/page-component";
 import HeaderNavigation from "@/components/navigation/header.navigation";
-import Type from "@/components/type";
 import { cn } from "@/lib/utils";
 import {
   EnvelopeIcon,
@@ -12,13 +11,14 @@ import {
   UserGroupIcon,
   UserPlusIcon,
 } from "@heroicons/react/24/outline";
+import NumberFlow from "@number-flow/react";
 
 export default function LaunchedWaitList() {
   const stats = [
     {
       id: 1,
       title: "Total Sign Ups",
-      value: "39,294",
+      value: "39294",
       change: "+12.5%",
       trend: "up",
       icon: UserPlusIcon,
@@ -28,7 +28,7 @@ export default function LaunchedWaitList() {
     {
       id: 2,
       title: "Total Referrals",
-      value: "8,432",
+      value: "8432",
       change: "+8.2%",
       trend: "up",
       icon: ShareIcon,
@@ -48,7 +48,7 @@ export default function LaunchedWaitList() {
     {
       id: 4,
       title: "Emails sent",
-      value: "3,439",
+      value: "3439",
       change: null,
       trend: null,
       icon: EnvelopeIcon,
@@ -58,7 +58,7 @@ export default function LaunchedWaitList() {
     {
       id: 5,
       title: "Fake users blocked",
-      value: "3,439",
+      value: "3439",
       change: null,
       trend: null,
       icon: HandRaisedIcon,
@@ -81,7 +81,7 @@ export default function LaunchedWaitList() {
                 <div
                   className={cn(
                     "size-10 rounded-md flex items-center justify-center",
-                    stat.iconBg,
+                    stat.iconBg
                   )}
                 >
                   <stat.icon className={cn("size-5", stat.iconColor)} />
@@ -89,7 +89,11 @@ export default function LaunchedWaitList() {
               </div>
               <div className="flex flex-col gap-2">
                 <p className="text-sm text-muted-foreground">{stat.title}</p>
-                <p className="text-2xl font-semibold">{stat.value}</p>
+                {/* <p className="text-2xl font-semibold">{stat.value}</p> */}
+                <NumberFlow
+                  value={parseInt(stat.value ?? 0)}
+                  className="text-2xl font-semibold"
+                />
               </div>
             </div>
           </div>
