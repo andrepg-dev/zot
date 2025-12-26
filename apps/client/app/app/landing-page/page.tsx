@@ -1,3 +1,5 @@
+"use client";
+
 import Title from "@/components/global/title";
 import PageComponent from "@/components/layouts/page-component";
 import {
@@ -15,8 +17,6 @@ export default function LandingPage() {
       <Title description="Build and manage your landing pages">
         Landing Page
       </Title>
-
-      {/* List of cards of templates */}
 
       <div className="flex justify-between my-6">
         <div className="flex gap-2">
