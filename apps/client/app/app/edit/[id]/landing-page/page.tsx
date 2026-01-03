@@ -28,9 +28,7 @@ export default function EditLandingPage({
   useEffect(() => {
     const timeOutId = setTimeout(() => {
       setShouldChangeHeader(editionType === "manually");
-      if (editionType === "manually") {
-        setVisualizationType("web");
-      }
+      setVisualizationType(editionType === "ai" ? "code" : "web");
     }, 500);
 
     return () => {
