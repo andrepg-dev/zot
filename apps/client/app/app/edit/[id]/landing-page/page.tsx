@@ -5,14 +5,15 @@ import MonacoEditor from "@/components/app/landing-page/monaco-editor/monaco-edi
 import PageComponent from "@/components/layouts/page-component";
 import HeaderNavigation from "@/components/navigation/header.navigation";
 import SidebarNavigation from "@/components/navigation/sidebar.navigation";
-import { useLandingPageState } from "@/store/landing-page/landing-page.action";
+import { cn } from "@/lib/utils";
+import { useLandingPageState } from "@/store/landing-page/landing-page.store";
 import {
   ChevronRightIcon,
   PaintBrushIcon,
   PlusIcon,
 } from "@heroicons/react/24/outline";
 import { Button } from "@heroui/button";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 export default function EditLandingPage({
   params,
@@ -21,6 +22,17 @@ export default function EditLandingPage({
 }) {
   const { id } = React.use(params);
   const { editionType, visualizationType } = useLandingPageState();
+  const [shouldChangeHeader, setShouldChangeHeader] = useState<boolean>();
+
+  useEffect(() => {
+    const timeOutId = setTimeout(() => {
+      setShouldChangeHeader(editionType === "manually");
+    }, 500);
+
+    return () => {
+      clearTimeout(timeOutId);
+    };
+  }, [editionType]);
 
   return (
     <PageComponent className="flex flex-1 h-full p-0">
@@ -39,11 +51,15 @@ export default function EditLandingPage({
             </Button>
           </div>
         }
+        hidden={shouldChangeHeader}
       />
       <SidebarNavigation
-        className="w-[620px] overflow-y-auto z-50"
+        className={cn(
+          "overflow-y-auto z-50 duration-400 transition-all",
+          editionType === "ai" ? "w-[620px]" : "w-0"
+        )}
         children={
-          <div className="p-4 pb-0 flex flex-col h-full flex-1 text-sm gap-2 w-[435px]">
+          <div className="p-4 pb-0 flex flex-col h-full flex-1 text-sm gap-2 min-w-[475px]">
             <div className="flex flex-col gap-2.5 flex-1 min-h-0 pb-52">
               <div className="bg-default-100 p-2 border rounded-lg max-w-4/5 ml-auto">
                 Hola, estoy creando una tienda online para vender ropa y

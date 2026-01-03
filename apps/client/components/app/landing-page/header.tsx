@@ -1,6 +1,6 @@
 import GlobalTooltip from "@/components/global/tooltip";
 import { cn } from "@/lib/utils";
-import { useLandingPageState } from "@/store/landing-page/landing-page.action";
+import { useLandingPageState } from "@/store/landing-page/landing-page.store";
 import {
   ArrowDownTrayIcon,
   Bars3Icon,
@@ -24,7 +24,7 @@ export default function Header() {
   } = useLandingPageState();
 
   return (
-    <div className="border-b px-4 py-2 z-50 relative flex items-center justify-between bg-sidebar overflow-hidden">
+    <div className="border-b px-4 py-2 z-50 relative flex items-center justify-between overflow-hidden rounded-default">
       <div className="flex text-xs items-center gap-2">
         <span>Edition type:</span>
 

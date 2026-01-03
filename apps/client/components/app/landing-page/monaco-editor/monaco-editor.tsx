@@ -1,5 +1,6 @@
 "use client";
 
+import { useLandingPageState } from "@/store/landing-page/landing-page.store";
 import { Editor, Monaco } from "@monaco-editor/react";
 import {
   MonacoJsxSyntaxHighlight,
@@ -11,10 +12,11 @@ import { initialValue } from "./monaco.constants";
 
 export default function MonacoEditor() {
   const [editorData, setEditorData] = useState(initialValue);
+  const { editionType } = useLandingPageState();
 
   const convertThemeToMonaco = (theme: any) => {
     const tokenColors = (theme.tokenColors || []).filter(
-      (token: any) => token && token.settings,
+      (token: any) => token && token.settings
     );
 
     const rules = tokenColors.flatMap((token: any) => {
@@ -58,7 +60,7 @@ export default function MonacoEditor() {
   const handleEditorMount = useCallback((editor: any, monaco: any) => {
     const monacoJsxSyntaxHighlight = new MonacoJsxSyntaxHighlight(
       getWorker(),
-      monaco,
+      monaco
     );
 
     const { highlighter, dispose } =
@@ -151,7 +153,7 @@ export default function MonacoEditor() {
               lineIndex + 1,
               startColumn,
               lineIndex + 1,
-              endColumn,
+              endColumn
             ),
             options: {
               inlineClassName: "react-hook",
@@ -162,7 +164,7 @@ export default function MonacoEditor() {
 
       hookDecorations = editor.deltaDecorations(
         hookDecorations,
-        newDecorations,
+        newDecorations
       );
     };
 
@@ -194,7 +196,7 @@ export default function MonacoEditor() {
                 lineIndex + 1,
                 startColumn,
                 lineIndex + 1,
-                endColumn,
+                endColumn
               ),
               options: {
                 inlineClassName: "jsx-tag-name-html",
@@ -206,7 +208,7 @@ export default function MonacoEditor() {
                 lineIndex + 1,
                 startColumn,
                 lineIndex + 1,
-                endColumn,
+                endColumn
               ),
               options: {
                 inlineClassName: "jsx-tag-name-custom",
@@ -218,7 +220,7 @@ export default function MonacoEditor() {
 
       componentDecorations = editor.deltaDecorations(
         componentDecorations,
-        newDecorations,
+        newDecorations
       );
     };
 
@@ -248,7 +250,7 @@ export default function MonacoEditor() {
 
   return (
     <Editor
-      height={"94%"}
+      height={editionType === "manually" ? "95.2%" : "95%"}
       onMount={handleEditorMount}
       beforeMount={handleEditorBeforeMount}
       language="typescript"
@@ -267,6 +269,7 @@ export default function MonacoEditor() {
         hover: {
           enabled: false,
         },
+        fontFamily: "Geist Mono",
       }}
     />
   );

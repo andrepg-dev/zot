@@ -1,6 +1,6 @@
+import RootLayoutContent from "@/components/global/root-layout-content";
 import Header from "@/components/header/header";
 import QueryProvider from "@/components/query-provider";
-import Sidebar from "@/components/sidebar/sidebar";
 import { interFont } from "@/config/fonts";
 import { siteConfig } from "@/config/site";
 import "@/styles/globals.css";
@@ -8,6 +8,7 @@ import { ToastProvider } from "@heroui/toast";
 import clsx from "clsx";
 import { Metadata } from "next";
 import { Providers } from "./providers";
+import Sidebar from "@/components/sidebar/sidebar";
 
 export const metadata: Metadata = {
   title: {
@@ -44,14 +45,18 @@ export default function RootLayout({
           <QueryProvider>
             <div className="relative z-10 flex flex-col h-screen overflow-hidden">
               <Header />
+              <RootLayoutContent>{children}</RootLayoutContent>
 
-              <div className="flex flex-row flex-1  bg-[#060606] overflow-hidden">
+              {/* <div className="flex flex-row flex-1 bg-[#060606] overflow-hidden">
                 <Sidebar />
-                {/* Content */}
-                <main className="w-full overflow-y-auto bg-black m-2 mb-0 rounded-t-xl ml-0 border border-b-0">
+                <main
+                  className={
+                    "w-full overflow-y-auto bg-black rounded-t-xl border border-b-0"
+                  }
+                >
                   {children}
                 </main>
-              </div>
+              </div> */}
             </div>
           </QueryProvider>
         </Providers>

@@ -8,12 +8,14 @@ export default function HeaderNavigation({
   children,
   navigationItems,
   postNavigationItems,
+  hidden,
 }: {
   children?: ReactNode;
   navigationItems?: Array<{ label: string; pathname: string }>;
   postNavigationItems?: ReactNode;
+  hidden?: boolean;
 }) {
-  const { setChildren, setNavigationItems, setPostNavigationItems } =
+  const { setChildren, setNavigationItems, setPostNavigationItems, setHidden } =
     useHeaderStore();
   const pathname = usePathname();
 
@@ -23,13 +25,25 @@ export default function HeaderNavigation({
       setNavigationItems(navigationItems);
     }
     setPostNavigationItems(postNavigationItems);
+    setHidden(hidden ?? false);
 
     return () => {
       setChildren(null);
       setNavigationItems(null);
       setPostNavigationItems(null);
+      setHidden(false);
     };
-  }, [children, setChildren, pathname]);
+  }, [
+    children,
+    setChildren,
+    pathname,
+    navigationItems,
+    postNavigationItems,
+    hidden,
+    setNavigationItems,
+    setPostNavigationItems,
+    setHidden,
+  ]);
 
   return null;
 }
