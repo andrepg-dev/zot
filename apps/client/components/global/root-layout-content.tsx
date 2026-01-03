@@ -17,8 +17,8 @@ export default function RootLayoutContent({
       {/* Content */}
       <main
         className={cn(
-          "w-full overflow-y-auto bg-black rounded-t-xl border border-b-0",
-          editionType === "manually" ? "m-2 mb-0" : "mx-2 ml-0"
+          "w-full overflow-hidden bg-black rounded-t-xl border border-b-0",
+          editionType === "manually" ? "m-2 mb-0 mt-0" : "mx-2 ml-0"
         )}
       >
         {children}

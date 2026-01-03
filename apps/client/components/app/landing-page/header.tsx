@@ -24,7 +24,7 @@ export default function Header() {
   } = useLandingPageState();
 
   return (
-    <div className="border-b px-4 py-2 z-50 relative flex items-center justify-between overflow-hidden rounded-default">
+    <div className="border-b px-4 py-2 z-50 relative flex items-center justify-between overflow-hidden bg-background">
       <div className="flex text-xs items-center gap-2">
         <span>Edition type:</span>
 

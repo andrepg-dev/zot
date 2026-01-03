@@ -16,7 +16,7 @@ export default function Header() {
     <header
       className={cn(
         "overflow-hidden transition-all duration-700",
-        hidden ? "h-0" : "h-14"
+        hidden ? "h-2" : "h-14"
       )}
       id="header"
     >

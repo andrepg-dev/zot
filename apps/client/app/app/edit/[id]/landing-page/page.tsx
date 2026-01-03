@@ -21,12 +21,16 @@ export default function EditLandingPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = React.use(params);
-  const { editionType, visualizationType } = useLandingPageState();
+  const { editionType, visualizationType, setVisualizationType } =
+    useLandingPageState();
   const [shouldChangeHeader, setShouldChangeHeader] = useState<boolean>();
 
   useEffect(() => {
     const timeOutId = setTimeout(() => {
       setShouldChangeHeader(editionType === "manually");
+      if (editionType === "manually") {
+        setVisualizationType("web");
+      }
     }, 500);
 
     return () => {
@@ -134,7 +138,7 @@ export default function EditLandingPage({
         <Header />
 
         {/* CONTENT */}
-        {editionType === "ai" && visualizationType !== "code" && (
+        {/* {visualizationType === "web" && (
           <div className="flex flex-col text-muted-foreground absolute w-full h-full justify-center items-center gap-2 bottom-0 -z-0 bg-default-50">
             <PaintBrushIcon className="size-5" />
 
@@ -142,7 +146,7 @@ export default function EditLandingPage({
               Let's explore
             </footer>
           </div>
-        )}
+        )} */}
 
         {visualizationType === "code" && <MonacoEditor />}
       </div>
