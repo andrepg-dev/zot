@@ -55,7 +55,15 @@
 }
 
 .jsx-tag-name {
+  color: #77b6fb !important;
+}
+
+.jsx-tag-name-html {
   color: #e06c75 !important;
+}
+
+.jsx-tag-name-custom {
+  color: #61afef !important;
 }
 
 .jsx-tag-attribute-key {
@@ -77,4 +85,12 @@
 .monaco-editor .jsx-tag-attribute-value,
 .monaco-editor .jsx-text {
   font-weight: inherit;
+}
+
+.monaco-editor .react-hook {
+  color: #c678dd !important;
+}
+
+.monaco-editor .react-hook-custom {
+  color: #c678dd !important;
 }
