@@ -76,15 +76,8 @@ export default function EditLandingPage({
 
     monaco.editor.defineTheme("OneDarkPro", theme);
     monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
-      noSemanticValidation: false,
+      noSemanticValidation: true,
       noSyntaxValidation: true,
-    });
-
-    // Configure compiler options for TypeScript
-    monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
-      jsx: monaco.languages.typescript.JsxEmit.Preserve,
-      target: monaco.languages.typescript.ScriptTarget.ES2020,
-      esModuleInterop: true,
     });
   }, []);
 

@@ -39,18 +39,18 @@
 }
 
 .jsx-tag-angle-bracket {
-  color: #61afef !important;
+  color: #d2d4d8 !important;
 
   &.jsx-tag-order-1 {
-    color: #56b6c2 !important;
+    color: #d2d4d8 !important;
   }
 
   &.jsx-tag-order-2 {
-    color: #61afef !important;
+    color: #d2d4d8 !important;
   }
 
   &.jsx-tag-order-3 {
-    color: #e5c07b !important;
+    color: #d2d4d8 !important;
   }
 }
 
