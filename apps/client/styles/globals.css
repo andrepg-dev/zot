@@ -33,3 +33,48 @@
 * {
   border-color: var(--border);
 }
+
+.jsx-expression-braces {
+  color: #c678dd !important;
+}
+
+.jsx-tag-angle-bracket {
+  color: #61afef !important;
+
+  &.jsx-tag-order-1 {
+    color: #56b6c2 !important;
+  }
+
+  &.jsx-tag-order-2 {
+    color: #61afef !important;
+  }
+
+  &.jsx-tag-order-3 {
+    color: #e5c07b !important;
+  }
+}
+
+.jsx-tag-name {
+  color: #e06c75 !important;
+}
+
+.jsx-tag-attribute-key {
+  color: #d19a66 !important;
+}
+
+.jsx-tag-attribute-value {
+  color: #98c379 !important;
+}
+
+.jsx-text {
+  color: #abb2bf !important;
+}
+
+.monaco-editor .jsx-expression-braces,
+.monaco-editor .jsx-tag-angle-bracket,
+.monaco-editor .jsx-tag-name,
+.monaco-editor .jsx-tag-attribute-key,
+.monaco-editor .jsx-tag-attribute-value,
+.monaco-editor .jsx-text {
+  font-weight: inherit;
+}

@@ -62,6 +62,7 @@
     "framer-motion": "11.18.2",
     "gsap": "^3.14.2",
     "intl-messageformat": "10.7.16",
+    "monaco-jsx-syntax-highlight": "^1.2.2",
     "monaco-themes": "^0.4.8",
     "next": "16.1.1",
     "next-themes": "0.4.6",

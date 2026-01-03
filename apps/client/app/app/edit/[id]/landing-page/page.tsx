@@ -12,10 +12,12 @@ import {
 } from "@heroicons/react/24/outline";
 import { Button } from "@heroui/button";
 import Editor, { Monaco } from "@monaco-editor/react";
-import React, { useState } from "react";
+import {
+  MonacoJsxSyntaxHighlight,
+  getWorker,
+} from "monaco-jsx-syntax-highlight";
+import React, { useCallback, useState } from "react";
 import OneDarkPro from "../../../../../theme/one-dark-pro.json";
-import VercelTheme from "../../../../../theme/vercel-theme.json";
-
 
 export default function EditLandingPage({
   params,
@@ -24,11 +26,20 @@ export default function EditLandingPage({
 }) {
   const { id } = React.use(params);
   const { editionType, visualizationType } = useLandingPageState();
-  const [editorData, setEditorData] = useState("// Instalar Fire Code");
+  const [editorData, setEditorData] = useState(`const test = () => {
+  const num: number = 123
 
-  const handleEditorDidMount = (monaco: Monaco) => {
-    // Asegurar que tokenColors tenga settings válidos y convertir a formato Monaco
-    const tokenColors = (OneDarkPro.tokenColors || []).filter(
+  return (
+    <div className='test'>
+      {num}
+      <div render={<div style={'background: red;'}/>}/>
+      <div props={num}></div>
+    </div>
+  )
+}`);
+
+  const convertThemeToMonaco = (theme: any) => {
+    const tokenColors = (theme.tokenColors || []).filter(
       (token: any) => token && token.settings,
     );
 
@@ -42,26 +53,50 @@ export default function EditLandingPage({
       }));
     });
 
-    // One dark pro
-    monaco.editor.defineTheme("OneDarkPro", {
+    return {
       base: "vs-dark",
       inherit: true,
-      colors: OneDarkPro.colors || {},
+      colors: theme.colors || {},
       rules: rules,
-      semanticHighlighting: OneDarkPro.semanticHighlighting,
-      semanticTokenColors: OneDarkPro.semanticTokenColors || {},
-    });
-
-    monaco.editor.defineTheme("VercelTheme", {
-      base: "vs-dark",
-      inherit: true,
-     ...VercelTheme
-    });
-
-    monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
-      tsx: "react",
-    });
+      semanticHighlighting: theme.semanticHighlighting,
+      semanticTokenColors: theme.semanticTokenColors || {},
+    };
   };
+
+  const handleEditorBeforeMount = useCallback((monaco: Monaco) => {
+    // Handle theme
+    monaco.editor.defineTheme("OneDarkPro", convertThemeToMonaco(OneDarkPro));
+    monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
+      noSemanticValidation: true,
+      noSyntaxValidation: true,
+    });
+
+    // Configure compiler options for TypeScript
+    monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
+      jsx: monaco.languages.typescript.JsxEmit.Preserve,
+      target: monaco.languages.typescript.ScriptTarget.ES2020,
+      esModuleInterop: true,
+    });
+  }, []);
+
+  const handleEditorMount = useCallback((editor: any, monaco: any) => {
+    const monacoJsxSyntaxHighlight = new MonacoJsxSyntaxHighlight(
+      getWorker(),
+      monaco,
+    );
+
+    const { highlighter, dispose } =
+      monacoJsxSyntaxHighlight.highlighterBuilder({
+        editor: editor,
+      });
+    highlighter();
+
+    editor.onDidChangeModelContent(() => {
+      highlighter();
+    });
+
+    return dispose;
+  }, []);
 
   return (
     <PageComponent className="flex flex-1 h-full p-0">
@@ -177,27 +212,23 @@ export default function EditLandingPage({
           <>
             <Editor
               height={"94%"}
-              beforeMount={handleEditorDidMount}
-              defaultLanguage="typescript"
+              onMount={handleEditorMount}
+              beforeMount={handleEditorBeforeMount}
+              language="typescript"
               theme="OneDarkPro"
+              path="file:///index.tsx"
               value={editorData}
               onChange={(value) => {
                 setEditorData(value ?? "");
               }}
-              path="index.css"
               options={{
                 fontSize: 13,
-                wordWrap: "on",
                 minimap: {
                   enabled: false,
                 },
-                bracketPairColorization: {
-                  enabled: true,
-                },
-                formatOnPaste: true,
-                suggest: {
-                  showFields: false,
-                  showFunctions: false,
+                tabSize: 2,
+                hover: {
+                  enabled: false,
                 },
               }}
             />
