@@ -49,32 +49,37 @@ export default function Header() {
       </div>
 
       {/* Default header content */}
-      <div className="flex items-center gap-4">
-        <Button
-          variant="light"
-          className="text-xs text-muted-foreground"
-          size="sm"
-        >
-          Feedback
-        </Button>
 
-        <Button
-          startContent={<MagnifyingGlassIcon className={"size-4"} />}
-          radius="full"
-          variant="bordered"
-          className="text-muted-foreground text-xs flex hover:border-muted"
-          size="sm"
-        >
-          <span>Search...</span>
-
-          <Kbd
-            keys={["command"]}
-            className="scale-95 bg-transparent text-muted-foreground"
+      {postNavigationItems ? (
+        postNavigationItems
+      ) : (
+        <div className="flex items-center gap-4">
+          <Button
+            variant="light"
+            className="text-xs text-muted-foreground"
+            size="sm"
           >
-            k
-          </Kbd>
-        </Button>
-      </div>
+            Feedback
+          </Button>
+
+          <Button
+            startContent={<MagnifyingGlassIcon className={"size-4"} />}
+            radius="full"
+            variant="bordered"
+            className="text-muted-foreground text-xs flex hover:border-muted"
+            size="sm"
+          >
+            <span>Search...</span>
+
+            <Kbd
+              keys={["command"]}
+              className="scale-95 bg-transparent text-muted-foreground"
+            >
+              k
+            </Kbd>
+          </Button>
+        </div>
+      )}
     </header>
   );
 }

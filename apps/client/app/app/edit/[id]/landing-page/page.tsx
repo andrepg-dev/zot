@@ -4,12 +4,18 @@ import Header from "@/components/app/landing-page/header";
 import PageComponent from "@/components/layouts/page-component";
 import HeaderNavigation from "@/components/navigation/header.navigation";
 import SidebarNavigation from "@/components/navigation/sidebar.navigation";
+import { useLandingPageState } from "@/store/landing-page/landing-page.action";
 import {
   ChevronRightIcon,
   PaintBrushIcon,
   PlusIcon,
 } from "@heroicons/react/24/outline";
-import React from "react";
+import { Button } from "@heroui/button";
+import Editor, { Monaco } from "@monaco-editor/react";
+import React, { useState } from "react";
+import OneDarkPro from "../../../../../theme/one-dark-pro.json";
+import VercelTheme from "../../../../../theme/vercel-theme.json";
+
 
 export default function EditLandingPage({
   params,
@@ -17,6 +23,45 @@ export default function EditLandingPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = React.use(params);
+  const { editionType, visualizationType } = useLandingPageState();
+  const [editorData, setEditorData] = useState("// Instalar Fire Code");
+
+  const handleEditorDidMount = (monaco: Monaco) => {
+    // Asegurar que tokenColors tenga settings válidos y convertir a formato Monaco
+    const tokenColors = (OneDarkPro.tokenColors || []).filter(
+      (token: any) => token && token.settings,
+    );
+
+    const rules = tokenColors.flatMap((token: any) => {
+      const scopes = Array.isArray(token.scope) ? token.scope : [token.scope];
+      return scopes.map((scope: string) => ({
+        token: scope,
+        foreground: token.settings?.foreground,
+        background: token.settings?.background,
+        fontStyle: token.settings?.fontStyle,
+      }));
+    });
+
+    // One dark pro
+    monaco.editor.defineTheme("OneDarkPro", {
+      base: "vs-dark",
+      inherit: true,
+      colors: OneDarkPro.colors || {},
+      rules: rules,
+      semanticHighlighting: OneDarkPro.semanticHighlighting,
+      semanticTokenColors: OneDarkPro.semanticTokenColors || {},
+    });
+
+    monaco.editor.defineTheme("VercelTheme", {
+      base: "vs-dark",
+      inherit: true,
+     ...VercelTheme
+    });
+
+    monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
+      tsx: "react",
+    });
+  };
 
   return (
     <PageComponent className="flex flex-1 h-full p-0">
@@ -25,6 +70,16 @@ export default function EditLandingPage({
           { label: "Landing Page", pathname: "/app/landing-page" },
           { label: id, pathname: id },
         ]}
+        postNavigationItems={
+          <div>
+            <Button
+              size="sm"
+              className="px-3 py-2 bg-foreground text-white dark:text-black h-max"
+            >
+              Publish
+            </Button>
+          </div>
+        }
       />
       <SidebarNavigation
         className="w-[620px] overflow-y-auto z-50"
@@ -107,13 +162,47 @@ export default function EditLandingPage({
       <div className="h-full flex-1 w-full relative">
         <Header />
 
-        <div className="flex flex-col text-muted-foreground absolute w-full h-full justify-center items-center gap-2 bottom-0 -z-0 bg-default-50">
-          <PaintBrushIcon className="size-5" />
+        {/* CONTENT */}
+        {editionType === "ai" && visualizationType !== "code" && (
+          <div className="flex flex-col text-muted-foreground absolute w-full h-full justify-center items-center gap-2 bottom-0 -z-0 bg-default-50">
+            <PaintBrushIcon className="size-5" />
 
-          <footer className="absolute bottom-4 mx-auto flex gap-4 text-muted-foreground/40">
-            Let's explore
-          </footer>
-        </div>
+            <footer className="absolute bottom-4 mx-auto flex gap-4 text-muted-foreground/40">
+              Let's explore
+            </footer>
+          </div>
+        )}
+
+        {visualizationType === "code" && (
+          <>
+            <Editor
+              height={"94%"}
+              beforeMount={handleEditorDidMount}
+              defaultLanguage="typescript"
+              theme="OneDarkPro"
+              value={editorData}
+              onChange={(value) => {
+                setEditorData(value ?? "");
+              }}
+              path="index.css"
+              options={{
+                fontSize: 13,
+                wordWrap: "on",
+                minimap: {
+                  enabled: false,
+                },
+                bracketPairColorization: {
+                  enabled: true,
+                },
+                formatOnPaste: true,
+                suggest: {
+                  showFields: false,
+                  showFunctions: false,
+                },
+              }}
+            />
+          </>
+        )}
       </div>
     </PageComponent>
   );

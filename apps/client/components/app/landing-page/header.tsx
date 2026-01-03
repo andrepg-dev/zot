@@ -1,5 +1,6 @@
 import GlobalTooltip from "@/components/global/tooltip";
 import { cn } from "@/lib/utils";
+import { useLandingPageState } from "@/store/landing-page/landing-page.action";
 import {
   ArrowDownTrayIcon,
   Bars3Icon,
@@ -13,13 +14,14 @@ import {
   DropdownMenu,
   DropdownTrigger,
 } from "@heroui/react";
-import { useState } from "react";
 
 export default function Header() {
-  const [editionType, setEditionType] = useState<"ai" | "manually">("ai");
-  const [visualizationType, setVisualizationType] = useState<"web" | "code">(
-    "code",
-  );
+  const {
+    editionType,
+    setEditionType,
+    setVisualizationType,
+    visualizationType,
+  } = useLandingPageState();
 
   return (
     <div className="border-b px-4 py-2 z-50 relative flex items-center justify-between bg-sidebar">
@@ -32,7 +34,7 @@ export default function Header() {
               onClick={() => setEditionType("ai")}
               className={cn(
                 "p-1 px-2 rounded !cursor-pointer text-xs",
-                editionType === "ai" && "bg-default-50",
+                editionType === "ai" && "bg-default-50"
               )}
             >
               AI
@@ -43,7 +45,7 @@ export default function Header() {
               onClick={() => setEditionType("manually")}
               className={cn(
                 "p-1 px-2 rounded !cursor-pointer text-xs",
-                editionType === "manually" && "bg-default-50",
+                editionType === "manually" && "bg-default-50"
               )}
             >
               Manually
@@ -57,7 +59,7 @@ export default function Header() {
             onClick={() => setVisualizationType("web")}
             className={cn(
               "p-1 px-2 rounded !cursor-pointer text-xs",
-              visualizationType === "web" && "bg-default-50",
+              visualizationType === "web" && "bg-default-50"
             )}
           >
             <EyeIcon className="size-4" />
@@ -68,7 +70,7 @@ export default function Header() {
             onClick={() => setVisualizationType("code")}
             className={cn(
               "p-1 px-2 rounded !cursor-pointer text-xs",
-              visualizationType === "code" && "bg-default-50",
+              visualizationType === "code" && "bg-default-50"
             )}
           >
             <CodeBracketIcon className="size-4" />

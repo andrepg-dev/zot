@@ -17,5 +17,9 @@
   "packageManager": "npm@10.0.0",
   "devDependencies": {
     "turbo": "^2.6.1"
+  },
+  "dependencies": {
+    "@monaco-editor/react": "^4.7.0",
+    "client": "^0.0.1"
   }
 }
