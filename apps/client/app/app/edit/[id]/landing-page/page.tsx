@@ -9,14 +9,21 @@ import {
   PaintBrushIcon,
   PlusIcon,
 } from "@heroicons/react/24/outline";
+import React from "react";
 
-export default function NewLandingPage() {
+export default function EditLandingPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = React.use(params);
+
   return (
     <PageComponent className="flex flex-1 h-full p-0">
       <HeaderNavigation
         navigationItems={[
           { label: "Landing Page", pathname: "/app/landing-page" },
-          { label: "Create", pathname: "" },
+          { label: id, pathname: id },
         ]}
       />
       <SidebarNavigation

@@ -7,7 +7,6 @@ import "@/styles/globals.css";
 import { ToastProvider } from "@heroui/toast";
 import clsx from "clsx";
 import { Metadata } from "next";
-import NextTopLoader from "nextjs-toploader";
 import { Providers } from "./providers";
 
 export const metadata: Metadata = {
@@ -31,17 +30,17 @@ export default function RootLayout({
       <body
         className={clsx(
           "min-h-screen text-foreground font-sans antialiased bg-black relative dark",
-          fontSans.variable,
+          fontSans.variable
         )}
       >
         <ToastProvider />
         <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
-          <NextTopLoader
+          {/* <NextTopLoader
             color="#006fee"
             height={3}
             showSpinner={false}
             zIndex={100000}
-          />
+          /> */}
           <QueryProvider>
             <div className="relative z-10 flex flex-col h-screen overflow-hidden">
               <Header />
