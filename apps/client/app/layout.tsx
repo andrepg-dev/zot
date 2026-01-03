@@ -1,7 +1,7 @@
 import Header from "@/components/header/header";
 import QueryProvider from "@/components/query-provider";
 import Sidebar from "@/components/sidebar/sidebar";
-import { fontSans } from "@/config/fonts";
+import { interFont } from "@/config/fonts";
 import { siteConfig } from "@/config/site";
 import "@/styles/globals.css";
 import { ToastProvider } from "@heroui/toast";
@@ -30,7 +30,7 @@ export default function RootLayout({
       <body
         className={clsx(
           "min-h-screen text-foreground font-sans antialiased bg-black relative dark",
-          fontSans.variable
+          interFont.variable
         )}
       >
         <ToastProvider />

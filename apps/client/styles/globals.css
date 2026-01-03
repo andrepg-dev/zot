@@ -94,3 +94,7 @@
 .monaco-editor .react-hook-custom {
   color: #c678dd !important;
 }
+
+.monaco-editor .view-lines {
+  font-family: "Geist Mono" !important;
+}

@@ -60,6 +60,7 @@
     "@tanstack/react-query": "^5.90.10",
     "clsx": "2.1.1",
     "framer-motion": "11.18.2",
+    "geist": "^1.5.1",
     "gsap": "^3.14.2",
     "intl-messageformat": "10.7.16",
     "monaco-jsx-syntax-highlight": "^1.2.2",
