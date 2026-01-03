@@ -31,7 +31,7 @@ export default function RootLayout({
       <body
         className={clsx(
           "min-h-screen text-foreground font-sans antialiased bg-black relative dark",
-          interFont.variable
+          interFont.variable,
         )}
       >
         <ToastProvider />

@@ -13,11 +13,11 @@ export const defaultNavItems = [
     label: "Dashboard",
     icon: Squares2X2Icon,
   },
-  {
-    href: "/app/domains",
-    label: "Domains",
-    icon: GlobeAltIcon,
-  },
+  // {
+  //   href: "/app/domains",
+  //   label: "Domains",
+  //   icon: GlobeAltIcon,
+  // },
   {
     href: "/app/billing",
     label: "Billing",
