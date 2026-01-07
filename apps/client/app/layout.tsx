@@ -41,17 +41,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <div className="relative z-10 flex flex-col h-screen overflow-hidden">
               <Header />
               <RootLayoutContent>{children}</RootLayoutContent>
-
-              {/* <div className="flex flex-row flex-1 bg-[#060606] overflow-hidden">
-                <Sidebar />
-                <main
-                  className={
-                    "w-full overflow-y-auto bg-black rounded-t-xl border border-b-0"
-                  }
-                >
-                  {children}
-                </main>
-              </div> */}
             </div>
           </QueryProvider>
         </Providers>

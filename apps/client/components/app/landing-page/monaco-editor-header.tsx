@@ -9,7 +9,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@heroui/react";
 
-export default function Header() {
+export default function MonacoEditorHeader() {
   const { editionType, setEditionType, setVisualizationType, visualizationType } =
     useLandingPageState();
 

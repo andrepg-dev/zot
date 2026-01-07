@@ -2,9 +2,9 @@
 
 import HeaderNavigation from "@/components/navigation/header.navigation";
 import SidebarNavigation from "@/components/navigation/sidebar.navigation";
+import Chip from "@/components/ui/chip";
 import {
   BoltIcon,
-  ChartBarIcon,
   Cog6ToothIcon,
   HomeIcon,
   WrenchScrewdriverIcon
@@ -49,6 +49,7 @@ export default function WaitListLayout({ children }: { children: React.ReactNode
             pathname: ""
           }
         ]}
+        children={<Chip status="active" label="Active"></Chip>}
       />
       {children}
     </>

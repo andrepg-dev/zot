@@ -1,6 +1,6 @@
 "use client";
 
-import Header from "@/components/app/landing-page/header";
+import MonacoEditorHeader from "@/components/app/landing-page/monaco-editor-header";
 import PageComponent from "@/components/layouts/page-component";
 import HeaderNavigation from "@/components/navigation/header.navigation";
 import SidebarNavigation from "@/components/navigation/sidebar.navigation";
@@ -87,7 +87,7 @@ export default function NewLandingPage() {
       />
 
       <div className="h-full flex-1 w-full relative">
-        <Header />
+        <MonacoEditorHeader />
 
         <div className="flex flex-col text-muted-foreground absolute w-full h-full justify-center items-center gap-2 bottom-0 -z-0 bg-default-50">
           <PaintBrushIcon className="size-5" />

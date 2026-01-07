@@ -2,7 +2,6 @@
 
 import Title from "@/components/global/title";
 import PageComponent from "@/components/layouts/page-component";
-import HeaderNavigation from "@/components/navigation/header.navigation";
 import { cn } from "@/lib/utils";
 import {
   EnvelopeIcon,
@@ -69,25 +68,19 @@ export default function LaunchedWaitList() {
 
   return (
     <PageComponent>
-      <HeaderNavigation></HeaderNavigation>
-
       <Title description="Wait-List launched">Overview</Title>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mt-4 bg-default-50 border rounded-default">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mt-4 rounded-default">
         {stats.map((stat) => (
-          <div key={stat.id}>
-            <div className="p-6">
-              <div className="flex items-start justify-between mb-4">
-                <div
-                  className={cn("size-10 rounded-md flex items-center justify-center", stat.iconBg)}
-                >
-                  <stat.icon className={cn("size-5", stat.iconColor)} />
-                </div>
-              </div>
+          <div key={stat.id} className="border rounded-default bg-default-50">
+            <div className="p-6 py-5">
               <div className="flex flex-col gap-2">
-                <p className="text-sm text-muted-foreground">{stat.title}</p>
-                {/* <p className="text-2xl font-semibold">{stat.value}</p> */}
                 <NumberFlow value={parseInt(stat.value ?? 0)} className="text-2xl font-semibold" />
+
+                <div className="flex gap-2 items-center">
+                  <stat.icon className={cn("size-4", stat.iconColor)} />
+                  <p className="text-sm text-muted-foreground">{stat.title}</p>
+                </div>
               </div>
             </div>
           </div>
