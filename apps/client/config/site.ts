@@ -6,8 +6,8 @@ export const siteConfig = {
   navItems: [
     {
       label: "Home",
-      href: "/",
-    },
+      href: "/"
+    }
   ],
   navMenuItems: [],
   links: {
@@ -15,6 +15,6 @@ export const siteConfig = {
     twitter: "",
     docs: "",
     discord: "",
-    sponsor: "",
-  },
+    sponsor: ""
+  }
 };

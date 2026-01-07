@@ -6,7 +6,7 @@ import {
   ListBulletIcon,
   MagnifyingGlassIcon,
   PlusIcon,
-  ViewColumnsIcon,
+  ViewColumnsIcon
 } from "@heroicons/react/24/outline";
 
 import {
@@ -20,7 +20,7 @@ import {
   TableColumn,
   TableHeader,
   TableRow,
-  getKeyValue,
+  getKeyValue
 } from "@heroui/react";
 
 import Title from "@/components/global/title";
@@ -41,35 +41,35 @@ export default function WaitListPage() {
       "email-sending-quantity": 300,
       status: "Active",
       users: `403 registration`,
-      "referal-emails": `343 referal emails`,
-    },
+      "referal-emails": `343 referal emails`
+    }
   ];
 
   const columns = [
     {
       key: "id",
-      label: "ID",
+      label: "ID"
     },
     {
       key: "name",
-      label: "Name",
+      label: "Name"
     },
     {
       key: "email-sending-quantity",
-      label: "Email Sending Quantity",
+      label: "Email Sending Quantity"
     },
     {
       key: "status",
-      label: "Status",
+      label: "Status"
     },
     {
       key: "users",
-      label: "User registered",
+      label: "User registered"
     },
     {
       key: "referal-emails",
-      label: "Referal emails",
-    },
+      label: "Referal emails"
+    }
   ];
 
   const router = useRouter();
@@ -95,10 +95,7 @@ export default function WaitListPage() {
 
   return (
     <PageComponent>
-      <Title
-        description="Setup your wait-list to launch your product"
-        className="mb-6"
-      >
+      <Title description="Setup your wait-list to launch your product" className="mb-6">
         Wait-List
       </Title>
 
@@ -108,22 +105,16 @@ export default function WaitListPage() {
             <Input
               placeholder="Search by name..."
               variant="bordered"
-              startContent={
-                <MagnifyingGlassIcon className="text-default-300 size-5" />
-              }
+              startContent={<MagnifyingGlassIcon className="text-default-300 size-5" />}
               size="sm"
               isClearable
               classNames={{
                 base: "max-w-sm",
-                inputWrapper: "border-1",
+                inputWrapper: "border-1"
               }}
             />
 
-            <Button
-              size="sm"
-              variant="light"
-              className="min-w-max border border-dashed"
-            >
+            <Button size="sm" variant="light" className="min-w-max border border-dashed">
               <FunnelIcon className="size-4" />
             </Button>
           </div>
@@ -161,9 +152,7 @@ export default function WaitListPage() {
         </div>
 
         <div className="flex justify-between items-center">
-          <span className="text-default-400 text-small">
-            Total {rows.length} waitlists
-          </span>
+          <span className="text-default-400 text-small">Total {rows.length} waitlists</span>
           {viewMode === "table" && (
             <label className="flex items-center text-default-400 text-small">
               Rows per page:
@@ -183,7 +172,7 @@ export default function WaitListPage() {
             classNames={{
               th: "!rounded-b-none bg-",
               wrapper: "p-0 border",
-              td: "first:before:rounded-none last:before:rounded-e-none cursor-pointer",
+              td: "first:before:rounded-none last:before:rounded-e-none cursor-pointer"
             }}
             onRowAction={(e) => {
               router.push(`/app/launch/waitlist/${e}`);
@@ -200,9 +189,7 @@ export default function WaitListPage() {
             <TableBody items={rows} emptyContent={"No rows to display."}>
               {(item: any) => (
                 <TableRow key={item.id} className="hover:bg-default-200">
-                  {(columnKey: any) => (
-                    <TableCell>{getKeyValue(item, columnKey)}</TableCell>
-                  )}
+                  {(columnKey: any) => <TableCell>{getKeyValue(item, columnKey)}</TableCell>}
                 </TableRow>
               )}
             </TableBody>
@@ -227,9 +214,7 @@ export default function WaitListPage() {
                       <div className="flex items-start justify-between">
                         <div className="flex flex-col gap-1 flex-1">
                           <h3 className="font-medium text-sm">{item.name}</h3>
-                          <p className="text-xs text-muted-foreground">
-                            ID: {item.id}
-                          </p>
+                          <p className="text-xs text-muted-foreground">ID: {item.id}</p>
                         </div>
                         <Chip label={item.status} status={"active"} />
                       </div>
@@ -238,23 +223,15 @@ export default function WaitListPage() {
                           <span className="text-xs text-muted-foreground">
                             Email Sending Quantity:
                           </span>
-                          <span className="text-xs ">
-                            {item["email-sending-quantity"]}
-                          </span>
+                          <span className="text-xs ">{item["email-sending-quantity"]}</span>
                         </div>
                         <div className="flex justify-between items-center">
-                          <span className="text-xs text-muted-foreground">
-                            Users registered:
-                          </span>
+                          <span className="text-xs text-muted-foreground">Users registered:</span>
                           <span className="text-xs ">{item.users}</span>
                         </div>
                         <div className="flex justify-between items-center">
-                          <span className="text-xs text-muted-foreground">
-                            Referal emails:
-                          </span>
-                          <span className="text-xs ">
-                            {item["referal-emails"]}
-                          </span>
+                          <span className="text-xs text-muted-foreground">Referal emails:</span>
+                          <span className="text-xs ">{item["referal-emails"]}</span>
                         </div>
                       </div>
                     </div>

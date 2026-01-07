@@ -6,7 +6,7 @@ import {
   Cog6ToothIcon,
   CreditCardIcon,
   GlobeAltIcon,
-  SunIcon,
+  SunIcon
 } from "@heroicons/react/24/outline";
 import clsx from "clsx";
 import Link from "next/link";
@@ -18,7 +18,7 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownSection,
-  DropdownTrigger,
+  DropdownTrigger
 } from "@heroui/react";
 import ItemList from "./items-list";
 
@@ -39,9 +39,7 @@ export default function Sidebar() {
         {navItems && !children && <ItemList navItems={navItems} />}
 
         {!navItems && !children && (
-          <div className="p-4 text-center text-sm text-muted-foreground">
-            No navigation items
-          </div>
+          <div className="p-4 text-center text-sm text-muted-foreground">No navigation items</div>
         )}
 
         {!children && (
@@ -64,7 +62,7 @@ export default function Sidebar() {
                 classNames={{
                   base: "before:bg-default-200", // change arrow background
                   content:
-                    "py-1 px-1 border border-default-200 bg-linear-to-br from-white to-default-200 dark:from-default-50 dark:to-black",
+                    "py-1 px-1 border border-default-200 bg-linear-to-br from-white to-default-200 dark:from-default-50 dark:to-black"
                 }}
                 radius="sm"
               >
@@ -130,10 +128,7 @@ export default function Sidebar() {
                   </DropdownSection>
 
                   <DropdownSection>
-                    <DropdownItem
-                      key="help_and_feedback"
-                      className="!transition-none"
-                    >
+                    <DropdownItem key="help_and_feedback" className="!transition-none">
                       Help & Feedback
                     </DropdownItem>
 

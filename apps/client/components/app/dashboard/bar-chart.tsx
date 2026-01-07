@@ -11,7 +11,7 @@ const barChartData = [
   { month: "March", desktop: 512 },
   { month: "April", desktop: 629 },
   { month: "May", desktop: 458 },
-  { month: "June", desktop: 781 },
+  { month: "June", desktop: 781 }
 ];
 
 const axisColor = "#b4b4b4";
@@ -38,10 +38,7 @@ export default function BarChartComponent() {
       </div>
       <div className="h-64 w-full">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart
-            data={barChartData}
-            margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
-          >
+          <BarChart data={barChartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
             <XAxis
               dataKey="month"
               tickLine={false}
@@ -60,14 +57,10 @@ export default function BarChartComponent() {
                 border: `1px solid ${tooltipBorder}`,
                 borderRadius: "4px",
                 color: tooltipText,
-                padding: "8px 12px",
+                padding: "8px 12px"
               }}
             />
-            <Bar
-              shape={<CustomGradientBar />}
-              dataKey="desktop"
-              fill={strokeColor}
-            />
+            <Bar shape={<CustomGradientBar />} dataKey="desktop" fill={strokeColor} />
           </BarChart>
         </ResponsiveContainer>
       </div>

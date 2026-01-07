@@ -2,10 +2,7 @@
 
 import { useLandingPageState } from "@/store/landing-page/landing-page.store";
 import { Editor, Monaco } from "@monaco-editor/react";
-import {
-  MonacoJsxSyntaxHighlight,
-  getWorker,
-} from "monaco-jsx-syntax-highlight";
+import { MonacoJsxSyntaxHighlight, getWorker } from "monaco-jsx-syntax-highlight";
 import { useCallback, useState } from "react";
 import OneDarkPro from "../../../../theme/one-dark-pro.json";
 import { initialValue } from "./monaco.constants";
@@ -15,9 +12,7 @@ export default function MonacoEditor() {
   const { editionType } = useLandingPageState();
 
   const convertThemeToMonaco = (theme: any) => {
-    const tokenColors = (theme.tokenColors || []).filter(
-      (token: any) => token && token.settings
-    );
+    const tokenColors = (theme.tokenColors || []).filter((token: any) => token && token.settings);
 
     const rules = tokenColors.flatMap((token: any) => {
       const scopes = Array.isArray(token.scope) ? token.scope : [token.scope];
@@ -25,7 +20,7 @@ export default function MonacoEditor() {
         token: scope,
         foreground: token.settings?.foreground,
         background: token.settings?.background,
-        fontStyle: token.settings?.fontStyle,
+        fontStyle: token.settings?.fontStyle
       }));
     });
 
@@ -35,7 +30,7 @@ export default function MonacoEditor() {
       colors: theme.colors || {},
       rules: rules,
       semanticHighlighting: theme.semanticHighlighting,
-      semanticTokenColors: theme.semanticTokenColors || {},
+      semanticTokenColors: theme.semanticTokenColors || {}
     };
   };
 
@@ -47,26 +42,22 @@ export default function MonacoEditor() {
     theme.semanticTokenColors = {
       ...theme.semanticTokenColors,
       "function.defaultLibrary": "#c678dd",
-      function: "#61afef",
+      function: "#61afef"
     };
 
     monaco.editor.defineTheme("OneDarkPro", theme);
     monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
       noSemanticValidation: true,
-      noSyntaxValidation: true,
+      noSyntaxValidation: true
     });
   }, []);
 
   const handleEditorMount = useCallback((editor: any, monaco: any) => {
-    const monacoJsxSyntaxHighlight = new MonacoJsxSyntaxHighlight(
-      getWorker(),
-      monaco
-    );
+    const monacoJsxSyntaxHighlight = new MonacoJsxSyntaxHighlight(getWorker(), monaco);
 
-    const { highlighter, dispose } =
-      monacoJsxSyntaxHighlight.highlighterBuilder({
-        editor: editor,
-      });
+    const { highlighter, dispose } = monacoJsxSyntaxHighlight.highlighterBuilder({
+      editor: editor
+    });
     highlighter();
 
     let hookDecorations: string[] = [];
@@ -128,7 +119,7 @@ export default function MonacoEditor() {
       "rect",
       "line",
       "polyline",
-      "polygon",
+      "polygon"
     ]);
 
     const highlightHooks = () => {
@@ -149,23 +140,15 @@ export default function MonacoEditor() {
           const endColumn = startColumn + hookName.length;
 
           newDecorations.push({
-            range: new monaco.Range(
-              lineIndex + 1,
-              startColumn,
-              lineIndex + 1,
-              endColumn
-            ),
+            range: new monaco.Range(lineIndex + 1, startColumn, lineIndex + 1, endColumn),
             options: {
-              inlineClassName: "react-hook",
-            },
+              inlineClassName: "react-hook"
+            }
           });
         }
       });
 
-      hookDecorations = editor.deltaDecorations(
-        hookDecorations,
-        newDecorations
-      );
+      hookDecorations = editor.deltaDecorations(hookDecorations, newDecorations);
     };
 
     const highlightComponents = () => {
@@ -192,36 +175,23 @@ export default function MonacoEditor() {
 
           if (isHtmlTag) {
             newDecorations.push({
-              range: new monaco.Range(
-                lineIndex + 1,
-                startColumn,
-                lineIndex + 1,
-                endColumn
-              ),
+              range: new monaco.Range(lineIndex + 1, startColumn, lineIndex + 1, endColumn),
               options: {
-                inlineClassName: "jsx-tag-name-html",
-              },
+                inlineClassName: "jsx-tag-name-html"
+              }
             });
           } else if (isCustomComponent) {
             newDecorations.push({
-              range: new monaco.Range(
-                lineIndex + 1,
-                startColumn,
-                lineIndex + 1,
-                endColumn
-              ),
+              range: new monaco.Range(lineIndex + 1, startColumn, lineIndex + 1, endColumn),
               options: {
-                inlineClassName: "jsx-tag-name-custom",
-              },
+                inlineClassName: "jsx-tag-name-custom"
+              }
             });
           }
         }
       });
 
-      componentDecorations = editor.deltaDecorations(
-        componentDecorations,
-        newDecorations
-      );
+      componentDecorations = editor.deltaDecorations(componentDecorations, newDecorations);
     };
 
     editor.onDidChangeModelContent(() => {
@@ -263,13 +233,13 @@ export default function MonacoEditor() {
       options={{
         fontSize: 13,
         minimap: {
-          enabled: false,
+          enabled: false
         },
         tabSize: 2,
         hover: {
-          enabled: false,
+          enabled: false
         },
-        fontFamily: "Geist Mono",
+        fontFamily: "Geist Mono"
       }}
     />
   );

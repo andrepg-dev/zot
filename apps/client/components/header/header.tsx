@@ -9,35 +9,23 @@ import Image from "next/image";
 import Link from "next/link";
 
 export default function Header() {
-  const { children, navigationItems, postNavigationItems, hidden } =
-    useHeaderStore();
+  const { children, navigationItems, postNavigationItems, hidden } = useHeaderStore();
 
   return (
     <header
-      className={cn(
-        "overflow-hidden transition-all duration-700",
-        hidden ? "h-2" : "h-14"
-      )}
+      className={cn("overflow-hidden transition-all duration-700", hidden ? "h-2" : "h-14")}
       id="header"
     >
       <div className="shrink-0 bg-sidebar p-4 flex items-center justify-between overflow-hidden h-14">
         <div className="flex gap-2 items-center">
-          <Image
-            src={"/icons/waitlean-icon.png"}
-            width={25}
-            height={25}
-            alt={"Waitlean logo"}
-          />
+          <Image src={"/icons/waitlean-icon.png"} width={25} height={25} alt={"Waitlean logo"} />
           <Link href={"/app/dashboard"}>
             <span className="font-bold text-sm">WaitList + Landing Page</span>
           </Link>
 
           {navigationItems &&
             navigationItems?.map((value, idx) => (
-              <div
-                key={idx}
-                className="flex items-center text-sm font-bold gap-2"
-              >
+              <div key={idx} className="flex items-center text-sm font-bold gap-2">
                 <span className="text-muted-foreground">
                   <SlashIcon className="size-4 text-default-100" />
                 </span>
@@ -60,11 +48,7 @@ export default function Header() {
           postNavigationItems
         ) : (
           <div className="flex items-center gap-4">
-            <Button
-              variant="light"
-              className="text-xs text-muted-foreground"
-              size="sm"
-            >
+            <Button variant="light" className="text-xs text-muted-foreground" size="sm">
               Feedback
             </Button>
 
@@ -77,10 +61,7 @@ export default function Header() {
             >
               <span>Search...</span>
 
-              <Kbd
-                keys={["command"]}
-                className="scale-95 bg-transparent text-muted-foreground"
-              >
+              <Kbd keys={["command"]} className="scale-95 bg-transparent text-muted-foreground">
                 k
               </Kbd>
             </Button>

@@ -9,7 +9,7 @@ import {
   ResponsiveContainer,
   Tooltip,
   XAxis,
-  YAxis,
+  YAxis
 } from "recharts";
 
 const chartData = [
@@ -18,7 +18,7 @@ const chartData = [
   { month: "March", desktop: 512, mobile: 387 },
   { month: "April", desktop: 629, mobile: 521 },
   { month: "May", desktop: 458, mobile: 412 },
-  { month: "June", desktop: 781, mobile: 598 },
+  { month: "June", desktop: 781, mobile: 598 }
 ];
 
 const gridColor = "rgba(255, 255, 255, 0.1)";
@@ -49,28 +49,13 @@ export default function AreaChartComponent() {
       </div>
       <div className="h-64 w-full">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart
-            data={chartData}
-            margin={{ top: 15, right: 10, left: -15, bottom: 0 }}
-          >
+          <AreaChart data={chartData} margin={{ top: 15, right: 10, left: -15, bottom: 0 }}>
             <defs>
-              <linearGradient
-                id="gradient-chart-desktop"
-                x1="0"
-                y1="0"
-                x2="0"
-                y2="1"
-              >
+              <linearGradient id="gradient-chart-desktop" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor={desktopColor} stopOpacity={0.5} />
                 <stop offset="95%" stopColor={desktopColor} stopOpacity={0.1} />
               </linearGradient>
-              <linearGradient
-                id="gradient-chart-mobile"
-                x1="0"
-                y1="0"
-                x2="0"
-                y2="1"
-              >
+              <linearGradient id="gradient-chart-mobile" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor={mobileColor} stopOpacity={0.5} />
                 <stop offset="95%" stopColor={mobileColor} stopOpacity={0.1} />
               </linearGradient>
@@ -107,7 +92,7 @@ export default function AreaChartComponent() {
                 border: `1px solid ${tooltipBorder}`,
                 borderRadius: "4px",
                 color: tooltipText,
-                padding: "8px 12px",
+                padding: "8px 12px"
               }}
             />
             <Area

@@ -4,14 +4,14 @@ import {
   EnvelopeIcon,
   GlobeAltIcon,
   Square3Stack3DIcon,
-  Squares2X2Icon,
+  Squares2X2Icon
 } from "@heroicons/react/24/outline";
 
 export const defaultNavItems = [
   {
     href: "/app/dashboard",
     label: "Dashboard",
-    icon: Squares2X2Icon,
+    icon: Squares2X2Icon
   },
   // {
   //   href: "/app/domains",
@@ -21,23 +21,23 @@ export const defaultNavItems = [
   {
     href: "/app/billing",
     label: "Billing",
-    icon: CreditCardIcon,
+    icon: CreditCardIcon
   },
   {
     href: "/app/emails",
     label: "Emails",
-    icon: EnvelopeIcon,
+    icon: EnvelopeIcon
   },
   {
     href: "/app/landing-page",
     label: "Landing page",
-    icon: Square3Stack3DIcon,
+    icon: Square3Stack3DIcon
   },
   {
     href: "/app/waitlist",
     label: "WaitList",
-    icon: CursorArrowRippleIcon,
-  },
+    icon: CursorArrowRippleIcon
+  }
 ];
 
 type navItemsType = typeof defaultNavItems;

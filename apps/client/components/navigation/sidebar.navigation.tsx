@@ -9,15 +9,14 @@ export default function SidebarNavigation({
   children,
   navItems,
   hidden,
-  className,
+  className
 }: {
   children?: React.ReactNode;
   navItems?: NavItemsI;
   hidden?: boolean;
   className?: string;
 }) {
-  const { setNavItems, setChildren, setHidden, setClassName } =
-    useSidebarStore();
+  const { setNavItems, setChildren, setHidden, setClassName } = useSidebarStore();
   const pathname = usePathname();
 
   // Reset values

@@ -4,18 +4,18 @@ const nextConfig = {
     return [
       {
         source: "/api/:path*",
-        destination: "http://localhost:3010/:path*",
-      },
+        destination: "http://localhost:3010/:path*"
+      }
     ];
   },
   images: {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "*",
-      },
-    ],
-  },
+        hostname: "*"
+      }
+    ]
+  }
 };
 
 module.exports = nextConfig;

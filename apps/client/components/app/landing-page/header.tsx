@@ -5,23 +5,13 @@ import {
   ArrowDownTrayIcon,
   Bars3Icon,
   CodeBracketIcon,
-  EyeIcon,
+  EyeIcon
 } from "@heroicons/react/24/outline";
-import {
-  Button,
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownTrigger,
-} from "@heroui/react";
+import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@heroui/react";
 
 export default function Header() {
-  const {
-    editionType,
-    setEditionType,
-    setVisualizationType,
-    visualizationType,
-  } = useLandingPageState();
+  const { editionType, setEditionType, setVisualizationType, visualizationType } =
+    useLandingPageState();
 
   return (
     <div className="border-b px-4 py-2 z-50 relative flex items-center justify-between overflow-hidden bg-background">
@@ -94,10 +84,7 @@ export default function Header() {
             }
           }}
         >
-          <DropdownItem
-            key="download_zip"
-            startContent={<ArrowDownTrayIcon className="size-4" />}
-          >
+          <DropdownItem key="download_zip" startContent={<ArrowDownTrayIcon className="size-4" />}>
             Download Zip
           </DropdownItem>
         </DropdownMenu>

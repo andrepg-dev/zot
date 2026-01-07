@@ -4,11 +4,7 @@ import { cn } from "@/lib/utils";
 import { useLandingPageState } from "@/store/landing-page/landing-page.store";
 import Sidebar from "../sidebar/sidebar";
 
-export default function RootLayoutContent({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayoutContent({ children }: { children: React.ReactNode }) {
   const { editionType } = useLandingPageState();
 
   return (

@@ -22,13 +22,7 @@ export default function Dashboard() {
             variant="faded"
             isClosable
             endContent={
-              <Button
-                as={Link}
-                href="/pricing"
-                size="sm"
-                className="mx-4"
-                variant="faded"
-              >
+              <Button as={Link} href="/pricing" size="sm" className="mx-4" variant="faded">
                 Upgrade now
               </Button>
             }
@@ -36,10 +30,7 @@ export default function Dashboard() {
           ></Alert>
         </div>
 
-        <Title
-          description="Below are some tasks to get you started."
-          className="mt-8"
-        >
+        <Title description="Below are some tasks to get you started." className="mt-8">
           No active waitlist
         </Title>
 

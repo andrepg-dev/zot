@@ -11,7 +11,7 @@ import { addToast, Button, Checkbox } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   submitWaitlistSchema,
-  SubmitWaitListValues,
+  SubmitWaitListValues
 } from "@repo/packages/schemas/submit-watlist.zod";
 import { useMutation } from "@tanstack/react-query";
 import Link from "next/link";
@@ -21,12 +21,12 @@ export default function LaunchWaitList() {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors }
   } = useForm<SubmitWaitListValues>({
     resolver: zodResolver(submitWaitlistSchema),
     defaultValues: {
-      sendEmail: true,
-    },
+      sendEmail: true
+    }
   });
 
   const { isPending, error, mutate } = useMutation({
@@ -35,9 +35,9 @@ export default function LaunchWaitList() {
       addToast({
         title: "Wait-List created",
         description: "Your Wait-List has been created",
-        color: "primary",
+        color: "primary"
       });
-    },
+    }
   });
 
   const onSubmit = (data: SubmitWaitListValues) => {
@@ -50,45 +50,31 @@ export default function LaunchWaitList() {
         navigationItems={[
           {
             label: "New Launch",
-            pathname: "",
-          },
+            pathname: ""
+          }
         ]}
       />
 
-      <Form
-        onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col gap-8"
-        error={error}
-      >
+      <Form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-8" error={error}>
         <FormField
           title="Wait-List Name"
           description="This shows up to Signups in the no-code widget, when they sign up, and in any emails."
           error={errors.name}
           isRequired
         >
-          <InputComponent
-            placeholder="App Launch"
-            maxLength={30}
-            {...register("name")}
-            autoFocus
-          />
+          <InputComponent placeholder="App Launch" maxLength={30} {...register("name")} autoFocus />
         </FormField>
 
         <FormField
           title="Wait-List URL"
           description={
             <>
-              Widget will be accessible through this URL.{" "}
-              <Type variant="link">See example.</Type>
+              Widget will be accessible through this URL. <Type variant="link">See example.</Type>
             </>
           }
           error={errors.url}
         >
-          <InputComponent
-            placeholder="example.com/waitlist"
-            type="url"
-            {...register("url")}
-          />
+          <InputComponent placeholder="example.com/waitlist" type="url" {...register("url")} />
         </FormField>
 
         <FormField
@@ -113,13 +99,7 @@ export default function LaunchWaitList() {
         </FormField>
 
         <div className="flex gap-2 justify-end">
-          <Button
-            as={Link}
-            href="/app/waitlist"
-            className="w-fit"
-            variant="bordered"
-            size="sm"
-          >
+          <Button as={Link} href="/app/waitlist" className="w-fit" variant="bordered" size="sm">
             <Type variant="sm">Cancel</Type>
           </Button>
           <Button

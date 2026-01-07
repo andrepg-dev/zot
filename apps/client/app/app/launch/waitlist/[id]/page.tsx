@@ -9,7 +9,7 @@ import {
   HandRaisedIcon,
   ShareIcon,
   UserGroupIcon,
-  UserPlusIcon,
+  UserPlusIcon
 } from "@heroicons/react/24/outline";
 import NumberFlow from "@number-flow/react";
 
@@ -23,7 +23,7 @@ export default function LaunchedWaitList() {
       trend: "up",
       icon: UserPlusIcon,
       iconColor: "text-blue-500",
-      iconBg: "bg-blue-500/10",
+      iconBg: "bg-blue-500/10"
     },
     {
       id: 2,
@@ -33,7 +33,7 @@ export default function LaunchedWaitList() {
       trend: "up",
       icon: ShareIcon,
       iconColor: "text-green-500",
-      iconBg: "bg-green-500/10",
+      iconBg: "bg-green-500/10"
     },
     {
       id: 3,
@@ -43,7 +43,7 @@ export default function LaunchedWaitList() {
       trend: "up",
       icon: UserGroupIcon,
       iconColor: "text-yellow-500",
-      iconBg: "bg-yellow-500/10",
+      iconBg: "bg-yellow-500/10"
     },
     {
       id: 4,
@@ -53,7 +53,7 @@ export default function LaunchedWaitList() {
       trend: null,
       icon: EnvelopeIcon,
       iconColor: "text-muted-foreground",
-      iconBg: "bg-default-500/10",
+      iconBg: "bg-default-500/10"
     },
     {
       id: 5,
@@ -63,8 +63,8 @@ export default function LaunchedWaitList() {
       trend: null,
       icon: HandRaisedIcon,
       iconColor: "text-purple-500",
-      iconBg: "bg-purple-500/10",
-    },
+      iconBg: "bg-purple-500/10"
+    }
   ];
 
   return (
@@ -79,10 +79,7 @@ export default function LaunchedWaitList() {
             <div className="p-6">
               <div className="flex items-start justify-between mb-4">
                 <div
-                  className={cn(
-                    "size-10 rounded-md flex items-center justify-center",
-                    stat.iconBg
-                  )}
+                  className={cn("size-10 rounded-md flex items-center justify-center", stat.iconBg)}
                 >
                   <stat.icon className={cn("size-5", stat.iconColor)} />
                 </div>
@@ -90,10 +87,7 @@ export default function LaunchedWaitList() {
               <div className="flex flex-col gap-2">
                 <p className="text-sm text-muted-foreground">{stat.title}</p>
                 {/* <p className="text-2xl font-semibold">{stat.value}</p> */}
-                <NumberFlow
-                  value={parseInt(stat.value ?? 0)}
-                  className="text-2xl font-semibold"
-                />
+                <NumberFlow value={parseInt(stat.value ?? 0)} className="text-2xl font-semibold" />
               </div>
             </div>
           </div>

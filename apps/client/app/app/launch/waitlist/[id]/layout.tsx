@@ -7,15 +7,11 @@ import {
   ChartBarIcon,
   Cog6ToothIcon,
   HomeIcon,
-  WrenchScrewdriverIcon,
+  WrenchScrewdriverIcon
 } from "@heroicons/react/24/outline";
 import { useParams } from "next/navigation";
 
-export default function WaitListLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function WaitListLayout({ children }: { children: React.ReactNode }) {
   const { id } = useParams<{ id: string }>();
 
   return (
@@ -25,23 +21,23 @@ export default function WaitListLayout({
           {
             href: `/app/launch/waitlist/${id}`,
             icon: HomeIcon,
-            label: "Overview",
+            label: "Overview"
           },
           {
             href: `/app/launch/waitlist/${id}/widget-builder`,
             icon: WrenchScrewdriverIcon,
-            label: "Widget Builder",
+            label: "Widget Builder"
           },
           {
             href: `/app/launch/waitlist/${id}/webhooks`,
             icon: BoltIcon,
-            label: "Webhooks",
+            label: "Webhooks"
           },
           {
             href: `/app/launch/waitlist/${id}/settings`,
             icon: Cog6ToothIcon,
-            label: "Settings",
-          },
+            label: "Settings"
+          }
         ]}
       />
 
@@ -50,8 +46,8 @@ export default function WaitListLayout({
           { label: "Wait-List", pathname: "/app/waitlist" },
           {
             label: `Launch ${String(id)}`,
-            pathname: "",
-          },
+            pathname: ""
+          }
         ]}
       />
       {children}

@@ -5,10 +5,7 @@ interface GlobalTooltipProps extends TooltipProps {
   classNames?: TooltipProps["classNames"];
 }
 
-export default function GlobalTooltip({
-  classNames,
-  ...props
-}: GlobalTooltipProps) {
+export default function GlobalTooltip({ classNames, ...props }: GlobalTooltipProps) {
   return (
     <Tooltip
       {...props}
@@ -16,7 +13,7 @@ export default function GlobalTooltip({
       size="sm"
       classNames={{
         content: cn(classNames?.content),
-        ...classNames,
+        ...classNames
       }}
     />
   );

@@ -5,42 +5,42 @@ const config = {
   content: [
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
-    "../../../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}",
+    "../../../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}"
   ],
   theme: {
     extend: {
       fontFamily: {
         sans: ["var(--font-sans)"],
-        mono: ["var(--font-mono)"],
+        mono: ["var(--font-mono)"]
       },
       borderRadius: {
-        default: "var(--radius-default)",
+        default: "var(--radius-default)"
       },
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
         card: {
           DEFAULT: "var(--card)",
-          foreground: "var(--card-foreground)",
+          foreground: "var(--card-foreground)"
         },
         popover: {
           DEFAULT: "var(--popover)",
-          foreground: "var(--popover-foreground)",
+          foreground: "var(--popover-foreground)"
         },
         secondary: {
           DEFAULT: "var(--secondary)",
-          foreground: "var(--secondary-foreground)",
+          foreground: "var(--secondary-foreground)"
         },
         muted: {
           DEFAULT: "var(--muted)",
-          foreground: "var(--muted-foreground)",
+          foreground: "var(--muted-foreground)"
         },
         accent: {
           DEFAULT: "var(--accent)",
-          foreground: "var(--accent-foreground)",
+          foreground: "var(--accent-foreground)"
         },
         destructive: {
-          DEFAULT: "var(--destructive)",
+          DEFAULT: "var(--destructive)"
         },
         border: "var(--border)",
         input: "var(--input)",
@@ -50,13 +50,13 @@ const config = {
           2: "var(--chart-2)",
           3: "var(--chart-3)",
           4: "var(--chart-4)",
-          5: "var(--chart-5)",
+          5: "var(--chart-5)"
         },
         sidebar: {
-          DEFAULT: "var(--sidebar)",
-        },
-      },
-    },
+          DEFAULT: "var(--sidebar)"
+        }
+      }
+    }
   },
   darkMode: "class",
   plugins: [
@@ -68,14 +68,14 @@ const config = {
       layout: {
         disabledOpacity: "0.5",
         radius: {
-          medium: ".45rem",
+          medium: ".45rem"
         },
         borderWidth: {
-          medium: "thin",
-        },
-      },
-    }),
-  ],
+          medium: "thin"
+        }
+      }
+    })
+  ]
 };
 
 module.exports = config;

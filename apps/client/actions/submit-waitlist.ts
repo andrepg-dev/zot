@@ -2,7 +2,7 @@
 
 import {
   submitWaitlistSchema,
-  SubmitWaitListValues,
+  SubmitWaitListValues
 } from "@repo/packages/schemas/submit-watlist.zod";
 
 export async function submitWaitListAction(data: SubmitWaitListValues) {

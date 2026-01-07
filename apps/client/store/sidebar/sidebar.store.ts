@@ -25,7 +25,7 @@ const useSidebarStore = create<SidebarStateI>((set) => ({
   },
   setClassName(className) {
     set({ className });
-  },
+  }
 }));
 
 export default useSidebarStore;

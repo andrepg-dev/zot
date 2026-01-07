@@ -8,15 +8,14 @@ export default function HeaderNavigation({
   children,
   navigationItems,
   postNavigationItems,
-  hidden,
+  hidden
 }: {
   children?: ReactNode;
   navigationItems?: Array<{ label: string; pathname: string }>;
   postNavigationItems?: ReactNode;
   hidden?: boolean;
 }) {
-  const { setChildren, setNavigationItems, setPostNavigationItems, setHidden } =
-    useHeaderStore();
+  const { setChildren, setNavigationItems, setPostNavigationItems, setHidden } = useHeaderStore();
   const pathname = usePathname();
 
   useEffect(() => {
@@ -42,7 +41,7 @@ export default function HeaderNavigation({
     hidden,
     setNavigationItems,
     setPostNavigationItems,
-    setHidden,
+    setHidden
   ]);
 
   return null;

@@ -20,7 +20,7 @@ export default function LandingPageCard({
   imageAlt = "",
   title,
   views,
-  href,
+  href
 }: LandingPageCardProps) {
   return (
     <Card

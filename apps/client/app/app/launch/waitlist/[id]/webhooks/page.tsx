@@ -4,9 +4,7 @@ import PageComponent from "@/components/layouts/page-component";
 export default function Webhooks() {
   return (
     <PageComponent>
-      <Title description="Receive notification when a user has been registered">
-        Webhooks
-      </Title>
+      <Title description="Receive notification when a user has been registered">Webhooks</Title>
     </PageComponent>
   );
 }

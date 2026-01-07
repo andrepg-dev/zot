@@ -21,15 +21,11 @@ export default function ItemList({ navItems }: { navItems: any }) {
               className={clsx(
                 "flex items-center gap-2 py-1.5 px-2 h-[35px] text-muted-foreground rounded-sm hover:bg-default-50",
                 {
-                  "text-white bg-default-100": isActive,
+                  "text-white bg-default-100": isActive
                 }
               )}
             >
-              {item.icon ? (
-                <Icon
-                  className={cn("size-4", isActive && "text-primary-400")}
-                />
-              ) : null}{" "}
+              {item.icon ? <Icon className={cn("size-4", isActive && "text-primary-400")} /> : null}{" "}
               {item.label}
             </Link>
           </li>

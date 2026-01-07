@@ -4,11 +4,7 @@ import Header from "@/components/app/landing-page/header";
 import PageComponent from "@/components/layouts/page-component";
 import HeaderNavigation from "@/components/navigation/header.navigation";
 import SidebarNavigation from "@/components/navigation/sidebar.navigation";
-import {
-  ChevronRightIcon,
-  PaintBrushIcon,
-  PlusIcon,
-} from "@heroicons/react/24/outline";
+import { ChevronRightIcon, PaintBrushIcon, PlusIcon } from "@heroicons/react/24/outline";
 
 export default function NewLandingPage() {
   return (
@@ -16,7 +12,7 @@ export default function NewLandingPage() {
       <HeaderNavigation
         navigationItems={[
           { label: "Landing Page", pathname: "/app/landing-page" },
-          { label: "Create", pathname: "" },
+          { label: "Create", pathname: "" }
         ]}
       />
       <SidebarNavigation
@@ -25,50 +21,43 @@ export default function NewLandingPage() {
           <div className="p-4 pb-0 flex flex-col h-full flex-1 text-sm gap-2 w-[435px]">
             <div className="flex flex-col gap-2.5 flex-1 min-h-0 pb-52">
               <div className="bg-default-100 p-2 border rounded-lg max-w-4/5 ml-auto ">
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab
-                nostrum sequi perferendis tempora! Vero optio labore pariatur
-                officia eaque porro quae deserunt non, totam dolores dicta,
-                neque assumenda tenetur voluptate?
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab nostrum sequi
+                perferendis tempora! Vero optio labore pariatur officia eaque porro quae deserunt
+                non, totam dolores dicta, neque assumenda tenetur voluptate?
               </div>
               <div className="p-2 rounded-lg max-w-4/5">Hola</div>
               <div className="bg-default-100 p-2 border rounded-lg max-w-4/5 ml-auto ">
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab
-                nostrum sequi perferendis tempora! Vero optio labore pariatur
-                officia eaque porro quae deserunt non, totam dolores dicta,
-                neque assumenda tenetur voluptate?
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab nostrum sequi
+                perferendis tempora! Vero optio labore pariatur officia eaque porro quae deserunt
+                non, totam dolores dicta, neque assumenda tenetur voluptate?
               </div>
               <div className="p-2 rounded-lg max-w-4/5">Hola</div>
               <div className="bg-default-100 p-2 border rounded-lg max-w-4/5 ml-auto ">
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab
-                nostrum sequi perferendis tempora! Vero optio labore pariatur
-                officia eaque porro quae deserunt non, totam dolores dicta,
-                neque assumenda tenetur voluptate?
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab nostrum sequi
+                perferendis tempora! Vero optio labore pariatur officia eaque porro quae deserunt
+                non, totam dolores dicta, neque assumenda tenetur voluptate?
               </div>
               <div className="p-2 rounded-lg max-w-4/5">
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab
-                nostrum sequi perferendis tempora! Vero optio labore pariatur
-                officia eaque porro quae deserunt non, totam dolores dicta,
-                neque assumenda tenetur voluptate?
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab nostrum sequi
+                perferendis tempora! Vero optio labore pariatur officia eaque porro quae deserunt
+                non, totam dolores dicta, neque assumenda tenetur voluptate?
               </div>
 
               <div className="bg-default-100 p-2 border rounded-lg max-w-4/5 ml-auto ">
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab
-                nostrum sequi perferendis tempora! Vero optio labore pariatur
-                officia eaque porro quae deserunt non, totam dolores dicta,
-                neque assumenda tenetur voluptate?
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab nostrum sequi
+                perferendis tempora! Vero optio labore pariatur officia eaque porro quae deserunt
+                non, totam dolores dicta, neque assumenda tenetur voluptate?
               </div>
               <div className="p-2 rounded-lg max-w-4/5">
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab
-                nostrum sequi perferendis tempora! Vero optio labore pariatur
-                officia eaque porro quae deserunt non, totam dolores dicta,
-                neque assumenda tenetur voluptate?
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab nostrum sequi
+                perferendis tempora! Vero optio labore pariatur officia eaque porro quae deserunt
+                non, totam dolores dicta, neque assumenda tenetur voluptate?
               </div>
 
               <div className="bg-default-100 p-2 border rounded-lg max-w-4/5 ml-auto ">
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab
-                nostrum sequi perferendis tempora! Vero optio labore pariatur
-                officia eaque porro quae deserunt non, totam dolores dicta,
-                neque assumenda tenetur voluptate?
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab nostrum sequi
+                perferendis tempora! Vero optio labore pariatur officia eaque porro quae deserunt
+                non, totam dolores dicta, neque assumenda tenetur voluptate?
               </div>
             </div>
 

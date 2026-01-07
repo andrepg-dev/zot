@@ -19,7 +19,7 @@ const variants = {
   h6: "text-sm font-medium",
   base: "text-sm",
   sm: "text-xs",
-  link: "text-primary-400 hover:underline decoration-2 cursor-pointer",
+  link: "text-primary-400 hover:underline decoration-2 cursor-pointer"
 } as const;
 
 const elementMap: Record<VariantKey, React.ElementType> = {
@@ -31,16 +31,10 @@ const elementMap: Record<VariantKey, React.ElementType> = {
   h6: "h6",
   base: "p",
   sm: "p",
-  link: "span",
+  link: "span"
 };
 
-export default function Type({
-  variant = "base",
-  children,
-  className,
-  as,
-  ...props
-}: TypeProps) {
+export default function Type({ variant = "base", children, className, as, ...props }: TypeProps) {
   const Component = as || elementMap[variant];
 
   return (

@@ -29,8 +29,8 @@ export default function PricingPage() {
         "Custom email creation",
         "1 domain for branded emails and landing pages",
         "Analytics for signups and sent emails",
-        "Trend search powered by Google Search",
-      ],
+        "Trend search powered by Google Search"
+      ]
     },
     {
       name: "Premium",
@@ -51,8 +51,8 @@ export default function PricingPage() {
         "Extra security to block fake or disposable emails",
         "Analytics for sent emails and registered users",
         "Trend search with Google Search",
-        "Use more powerful AI models",
-      ],
+        "Use more powerful AI models"
+      ]
     },
     {
       name: "Scale",
@@ -72,9 +72,9 @@ export default function PricingPage() {
         "Extra security to block fake or disposable emails",
         "Analytics for sent emails and registered users",
         "Google Search included",
-        "Use more powerful AI models",
-      ],
-    },
+        "Use more powerful AI models"
+      ]
+    }
   ];
 
   return (
@@ -105,19 +105,17 @@ export default function PricingPage() {
        radial-gradient(ellipse 100% 45% at 70% 5%, rgba(251, 191, 36, 0.03), transparent 42%),
        radial-gradient(ellipse 80% 75% at 90% 80%, rgba(168, 85, 247, 0.05), transparent 55%),
        #000000
-     `,
+     `
         }}
       />
 
       <div className="flex flex-col gap-8">
         <div className="text-center space-y-3">
-          <p className="text-xs tracking-[0.25em] uppercase text-blue-300/80">
-            Pricing
-          </p>
+          <p className="text-xs tracking-[0.25em] uppercase text-blue-300/80">Pricing</p>
           <h1 className="text-3xl font-semibold">Choose the plan that fits</h1>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Transparent pricing with zero surprises. Upgrade when you need more
-            room to scale launches, emails, and domains.
+            Transparent pricing with zero surprises. Upgrade when you need more room to scale
+            launches, emails, and domains.
           </p>
         </div>
 
@@ -138,15 +136,11 @@ export default function PricingPage() {
               )}
 
               <div className="space-y-2">
-                <p className="text-xs uppercase tracking-wide text-blue-300/80">
-                  {plan.name}
-                </p>
+                <p className="text-xs uppercase tracking-wide text-blue-300/80">{plan.name}</p>
                 <p className="text-lg font-semibold">{plan.blurb}</p>
                 <div className="flex items-baseline gap-2">
                   <span className="text-4xl font-semibold">{plan.price}</span>
-                  <span className="text-muted-foreground">
-                    {plan.frequency}
-                  </span>
+                  <span className="text-muted-foreground">{plan.frequency}</span>
                 </div>
               </div>
 
@@ -167,9 +161,7 @@ export default function PricingPage() {
                     <span className="mt-0.5 inline-flex rounded-full bg- p-1 text-blue-100">
                       <CheckIcon className="size-4" />
                     </span>
-                    <span className="text-sm leading-relaxed text-foreground">
-                      {feature}
-                    </span>
+                    <span className="text-sm leading-relaxed text-foreground">{feature}</span>
                   </div>
                 ))}
               </div>

@@ -18,5 +18,5 @@ export const useLandingPageState = create<LandingPageStateI>()((set) => ({
   },
   setVisualizationType: (visualizationType) => {
     set({ visualizationType });
-  },
+  }
 }));

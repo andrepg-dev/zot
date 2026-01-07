@@ -21,8 +21,8 @@ const plans = [
       "Export your data",
       "1 domain for branded emails and landing pages",
       "Analytics for signups and sent emails",
-      "Trend search powered by Google Search",
-    ],
+      "Trend search powered by Google Search"
+    ]
   },
   {
     name: "Premium",
@@ -43,8 +43,8 @@ const plans = [
       "Extra security to block fake or disposable emails",
       "Analytics for sent emails and registered users",
       "Export your data",
-      "Use more powerful AI models",
-    ],
+      "Use more powerful AI models"
+    ]
   },
   {
     name: "Scale",
@@ -64,9 +64,9 @@ const plans = [
       "Extra security to block fake or disposable emails",
       "Analytics for sent emails and registered users",
       "Export your data",
-      "Use more powerful AI models",
-    ],
-  },
+      "Use more powerful AI models"
+    ]
+  }
 ];
 
 export default function BillingPage() {
@@ -74,13 +74,11 @@ export default function BillingPage() {
     <PageComponent className="max-w-6xl mx-auto text-foreground relative">
       <div className="flex flex-col gap-8">
         <div className="text-center space-y-3">
-          <p className="text-xs tracking-[0.25em] uppercase text-blue-300/80">
-            Billing
-          </p>
+          <p className="text-xs tracking-[0.25em] uppercase text-blue-300/80">Billing</p>
           <h1 className="text-3xl font-semibold">Choose the plan that fits</h1>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Transparent pricing with zero surprises. Upgrade when you need more
-            room to scale launches, emails, and domains.
+            Transparent pricing with zero surprises. Upgrade when you need more room to scale
+            launches, emails, and domains.
           </p>
         </div>
 
@@ -101,15 +99,11 @@ export default function BillingPage() {
               )}
 
               <div className="space-y-2">
-                <p className="text-xs uppercase tracking-wide text-blue-300/80">
-                  {plan.name}
-                </p>
+                <p className="text-xs uppercase tracking-wide text-blue-300/80">{plan.name}</p>
                 <p className="text-lg font-semibold">{plan.blurb}</p>
                 <div className="flex items-baseline gap-2">
                   <span className="text-4xl font-semibold">{plan.price}</span>
-                  <span className="text-muted-foreground">
-                    {plan.frequency}
-                  </span>
+                  <span className="text-muted-foreground">{plan.frequency}</span>
                 </div>
               </div>
 
@@ -126,16 +120,11 @@ export default function BillingPage() {
 
               <div className="mt-6 flex-1 space-y-3">
                 {plan.features.map((feature) => (
-                  <div
-                    key={`${plan.name}-${feature}`}
-                    className="flex items-start gap-3"
-                  >
+                  <div key={`${plan.name}-${feature}`} className="flex items-start gap-3">
                     <span className="mt-0.5 inline-flex rounded-full p-1 text-blue-100">
                       <CheckIcon className="size-4" />
                     </span>
-                    <span className="text-sm leading-relaxed text-foreground">
-                      {feature}
-                    </span>
+                    <span className="text-sm leading-relaxed text-foreground">{feature}</span>
                   </div>
                 ))}
               </div>

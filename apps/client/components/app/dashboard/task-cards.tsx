@@ -1,11 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import {
-  EnvelopeIcon,
-  LinkIcon,
-  RectangleStackIcon,
-} from "@heroicons/react/24/outline";
+import { EnvelopeIcon, LinkIcon, RectangleStackIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 
 const dashboardTasks = [
@@ -14,22 +10,22 @@ const dashboardTasks = [
     icon: RectangleStackIcon,
     title: "Start creating landing page",
     description: "Create a landing page using templates + AI.",
-    href: "/app/landing-page",
+    href: "/app/landing-page"
   },
   {
     id: 2,
     icon: LinkIcon,
     title: "Integrate waiting list",
     description: "Start collecting signups.",
-    href: "/app/launch/waitlist",
+    href: "/app/launch/waitlist"
   },
   {
     id: 3,
     icon: EnvelopeIcon,
     title: "Send email campaigns",
     description: "Time to execute seriously your creation.",
-    href: "/app/emails",
-  },
+    href: "/app/emails"
+  }
 ];
 
 export default function TaskCards() {
@@ -56,9 +52,7 @@ export default function TaskCards() {
             </div>
             <div className="flex flex-col flex-1">
               <p className="font-medium text-base">{task.title}</p>
-              <p className="text-sm text-muted-foreground mt-1">
-                {task.description}
-              </p>
+              <p className="text-sm text-muted-foreground mt-1">{task.description}</p>
             </div>
           </div>
         </Link>

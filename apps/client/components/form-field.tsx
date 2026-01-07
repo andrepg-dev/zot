@@ -17,7 +17,7 @@ export default function FormField({
   children,
   isRequired = false,
   isPremiumFeature = false,
-  error,
+  error
 }: FormFieldProps) {
   return (
     <div className="grid grid-cols-2 gap-12">

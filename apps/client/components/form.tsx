@@ -14,7 +14,7 @@ export default function Form({
       addToast({
         title: "Unexpeced error.",
         description: "Please try again or contact us at asponceg@gmail.com",
-        color: "danger",
+        color: "danger"
       });
     }
   }, [error]);

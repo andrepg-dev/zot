@@ -4,7 +4,7 @@ import Type from "../type";
 export default function Title({
   children,
   description,
-  className,
+  className
 }: {
   children: React.ReactNode;
   description?: string;
