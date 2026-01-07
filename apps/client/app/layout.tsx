@@ -8,7 +8,6 @@ import { ToastProvider } from "@heroui/toast";
 import clsx from "clsx";
 import { Metadata } from "next";
 import { Providers } from "./providers";
-import Sidebar from "@/components/sidebar/sidebar";
 
 export const metadata: Metadata = {
   title: {
@@ -31,7 +30,7 @@ export default function RootLayout({
       <body
         className={clsx(
           "min-h-screen text-foreground font-sans antialiased bg-black relative dark",
-          interFont.variable,
+          interFont.variable
         )}
       >
         <ToastProvider />

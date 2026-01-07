@@ -7,22 +7,13 @@ import HeaderNavigation from "@/components/navigation/header.navigation";
 import SidebarNavigation from "@/components/navigation/sidebar.navigation";
 import { cn } from "@/lib/utils";
 import { useLandingPageState } from "@/store/landing-page/landing-page.store";
-import {
-  ChevronRightIcon,
-  PaintBrushIcon,
-  PlusIcon,
-} from "@heroicons/react/24/outline";
+import { ChevronRightIcon, PlusIcon } from "@heroicons/react/24/outline";
 import { Button } from "@heroui/button";
 import React, { useEffect, useState } from "react";
 
-export default function EditLandingPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
+export default function EditLandingPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = React.use(params);
-  const { editionType, visualizationType, setVisualizationType } =
-    useLandingPageState();
+  const { editionType, visualizationType, setVisualizationType } = useLandingPageState();
   const [shouldChangeHeader, setShouldChangeHeader] = useState<boolean>();
 
   useEffect(() => {
@@ -41,14 +32,11 @@ export default function EditLandingPage({
       <HeaderNavigation
         navigationItems={[
           { label: "Landing Page", pathname: "/app/landing-page" },
-          { label: id, pathname: id },
+          { label: id, pathname: id }
         ]}
         postNavigationItems={
           <div>
-            <Button
-              size="sm"
-              className="px-3 py-2 bg-foreground text-white dark:text-black h-max"
-            >
+            <Button size="sm" className="px-3 py-2 bg-foreground text-white dark:text-black h-max">
               Launch
             </Button>
           </div>
@@ -64,23 +52,19 @@ export default function EditLandingPage({
           <div className="p-4 pb-0 flex flex-col h-full flex-1 text-sm gap-2 min-w-[475px]">
             <div className="flex flex-col gap-2.5 flex-1 min-h-0 pb-52">
               <div className="bg-default-100 p-2 border rounded-lg max-w-4/5 ml-auto">
-                Hola, estoy creando una tienda online para vender ropa y
-                necesito ayuda.
+                Hola, estoy creando una tienda online para vender ropa y necesito ayuda.
               </div>
 
               <div className="p-2 rounded-lg max-w-4/5">
-                ¡Perfecto! ¿Qué tipo de ropa quieres vender y a qué tipo de
-                público?
+                ¡Perfecto! ¿Qué tipo de ropa quieres vender y a qué tipo de público?
               </div>
 
               <div className="bg-default-100 p-2 border rounded-lg max-w-4/5 ml-auto">
-                Principalmente camisetas y hoodies. Quiero vender a jóvenes de
-                16 a 25 años.
+                Principalmente camisetas y hoodies. Quiero vender a jóvenes de 16 a 25 años.
               </div>
 
               <div className="p-2 rounded-lg max-w-4/5">
-                Excelente. ¿Tu marca tiene un estilo más urbano, minimalista o
-                deportivo?
+                Excelente. ¿Tu marca tiene un estilo más urbano, minimalista o deportivo?
               </div>
 
               <div className="bg-default-100 p-2 border rounded-lg max-w-4/5 ml-auto">
@@ -88,9 +72,8 @@ export default function EditLandingPage({
               </div>
 
               <div className="p-2 rounded-lg max-w-4/5">
-                Perfecto. Puedo ayudarte a definir tu identidad, precios,
-                catálogo inicial y estrategia de venta. ¿Ya tienes nombre de
-                marca?
+                Perfecto. Puedo ayudarte a definir tu identidad, precios, catálogo inicial y
+                estrategia de venta. ¿Ya tienes nombre de marca?
               </div>
 
               <div className="bg-default-100 p-2 border rounded-lg max-w-4/5 ml-auto">
@@ -98,8 +81,8 @@ export default function EditLandingPage({
               </div>
 
               <div className="p-2 rounded-lg max-w-4/5">
-                Me encanta el nombre. Vamos a construir tu tienda paso a paso.
-                ¿Quieres empezar por logo, catálogo o precios?
+                Me encanta el nombre. Vamos a construir tu tienda paso a paso. ¿Quieres empezar por
+                logo, catálogo o precios?
               </div>
 
               <div className="bg-default-100 p-2 border rounded-lg max-w-4/5 ml-auto">

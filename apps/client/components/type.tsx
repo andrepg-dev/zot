@@ -1,13 +1,13 @@
-import { cn } from "@/lib/utils"
-import React from "react"
+import { cn } from "@/lib/utils";
+import React from "react";
 
-type VariantKey = keyof typeof variants
+type VariantKey = keyof typeof variants;
 
 interface TypeProps {
-  variant?: VariantKey
-  children: React.ReactNode
-  className?: string
-  as?: React.ElementType
+  variant?: VariantKey;
+  children: React.ReactNode;
+  className?: string;
+  as?: React.ElementType;
 }
 
 const variants = {
@@ -20,7 +20,7 @@ const variants = {
   base: "text-sm",
   sm: "text-xs",
   link: "text-primary-400 hover:underline decoration-2 cursor-pointer",
-} as const
+} as const;
 
 const elementMap: Record<VariantKey, React.ElementType> = {
   h1: "h1",
@@ -32,7 +32,7 @@ const elementMap: Record<VariantKey, React.ElementType> = {
   base: "p",
   sm: "p",
   link: "span",
-}
+};
 
 export default function Type({
   variant = "base",
@@ -41,11 +41,11 @@ export default function Type({
   as,
   ...props
 }: TypeProps) {
-  const Component = as || elementMap[variant]
+  const Component = as || elementMap[variant];
 
   return (
     <Component className={cn(variants[variant], className)} {...props}>
       {children}
     </Component>
-  )
+  );
 }

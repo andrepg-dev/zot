@@ -8,7 +8,7 @@ interface HeaderState {
   hidden?: boolean;
   setChildren: (children: ReactNode | null) => void;
   setNavigationItems: (
-    navigationItems: Array<{ pathname: string; label: string }> | null,
+    navigationItems: Array<{ pathname: string; label: string }> | null
   ) => void;
   setPostNavigationItems: (children: ReactNode | null) => void;
   setHidden: (hidden: boolean) => void;

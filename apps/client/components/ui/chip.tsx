@@ -15,7 +15,7 @@ export default function Chip({ status, label }: ChipProps) {
         status === "active" && "bg-success/20 text-success",
         status === "warning" && "bg-warning/20 text-warning",
         status === "neutral" && "bg-default/20 text-default-600",
-        status === "danger" && "bg-destructive/20 text-destructive",
+        status === "danger" && "bg-destructive/20 text-destructive"
       )}
     >
       {label || status}

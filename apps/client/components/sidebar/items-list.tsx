@@ -22,7 +22,7 @@ export default function ItemList({ navItems }: { navItems: any }) {
                 "flex items-center gap-2 py-1.5 px-2 h-[35px] text-muted-foreground rounded-sm hover:bg-default-50",
                 {
                   "text-white bg-default-100": isActive,
-                },
+                }
               )}
             >
               {item.icon ? (

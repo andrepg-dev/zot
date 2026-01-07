@@ -1,5 +1,5 @@
 const CustomGradientBar = (
-  props: React.SVGProps<SVGRectElement> & { dataKey?: string },
+  props: React.SVGProps<SVGRectElement> & { dataKey?: string }
 ) => {
   const { fill, x, y, width, height, dataKey } = props;
 
