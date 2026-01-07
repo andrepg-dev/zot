@@ -46,10 +46,10 @@ export default function EditLandingPage({ params }: { params: Promise<{ id: stri
       <SidebarNavigation
         className={cn(
           "overflow-y-auto z-50 duration-400 transition-all",
-          editionType === "ai" ? "w-[620px]" : "w-0"
+          editionType === "ai" ? "min-w-[435px]" : "min-w-0 w-0"
         )}
         children={
-          <div className="p-4 pb-0 flex flex-col h-full flex-1 text-sm gap-2 min-w-[475px]">
+          <div className="p-4 pb-0 flex flex-col h-full flex-1 text-sm gap-2 min-w-[435px]">
             <div className="flex flex-col gap-2.5 flex-1 min-h-0 pb-52">
               <div className="bg-default-100 p-2 border rounded-lg max-w-4/5 ml-auto">
                 Hola, estoy creando una tienda online para vender ropa y necesito ayuda.
