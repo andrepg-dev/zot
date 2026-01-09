@@ -4,7 +4,7 @@ import { useLandingPageState } from "@/store/landing-page/landing-page.store";
 import { Editor, Monaco } from "@monaco-editor/react";
 import { MonacoJsxSyntaxHighlight, getWorker } from "monaco-jsx-syntax-highlight";
 import { useCallback, useState } from "react";
-import OneDarkPro from "../../../theme/one-dark-pro.json";
+import OneDarkPro from "../../../../theme/one-dark-pro.json";
 import { initialValue } from "./monaco.constants";
 
 export default function MonacoEditor() {

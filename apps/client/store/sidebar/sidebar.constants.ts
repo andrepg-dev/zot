@@ -2,7 +2,6 @@ import {
   CreditCardIcon,
   CursorArrowRippleIcon,
   EnvelopeIcon,
-  GlobeAltIcon,
   Square3Stack3DIcon,
   Squares2X2Icon
 } from "@heroicons/react/24/outline";

@@ -34,7 +34,7 @@ export default function PricingPage() {
     },
     {
       name: "Premium",
-      price: "$25",
+      price: "$50",
       frequency: "/ month",
       blurb: "For products in production that need headroom and support.",
       ctaLabel: "Upgrade now",
@@ -56,7 +56,7 @@ export default function PricingPage() {
     },
     {
       name: "Scale",
-      price: "$90",
+      price: "$180",
       frequency: "/ month",
       blurb: "Built for fast-growing teams with heavy launch pipelines.",
       ctaLabel: "Contact sales",
