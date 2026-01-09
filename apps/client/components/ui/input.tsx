@@ -29,10 +29,9 @@ const InputComponent = forwardRef<HTMLInputElement, InputProps>((props, ref) => 
         )}
         classNames={{
           inputWrapper:
-            "data-[focus=true]:bg-default-50 data-[hover=true]:!bg-default-50 bg-default-50",
+            "data-[focus=true]:bg-default-100/50 data-[hover=true]:!bg-default-100/50 bg-default-100/50 border",
           input: "text-xs"
         }}
-        {...rest}
         startContent={
           type === "url" && (
             <span className="text-xs bg-default-100 text-muted-foreground rounded-sm p-1 px-2">
@@ -42,11 +41,12 @@ const InputComponent = forwardRef<HTMLInputElement, InputProps>((props, ref) => 
         }
         endContent={
           maxLength && (
-            <span className="text-xs text-muted-foreground min-w-[35px] text-center p-1 rounded-sm bg-default-100">
+            <span className="text-xs text-muted-foreground text-center p-1 rounded-sm bg-default-100 min-w-max">
               {String(inputValue).length}/{maxLength}
             </span>
           )
         }
+        {...rest}
       />
     </div>
   );
