@@ -1,6 +1,6 @@
 "use client";
 
-import { defaultNavItems, NavItemsI } from "@/store/sidebar/sidebar.constants";
+import { defaultNavItems, NavItemsI, NavItemOrDivider } from "@/store/sidebar/sidebar.constants";
 import useSidebarStore from "@/store/sidebar/sidebar.store";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
@@ -12,7 +12,7 @@ export default function SidebarNavigation({
   className
 }: {
   children?: React.ReactNode;
-  navItems?: NavItemsI;
+  navItems?: NavItemOrDivider[] | NavItemsI;
   hidden?: boolean;
   className?: string;
 }) {

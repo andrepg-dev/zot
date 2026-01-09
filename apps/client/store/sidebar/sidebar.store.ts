@@ -1,12 +1,12 @@
 import { create } from "zustand";
-import { defaultNavItems, NavItemsI } from "./sidebar.constants";
+import { defaultNavItems, NavItemsI, NavItemOrDivider } from "./sidebar.constants";
 
 interface SidebarStateI {
-  navItems?: NavItemsI | null;
+  navItems?: NavItemsI | NavItemOrDivider[] | null;
   children?: React.ReactNode | null;
   hidden?: boolean;
   className?: string | null;
-  setNavItems: (navItems: NavItemsI | null) => void;
+  setNavItems: (navItems: NavItemsI | NavItemOrDivider[] | null) => void;
   setChildren: (children: React.ReactNode | null) => void;
   setHidden: (hidden: boolean) => void;
   setClassName: (className: string | null) => void;

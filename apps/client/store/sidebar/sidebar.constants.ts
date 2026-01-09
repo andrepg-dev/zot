@@ -41,6 +41,18 @@ export const defaultNavItems = [
 
 type navItemsType = typeof defaultNavItems;
 
+export interface NavItem {
+  href: string;
+  label: string;
+  icon?: React.ForwardRefExoticComponent<any>;
+}
+
+export interface NavDivider {
+  type: "divider";
+}
+
+export type NavItemOrDivider = NavItem | NavDivider;
+
 export interface NavItemsI extends navItemsType {
   icon?: React.ForwardRefExoticComponent<any>;
 }
