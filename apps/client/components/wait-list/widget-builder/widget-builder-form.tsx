@@ -5,16 +5,13 @@ import InputComponent from "@/components/ui/input";
 import { Button } from "@heroui/button";
 import { Card, CardBody, CardHeader } from "@heroui/card";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 export default function WidgetBuilderForm() {
-  const router = useRouter();
-
   return (
     <article className="w-[48rem] mt-6 flex flex-col gap-4">
       {/* General */}
       <section>
-        <Card radius="sm">
+        <Card radius="sm" className="border">
           <CardHeader className="border-b">
             <Title description="Configure general information">
               <span className="text-sm">General</span>
@@ -64,7 +61,7 @@ export default function WidgetBuilderForm() {
 
       {/* Colors */}
       <section>
-        <Card radius="sm">
+        <Card radius="sm" className="border">
           <CardHeader className="border-b">
             <Title description="Edit widget colors">
               <span className="text-sm">Colors</span>
@@ -134,13 +131,15 @@ export default function WidgetBuilderForm() {
       <hr />
 
       <div className="flex justify-between">
-        <Button variant="flat" size="sm" as={Link} href="/app/waitlist">
+        <Button variant="flat" size="sm" as={Link} href="/app/waitlist" className="border">
           Cancel
         </Button>
 
         <div className="flex gap-2">
-          <Button size="sm">Create</Button>
-          <Button size="sm" color="primary">
+          <Button size="sm" className="border">
+            Create
+          </Button>
+          <Button size="sm" className="border" color="primary">
             Create and attach
           </Button>
         </div>

@@ -33,8 +33,6 @@ export default async function Page({
           </GlobalTooltip>
         </div>
       </div>
-
-      
     </div>
   );
 }

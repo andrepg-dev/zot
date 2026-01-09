@@ -81,12 +81,13 @@ export default function LaunchedWaitList({ params }: { params: Promise<{ id: str
 
         {/* <button className="text-primary flex items-center gap-1 text-sm font-medium hover:underline cursor-pointer  decoration-2"></button> */}
 
+        {/* Open a openbox with a searchbar to attach our widget */}
         <Button
           size="sm"
           radius="sm"
           color="primary"
           as={Link}
-          href={`/app/launch/widget-builder?from=${id}`}
+          href={`/app/launch/waitlist/${id}/widget-builder`}
         >
           <PlusIcon className="size-4" />
           Attach widget
