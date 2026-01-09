@@ -23,11 +23,11 @@ export default function WaitListLayout({ children }: { children: React.ReactNode
             icon: HomeIcon,
             label: "Overview"
           },
-          {
-            href: `/app/launch/waitlist/${id}/widget-builder`,
-            icon: WrenchScrewdriverIcon,
-            label: "Widget Builder"
-          },
+          // {
+          //   href: `/app/launch/waitlist/${id}/widget-builder`,
+          //   icon: WrenchScrewdriverIcon,
+          //   label: "Widget Builder"
+          // },
           {
             href: `/app/launch/waitlist/${id}/webhooks`,
             icon: BoltIcon,

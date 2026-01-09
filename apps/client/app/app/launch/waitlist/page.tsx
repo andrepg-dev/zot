@@ -45,7 +45,7 @@ export default function LaunchWaitList() {
   };
 
   return (
-    <PageComponent className="bg-background border border-dashed rounded-lg w-5/6 mx-auto mt-8">
+    <PageComponent className="bg-default-50 border border-dashed rounded-sm w-5/6 mx-auto mt-8">
       <HeaderNavigation
         navigationItems={[
           {
@@ -69,7 +69,7 @@ export default function LaunchWaitList() {
           title="Wait-List URL"
           description={
             <>
-              Widget will be accessible through this URL. <Type variant="link">See example.</Type>
+              Use your own URL to join in the widget<Type variant="link">See example.</Type>
             </>
           }
           error={errors.url}

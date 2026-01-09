@@ -31,7 +31,7 @@ export default function Dashboard() {
         </div>
 
         <Title description="Below are some tasks to get you started." className="mt-8">
-          No active waitlist
+          Dashboard
         </Title>
 
         <div className="grid grid-cols-3 gap-4 my-6">

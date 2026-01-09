@@ -1,3 +1,5 @@
+"use client";
+
 import { plans } from "@/constants/billing-constant";
 import { CheckIcon } from "@heroicons/react/24/solid";
 import { Drawer, DrawerBody, DrawerContent, DrawerHeader, useDisclosure } from "@heroui/react";

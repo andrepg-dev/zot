@@ -20,7 +20,7 @@ export default function Header() {
         <div className="flex gap-2 items-center">
           <Image src={"/icons/waitlean-icon.png"} width={25} height={25} alt={"Waitlean logo"} />
           <Link href={"/app/dashboard"}>
-            <span className="font-bold text-sm">WaitList + Landing Page</span>
+            <span className="font-bold text-sm">WaitList + Landing Page = ZOT</span>
           </Link>
 
           {navigationItems &&

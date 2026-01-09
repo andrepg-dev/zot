@@ -1,9 +1,11 @@
+"use client";
+
 import { cn } from "@/lib/utils";
 import { Input, InputProps } from "@heroui/input";
 import { forwardRef, useEffect, useState } from "react";
 
 const InputComponent = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
-  const { value, maxLength, onChange, type, ...rest } = props;
+  const { value, maxLength, onChange, type, startContent, ...rest } = props;
   const [inputValue, setInputValue] = useState(value || "");
 
   useEffect(() => {
@@ -16,6 +18,13 @@ const InputComponent = forwardRef<HTMLInputElement, InputProps>((props, ref) => 
     setInputValue(e.target.value);
     onChange?.(e);
   };
+
+  const defaultStartContent =
+    type === "url" && !startContent ? (
+      <span className="text-xs bg-default-100 text-muted-foreground rounded-sm p-1 px-2">
+        https://
+      </span>
+    ) : undefined;
 
   return (
     <div className="relative">
@@ -32,13 +41,7 @@ const InputComponent = forwardRef<HTMLInputElement, InputProps>((props, ref) => 
             "data-[focus=true]:bg-default-100/50 data-[hover=true]:!bg-default-100/50 bg-default-100/50 border",
           input: "text-xs"
         }}
-        startContent={
-          type === "url" && (
-            <span className="text-xs bg-default-100 text-muted-foreground rounded-sm p-1 px-2">
-              https://
-            </span>
-          )
-        }
+        startContent={startContent || defaultStartContent}
         endContent={
           maxLength && (
             <span className="text-xs text-muted-foreground text-center p-1 rounded-sm bg-default-100 min-w-max">

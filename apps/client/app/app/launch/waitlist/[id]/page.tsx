@@ -6,13 +6,19 @@ import { cn } from "@/lib/utils";
 import {
   EnvelopeIcon,
   HandRaisedIcon,
+  PlusIcon,
   ShareIcon,
   UserGroupIcon,
   UserPlusIcon
 } from "@heroicons/react/24/outline";
+import { Button } from "@heroui/button";
+import { Link } from "@heroui/link";
 import NumberFlow from "@number-flow/react";
+import React from "react";
 
-export default function LaunchedWaitList() {
+export default function LaunchedWaitList({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = React.use(params);
+
   const stats = [
     {
       id: 1,
@@ -68,7 +74,24 @@ export default function LaunchedWaitList() {
 
   return (
     <PageComponent>
-      <Title description="Wait-List launched">Overview</Title>
+      <div className="flex items-start gap-8">
+        <Title description="Wait-List launched" className="flex">
+          <span>Launch {id}</span>
+        </Title>
+
+        {/* <button className="text-primary flex items-center gap-1 text-sm font-medium hover:underline cursor-pointer  decoration-2"></button> */}
+
+        <Button
+          size="sm"
+          radius="sm"
+          color="primary"
+          as={Link}
+          href={`/app/launch/widget-builder?from=${id}`}
+        >
+          <PlusIcon className="size-4" />
+          Attach widget
+        </Button>
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mt-4 rounded-default">
         {stats.map((stat) => (
