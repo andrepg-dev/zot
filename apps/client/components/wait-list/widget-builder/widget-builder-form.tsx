@@ -128,8 +128,6 @@ export default function WidgetBuilderForm() {
         </Card>
       </section>
 
-      <hr />
-
       <div className="flex justify-between">
         <Button variant="flat" size="sm" as={Link} href="/app/waitlist" className="border">
           Cancel

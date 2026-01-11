@@ -22,11 +22,11 @@ export const defaultNavItems = [
     label: "Billing",
     icon: CreditCardIcon
   },
-  {
-    href: "/app/emails",
-    label: "Emails",
-    icon: EnvelopeIcon
-  },
+  // {
+  //   href: "/app/emails",
+  //   label: "Emails",
+  //   icon: EnvelopeIcon
+  // },
   {
     href: "/app/landing-page",
     label: "Landing page",

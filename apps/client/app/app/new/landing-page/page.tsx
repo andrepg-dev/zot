@@ -1,6 +1,6 @@
 "use client";
 
-import MonacoEditorHeader from "@/components/editor/monaco-editor/monaco-editor-header";
+import MonacoEditorHeader from "@/components/editor/monaco/monaco-editor/monaco-editor-header";
 import PageComponent from "@/components/layouts/page-component";
 import HeaderNavigation from "@/components/navigation/header.navigation";
 import SidebarNavigation from "@/components/navigation/sidebar.navigation";
