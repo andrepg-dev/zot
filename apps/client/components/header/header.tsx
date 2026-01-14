@@ -5,7 +5,6 @@ import useHeaderStore from "@/store/header/header.store";
 import { MagnifyingGlassIcon, SlashIcon } from "@heroicons/react/24/outline";
 import { Button } from "@heroui/button";
 import { Kbd } from "@heroui/kbd";
-import Image from "next/image";
 import Link from "next/link";
 
 export default function Header() {
@@ -18,9 +17,9 @@ export default function Header() {
     >
       <div className="shrink-0 bg-sidebar p-4 flex items-center justify-between overflow-hidden h-14">
         <div className="flex gap-2 items-center">
-          <Image src={"/icons/waitlean-icon.png"} width={25} height={25} alt={"Waitlean logo"} />
+          {/* <Image src={"/zot-logo.png"} width={80} height={80} alt={"zot logo"} /> */}
           <Link href={"/app/dashboard"}>
-            <span className="font-bold text-sm">WaitList + Landing Page = ZOT</span>
+            <span className="font-bold text-2xl">zot</span>
           </Link>
 
           {navigationItems &&

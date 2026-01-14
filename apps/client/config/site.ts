@@ -1,7 +1,7 @@
 export type SiteConfig = typeof siteConfig;
 
 export const siteConfig = {
-  name: "WaitLean",
+  name: "Zot",
   description: "Open Source waitlist to launch your products",
   navItems: [
     {
