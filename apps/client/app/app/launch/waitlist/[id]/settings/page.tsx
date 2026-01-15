@@ -39,6 +39,25 @@ export default function SettingsPage() {
                 Disable
               </Button>
             </FormField>
+
+            <hr />
+
+            <FormField
+              title="Fake user's protection"
+              description={
+                <>
+                  Stop recieving temporal and fakes emails with{" "}
+                  <Type variant="link">Dymo security services</Type>.
+                </>
+              }
+              className="p-4"
+              isPremiumFeature
+            >
+              <Switch size="sm" className="text-sm" isDisabled>
+                Block fake user's
+              </Switch>
+            </FormField>
+
             <hr />
 
             <CardFooter className="flex justify-end">
