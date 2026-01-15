@@ -2,6 +2,11 @@
 
 import Title from "@/components/global/title";
 import PageComponent from "@/components/layouts/page-component";
+import ConversionRateChart from "@/components/wait-list/charts/conversion-rate-chart";
+import DailyRegistrationsChart from "@/components/wait-list/charts/daily-registrations-chart";
+import FakeUsersBlockedChart from "@/components/wait-list/charts/fake-users-blocked-chart";
+import TopReferrersChart from "@/components/wait-list/charts/top-referrers-chart";
+import TrafficSourcesChart from "@/components/wait-list/charts/traffic-sources-chart";
 import { cn } from "@/lib/utils";
 import {
   EnvelopeIcon,
@@ -96,7 +101,7 @@ export default function LaunchedWaitList({ params }: { params: Promise<{ id: str
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mt-4 rounded-default">
         {stats.map((stat) => (
-          <div key={stat.id} className="border rounded-default bg-default-50">
+          <div key={stat.id} className="border border-dashed rounded-lg bg-background">
             <div className="p-6 py-5">
               <div className="flex flex-col gap-2">
                 <NumberFlow value={parseInt(stat.value ?? 0)} className="text-2xl font-semibold" />
@@ -109,6 +114,32 @@ export default function LaunchedWaitList({ params }: { params: Promise<{ id: str
             </div>
           </div>
         ))}
+      </div>
+
+      {/* Analytics Section */}
+      <div className="mt-8">
+        <Title description="Detailed analytics and insights">
+          <span className="text-lg">Analytics</span>
+        </Title>
+      </div>
+
+      {/* Masonry Grid */}
+      <div className="columns-1 lg:columns-2 gap-6 mt-6 space-y-6">
+        <div className="break-inside-avoid">
+          <DailyRegistrationsChart />
+        </div>
+        <div className="break-inside-avoid">
+          <FakeUsersBlockedChart />
+        </div>
+        <div className="break-inside-avoid">
+          <TopReferrersChart />
+        </div>
+        <div className="break-inside-avoid">
+          <TrafficSourcesChart />
+        </div>
+        <div className="break-inside-avoid">
+          <ConversionRateChart />
+        </div>
       </div>
     </PageComponent>
   );
