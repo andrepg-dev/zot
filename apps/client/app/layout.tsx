@@ -30,7 +30,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         )}
       >
         <ToastProvider />
-        <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
+        <Providers themeProps={{ attribute: "class", forcedTheme: "dark" }}>
           {/* <NextTopLoader
             color="#006fee"
             height={3}

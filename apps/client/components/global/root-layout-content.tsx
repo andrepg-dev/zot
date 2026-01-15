@@ -10,12 +10,12 @@ export default function RootLayoutContent({ children }: { children: React.ReactN
   const pathname = usePathname();
 
   return (
-    <div className="flex flex-row flex-1 bg-[#060606] overflow-hidden">
+    <div className="flex flex-row flex-1 dark:bg-[#060606] overflow-hidden">
       <Sidebar />
       {/* Content */}
       <main
         className={cn(
-          "w-full bg-black rounded-t-xl border border-b-0",
+          "w-full dark:bg-black rounded-t-xl border border-b-0",
           pathname.includes("/app/edit") && editionType === "manually"
             ? "overflow-hidden m-2 mb-0 mt-0"
             : "overflow-auto mx-2 ml-0"

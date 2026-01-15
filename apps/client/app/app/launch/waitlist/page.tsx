@@ -55,7 +55,7 @@ export default function LaunchWaitList() {
         ]}
       />
 
-      <Form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-8" error={error}>
+      <Form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6" error={error}>
         <FormField
           title="Wait-List Name"
           description="This shows up to Signups in the no-code widget, when they sign up, and in any emails."
@@ -69,7 +69,7 @@ export default function LaunchWaitList() {
           title="Wait-List URL"
           description={
             <>
-              Use your own URL to join in the widget<Type variant="link">See example.</Type>
+              Use your own URL to join in the widget <Type variant="link">See example.</Type>
             </>
           }
           error={errors.url}

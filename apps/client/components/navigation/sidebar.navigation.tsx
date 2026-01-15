@@ -1,6 +1,6 @@
 "use client";
 
-import { defaultNavItems, NavItemsI, NavItemOrDivider } from "@/store/sidebar/sidebar.constants";
+import { defaultNavItems, NavItemOrDivider, NavItemsI } from "@/store/sidebar/sidebar.constants";
 import useSidebarStore from "@/store/sidebar/sidebar.store";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";

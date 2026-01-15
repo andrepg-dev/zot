@@ -1,13 +1,13 @@
 "use client";
 
 import { useLandingPageState } from "@/store/landing-page/landing-page.store";
-import { Editor, Monaco } from "@monaco-editor/react";
+import { Editor, EditorProps, Monaco } from "@monaco-editor/react";
 import { MonacoJsxSyntaxHighlight, getWorker } from "monaco-jsx-syntax-highlight";
 import { useCallback, useState } from "react";
 import OneDarkPro from "../../../../theme/one-dark-pro.json";
 import { initialValue } from "./monaco.constants";
 
-export default function MonacoEditor() {
+export default function MonacoEditor({ ...props }: EditorProps) {
   const [editorData, setEditorData] = useState(initialValue);
   const { editionType } = useLandingPageState();
 
@@ -241,6 +241,7 @@ export default function MonacoEditor() {
         },
         fontFamily: "Geist Mono"
       }}
+      {...props}
     />
   );
 }

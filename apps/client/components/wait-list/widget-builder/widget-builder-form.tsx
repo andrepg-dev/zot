@@ -6,7 +6,7 @@ import { Button } from "@heroui/button";
 import { Card, CardBody, CardHeader } from "@heroui/card";
 import Link from "next/link";
 
-export default function WidgetBuilderForm() {
+export default function WidgetBuilderForm({ id }: { id: string }) {
   return (
     <article className="w-[48rem] mt-6 flex flex-col gap-4">
       {/* General */}
@@ -129,7 +129,13 @@ export default function WidgetBuilderForm() {
       </section>
 
       <div className="flex justify-between">
-        <Button variant="flat" size="sm" as={Link} href="/app/waitlist" className="border">
+        <Button
+          variant="flat"
+          size="sm"
+          as={Link}
+          href={`/app/launch/waitlist/${id}`}
+          className="border"
+        >
           Cancel
         </Button>
 

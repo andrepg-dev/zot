@@ -8,7 +8,7 @@ import { Card, CardFooter } from "@heroui/card";
 
 export default function Webhooks() {
   return (
-    <PageComponent className="flex flex-col gap-6">
+    <PageComponent className="flex flex-col gap-6 w-5xl">
       <Title description="Receive notification when a user has been registered">Webhooks</Title>
 
       <div className="flex flex-col gap-4">
