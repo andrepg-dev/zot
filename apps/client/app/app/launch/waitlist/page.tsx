@@ -65,7 +65,7 @@ export default function LaunchWaitList() {
           <InputComponent placeholder="App Launch" maxLength={30} {...register("name")} autoFocus />
         </FormField>
 
-        <FormField
+        {/* <FormField
           title="Wait-List URL"
           description={
             <>
@@ -75,7 +75,7 @@ export default function LaunchWaitList() {
           error={errors.url}
         >
           <InputComponent placeholder="example.com/waitlist" type="url" {...register("url")} />
-        </FormField>
+        </FormField> */}
 
         <FormField
           title="Send email to new signups"

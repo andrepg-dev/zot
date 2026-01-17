@@ -1,26 +1,33 @@
-import { Injectable } from '@nestjs/common';
-import { CreateWaitListDto } from './dto/create-wait-list.dto';
-import { UpdateWaitListDto } from './dto/update-wait-list.dto';
+import { Injectable } from "@nestjs/common";
+import { InjectModel } from "@nestjs/mongoose";
+import { Model } from "mongoose";
+import { CreateWaitListDto } from "./dto/create-wait-list.dto";
+import { UpdateWaitListDto } from "./dto/update-wait-list.dto";
+import { WaitList } from "./schemas/wait-list.schema";
 
 @Injectable()
 export class WaitListService {
-  create(createWaitListDto: CreateWaitListDto) {
-    return 'This action adds a new waitList';
+  constructor(
+    @InjectModel(WaitList.name) private WaitListModel: Model<WaitList>,
+  ) {}
+
+  create(CreateWaitListDto: CreateWaitListDto) {
+    return this.WaitListModel.create(CreateWaitListDto);
   }
 
   findAll() {
-    return `This action returns all waitList`;
+    return this.WaitListModel.find({});
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} waitList`;
+  findOne(id: string) {
+    return this.WaitListModel.findOne({ id });
   }
 
-  update(id: number, updateWaitListDto: UpdateWaitListDto) {
-    return `This action updates a #${id} waitList`;
+  update(id: string, updateWaitListDto: UpdateWaitListDto) {
+    return this.WaitListModel.findByIdAndUpdate(id, updateWaitListDto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} waitList`;
+  remove(id: string) {
+    return this.WaitListModel.deleteOne({ id });
   }
 }

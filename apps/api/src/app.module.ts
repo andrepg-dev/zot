@@ -1,6 +1,7 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { MongooseModule } from "@nestjs/mongoose";
+import { AppController } from "./app.controller";
 import envConfig from "./config/env.config";
 import mongodbConfig from "./config/mongodb.config";
 import { WaitListModule } from "./wait-list/wait-list.module";
@@ -11,7 +12,7 @@ import { WaitListModule } from "./wait-list/wait-list.module";
     MongooseModule.forRootAsync(mongodbConfig()),
     WaitListModule,
   ],
-  controllers: [],
+  controllers: [AppController],
   providers: [],
 })
 export class AppModule {}
