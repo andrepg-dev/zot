@@ -5,9 +5,9 @@ export class CreateWaitListDto {
   name: string;
 
   @IsString()
-  webhookURL: string;
+  webhook_url: string;
 
   @IsMongoId({ message: "Invalid mongoDB ObjectId" })
   @IsString()
-  widgetId: string;
+  widget_id: string;
 }

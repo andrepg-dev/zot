@@ -11,23 +11,23 @@ export class WaitListService {
     @InjectModel(WaitList.name) private WaitListModel: Model<WaitList>,
   ) {}
 
-  create(CreateWaitListDto: CreateWaitListDto) {
-    return this.WaitListModel.create(CreateWaitListDto);
+  async create(CreateWaitListDto: CreateWaitListDto) {
+    return await this.WaitListModel.create(CreateWaitListDto);
   }
 
-  findAll() {
-    return this.WaitListModel.find({});
+  async findAll() {
+    return await this.WaitListModel.find({});
   }
 
-  findOne(id: string) {
-    return this.WaitListModel.findOne({ id });
+  async findOne(id: string) {
+    return await this.WaitListModel.findOne({ id });
   }
 
-  update(id: string, updateWaitListDto: UpdateWaitListDto) {
-    return this.WaitListModel.findByIdAndUpdate(id, updateWaitListDto);
+  async update(id: string, updateWaitListDto: UpdateWaitListDto) {
+    return await this.WaitListModel.findByIdAndUpdate(id, updateWaitListDto);
   }
 
-  remove(id: string) {
-    return this.WaitListModel.deleteOne({ id });
+  async remove(id: string) {
+    return await this.WaitListModel.deleteOne({ id });
   }
 }

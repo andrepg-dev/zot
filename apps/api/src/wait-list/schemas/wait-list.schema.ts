@@ -10,13 +10,13 @@ export class WaitList {
   URL: string;
 
   @Prop({ required: true, default: false })
-  isSecurityActive: boolean;
+  is_security_active: boolean;
 
   @Prop({ type: mongoose.Schema.ObjectId, ref: "widget" })
   widget: mongoose.Types.ObjectId;
 
   @Prop()
-  webhookURL: string;
+  webhook_url: string;
 }
 
 export const WaitListSchema = SchemaFactory.createForClass(WaitList);

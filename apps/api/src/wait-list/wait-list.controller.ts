@@ -27,7 +27,7 @@ export class WaitListController {
 
   @Get(":id")
   findOne(@Param("id") id: string) {
-    return this.waitListService.findOne(+id);
+    return this.waitListService.findOne(id);
   }
 
   @Patch(":id")
@@ -35,11 +35,11 @@ export class WaitListController {
     @Param("id") id: string,
     @Body() updateWaitListDto: UpdateWaitListDto,
   ) {
-    return this.waitListService.update(+id, updateWaitListDto);
+    return this.waitListService.update(id, updateWaitListDto);
   }
 
   @Delete(":id")
   remove(@Param("id") id: string) {
-    return this.waitListService.remove(+id);
+    return this.waitListService.remove(id);
   }
 }
