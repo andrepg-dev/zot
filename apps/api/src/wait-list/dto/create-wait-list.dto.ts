@@ -1,13 +1,15 @@
-import { IsMongoId, IsString } from "class-validator";
+import { IsMongoId, IsOptional, IsString, IsUrl } from "class-validator";
 
 export class CreateWaitListDto {
   @IsString()
   name: string;
 
-  @IsString()
-  webhook_url: string;
+  @IsUrl()
+  @IsOptional()
+  webhook_url?: string;
 
   @IsMongoId({ message: "Invalid mongoDB ObjectId" })
   @IsString()
-  widget_id: string;
+  @IsOptional()
+  widget_id?: string;
 }

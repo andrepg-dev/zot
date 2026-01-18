@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, Types } from "mongoose";
 import { CreateWaitListDto } from "./dto/create-wait-list.dto";
@@ -20,14 +20,22 @@ export class WaitListService {
   }
 
   async findOne(id: Types.ObjectId) {
-    return await this.WaitListModel.findOne({ id });
+    return await this.WaitListModel.findOne({ _id: id });
   }
 
   async update(id: Types.ObjectId, updateWaitListDto: UpdateWaitListDto) {
-    return await this.WaitListModel.findByIdAndUpdate(id, updateWaitListDto);
+    return await this.WaitListModel.findByIdAndUpdate(id, updateWaitListDto, {
+      new: true,
+    });
   }
 
   async remove(id: Types.ObjectId) {
-    return await this.WaitListModel.deleteOne({ id });
+    const response = await this.WaitListModel.findByIdAndDelete(id);
+
+    if (!response) {
+      throw new NotFoundException(`WaitList "${id}" Not found.`);
+    }
+
+    return response;
   }
 }

@@ -19,7 +19,7 @@ export class WaitListController {
   constructor(private readonly waitListService: WaitListService) {}
 
   @Post()
-  async reate(@Body() createWaitListDto: CreateWaitListDto) {
+  async create(@Body() createWaitListDto: CreateWaitListDto) {
     return await this.waitListService.create(createWaitListDto);
   }
 
