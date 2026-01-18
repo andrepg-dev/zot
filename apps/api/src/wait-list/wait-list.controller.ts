@@ -3,11 +3,13 @@ import {
   Controller,
   Delete,
   Get,
+  NotFoundException,
   Param,
-  ParseUUIDPipe,
   Patch,
   Post,
 } from "@nestjs/common";
+import { ParseObjectIdPipe } from "@nestjs/mongoose";
+import { Types } from "mongoose";
 import { CreateWaitListDto } from "./dto/create-wait-list.dto";
 import { UpdateWaitListDto } from "./dto/update-wait-list.dto";
 import { WaitListService } from "./wait-list.service";
@@ -17,30 +19,36 @@ export class WaitListController {
   constructor(private readonly waitListService: WaitListService) {}
 
   @Post()
-  create(@Body() createWaitListDto: CreateWaitListDto) {
-    return this.waitListService.create(createWaitListDto);
+  async reate(@Body() createWaitListDto: CreateWaitListDto) {
+    return await this.waitListService.create(createWaitListDto);
   }
 
   @Get()
-  findAll() {
-    return this.waitListService.findAll();
+  async findAll() {
+    return await this.waitListService.findAll();
   }
 
   @Get(":id")
-  findOne(@Param("id", ParseUUIDPipe) id: string) {
-    return this.waitListService.findOne(id);
+  async findOne(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
+    const response = await this.waitListService.findOne(id);
+
+    if (!response) {
+      throw new NotFoundException(`WaitList ${id} not found`);
+    }
+
+    return response;
   }
 
   @Patch(":id")
-  update(
-    @Param("id", ParseUUIDPipe) id: string,
+  async update(
+    @Param("id", ParseObjectIdPipe) id: Types.ObjectId,
     @Body() updateWaitListDto: UpdateWaitListDto,
   ) {
-    return this.waitListService.update(id, updateWaitListDto);
+    return await this.waitListService.update(id, updateWaitListDto);
   }
 
   @Delete(":id")
-  remove(@Param("id", ParseUUIDPipe) id: string) {
-    return this.waitListService.remove(id);
+  async remove(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
+    return await this.waitListService.remove(id);
   }
 }

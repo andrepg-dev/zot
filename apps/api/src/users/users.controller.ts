@@ -4,10 +4,11 @@ import {
   Delete,
   Get,
   Param,
-  ParseUUIDPipe,
   Patch,
   Post,
 } from "@nestjs/common";
+import { ParseObjectIdPipe } from "@nestjs/mongoose";
+import { Types } from "mongoose";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { UsersService } from "./users.service";
@@ -28,14 +29,14 @@ export class UsersController {
 
   @Patch(":id")
   update(
-    @Param("id", ParseUUIDPipe) id: string,
+    @Param("id", ParseObjectIdPipe) id: Types.ObjectId,
     @Body() updateUserDto: UpdateUserDto,
   ) {
     return this.usersService.update(+id, updateUserDto);
   }
 
   @Delete(":id")
-  remove(@Param("id", ParseUUIDPipe) id: string) {
+  remove(@Param("id", ParseObjectIdPipe) id: Types.ObjectId) {
     return this.usersService.remove(+id);
   }
 }

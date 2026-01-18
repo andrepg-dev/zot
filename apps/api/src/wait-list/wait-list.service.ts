@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { Model } from "mongoose";
+import { Model, Types } from "mongoose";
 import { CreateWaitListDto } from "./dto/create-wait-list.dto";
 import { UpdateWaitListDto } from "./dto/update-wait-list.dto";
 import { WaitList } from "./schemas/wait-list.schema";
@@ -19,15 +19,15 @@ export class WaitListService {
     return await this.WaitListModel.find({});
   }
 
-  async findOne(id: string) {
+  async findOne(id: Types.ObjectId) {
     return await this.WaitListModel.findOne({ id });
   }
 
-  async update(id: string, updateWaitListDto: UpdateWaitListDto) {
+  async update(id: Types.ObjectId, updateWaitListDto: UpdateWaitListDto) {
     return await this.WaitListModel.findByIdAndUpdate(id, updateWaitListDto);
   }
 
-  async remove(id: string) {
+  async remove(id: Types.ObjectId) {
     return await this.WaitListModel.deleteOne({ id });
   }
 }
