@@ -1,12 +1,10 @@
 import "dotenv/config";
 
-export const ACCESS_TOKEN_IN_REQUEST_KEY = "access_token";
+// this is the cookie key where we storage the access_token
+export const SAVE_ACCESS_TOKEN_IN_COOKIES_KEY = "access_token";
 
-export const ACCESS_TOKEN = {
-  key: "ACCESS_TOKEN_SECRET",
-};
-
+// This is the key and the password of the JWT authentication
 export const JWT = {
-  key: "JWT_KEY",
+  key: "JWT_SECRET",
   SECRET: process.env.JWT_SECRET,
 };

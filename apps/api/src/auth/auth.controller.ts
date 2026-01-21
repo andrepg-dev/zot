@@ -7,6 +7,9 @@ import {
   UseGuards,
 } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
+import express from "express";
+import { CookiesService } from "../common/cookies.service";
+import { SAVE_ACCESS_TOKEN_IN_COOKIES_KEY } from "../constants/authentication";
 import { CreateUserDto } from "../users/dto/create-user.dto";
 import { AuthService } from "./auth.service";
 import { Public } from "./decorators/skip-auth.decorator";
@@ -17,12 +20,23 @@ export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private jwtService: JwtService,
+    private cookiesService: CookiesService,
   ) {}
 
   @Public()
   @UseGuards(LocalAuthGuard)
   @Post("login")
-  login(@Request() req: any, @Response({ passthrough: true }) res: Response) {
+  login(
+    @Request() req: any,
+    @Response({ passthrough: true }) res: express.Response,
+  ) {
+    const access_token = this.jwtService.sign(req.user);
+    this.cookiesService.saveCookie(
+      res,
+      SAVE_ACCESS_TOKEN_IN_COOKIES_KEY,
+      access_token,
+    );
+
     return { access_token: this.jwtService.sign(req.user) };
   }
 

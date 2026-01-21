@@ -1,6 +1,6 @@
 import {
-  ACCESS_TOKEN,
-  ACCESS_TOKEN_IN_REQUEST_KEY,
+  JWT,
+  SAVE_ACCESS_TOKEN_IN_COOKIES_KEY,
 } from "@api/src/constants/authentication";
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
@@ -19,10 +19,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
         (req: Request) => {
-          return req?.cookies[ACCESS_TOKEN_IN_REQUEST_KEY];
+          return req?.cookies[SAVE_ACCESS_TOKEN_IN_COOKIES_KEY];
         },
       ]),
-      secretOrKey: configService.get<string>(ACCESS_TOKEN.key) ?? "",
+      secretOrKey: configService.get<string>(JWT.key) ?? "",
       ignoreExpiration: false,
     });
   }
