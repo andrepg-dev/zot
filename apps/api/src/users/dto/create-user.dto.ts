@@ -1,5 +1,6 @@
 import {
   IsEmail,
+  IsOptional,
   IsString,
   IsUrl,
   MaxLength,
@@ -25,5 +26,6 @@ export class CreateUserDto {
 
   @IsString()
   @IsUrl()
+  @IsOptional()
   avatar: string;
 }

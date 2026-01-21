@@ -1,39 +1,83 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
+import * as bcrypt from "bcrypt";
 import { Model } from "mongoose";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { User } from "./schemas/users.schema";
-
 @Injectable()
 export class UsersService {
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
-  async create(user: CreateUserDto) {
-    return this.userModel.create(user);
+  async create(user: CreateUserDto, provider: "local" | "google" | "github") {
+    try {
+      const { password, ...rest } = user;
+
+      // generate username
+      const username = `${rest.name}${rest.last_name}`;
+
+      const userDocument = new this.userModel({
+        ...rest,
+        password: bcrypt.hashSync(password, 10),
+        username,
+        provider,
+      });
+
+      return await this.userModel.create(userDocument);
+    } catch (error) {
+      this.handleDatabaseErrors(error);
+    }
   }
 
   async findByEmail(email: string) {
-    const user = this.userModel.findOne({ email });
+    try {
+      const user = await this.userModel.findOne({ email });
 
-    if (!user) throw new NotFoundException();
+      if (!user) throw new NotFoundException();
 
-    return user;
+      return user;
+    } catch (error) {
+      this.handleDatabaseErrors(error);
+    }
   }
 
   async findById(id: string) {
-    const user = this.userModel.findById({ id });
+    try {
+      const user = await this.userModel.findById({ id });
 
-    if (!user) throw new NotFoundException();
+      if (!user) throw new NotFoundException();
 
-    return user;
+      return user;
+    } catch (error) {
+      this.handleDatabaseErrors(error);
+    }
   }
 
   async findByIdAndUpdate(id: string, data: UpdateUserDto) {
-    return this.userModel.findByIdAndUpdate(id, data, { new: true });
+    try {
+      return await this.userModel.findByIdAndUpdate(id, data, { new: true });
+    } catch (error) {
+      this.handleDatabaseErrors(error);
+    }
   }
 
   async findByIdAndDelete(id: string) {
-    return this.userModel.findByIdAndDelete(id, { new: true });
+    try {
+      return await this.userModel.findByIdAndDelete(id, { new: true });
+    } catch (error) {
+      this.handleDatabaseErrors(error);
+    }
+  }
+
+  handleDatabaseErrors(error: any) {
+    console.error(error);
+
+    throw new InternalServerErrorException(
+      `Error saving on database: ${error}`,
+    );
   }
 }
