@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from "@nestjs/common";
+import { Injectable, InternalServerErrorException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import * as bcrypt from "bcrypt";
 import { Model } from "mongoose";
@@ -15,6 +11,12 @@ export class UsersService {
 
   async create(user: CreateUserDto, provider: "local" | "google" | "github") {
     try {
+      const userExists = await this.findByEmail(user.email);
+
+      if (userExists !== null) {
+        return null; // Use already exists
+      }
+
       const { password, ...rest } = user;
 
       // generate username
@@ -36,8 +38,7 @@ export class UsersService {
   async findByEmail(email: string) {
     try {
       const user = await this.userModel.findOne({ email });
-
-      if (!user) throw new NotFoundException();
+      if (!user) return null;
 
       return user;
     } catch (error) {
@@ -49,7 +50,7 @@ export class UsersService {
     try {
       const user = await this.userModel.findById({ id });
 
-      if (!user) throw new NotFoundException();
+      if (!user) return null;
 
       return user;
     } catch (error) {
