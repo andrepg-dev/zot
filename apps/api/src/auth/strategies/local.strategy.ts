@@ -9,5 +9,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     super();
   }
 
-  validate() {}
+  validate(email: string, password: string) {
+    // Use the user authentication service located in auth.service.ts
+  }
 }

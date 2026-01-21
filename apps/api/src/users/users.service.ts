@@ -1,6 +1,6 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { Model, Types } from "mongoose";
+import { Model } from "mongoose";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { User } from "./schemas/users.schema";
@@ -9,23 +9,31 @@ import { User } from "./schemas/users.schema";
 export class UsersService {
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
-  create(createUserDto: CreateUserDto) {
-    return "This action adds a new user";
+  async create(user: CreateUserDto) {
+    return this.userModel.create(user);
   }
 
-  findAll() {
-    return `This action returns all users`;
+  async findByEmail(email: string) {
+    const user = this.userModel.findOne({ email });
+
+    if (!user) throw new NotFoundException();
+
+    return user;
   }
 
-  async findOne(id: Types.ObjectId) {
-    return null;
+  async findById(id: string) {
+    const user = this.userModel.findById({ id });
+
+    if (!user) throw new NotFoundException();
+
+    return user;
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async findByIdAndUpdate(id: string, data: UpdateUserDto) {
+    return this.userModel.findByIdAndUpdate(id, data, { new: true });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async findByIdAndDelete(id: string) {
+    return this.userModel.findByIdAndDelete(id, { new: true });
   }
 }
