@@ -90,9 +90,7 @@ export class WaitListService {
       });
 
       if (!response) {
-        throw new NotFoundException(
-          `WaitList "${String(id)}" not found or you don't have permission to delete it.`,
-        );
+        throw new NotFoundException(`WaitList "${String(id)}" not found.`);
       }
 
       return response;

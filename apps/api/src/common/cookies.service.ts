@@ -13,4 +13,12 @@ export class CookiesService {
   saveCookie(res: Response, key: string, value: any) {
     return res.cookie(key, value, this.options);
   }
+
+  clearCookie(res: Response, key: string) {
+    return res.clearCookie(key, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+    });
+  }
 }

@@ -124,4 +124,10 @@ export class AuthController {
   getProfile(@Request() req: express.Request) {
     return req.user;
   }
+
+  @Get("logout")
+  logout(@Response({ passthrough: true }) res: express.Response) {
+    this.cookiesService.clearCookie(res, SAVE_ACCESS_TOKEN_IN_COOKIES_KEY);
+    return { message: "Logged out successfully" };
+  }
 }

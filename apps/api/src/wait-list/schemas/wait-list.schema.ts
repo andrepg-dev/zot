@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import mongoose, { Types } from "mongoose";
+import { Types } from "mongoose";
 
 @Schema({ timestamps: true, versionKey: false })
 export class WaitList {
@@ -12,8 +12,8 @@ export class WaitList {
   @Prop({ required: true, default: false })
   is_security_active: boolean;
 
-  @Prop({ type: mongoose.Schema.ObjectId, ref: "widget" })
-  widget: mongoose.Types.ObjectId;
+  @Prop({ required: true, default: [] })
+  users_registed: Array<{ email: string; is_refered: boolean }>;
 
   @Prop({ required: true, default: true })
   is_available: boolean;
