@@ -7,5 +7,9 @@ export default () => ({
     // GOOGLE
     GOOGLE_CLIENT_ID: joi.string().required(),
     GOOGLE_CLIENT_SECRET: joi.string().required(),
+
+    // GITHUB
+    GITHUB_CLIENT_ID: joi.string().required(),
+    GITHUB_CLIENT_SECRET: joi.string().required(),
   }),
 });

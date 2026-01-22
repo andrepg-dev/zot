@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   HttpException,
+  InternalServerErrorException,
   Post,
   Request,
   Response,
@@ -75,6 +76,44 @@ export class AuthController {
   @UseGuards(GoogleAuthGuard)
   @Get("google")
   google() {}
+
+  @Public()
+  @Get("google/callback")
+  @UseGuards(GoogleAuthGuard)
+  googleAuthRedirect(
+    @Request() req: express.Request,
+    @Response({ passthrough: true }) res: express.Response,
+  ) {
+    if (!req.user) throw new InternalServerErrorException("User not found.");
+
+    const access_token = this.jwtService.sign(req.user);
+    this.cookiesService.saveCookie(
+      res,
+      SAVE_ACCESS_TOKEN_IN_COOKIES_KEY,
+      access_token,
+    );
+
+    return req.user;
+  }
+
+  @Public()
+  @Get("github/callback")
+  @UseGuards(GitHubAuthGuard)
+  githubAuthRedirect(
+    @Request() req: express.Request,
+    @Response({ passthrough: true }) res: express.Response,
+  ) {
+    if (!req.user) throw new InternalServerErrorException("User not found.");
+
+    const access_token = this.jwtService.sign(req.user);
+    this.cookiesService.saveCookie(
+      res,
+      SAVE_ACCESS_TOKEN_IN_COOKIES_KEY,
+      access_token,
+    );
+
+    return req.user;
+  }
 
   @Public()
   @UseGuards(GitHubAuthGuard)
