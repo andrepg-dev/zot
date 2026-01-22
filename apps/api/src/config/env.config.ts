@@ -11,5 +11,8 @@ export default () => ({
     // GITHUB
     GITHUB_CLIENT_ID: joi.string().required(),
     GITHUB_CLIENT_SECRET: joi.string().required(),
+
+    // General
+    BACKEND_URL: joi.string().required(),
   }),
 });

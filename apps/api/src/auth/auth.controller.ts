@@ -121,7 +121,7 @@ export class AuthController {
   github() {}
 
   @Get("profile")
-  async getProfile(@Request() req) {
+  getProfile(@Request() req: express.Request) {
     return req.user;
   }
 }
