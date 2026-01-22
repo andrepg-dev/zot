@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import mongoose from "mongoose";
+import mongoose, { Types } from "mongoose";
 
-@Schema({ timestamps: true })
+@Schema({ timestamps: true, versionKey: false })
 export class WaitList {
   @Prop({ required: true })
   name: string;
@@ -27,6 +27,9 @@ export class WaitList {
 
   @Prop()
   webhook_url: string;
+
+  @Prop({ required: true, ref: "user" })
+  owner: Types.ObjectId;
 }
 
 export const WaitListSchema = SchemaFactory.createForClass(WaitList);

@@ -20,7 +20,8 @@ export class AuthService {
       return null;
     }
 
-    const { password: userPassword, ...rest } = user.toObject();
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password: _password, ...rest } = user.toObject();
     return rest;
   }
 

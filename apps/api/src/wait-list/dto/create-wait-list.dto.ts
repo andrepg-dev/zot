@@ -24,6 +24,7 @@ export class CreateWaitListDto {
   @IsOptional()
   widget_id?: string;
 
-
-  
+  @IsBoolean()
+  @IsOptional()
+  is_available: boolean;
 }

@@ -60,7 +60,7 @@ export class AuthController {
     if (!newUser)
       throw new HttpException("User already exists, please login.", 400);
 
-    req.user = { userId: newUser._id };
+    req.user = { userId: String(newUser._id) };
 
     const access_token = this.jwtService.sign(req.user);
     this.cookiesService.saveCookie(

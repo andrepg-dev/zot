@@ -1,11 +1,17 @@
+import { User } from "@api/src/users/schemas/users.schema";
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
+import { InjectModel } from "@nestjs/mongoose";
 import { PassportStrategy } from "@nestjs/passport";
+import mongoose, { Model } from "mongoose";
 import { Profile, Strategy, VerifyCallback } from "passport-google-oauth20";
 
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, "google") {
-  constructor(configService: ConfigService) {
+  constructor(
+    configService: ConfigService,
+    @InjectModel(User.name) private userModel: Model<User>,
+  ) {
     super({
       clientID: configService.get<string>("GOOGLE_CLIENT_ID") ?? "",
       clientSecret: configService.get<string>("GOOGLE_CLIENT_SECRET") ?? "",
@@ -14,20 +20,57 @@ export class GoogleStrategy extends PassportStrategy(Strategy, "google") {
     });
   }
 
-  validate(_: string, __: string, profile: Profile, done: VerifyCallback) {
-    const { name, emails, photos } = profile;
+  async validate(
+    _: string,
+    __: string,
+    profile: Profile,
+    done: VerifyCallback,
+  ) {
+    try {
+      const { name, emails, photos } = profile;
 
-    if (!emails) throw new HttpException("Google email not provided", HttpStatus.BAD_REQUEST);
+      if (!emails)
+        throw new HttpException(
+          "Google email not provided",
+          HttpStatus.BAD_REQUEST,
+        );
 
-    if (!name) throw new HttpException("Google name not provided", HttpStatus.BAD_REQUEST);
+      if (!name)
+        throw new HttpException(
+          "Google name not provided",
+          HttpStatus.BAD_REQUEST,
+        );
 
-    const user = {
-      email: emails[0].value,
-      name: name.givenName,
-      last_name: name.familyName,
-      avatar: photos?.[0].value ?? undefined,
-    };
+      const email = emails[0].value;
 
-    done(null, user);
+      // Check if user already exists
+      const existingUser = await this.userModel.findOne({ email });
+
+      if (existingUser) {
+        // User already exists, return existing user
+        done(null, { userId: String(existingUser._id) });
+        return;
+      }
+
+      const dto = {
+        email,
+        name: name.givenName,
+        last_name: name.familyName,
+        avatar: photos?.[0].value ?? undefined,
+      };
+
+      const randomObjectId = String(new mongoose.Types.ObjectId());
+
+      // Save in database
+      const document = await this.userModel.create({
+        ...dto,
+        provider: "google",
+        username: `${dto.name}${dto.last_name}${randomObjectId}`,
+      });
+
+      done(null, { userId: String(document._id) }); // -> envia a google straty
+    } catch (error) {
+      done(error as Error);
+    }
   }
 }
