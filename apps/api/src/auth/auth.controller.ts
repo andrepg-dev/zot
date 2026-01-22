@@ -16,6 +16,8 @@ import { SAVE_ACCESS_TOKEN_IN_COOKIES_KEY } from "../constants/authentication";
 import { CreateUserDto } from "../users/dto/create-user.dto";
 import { AuthService } from "./auth.service";
 import { Public } from "./decorators/skip-auth.decorator";
+import { GitHubAuthGuard } from "./guards/github.guard";
+import { GoogleAuthGuard } from "./guards/google.guard";
 import { LocalAuthGuard } from "./guards/local.guard";
 
 @Controller("auth")
@@ -68,6 +70,16 @@ export class AuthController {
 
     return { access_token };
   }
+
+  @Public()
+  @UseGuards(GoogleAuthGuard)
+  @Get("google")
+  google() {}
+
+  @Public()
+  @UseGuards(GitHubAuthGuard)
+  @Get("github")
+  github() {}
 
   @Get("profile")
   async getProfile(@Request() req) {
