@@ -41,7 +41,18 @@ export class GitHubStrategy extends PassportStrategy(Strategy, "github") {
       const existingUser = await this.userModel.findOne({ email });
 
       if (existingUser) {
-        // User already exists, return existing user
+        // User already exists, update provider if not already included
+        const providers = Array.isArray(existingUser.provider)
+          ? existingUser.provider
+          : [existingUser.provider];
+
+        if (!providers.includes("github")) {
+          providers.push("github");
+          await this.userModel.findByIdAndUpdate(existingUser._id, {
+            provider: providers,
+          });
+        }
+
         done(null, { userId: String(existingUser._id) });
         return;
       }
@@ -62,7 +73,7 @@ export class GitHubStrategy extends PassportStrategy(Strategy, "github") {
       // Save in database
       const document = await this.userModel.create({
         ...dto,
-        provider: "github",
+        provider: ["github"],
         username: `${dto.name}${dto.last_name}${randomObjectId}`,
       });
 

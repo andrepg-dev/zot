@@ -47,7 +47,18 @@ export class GoogleStrategy extends PassportStrategy(Strategy, "google") {
       const existingUser = await this.userModel.findOne({ email });
 
       if (existingUser) {
-        // User already exists, return existing user
+        // User already exists, update provider if not already included
+        const providers = Array.isArray(existingUser.provider)
+          ? existingUser.provider
+          : [existingUser.provider];
+
+        if (!providers.includes("google")) {
+          providers.push("google");
+          await this.userModel.findByIdAndUpdate(existingUser._id, {
+            provider: providers,
+          });
+        }
+
         done(null, { userId: String(existingUser._id) });
         return;
       }
@@ -64,7 +75,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, "google") {
       // Save in database
       const document = await this.userModel.create({
         ...dto,
-        provider: "google",
+        provider: ["google"],
         username: `${dto.name}${dto.last_name}${randomObjectId}`,
       });
 

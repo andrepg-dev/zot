@@ -26,7 +26,7 @@ export class AuthService {
   }
 
   async register(user: CreateUserDto) {
-    const response = await this.usersService.create(user, "local");
+    const response = await this.usersService.create(user, ["local"]);
     return response;
   }
 }

@@ -18,7 +18,7 @@ export class User {
   password?: string;
 
   @Prop({ default: "local" }) // Local, Google, Github
-  provider: string;
+  provider: Array<"google" | "local" | "github">;
 
   @Prop()
   providerId?: string;
