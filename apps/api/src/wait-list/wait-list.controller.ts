@@ -20,10 +20,7 @@ export class WaitListController {
   constructor(private readonly waitListService: WaitListService) {}
 
   @Post()
-  async create(
-    @Body() createWaitListDto: CreateWaitListDto,
-    @Request() req: Express.Request,
-  ) {
+  async create(@Body() createWaitListDto: CreateWaitListDto, @Request() req: Express.Request) {
     const userId = req?.user?.userId;
 
     return await this.waitListService.create(createWaitListDto, userId);
