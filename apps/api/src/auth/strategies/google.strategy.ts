@@ -48,9 +48,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, "google") {
 
       if (existingUser) {
         // User already exists, update provider if not already included
-        const providers = Array.isArray(existingUser.provider)
-          ? existingUser.provider
-          : [existingUser.provider];
+        const providers = existingUser.providers;
 
         if (!providers.includes("google")) {
           providers.push("google");
@@ -75,7 +73,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, "google") {
       // Save in database
       const document = await this.userModel.create({
         ...dto,
-        provider: ["google"],
+        providers: ["google"],
         username: `${dto.name}${dto.last_name}${randomObjectId}`,
       });
 

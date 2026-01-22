@@ -42,9 +42,7 @@ export class GitHubStrategy extends PassportStrategy(Strategy, "github") {
 
       if (existingUser) {
         // User already exists, update provider if not already included
-        const providers = Array.isArray(existingUser.provider)
-          ? existingUser.provider
-          : [existingUser.provider];
+        const providers = existingUser.providers;
 
         if (!providers.includes("github")) {
           providers.push("github");
@@ -73,7 +71,7 @@ export class GitHubStrategy extends PassportStrategy(Strategy, "github") {
       // Save in database
       const document = await this.userModel.create({
         ...dto,
-        provider: ["github"],
+        providers: ["github"],
         username: `${dto.name}${dto.last_name}${randomObjectId}`,
       });
 

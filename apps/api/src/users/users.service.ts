@@ -11,7 +11,7 @@ export class UsersService {
 
   async create(
     user: CreateUserDto,
-    provider: Array<"local" | "google" | "github">,
+    providers: Array<"local" | "google" | "github">,
   ) {
     try {
       const userExists = await this.findByEmail(user.email);
@@ -29,7 +29,7 @@ export class UsersService {
         ...rest,
         password: bcrypt.hashSync(password, 10),
         username,
-        provider,
+        providers,
       });
 
       return await this.userModel.create(userDocument);
