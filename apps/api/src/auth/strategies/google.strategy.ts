@@ -17,17 +17,9 @@ export class GoogleStrategy extends PassportStrategy(Strategy, "google") {
   validate(_: string, __: string, profile: Profile, done: VerifyCallback) {
     const { name, emails, photos } = profile;
 
-    if (!emails)
-      throw new HttpException(
-        "Google email not provided",
-        HttpStatus.BAD_REQUEST,
-      );
+    if (!emails) throw new HttpException("Google email not provided", HttpStatus.BAD_REQUEST);
 
-    if (!name)
-      throw new HttpException(
-        "Google name not provided",
-        HttpStatus.BAD_REQUEST,
-      );
+    if (!name) throw new HttpException("Google name not provided", HttpStatus.BAD_REQUEST);
 
     const user = {
       email: emails[0].value,

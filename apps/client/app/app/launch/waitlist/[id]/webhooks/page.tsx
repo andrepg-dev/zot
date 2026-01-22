@@ -2,9 +2,10 @@ import FormField from "@/components/form-field";
 import Title from "@/components/global/title";
 import PageComponent from "@/components/layouts/page-component";
 import InputComponent from "@/components/ui/input";
-import { LinkIcon } from "@heroicons/react/24/outline";
+import { BellIcon, LinkIcon } from "@heroicons/react/24/outline";
 import { Button } from "@heroui/button";
 import { Card, CardFooter } from "@heroui/card";
+import { Switch } from "@heroui/switch";
 
 export default function Webhooks() {
   return (
@@ -22,6 +23,16 @@ export default function Webhooks() {
             <InputComponent type="url" />
           </FormField>
           <hr />
+          <FormField
+            icon={<BellIcon className="size-4" />}
+            title="Send me notifications"
+            description="We will send you notifications via email on every 20 users registered."
+            className="p-4"
+          >
+            <Switch size="sm">Notifications enabled</Switch>
+          </FormField>
+          <hr />
+
           <CardFooter className="flex justify-end">
             <Button color="primary" size="sm">
               Connect

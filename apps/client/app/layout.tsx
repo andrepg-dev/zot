@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   },
   description: siteConfig.description,
   icons: {
-    icon: "/icons/zot.png"
+    icon: "/zot-icon.svg"
   }
 };
 

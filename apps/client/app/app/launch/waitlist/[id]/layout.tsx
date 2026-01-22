@@ -3,13 +3,7 @@
 import HeaderNavigation from "@/components/navigation/header.navigation";
 import SidebarNavigation from "@/components/navigation/sidebar.navigation";
 import Chip from "@/components/ui/chip";
-import {
-  BoltIcon,
-  Cog6ToothIcon,
-  HomeIcon,
-  PlusCircleIcon,
-  QueueListIcon
-} from "@heroicons/react/24/outline";
+import { BoltIcon, Cog6ToothIcon, EnvelopeIcon, HomeIcon } from "@heroicons/react/24/outline";
 import { useParams } from "next/navigation";
 
 export default function WaitListLayout({ children }: { children: React.ReactNode }) {
@@ -36,15 +30,21 @@ export default function WaitListLayout({ children }: { children: React.ReactNode
           },
           { type: "divider" },
           {
-            href: `/app/launch/waitlist/${id}/widget-builder`,
-            icon: PlusCircleIcon,
-            label: "Widget Builder"
-          },
-          {
-            href: `/app/launch/waitlist/${id}/widget-list`,
-            icon: QueueListIcon,
-            label: "Widget List"
+            href: `/app/launch/waitlist/${id}/email`,
+            icon: EnvelopeIcon,
+            label: "Email configuration"
           }
+
+          // {
+          //   href: `/app/launch/waitlist/${id}/widget-builder`,
+          //   icon: PlusCircleIcon,
+          //   label: "Widget Builder"
+          // },
+          // {
+          //   href: `/app/launch/waitlist/${id}/widget-list`,
+          //   icon: QueueListIcon,
+          //   label: "Widget List"
+          // }
         ]}
       />
 

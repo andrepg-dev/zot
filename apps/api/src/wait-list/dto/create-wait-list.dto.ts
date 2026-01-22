@@ -1,8 +1,19 @@
-import { IsMongoId, IsOptional, IsString, IsUrl } from "class-validator";
+import {
+  IsBoolean,
+  IsMongoId,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsUrl,
+} from "class-validator";
 
 export class CreateWaitListDto {
   @IsString()
+  @IsNotEmpty()
   name: string;
+
+  @IsBoolean()
+  send_email_to_new_signup: boolean;
 
   @IsUrl()
   @IsOptional()
@@ -12,4 +23,7 @@ export class CreateWaitListDto {
   @IsString()
   @IsOptional()
   widget_id?: string;
+
+
+  
 }

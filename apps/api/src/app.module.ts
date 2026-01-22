@@ -9,6 +9,7 @@ import envConfig from "./config/env.config";
 import mongodbConfig from "./config/mongodb.config";
 import { UsersModule } from "./users/users.module";
 import { WaitListModule } from "./wait-list/wait-list.module";
+import { WidgetModule } from "./widget/widget.module";
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { WaitListModule } from "./wait-list/wait-list.module";
     WaitListModule,
     UsersModule,
     AuthModule,
+    WidgetModule,
   ],
   controllers: [AppController],
   providers: [
