@@ -17,7 +17,7 @@ const dashboardTasks = [
     icon: LinkIcon,
     title: "Integrate waiting list",
     description: "Start collecting signups.",
-    href: "/app/launch/waitlist"
+    href: "/app/waitlist/launch"
   },
   {
     id: 3,

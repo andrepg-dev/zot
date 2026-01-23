@@ -5,7 +5,7 @@ export const plans = [
     frequency: "/ month",
     blurb: "Perfect to validate an idea and run simple launches.",
     ctaLabel: "Current plan",
-    ctaHref: "/app/launch/waitlist",
+    ctaHref: "/app/waitlist/launch",
     popular: false,
     features: [
       "15,000 users signup limit",
