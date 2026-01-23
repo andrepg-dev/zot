@@ -33,7 +33,7 @@ export class WaitListUser {
       return !!this.referred_by;
     },
   })
-  is_refered: boolean;
+  is_referred: boolean;
 }
 
 export const WaitListUserSchema = SchemaFactory.createForClass(WaitListUser);
