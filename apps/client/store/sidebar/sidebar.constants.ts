@@ -1,7 +1,6 @@
 import {
   CreditCardIcon,
-  CursorArrowRippleIcon,
-  EnvelopeIcon,
+  InboxStackIcon,
   Square3Stack3DIcon,
   Squares2X2Icon
 } from "@heroicons/react/24/outline";
@@ -33,9 +32,22 @@ export const defaultNavItems = [
     icon: Square3Stack3DIcon
   },
   {
-    href: "/app/waitlist",
     label: "WaitList",
-    icon: CursorArrowRippleIcon
+    icon: InboxStackIcon,
+    subItem: [
+      {
+        href: "/app/waitlist/dashboard",
+        label: "Dashboard"
+      },
+      {
+        href: "/app/waitlist/emails",
+        label: "Emails"
+      },
+      {
+        href: "/app/waitlist/domains",
+        label: "Domains"
+      }
+    ]
   }
 ];
 

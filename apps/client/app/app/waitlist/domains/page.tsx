@@ -1,10 +1,10 @@
 import Title from "@/components/global/title";
 import PageComponent from "@/components/layouts/page-component";
 
-export default function TemplatesEmailPage() {
+export default function DomainsPage() {
   return (
     <PageComponent>
-      <Title description="See the list of templates">Templates</Title>
+      <Title description="Manage domains here">Domains</Title>
     </PageComponent>
   )
 }

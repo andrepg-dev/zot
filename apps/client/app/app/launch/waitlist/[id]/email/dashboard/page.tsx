@@ -10,6 +10,13 @@
  * @returns
  */
 
+import Title from "@/components/global/title";
+import PageComponent from "@/components/layouts/page-component";
+
 export default function DashboardEmailPage() {
-  return <div>EmailsPage</div>;
+  return (
+    <PageComponent>
+      <Title description="Manage your email here">Dashboard</Title>
+    </PageComponent>
+  );
 }

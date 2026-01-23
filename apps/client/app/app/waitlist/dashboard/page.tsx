@@ -78,20 +78,6 @@ export default function WaitListPage() {
     router.push(`/app/launch/waitlist/${key}`);
   };
 
-  const handleView = (id: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    router.push(`/app/launch/waitlist/${id}`);
-  };
-
-  const handleEdit = (id: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    router.push(`/app/launch/waitlist/${id}/edit`);
-  };
-
-  const handleDelete = (id: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    console.log("Delete:", id);
-  };
 
   return (
     <PageComponent>
@@ -139,7 +125,7 @@ export default function WaitListPage() {
 
             <Button
               as={Link}
-              href="/app/launch/waitlist"
+              href="/app/waitlist/launch"
               className="bg-primary border-transparent border transition-none"
               startContent={<PlusIcon className="size-5" />}
               size="sm"
@@ -216,7 +202,7 @@ export default function WaitListPage() {
                           <h3 className="font-medium text-sm">{item.name}</h3>
                           <p className="text-xs text-muted-foreground">ID: {item.id}</p>
                         </div>
-                        <Chip label={item.status} status={"active"} />
+                        <Chip status={"active"} >{item.status}</Chip>
                       </div>
                       <div className="flex flex-col gap-2 pt-2 border-t border-default-200">
                         <div className="flex justify-between items-center">

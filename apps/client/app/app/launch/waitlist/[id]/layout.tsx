@@ -3,7 +3,7 @@
 import HeaderNavigation from "@/components/navigation/header.navigation";
 import SidebarNavigation from "@/components/navigation/sidebar.navigation";
 import Chip from "@/components/ui/chip";
-import { BoltIcon, Cog6ToothIcon, EnvelopeIcon, HomeIcon } from "@heroicons/react/24/outline";
+import { BoltIcon, Cog6ToothIcon, EnvelopeIcon, HomeIcon, KeyIcon } from "@heroicons/react/24/outline";
 import { useParams } from "next/navigation";
 
 export default function WaitListLayout({ children }: { children: React.ReactNode }) {
@@ -22,6 +22,11 @@ export default function WaitListLayout({ children }: { children: React.ReactNode
             href: `/app/launch/waitlist/${id}/webhooks`,
             icon: BoltIcon,
             label: "Webhooks"
+          },
+          {
+            href: `/app/launch/waitlist/${id}/api-keys`,
+            icon: KeyIcon,
+            label: "Api Keys"
           },
           {
             href: `/app/launch/waitlist/${id}/settings`,
@@ -59,7 +64,7 @@ export default function WaitListLayout({ children }: { children: React.ReactNode
 
       <HeaderNavigation
         navigationItems={[
-          { label: "Wait-List", pathname: "/app/waitlist" },
+          { label: "Wait-List", pathname: "/app/waitlist/dashboard" },
           {
             label: `Launch ${String(id)}`,
             pathname: ""

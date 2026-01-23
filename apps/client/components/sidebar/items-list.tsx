@@ -124,7 +124,7 @@ export default function ItemList({ navItems }: { navItems: NavItemOrDivider[] | 
                 ) : null
               )}
               {hasSubItems && isExpanded && (
-                <ul className="ml-6 mt-1 space-y-1">
+                <ul className="pl-4 mt-1 space-y-1">
                   {subItem.map((sub: any) => {
                     const isSubActive = pathname === sub.href;
                     const SubIcon = sub.icon;
@@ -133,9 +133,9 @@ export default function ItemList({ navItems }: { navItems: NavItemOrDivider[] | 
                         <Link
                           href={sub.href}
                           className={cn(
-                            "flex items-center gap-2 py-1.5 px-2 h-[35px] text-muted-foreground rounded-sm",
-                            isSubActive && "text-white",
-                            !isSubActive && "hover:text-zinc-300"
+                            "flex items-center gap-2 py-1.5 px-3 !rounded-l-none h-[35px] text-muted-foreground rounded-sm",
+                            isSubActive && "text-white border-l-3",
+                            !isSubActive && "hover:text-zinc-300 !border-l-transparent border-l-3"
                           )}
                         >
                           {SubIcon ? (
