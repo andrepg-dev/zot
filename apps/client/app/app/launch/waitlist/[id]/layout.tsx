@@ -24,31 +24,21 @@ export default function WaitListLayout({ children }: { children: React.ReactNode
             label: "Webhooks"
           },
           {
+            href: `/app/launch/waitlist/${id}/email`,
+            icon: EnvelopeIcon,
+            label: "Email",
+          },
+          {
             href: `/app/launch/waitlist/${id}/api-keys`,
             icon: KeyIcon,
             label: "Api Keys"
           },
+          { type: "divider" },
           {
             href: `/app/launch/waitlist/${id}/settings`,
             icon: Cog6ToothIcon,
             label: "Settings"
           },
-          { type: "divider" },
-          {
-            icon: EnvelopeIcon,
-            label: "Email",
-            subItem: [
-              {
-                href: `/app/launch/waitlist/${id}/email/dashboard`,
-                label: "Dashboard",
-              },
-              {
-                href: `/app/launch/waitlist/${id}/email/templates`,
-                label: "Templates",
-              }
-            ]
-          }
-
           // {
           //   href: `/app/launch/waitlist/${id}/widget-builder`,
           //   icon: PlusCircleIcon,
