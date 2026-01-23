@@ -1,13 +1,13 @@
 import { cn } from "@/lib/utils";
 
-type ChipStatus = "active" | "warning" | "neutral" | "danger";
+type ChipStatus = "active" | "warning" | "neutral" | "danger" | "primary";
 
 interface ChipProps {
   status: ChipStatus;
-  label?: string;
+  children?: React.ReactNode;
 }
 
-export default function Chip({ status, label }: ChipProps) {
+export default function Chip({ status, children }: ChipProps) {
   return (
     <span
       className={cn(
@@ -15,10 +15,11 @@ export default function Chip({ status, label }: ChipProps) {
         status === "active" && "bg-success/20 text-success",
         status === "warning" && "bg-warning/20 text-warning",
         status === "neutral" && "bg-default/20 text-default-600",
-        status === "danger" && "bg-destructive/20 text-destructive"
+        status === "danger" && "bg-destructive/20 text-destructive",
+        status === "primary" && "bg-primary/20 text-primary"
       )}
     >
-      {label || status}
+      {children || status}
     </span>
   );
 }

@@ -30,9 +30,18 @@ export default function WaitListLayout({ children }: { children: React.ReactNode
           },
           { type: "divider" },
           {
-            href: `/app/launch/waitlist/${id}/email`,
             icon: EnvelopeIcon,
-            label: "Email configuration"
+            label: "Email",
+            subItem: [
+              {
+                href: `/app/launch/waitlist/${id}/email/dashboard`,
+                label: "Dashboard",
+              },
+              {
+                href: `/app/launch/waitlist/${id}/email/templates`,
+                label: "Templates",
+              }
+            ]
           }
 
           // {
@@ -56,7 +65,7 @@ export default function WaitListLayout({ children }: { children: React.ReactNode
             pathname: ""
           }
         ]}
-        children={<Chip status="active" label="Active"></Chip>}
+        children={<Chip status="active">Active</Chip>}
       />
       {children}
     </>

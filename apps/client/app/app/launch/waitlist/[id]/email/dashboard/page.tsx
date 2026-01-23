@@ -10,6 +10,6 @@
  * @returns
  */
 
-export default function EmailPage() {
+export default function DashboardEmailPage() {
   return <div>EmailsPage</div>;
 }

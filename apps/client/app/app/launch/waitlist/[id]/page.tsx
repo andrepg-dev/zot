@@ -2,6 +2,7 @@
 
 import Title from "@/components/global/title";
 import PageComponent from "@/components/layouts/page-component";
+import Chip from "@/components/ui/chip";
 import ConversionRateChart from "@/components/wait-list/charts/conversion-rate-chart";
 import DailyRegistrationsChart from "@/components/wait-list/charts/daily-registrations-chart";
 import FakeUsersBlockedChart from "@/components/wait-list/charts/fake-users-blocked-chart";
@@ -11,13 +12,10 @@ import { cn } from "@/lib/utils";
 import {
   EnvelopeIcon,
   HandRaisedIcon,
-  PlusIcon,
   ShareIcon,
   UserGroupIcon,
   UserPlusIcon
 } from "@heroicons/react/24/outline";
-import { Button } from "@heroui/button";
-import { Link } from "@heroui/link";
 import NumberFlow from "@number-flow/react";
 import React from "react";
 
@@ -79,24 +77,13 @@ export default function LaunchedWaitList({ params }: { params: Promise<{ id: str
 
   return (
     <PageComponent>
-      <div className="flex items-start gap-8">
+      <div className="flex items-start gap-2">
         <Title description="Wait-List launched" className="flex">
           <span>Launch {id}</span>
         </Title>
 
         {/* <button className="text-primary flex items-center gap-1 text-sm font-medium hover:underline cursor-pointer  decoration-2"></button> */}
-
-        {/* Open a openbox with a searchbar to attach our widget */}
-        <Button
-          size="sm"
-          radius="sm"
-          color="primary"
-          as={Link}
-          href={`/app/launch/waitlist/${id}/widget-builder`}
-        >
-          <PlusIcon className="size-4" />
-          Attach widget
-        </Button>
+        <Chip status="primary">Bernay Landing page</Chip>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mt-4 rounded-default">
