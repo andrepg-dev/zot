@@ -1,7 +1,4 @@
-import {
-  JWT,
-  SAVE_ACCESS_TOKEN_IN_COOKIES_KEY,
-} from "@api/src/constants/authentication";
+import { JWT, SAVE_ACCESS_TOKEN_IN_COOKIES_KEY } from "@api/src/constants/authentication";
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { PassportStrategy } from "@nestjs/passport";

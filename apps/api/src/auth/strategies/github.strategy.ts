@@ -30,10 +30,7 @@ export class GitHubStrategy extends PassportStrategy(Strategy, "github") {
       const { displayName, emails, photos, username } = profile;
 
       if (!emails || emails.length === 0)
-        throw new HttpException(
-          "GitHub email not provided",
-          HttpStatus.BAD_REQUEST,
-        );
+        throw new HttpException("GitHub email not provided", HttpStatus.BAD_REQUEST);
 
       const email = emails[0].value;
 

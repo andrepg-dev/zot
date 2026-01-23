@@ -1,11 +1,4 @@
-import {
-  IsBoolean,
-  IsMongoId,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  IsUrl,
-} from "class-validator";
+import { IsBoolean, IsMongoId, IsNotEmpty, IsOptional, IsString, IsUrl } from "class-validator";
 
 export class CreateWaitListDto {
   @IsString()

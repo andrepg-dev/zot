@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from "@nestjs/common";
+import { Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, Types } from "mongoose";
 import { CreateWaitListDto } from "./dto/create-wait-list.dto";
@@ -11,18 +7,13 @@ import { WaitList } from "./schemas/wait-list.schema";
 
 @Injectable()
 export class WaitListService {
-  constructor(
-    @InjectModel(WaitList.name) private WaitListModel: Model<WaitList>,
-  ) {}
+  constructor(@InjectModel(WaitList.name) private WaitListModel: Model<WaitList>) {}
 
   private toObjectId(id: string | undefined): Types.ObjectId | undefined {
     return id ? new Types.ObjectId(id) : undefined;
   }
 
-  async create(
-    createWaitListDto: CreateWaitListDto,
-    owner: string | undefined,
-  ) {
+  async create(createWaitListDto: CreateWaitListDto, owner: string | undefined) {
     try {
       return await this.WaitListModel.create({
         ...createWaitListDto,
@@ -102,11 +93,8 @@ export class WaitListService {
     }
   }
 
-  handleDatabaseErrors(error: any) {
+  private handleDatabaseErrors(error: any) {
     console.error(error);
-
-    throw new InternalServerErrorException(
-      `Error saving on database: ${error}`,
-    );
+    throw new InternalServerErrorException(`Error saving on database: ${error}`);
   }
 }

@@ -32,19 +32,12 @@ export class AuthController {
   @Public()
   @UseGuards(LocalAuthGuard)
   @Post("login")
-  login(
-    @Request() req: express.Request,
-    @Response({ passthrough: true }) res: express.Response,
-  ) {
+  login(@Request() req: express.Request, @Response({ passthrough: true }) res: express.Response) {
     if (!req.user) throw new UnauthorizedException();
 
     const access_token = this.jwtService.sign(req.user);
 
-    this.cookiesService.saveCookie(
-      res,
-      SAVE_ACCESS_TOKEN_IN_COOKIES_KEY,
-      access_token,
-    );
+    this.cookiesService.saveCookie(res, SAVE_ACCESS_TOKEN_IN_COOKIES_KEY, access_token);
 
     return { access_token };
   }
@@ -57,17 +50,12 @@ export class AuthController {
     @Response({ passthrough: true }) res: express.Response,
   ) {
     const newUser = await this.authService.register(user);
-    if (!newUser)
-      throw new HttpException("User already exists, please login.", 400);
+    if (!newUser) throw new HttpException("User already exists, please login.", 400);
 
     req.user = { userId: String(newUser._id) };
 
     const access_token = this.jwtService.sign(req.user);
-    this.cookiesService.saveCookie(
-      res,
-      SAVE_ACCESS_TOKEN_IN_COOKIES_KEY,
-      access_token,
-    );
+    this.cookiesService.saveCookie(res, SAVE_ACCESS_TOKEN_IN_COOKIES_KEY, access_token);
 
     return { access_token };
   }
@@ -87,11 +75,7 @@ export class AuthController {
     if (!req.user) throw new InternalServerErrorException("User not found.");
 
     const access_token = this.jwtService.sign(req.user);
-    this.cookiesService.saveCookie(
-      res,
-      SAVE_ACCESS_TOKEN_IN_COOKIES_KEY,
-      access_token,
-    );
+    this.cookiesService.saveCookie(res, SAVE_ACCESS_TOKEN_IN_COOKIES_KEY, access_token);
 
     return req.user;
   }
@@ -106,11 +90,7 @@ export class AuthController {
     if (!req.user) throw new InternalServerErrorException("User not found.");
 
     const access_token = this.jwtService.sign(req.user);
-    this.cookiesService.saveCookie(
-      res,
-      SAVE_ACCESS_TOKEN_IN_COOKIES_KEY,
-      access_token,
-    );
+    this.cookiesService.saveCookie(res, SAVE_ACCESS_TOKEN_IN_COOKIES_KEY, access_token);
 
     return req.user;
   }

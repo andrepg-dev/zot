@@ -20,26 +20,13 @@ export class GoogleStrategy extends PassportStrategy(Strategy, "google") {
     });
   }
 
-  async validate(
-    _: string,
-    __: string,
-    profile: Profile,
-    done: VerifyCallback,
-  ) {
+  async validate(_: string, __: string, profile: Profile, done: VerifyCallback) {
     try {
       const { name, emails, photos } = profile;
 
-      if (!emails)
-        throw new HttpException(
-          "Google email not provided",
-          HttpStatus.BAD_REQUEST,
-        );
+      if (!emails) throw new HttpException("Google email not provided", HttpStatus.BAD_REQUEST);
 
-      if (!name)
-        throw new HttpException(
-          "Google name not provided",
-          HttpStatus.BAD_REQUEST,
-        );
+      if (!name) throw new HttpException("Google name not provided", HttpStatus.BAD_REQUEST);
 
       const email = emails[0].value;
 

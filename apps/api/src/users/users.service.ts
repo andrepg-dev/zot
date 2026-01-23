@@ -9,10 +9,7 @@ import { User } from "./schemas/users.schema";
 export class UsersService {
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
-  async create(
-    user: CreateUserDto,
-    providers: Array<"local" | "google" | "github">,
-  ) {
+  async create(user: CreateUserDto, providers: Array<"local" | "google" | "github">) {
     try {
       const userExists = await this.findByEmail(user.email);
 
@@ -80,8 +77,6 @@ export class UsersService {
   handleDatabaseErrors(error: any) {
     console.error(error);
 
-    throw new InternalServerErrorException(
-      `Error saving on database: ${error}`,
-    );
+    throw new InternalServerErrorException(`Error saving on database: ${error}`);
   }
 }

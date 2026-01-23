@@ -12,9 +12,6 @@ export class WaitList {
   @Prop({ required: true, default: false })
   is_security_active: boolean;
 
-  @Prop({ required: true, default: [] })
-  users_registed: Array<{ email: string; is_refered: boolean }>;
-
   @Prop({ required: true, default: true })
   is_available: boolean;
 
