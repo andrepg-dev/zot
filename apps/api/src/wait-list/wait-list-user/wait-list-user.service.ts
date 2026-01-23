@@ -37,7 +37,7 @@ export class WaitListUserService {
     });
 
     if (!waitlist) {
-      throw new NotFoundException("Waitlist not found or you don't have permission to access it.");
+      throw new NotFoundException("Waitlist not found.");
     }
   }
 
