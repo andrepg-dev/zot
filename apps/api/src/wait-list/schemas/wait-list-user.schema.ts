@@ -3,7 +3,18 @@ import { Types } from "mongoose";
 
 export type DocumentOfSchema = WaitListUser & Document;
 
-@Schema({ timestamps: true, versionKey: false, toJSON: { virtuals: true } })
+@Schema({
+  timestamps: true,
+  versionKey: false,
+  toJSON: {
+    virtuals: true,
+    transform(doc, ret: Record<string, any>) {
+      delete ret.waitlist_id;
+      return ret;
+    },
+  },
+  id: false,
+})
 export class WaitListUser {
   @Prop({ required: true })
   email: string;
