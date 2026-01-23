@@ -1,5 +1,5 @@
 import { Public } from "@api/src/auth/decorators/skip-auth.decorator";
-import { Body, Controller, Delete, Get, Param, Post, Query } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Query, Request } from "@nestjs/common";
 import { ParseObjectIdPipe } from "@nestjs/mongoose";
 import { Types } from "mongoose";
 import { RegisterWaitListUserDto } from "./dto/register-wait-list-user.dto";
@@ -19,14 +19,22 @@ export class WaitListUserController {
   }
 
   @Get()
-  async findAll(@Param("waitlistId", ParseObjectIdPipe) waitlistId: Types.ObjectId) {
-    return await this.waitListUserService.findAll(waitlistId);
+  async findAll(
+    @Param("waitlistId", ParseObjectIdPipe) waitlistId: Types.ObjectId,
+    @Request() req: Express.Request,
+  ) {
+    const userId = req?.user?.userId;
+    return await this.waitListUserService.findAll(waitlistId, userId);
   }
 
   @Get("count")
-  async count(@Param("waitlistId", ParseObjectIdPipe) waitlistId: Types.ObjectId) {
-    const total = await this.waitListUserService.count(waitlistId);
-    const referred = await this.waitListUserService.countReferred(waitlistId);
+  async count(
+    @Param("waitlistId", ParseObjectIdPipe) waitlistId: Types.ObjectId,
+    @Request() req: Express.Request,
+  ) {
+    const userId = req?.user?.userId;
+    const total = await this.waitListUserService.count(waitlistId, userId);
+    const referred = await this.waitListUserService.countReferred(waitlistId, userId);
 
     return { total, referred };
   }
@@ -35,15 +43,19 @@ export class WaitListUserController {
   async findByEmail(
     @Param("waitlistId", ParseObjectIdPipe) waitlistId: Types.ObjectId,
     @Query("email") email: string,
+    @Request() req: Express.Request,
   ) {
-    return await this.waitListUserService.findByEmail(waitlistId, email);
+    const userId = req?.user?.userId;
+    return await this.waitListUserService.findByEmail(waitlistId, email, userId);
   }
 
   @Delete(":email")
   async remove(
     @Param("waitlistId", ParseObjectIdPipe) waitlistId: Types.ObjectId,
     @Param("email") email: string,
+    @Request() req: Express.Request,
   ) {
-    return await this.waitListUserService.remove(waitlistId, email);
+    const userId = req?.user?.userId;
+    return await this.waitListUserService.remove(waitlistId, email, userId);
   }
 }
