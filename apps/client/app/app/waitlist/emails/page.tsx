@@ -1,6 +1,10 @@
+import Title from "@/components/global/title";
+import PageComponent from "@/components/layouts/page-component";
 
 export default function EmailsPage() {
   return (
-    <div>EmailsPage</div>
+    <PageComponent>
+      <Title description="Manage templates in email section">Email</Title>
+    </PageComponent>
   )
 }

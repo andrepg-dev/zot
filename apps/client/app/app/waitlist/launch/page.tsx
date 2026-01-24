@@ -3,6 +3,7 @@
 import { submitWaitListAction } from "@/actions/submit-waitlist";
 import Form from "@/components/form";
 import FormField from "@/components/form-field";
+import Stepper from "@/components/global/stepper";
 import Title from "@/components/global/title";
 import PageComponent from "@/components/layouts/page-component";
 import HeaderNavigation from "@/components/navigation/header.navigation";
@@ -57,38 +58,32 @@ export default function LaunchWaitList() {
         ]}
       />
 
-      <SidebarNavigation children={
-        <div className="text-sm p-4 px-6 flex flex-col gap-8">
-          <div className="flex flex-col">
-            <Type className="text-muted-foreground text-xs">Step 1</Type>
-            <div className="flex items-center gap-2 font-medium">
-              <Type>General configurations</Type>
-            </div>
-          </div>
-
-
-          <div className="flex flex-col text-muted-foreground">
-            <Type className="text-xs">Step 2</Type>
-            <div className="flex items-center gap-2 font-medium">
-              <Type>Configure api key</Type>
-            </div>
-          </div>
-
-          <div className="flex flex-col text-muted-foreground">
-            <Type className="text-xs">Step 3 - <span className="italic">optional</span></Type>
-            <div className="flex items-center gap-2 font-medium">
-              <Type>Configure email sending</Type>
-            </div>
-          </div>
-
-          <div className="flex flex-col text-muted-foreground">
-            <Type className="text-xs">Step 4</Type>
-            <div className="flex items-center gap-2 font-medium">
-              <Type>Review</Type>
-            </div>
-          </div>
-        </div>
-      } />
+      <SidebarNavigation
+        children={
+          <Stepper
+            steps={[
+              {
+                number: 1,
+                title: "General configurations",
+              },
+              {
+                number: 2,
+                title: "Configure api key",
+                active: true
+              },
+              {
+                number: 3,
+                title: "Configure email sending",
+                optional: true
+              },
+              {
+                number: 4,
+                title: "Review"
+              }
+            ]}
+          />
+        }
+      />
 
       <div className="flex flex-col gap-4">
         <Title description="Getting started by adding basic details of your waitlist">General configurations</Title>

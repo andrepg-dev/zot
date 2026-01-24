@@ -1,4 +1,5 @@
 import {
+  Cog6ToothIcon,
   CreditCardIcon,
   InboxStackIcon,
   Square3Stack3DIcon,
@@ -27,11 +28,6 @@ export const defaultNavItems = [
   //   icon: EnvelopeIcon
   // },
   {
-    href: "/app/landing-page",
-    label: "Landing page",
-    icon: Square3Stack3DIcon
-  },
-  {
     label: "WaitList",
     icon: InboxStackIcon,
     subItem: [
@@ -48,6 +44,18 @@ export const defaultNavItems = [
         label: "Domains"
       }
     ]
+  },
+  {
+    href: "/app/landing-page",
+    label: "Landing page",
+    icon: Square3Stack3DIcon
+  },
+
+  { type: "divider" },
+  {
+    href: "/app/settings",
+    label: "Settings",
+    icon: Cog6ToothIcon
   }
 ];
 
