@@ -1,9 +1,6 @@
 "use server";
 
-import {
-  submitWaitlistSchema,
-  SubmitWaitListValues
-} from "@repo/packages/schemas/submit-watlist.zod";
+import { submitWaitlistSchema, SubmitWaitListValues } from "@repo/packages/shared/schemas/index";
 
 export async function submitWaitListAction(data: SubmitWaitListValues) {
   const result = submitWaitlistSchema.safeParse(data);

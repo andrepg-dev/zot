@@ -15,7 +15,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   submitWaitlistSchema,
   SubmitWaitListValues
-} from "@repo/packages/schemas/submit-watlist.zod";
+} from "@repo/packages/shared/schemas/index";
 import { useMutation } from "@tanstack/react-query";
 import Link from "next/link";
 import { useForm } from "react-hook-form";

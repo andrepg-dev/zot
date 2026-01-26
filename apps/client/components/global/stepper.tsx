@@ -51,7 +51,7 @@ export default function Stepper({ steps, className }: StepperProps) {
             {/* Contenido del paso */}
             <div
               className={cn(
-                "flex flex-col pb-8 ",
+                "flex flex-col pb-8 cursor-pointer",
                 !isActive && "text-muted-foreground"
               )}
             >
