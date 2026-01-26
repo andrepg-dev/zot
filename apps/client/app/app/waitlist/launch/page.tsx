@@ -65,11 +65,11 @@ export default function LaunchWaitList() {
               {
                 number: 1,
                 title: "General configurations",
+                active: true
               },
               {
                 number: 2,
                 title: "Configure api key",
-                active: true
               },
               {
                 number: 3,
@@ -117,7 +117,7 @@ export default function LaunchWaitList() {
 
             <FormField
               title="Add security to your WaitList"
-              description="We prevent fake emails from being sent to your WaitList. "
+              description="Prevent fake emails from being sent to your WaitList with Dymo Security Services."
               isPremiumFeature
               error={errors.addSecurity}
               className="p-4"
@@ -128,7 +128,7 @@ export default function LaunchWaitList() {
             </FormField>
           </CardBody>
 
-          <CardFooter className="border-t flex justify-end">
+          <CardFooter className="border-t flex justify-end py-4">
             <div className="flex gap-2 justify-end">
               <Button as={Link} href="/app/waitlist/dashboard" className="w-fit" variant="bordered" size="sm">
                 <Type variant="sm">Cancel</Type>

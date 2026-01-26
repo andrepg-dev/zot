@@ -42,7 +42,7 @@ export default function FormField({
               </BillingDrawing>
             )}
           </h6>
-          <p className="text-muted-foreground">{description}</p>
+          <p className="text-muted-foreground text-pretty">{description}</p>
         </div>
       </div>
 
