@@ -9,6 +9,8 @@ import envConfig from "./config/env.config";
 import mongodbConfig from "./config/mongodb.config";
 import { UsersModule } from "./users/users.module";
 import { WaitListModule } from "./wait-list/wait-list.module";
+import { ReactToHtmlService } from './core/react-to-html/react-to-html.service';
+import { ReactToHtmlModule } from './react-to-html/react-to-html.module';
 
 @Module({
   imports: [
@@ -17,6 +19,7 @@ import { WaitListModule } from "./wait-list/wait-list.module";
     WaitListModule,
     UsersModule,
     AuthModule,
+    ReactToHtmlModule,
   ],
   controllers: [AppController],
   providers: [
@@ -24,6 +27,7 @@ import { WaitListModule } from "./wait-list/wait-list.module";
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
     },
+    ReactToHtmlService,
   ],
 })
 export class AppModule {}
