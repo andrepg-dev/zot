@@ -1,8 +1,9 @@
 "use client";
 
+import PrimaryActionButton from "@/components/global/primary-action-button";
 import HeaderNavigation from "@/components/navigation/header.navigation";
 import { useLandingPageState } from "@/store/landing-page/landing-page.store";
-import { Button } from "@heroui/button";
+import { RocketLaunchIcon } from "@heroicons/react/24/outline";
 import { useEffect, useState } from "react";
 
 export default function EditorHeader({ id }: { id: string }) {
@@ -27,11 +28,7 @@ export default function EditorHeader({ id }: { id: string }) {
         { label: id, pathname: id }
       ]}
       postNavigationItems={
-        <div>
-          <Button size="sm" className="px-3 py-2 bg-foreground text-white dark:text-black h-max">
-            Launch
-          </Button>
-        </div>
+        <PrimaryActionButton startContent={<RocketLaunchIcon className="size-4" strokeWidth={2} />}>Launch product</PrimaryActionButton>
       }
       hidden={shouldChangeHeader}
     />

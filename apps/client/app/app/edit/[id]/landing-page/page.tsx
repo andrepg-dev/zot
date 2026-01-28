@@ -41,7 +41,10 @@ export default function EditLandingPage({ params }: { params: Promise<{ id: stri
 
           {/* Editor derecho */}
           <div className="flex flex-col flex-1 min-w-0">
-            <HeaderTabulation />
+            <HeaderTabulation tabs={[{
+              title: "CounterDemo.tsx",
+              isActive: true
+            }]} />
 
             {visualizationType === "code" && <MonacoEditor />}
           </div>

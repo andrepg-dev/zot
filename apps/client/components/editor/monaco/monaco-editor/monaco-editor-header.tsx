@@ -8,13 +8,14 @@ import {
   EyeIcon
 } from "@heroicons/react/24/outline";
 import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@heroui/react";
+import MonacoEditorTemplate from "./monaco-edito-header-template";
 
 export default function MonacoEditorHeader() {
   const { editionType, setEditionType, setVisualizationType, visualizationType } =
     useLandingPageState();
 
   return (
-    <div className="border-b px-4 py-2 z-50 relative flex items-center justify-between overflow-hidden bg-background">
+    <MonacoEditorTemplate>
       <div className="flex text-xs items-center gap-2">
         <span>Edition type:</span>
 
@@ -89,6 +90,6 @@ export default function MonacoEditorHeader() {
           </DropdownItem>
         </DropdownMenu>
       </Dropdown>
-    </div>
+    </MonacoEditorTemplate>
   );
 }

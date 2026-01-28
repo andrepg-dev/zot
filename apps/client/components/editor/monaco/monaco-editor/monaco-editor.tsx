@@ -5,10 +5,9 @@ import { Editor, EditorProps, Monaco } from "@monaco-editor/react";
 import { MonacoJsxSyntaxHighlight, getWorker } from "monaco-jsx-syntax-highlight";
 import { useCallback, useState } from "react";
 import OneDarkPro from "../../../../theme/one-dark-pro.json";
-import { initialValue } from "./monaco.constants";
 
 export default function MonacoEditor({ ...props }: EditorProps) {
-  const [editorData, setEditorData] = useState(initialValue);
+  const [editorData, setEditorData] = useState("");
   const { editionType } = useLandingPageState();
 
   const convertThemeToMonaco = (theme: any) => {

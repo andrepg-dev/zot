@@ -1,10 +1,20 @@
 import Tabulation from "./tab";
 
-export default function HeaderTabulation() {
+interface Tab {
+  title: string;
+  isActive?: boolean;
+}
+
+interface HeaderTabulationProps {
+  tabs: Tab[];
+}
+
+export default function HeaderTabulation({ tabs }: HeaderTabulationProps) {
   return (
-    <header className="bg-default-50 border-r flex">
-      <Tabulation title="page.tsx" />
-      <Tabulation title="react-component.tsx" isActive />
+    <header className="bg-default-50 flex">
+      {tabs && tabs.map((tab, index) => (
+        <Tabulation key={`${tab.title}-${index}`} title={tab.title} isActive={tab.isActive} />
+      ))}
     </header>
   );
 }
