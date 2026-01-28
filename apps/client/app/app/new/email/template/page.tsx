@@ -8,9 +8,15 @@ import PageComponent from "@/components/layouts/page-component";
 import HeaderNavigation from "@/components/navigation/header.navigation";
 import SidebarNavigation from "@/components/navigation/sidebar.navigation";
 import Type from "@/components/type";
-import { ArrowDownTrayIcon, Bars3Icon, EnvelopeIcon, FolderPlusIcon } from "@heroicons/react/24/outline";
+import {
+  ArrowDownTrayIcon,
+  Bars3Icon,
+  EnvelopeIcon,
+  FolderPlusIcon
+} from "@heroicons/react/24/outline";
 import { Button } from "@heroui/button";
 import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@heroui/dropdown";
+import Link from "next/link";
 
 export default function CreateEmailPage() {
   return (
@@ -33,15 +39,16 @@ export default function CreateEmailPage() {
             pathname: ""
           }
         ]}
-
-        postNavigationItems={(
+        postNavigationItems={
           <div className="flex items-center gap-8 text-sm">
-            <PrimaryActionButton startContent={<FolderPlusIcon className="size-4" strokeWidth={2} />}>
+            <PrimaryActionButton
+              startContent={<FolderPlusIcon className="size-4" strokeWidth={2} />}
+            >
               Save template
             </PrimaryActionButton>
-          </div>)}
+          </div>
+        }
       />
-
 
       {/* Editor Section */}
       <div className="flex flex-col flex-1 w-full border-r">
@@ -51,11 +58,18 @@ export default function CreateEmailPage() {
           </div>
 
           <div className="flex items-center gap-4">
-            <Type variant="link" className="hover:underline">See documentation</Type>
+            <Link
+              href="https://react.email/docs/introduction"
+              title="React email documentation"
+              target="_blank"
+              className="hover:underline"
+            >
+              <Type variant="link">See documentation</Type>
+            </Link>
 
-            <Dropdown className="border p-0">
+            <Dropdown className="border p-0" disableAnimation>
               <DropdownTrigger>
-                <Button size="sm" variant="faded" isIconOnly>
+                <Button size="sm" variant="faded" isIconOnly disableAnimation>
                   <Bars3Icon className="size-4" />
                 </Button>
               </DropdownTrigger>
@@ -69,7 +83,10 @@ export default function CreateEmailPage() {
                   }
                 }}
               >
-                <DropdownItem key="download_source_code" startContent={<ArrowDownTrayIcon className="size-4" />}>
+                <DropdownItem
+                  key="download_source_code"
+                  startContent={<ArrowDownTrayIcon className="size-4" />}
+                >
                   Download file
                 </DropdownItem>
               </DropdownMenu>
@@ -104,6 +121,6 @@ export default function CreateEmailPage() {
           </footer>
         </div>
       </div>
-    </PageComponent >
+    </PageComponent>
   );
 }

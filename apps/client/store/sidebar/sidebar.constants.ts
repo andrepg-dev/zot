@@ -1,6 +1,7 @@
 import {
   Cog6ToothIcon,
   CreditCardIcon,
+  GlobeAltIcon,
   InboxStackIcon,
   Square3Stack3DIcon,
   Squares2X2Icon
@@ -38,10 +39,6 @@ export const defaultNavItems = [
       {
         href: "/app/waitlist/emails",
         label: "Emails"
-      },
-      {
-        href: "/app/waitlist/domains",
-        label: "Domains"
       }
     ]
   },
@@ -49,6 +46,11 @@ export const defaultNavItems = [
     href: "/app/landing-page",
     label: "Landing page",
     icon: Square3Stack3DIcon
+  },
+  {
+    href: "/app/waitlist/domains",
+    label: "Domains",
+    icon: GlobeAltIcon
   },
 
   { type: "divider" },
