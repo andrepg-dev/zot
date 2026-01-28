@@ -22,24 +22,26 @@ export default function Header() {
             <span className="font-bold text-2xl">zot</span>
           </Link>
 
-
           {navigationItems &&
             navigationItems?.map((value, idx) => (
-              <div key={idx} className="flex items-center text-sm font-bold gap-2">
+              <div
+                key={idx}
+                className="flex items-center text-sm font-semibold gap-2 mt-1 text-muted-foreground hover:text-foreground"
+              >
                 <span className="text-muted-foreground">
                   <SlashIcon className="size-4 text-default-100" />
                 </span>
 
                 <Link
                   href={value.pathname}
-                  className="hover:underline-2 font-medium hover:underline decoration-2 rounded-md"
+                  className="hover:underline-2 hover:underline decoration-2 rounded-md !text-[13px]"
                 >
                   {value.label}
                 </Link>
               </div>
             ))}
 
-          {children}
+          <div>{children}</div>
         </div>
 
         {/* Default header content */}
