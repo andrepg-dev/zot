@@ -11,10 +11,9 @@ export default function EmailsPage() {
         searchPlaceholder="Search template"
         actionButton={{
           label: "Create template",
-          href: "/app/new/template"
+          href: "/app/new/email/template"
         }}
       />
-
     </PageComponent>
-  )
+  );
 }

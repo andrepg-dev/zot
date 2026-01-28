@@ -14,7 +14,6 @@ export default function PricingPage() {
 
   return (
     <PageComponent className="max-w-6xl mx-auto text-foreground relative">
-      {/* <SidebarNavigation hidden navItems={defaultNavItems} /> */}
       <HeaderNavigation hidden />
 
       <div className="fixed top-20 right-10">

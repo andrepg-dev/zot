@@ -94,9 +94,7 @@ export default function ItemList({ navItems }: { navItems: NavItemOrDivider[] | 
                   )}
                   onClick={() => toggleExpand(itemId)}
                 >
-                  {Icon ? (
-                    <Icon className={cn("size-4", isActive && "text-primary-400")} />
-                  ) : null}
+                  {Icon ? <Icon className={cn("size-4", isActive && "text-primary-400")} /> : null}
                   <span className="flex-1 text-left">{Label}</span>
                   <ChevronRightIcon
                     className={cn(
@@ -105,24 +103,20 @@ export default function ItemList({ navItems }: { navItems: NavItemOrDivider[] | 
                     )}
                   />
                 </div>
-              ) : (
-                href ? (
-                  <Link
-                    href={href}
-                    className={clsx(
-                      "flex items-center gap-2 py-1.5 px-2 h-[35px] text-muted-foreground rounded-sm hover:bg-default-50",
-                      {
-                        "text-white bg-default-100": isActive
-                      }
-                    )}
-                  >
-                    {Icon ? (
-                      <Icon className={cn("size-4", isActive && "text-primary-400")} />
-                    ) : null}
-                    {Label}
-                  </Link>
-                ) : null
-              )}
+              ) : href ? (
+                <Link
+                  href={href}
+                  className={clsx(
+                    "flex items-center gap-2 py-1.5 px-2 h-[35px] text-muted-foreground rounded-sm hover:bg-default-50",
+                    {
+                      "text-white bg-default-100": isActive
+                    }
+                  )}
+                >
+                  {Icon ? <Icon className={cn("size-4", isActive && "text-primary-400")} /> : null}
+                  {Label}
+                </Link>
+              ) : null}
               {hasSubItems && isExpanded && (
                 <ul className="pl-4 mt-1 space-y-1">
                   {subItem.map((sub: any) => {
@@ -139,9 +133,7 @@ export default function ItemList({ navItems }: { navItems: NavItemOrDivider[] | 
                           )}
                         >
                           {SubIcon ? (
-                            <SubIcon
-                              className={cn("size-4", isSubActive && "text-primary-400")}
-                            />
+                            <SubIcon className={cn("size-4", isSubActive && "text-primary-400")} />
                           ) : null}
                           {sub.label}
                         </Link>
@@ -154,6 +146,6 @@ export default function ItemList({ navItems }: { navItems: NavItemOrDivider[] | 
           </li>
         );
       })}
-    </ul >
+    </ul>
   );
 }

@@ -12,7 +12,7 @@ export default function EditorSidebar() {
     <SidebarNavigation
       className={cn(
         "overflow-y-auto z-50 duration-400 transition-all",
-        editionType === "ai" ? "min-w-[435px]" : "min-w-0 w-0"
+        editionType === "ai" ? "min-w-[435px] w-[435px]" : "min-w-0 w-0"
       )}
       children={
         <div className="p-4 pb-0 flex flex-col h-full flex-1 text-sm gap-2 min-w-[435px]">
