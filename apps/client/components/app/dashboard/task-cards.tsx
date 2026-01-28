@@ -8,22 +8,22 @@ const dashboardTasks = [
   {
     id: 1,
     icon: RectangleStackIcon,
-    title: "Start creating landing page",
-    description: "Create a landing page using templates + AI.",
+    title: "Create landing page",
+    description: "Build with templates and AI assistance.",
     href: "/app/landing-page"
   },
   {
     id: 2,
     icon: LinkIcon,
-    title: "Integrate waiting list",
-    description: "Start collecting signups.",
+    title: "Launch waitlist",
+    description: "Collect and manage signups.",
     href: "/app/waitlist/launch"
   },
   {
     id: 3,
     icon: EnvelopeIcon,
-    title: "Send email campaigns",
-    description: "Time to execute seriously your creation.",
+    title: "Email campaigns",
+    description: "Engage your audience at scale.",
     href: "/app/emails"
   }
 ];
