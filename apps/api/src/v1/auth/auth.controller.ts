@@ -1,4 +1,5 @@
 import { CookiesService } from "@api/src/common/cookies.service";
+import { UserId } from "@api/src/common/decorators/user-id.decorator";
 import { SAVE_ACCESS_TOKEN_IN_COOKIES_KEY } from "@api/src/constants/authentication";
 import {
   Body,
@@ -9,7 +10,6 @@ import {
   Post,
   Request,
   Response,
-  UnauthorizedException,
   UseGuards,
 } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
@@ -59,13 +59,10 @@ export class AuthController {
     type: AccessTokenResponseDto,
   })
   @ApiUnauthorizedResponse({ description: "Invalid credentials" })
-  login(@Request() req: express.Request, @Response({ passthrough: true }) res: express.Response) {
-    if (!req.user) throw new UnauthorizedException();
-
-    const access_token = this.jwtService.sign(req.user);
+  login(@UserId() userId: string, @Response({ passthrough: true }) res: express.Response) {
+    const access_token = this.jwtService.sign(userId);
 
     this.cookiesService.saveCookie(res, SAVE_ACCESS_TOKEN_IN_COOKIES_KEY, access_token);
-
     return { access_token };
   }
 

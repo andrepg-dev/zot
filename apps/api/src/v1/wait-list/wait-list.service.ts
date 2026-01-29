@@ -94,7 +94,6 @@ export class WaitListService {
   }
 
   private handleDatabaseErrors(error: any) {
-    console.error(error);
     throw new InternalServerErrorException(`Error saving on database: ${error}`);
   }
 }

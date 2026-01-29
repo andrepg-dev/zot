@@ -1,4 +1,5 @@
-import { Body, Controller, Delete, Get, Param, Post, Query, Request } from "@nestjs/common";
+import { UserId } from "@api/src/common/decorators/user-id.decorator";
+import { Body, Controller, Delete, Get, Param, Post, Query } from "@nestjs/common";
 import { ParseObjectIdPipe } from "@nestjs/mongoose";
 import {
   ApiBearerAuth,
@@ -53,7 +54,8 @@ export class WaitListUserController {
   @ApiBearerAuth("JWT-auth")
   @ApiOperation({
     summary: "Get all waitlist users",
-    description: "Retrieves all users registered in a specific waitlist. Requires owner authentication.",
+    description:
+      "Retrieves all users registered in a specific waitlist. Requires owner authentication.",
   })
   @ApiOkResponse({
     description: "List of waitlist users retrieved successfully",
@@ -62,9 +64,8 @@ export class WaitListUserController {
   @ApiUnauthorizedResponse({ description: "Not authenticated or not the waitlist owner" })
   async findAll(
     @Param("waitlistId", ParseObjectIdPipe) waitlistId: Types.ObjectId,
-    @Request() req: Express.Request,
+    @UserId() userId: string,
   ) {
-    const userId = req?.user?.userId;
     return await this.waitListUserService.findAll(waitlistId, userId);
   }
 
@@ -81,9 +82,8 @@ export class WaitListUserController {
   @ApiUnauthorizedResponse({ description: "Not authenticated or not the waitlist owner" })
   async count(
     @Param("waitlistId", ParseObjectIdPipe) waitlistId: Types.ObjectId,
-    @Request() req: Express.Request,
+    @UserId() userId: string,
   ) {
-    const userId = req?.user?.userId;
     const total = await this.waitListUserService.count(waitlistId, userId);
     const referred = await this.waitListUserService.countReferred(waitlistId, userId);
 
@@ -111,9 +111,8 @@ export class WaitListUserController {
   async findByEmail(
     @Param("waitlistId", ParseObjectIdPipe) waitlistId: Types.ObjectId,
     @Query("email") email: string,
-    @Request() req: Express.Request,
+    @UserId() userId: string,
   ) {
-    const userId = req?.user?.userId;
     return await this.waitListUserService.findByEmail(waitlistId, email, userId);
   }
 
@@ -134,9 +133,8 @@ export class WaitListUserController {
   async remove(
     @Param("waitlistId", ParseObjectIdPipe) waitlistId: Types.ObjectId,
     @Param("email") email: string,
-    @Request() req: Express.Request,
+    @UserId() userId: string,
   ) {
-    const userId = req?.user?.userId;
     return await this.waitListUserService.remove(waitlistId, email, userId);
   }
 }

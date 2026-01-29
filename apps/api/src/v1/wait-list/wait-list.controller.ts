@@ -1,3 +1,4 @@
+import { UserId } from "@api/src/common/decorators/user-id.decorator";
 import {
   Body,
   Controller,
@@ -7,7 +8,6 @@ import {
   Param,
   Patch,
   Post,
-  Request,
 } from "@nestjs/common";
 import { ParseObjectIdPipe } from "@nestjs/mongoose";
 import {
@@ -42,9 +42,7 @@ export class WaitListController {
     type: WaitListResponseDto,
   })
   @ApiUnauthorizedResponse({ description: "Not authenticated" })
-  async create(@Body() createWaitListDto: CreateWaitListDto, @Request() req: Express.Request) {
-    const userId = req?.user?.userId;
-
+  async create(@Body() createWaitListDto: CreateWaitListDto, @UserId() userId: string) {
     return await this.waitListService.create(createWaitListDto, userId);
   }
 
@@ -58,9 +56,7 @@ export class WaitListController {
     type: [WaitListResponseDto],
   })
   @ApiUnauthorizedResponse({ description: "Not authenticated" })
-  async findAll(@Request() req: Express.Request) {
-    const userId = req?.user?.userId;
-
+  async findAll(@UserId() userId: string) {
     return await this.waitListService.findAll(userId);
   }
 
@@ -80,11 +76,7 @@ export class WaitListController {
   })
   @ApiNotFoundResponse({ description: "Waitlist not found" })
   @ApiUnauthorizedResponse({ description: "Not authenticated" })
-  async findOne(
-    @Param("id", ParseObjectIdPipe) id: Types.ObjectId,
-    @Request() req: Express.Request,
-  ) {
-    const userId = req?.user?.userId;
+  async findOne(@Param("id", ParseObjectIdPipe) id: Types.ObjectId, @UserId() userId: string) {
     const response = await this.waitListService.findOne(id, userId);
 
     if (!response) {
@@ -113,9 +105,8 @@ export class WaitListController {
   async update(
     @Param("id", ParseObjectIdPipe) id: Types.ObjectId,
     @Body() updateWaitListDto: UpdateWaitListDto,
-    @Request() req: Express.Request,
+    @UserId() userId: string,
   ) {
-    const userId = req?.user?.userId;
     return await this.waitListService.update(id, updateWaitListDto, userId);
   }
 
@@ -132,11 +123,7 @@ export class WaitListController {
   @ApiOkResponse({ description: "Waitlist deleted successfully" })
   @ApiNotFoundResponse({ description: "Waitlist not found" })
   @ApiUnauthorizedResponse({ description: "Not authenticated" })
-  async remove(
-    @Param("id", ParseObjectIdPipe) id: Types.ObjectId,
-    @Request() req: Express.Request,
-  ) {
-    const userId = req?.user?.userId;
+  async remove(@Param("id", ParseObjectIdPipe) id: Types.ObjectId, @UserId() userId: string) {
     return await this.waitListService.remove(id, userId);
   }
 }
