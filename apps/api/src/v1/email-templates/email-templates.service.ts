@@ -1,3 +1,4 @@
+import { handleDatabaseErrors } from "@api/src/common/error-handling/handle-database-errors";
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
@@ -9,23 +10,46 @@ import { EmailTemplate } from "./schemas/email-template.schema";
 export class EmailTemplatesService {
   constructor(@InjectModel(EmailTemplate.name) private EmailTemplateModel: Model<EmailTemplate>) {}
 
-  create(createEmailTemplateDto: CreateEmailTemplateDto) {
-    return this.EmailTemplateModel.create(createEmailTemplateDto);
+  async create(createEmailTemplateDto: CreateEmailTemplateDto, owner: string) {
+    try {
+      return await this.EmailTemplateModel.create({
+        ...createEmailTemplateDto,
+        owner: owner,
+      });
+    } catch (error) {
+      handleDatabaseErrors(error);
+    }
   }
 
-  findAll(owner: string) {
-    return this.EmailTemplateModel.find({ owner });
+  async findAll(owner: string) {
+    try {
+      return await this.EmailTemplateModel.find({ owner });
+    } catch (error) {
+      handleDatabaseErrors(error);
+    }
   }
 
-  findOne(id: number, owner: string) {
-    return this.EmailTemplateModel.findOne({ id, owner });
+  async findOne(id: number, owner: string) {
+    try {
+      return await this.EmailTemplateModel.findOne({ id, owner });
+    } catch (error) {
+      handleDatabaseErrors(error);
+    }
   }
 
-  update(id: number, updateEmailTemplateDto: UpdateEmailTemplateDto) {
-    return `This action updates a #${id} emailTemplate`;
+  async update(id: number, updateEmailTemplateDto: UpdateEmailTemplateDto, owner: string) {
+    try {
+      return await this.EmailTemplateModel.updateOne({ id, owner }, updateEmailTemplateDto);
+    } catch (error) {
+      handleDatabaseErrors(error);
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} emailTemplate`;
+  async remove(id: number, owner: string) {
+    try {
+      return await this.EmailTemplateModel.findOneAndDelete({ id, owner });
+    } catch (error) {
+      handleDatabaseErrors(error);
+    }
   }
 }

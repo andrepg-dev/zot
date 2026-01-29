@@ -1,8 +1,8 @@
+import { handleDatabaseErrors } from "@api/src/common/error-handling/handle-database-errors";
 import {
   ConflictException,
   ForbiddenException,
   Injectable,
-  InternalServerErrorException,
   NotFoundException,
 } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
@@ -77,7 +77,7 @@ export class WaitListUserService {
       if (error instanceof ConflictException || error instanceof NotFoundException) {
         throw error;
       }
-      this.handleDatabaseErrors(error);
+      handleDatabaseErrors(error);
     }
   }
 
@@ -90,7 +90,7 @@ export class WaitListUserService {
       if (error instanceof NotFoundException || error instanceof ForbiddenException) {
         throw error;
       }
-      this.handleDatabaseErrors(error);
+      handleDatabaseErrors(error);
     }
   }
 
@@ -112,7 +112,7 @@ export class WaitListUserService {
       if (error instanceof NotFoundException || error instanceof ForbiddenException) {
         throw error;
       }
-      this.handleDatabaseErrors(error);
+      handleDatabaseErrors(error);
     }
   }
 
@@ -134,7 +134,7 @@ export class WaitListUserService {
       if (error instanceof NotFoundException || error instanceof ForbiddenException) {
         throw error;
       }
-      this.handleDatabaseErrors(error);
+      handleDatabaseErrors(error);
     }
   }
 
@@ -147,7 +147,7 @@ export class WaitListUserService {
       if (error instanceof NotFoundException || error instanceof ForbiddenException) {
         throw error;
       }
-      this.handleDatabaseErrors(error);
+      handleDatabaseErrors(error);
     }
   }
 
@@ -163,12 +163,7 @@ export class WaitListUserService {
       if (error instanceof NotFoundException || error instanceof ForbiddenException) {
         throw error;
       }
-      this.handleDatabaseErrors(error);
+      handleDatabaseErrors(error);
     }
-  }
-
-  private handleDatabaseErrors(error: any) {
-    console.error(error);
-    throw new InternalServerErrorException(`Error saving on database: ${error}`);
   }
 }

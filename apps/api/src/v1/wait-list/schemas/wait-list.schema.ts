@@ -1,8 +1,8 @@
+import { BasedOwnerSchema } from "@api/src/common/schemas/based-owner.schema";
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { Types } from "mongoose";
 
 @Schema({ timestamps: true, versionKey: false })
-export class WaitList {
+export class WaitList extends BasedOwnerSchema {
   @Prop({ required: true })
   name: string;
 
@@ -24,9 +24,6 @@ export class WaitList {
 
   @Prop()
   webhook_url: string;
-
-  @Prop({ required: true, ref: "user" })
-  owner: Types.ObjectId;
 }
 
 export const WaitListSchema = SchemaFactory.createForClass(WaitList);

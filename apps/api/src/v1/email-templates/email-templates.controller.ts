@@ -9,8 +9,8 @@ export class EmailTemplatesController {
   constructor(private readonly emailTemplatesService: EmailTemplatesService) {}
 
   @Post()
-  create(@Body() createEmailTemplateDto: CreateEmailTemplateDto) {
-    return this.emailTemplatesService.create(createEmailTemplateDto);
+  create(@Body() createEmailTemplateDto: CreateEmailTemplateDto, @UserId() userId: string) {
+    return this.emailTemplatesService.create(createEmailTemplateDto, userId);
   }
 
   @Get()
@@ -19,17 +19,21 @@ export class EmailTemplatesController {
   }
 
   @Get(":id")
-  findOne(@Param("id") id: string) {
-    return this.emailTemplatesService.findOne(id);
+  findOne(@Param("id") id: string, @UserId() userId: string) {
+    return this.emailTemplatesService.findOne(+id, userId);
   }
 
   @Patch(":id")
-  update(@Param("id") id: string, @Body() updateEmailTemplateDto: UpdateEmailTemplateDto) {
-    return this.emailTemplatesService.update(+id, updateEmailTemplateDto);
+  update(
+    @Param("id") id: string,
+    @Body() updateEmailTemplateDto: UpdateEmailTemplateDto,
+    @UserId() userId: string,
+  ) {
+    return this.emailTemplatesService.update(+id, updateEmailTemplateDto, userId);
   }
 
   @Delete(":id")
-  remove(@Param("id") id: string) {
-    return this.emailTemplatesService.remove(+id);
+  remove(@Param("id") id: string, @UserId() userId: string) {
+    return this.emailTemplatesService.remove(+id, userId);
   }
 }
