@@ -1,7 +1,7 @@
 import { Injectable, InternalServerErrorException } from "@nestjs/common";
 import * as bcrypt from "bcrypt";
-import { UsersService } from "../users/users.service";
 import { CreateUserDto } from "../users/dto/create-user.dto";
+import { UsersService } from "../users/users.service";
 
 @Injectable()
 export class AuthService {
@@ -25,8 +25,15 @@ export class AuthService {
     return rest;
   }
 
-  async register(user: CreateUserDto) {
-    const response = await this.usersService.create(user, ["local"]);
-    return response;
+  async register(user: CreateUserDto): Promise<{ _id: string } | null> {
+    const unsafeResponse: unknown = await this.usersService.create(user, ["local"]);
+
+    if (!unsafeResponse) {
+      return null;
+    }
+
+    const response = unsafeResponse as { _id: unknown };
+
+    return { _id: String(response._id) };
   }
 }

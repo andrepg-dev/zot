@@ -75,7 +75,7 @@ export class UsersService {
     }
   }
 
-  handleDatabaseErrors(error: any) {
+  handleDatabaseErrors(error: any): never {
     console.error(error);
 
     throw new InternalServerErrorException(`Error saving on database: ${error}`);
