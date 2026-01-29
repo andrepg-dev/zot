@@ -3,7 +3,7 @@ import { Public } from "../auth/decorators/skip-auth.decorator";
 import { ReactToHtmlService } from "../core/react-to-html/react-to-html.service";
 import { ReactToHtmlDto } from "./dto/react-to-html.dto";
 
-@Controller("react2html")
+@Controller({ path: "react2html", version: "1" })
 export class ReactToHtmlController {
   constructor(private react2html: ReactToHtmlService) {}
 

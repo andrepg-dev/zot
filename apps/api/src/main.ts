@@ -25,8 +25,8 @@ async function bootstrap() {
   const config = new DocumentBuilder()
     .setTitle("Zot API")
     .setDescription("Guiade to use zot api")
-    .setVersion("1.0.0")
-    .addTag("cats")
+    .setVersion("1")
+    .addTag("Launch")
     .build();
 
   const documentFactory = () => SwaggerModule.createDocument(app, config);

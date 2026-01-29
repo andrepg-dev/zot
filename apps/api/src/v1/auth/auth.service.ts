@@ -1,7 +1,7 @@
 import { Injectable, InternalServerErrorException } from "@nestjs/common";
 import * as bcrypt from "bcrypt";
-import { CreateUserDto } from "../users/dto/create-user.dto";
 import { UsersService } from "../users/users.service";
+import { CreateUserDto } from "../users/dto/create-user.dto";
 
 @Injectable()
 export class AuthService {

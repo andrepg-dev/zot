@@ -1,4 +1,4 @@
-import { User } from "@api/src/users/schemas/users.schema";
+import { User } from "@api/src/v1/users/schemas/users.schema";
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { InjectModel } from "@nestjs/mongoose";

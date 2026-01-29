@@ -1,3 +1,5 @@
+import { CookiesService } from "@api/src/common/cookies.service";
+import { SAVE_ACCESS_TOKEN_IN_COOKIES_KEY } from "@api/src/constants/authentication";
 import {
   Body,
   Controller,
@@ -12,8 +14,6 @@ import {
 } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import express from "express";
-import { CookiesService } from "../common/cookies.service";
-import { SAVE_ACCESS_TOKEN_IN_COOKIES_KEY } from "../constants/authentication";
 import { CreateUserDto } from "../users/dto/create-user.dto";
 import { AuthService } from "./auth.service";
 import { Public } from "./decorators/skip-auth.decorator";
@@ -21,7 +21,7 @@ import { GitHubAuthGuard } from "./guards/github.guard";
 import { GoogleAuthGuard } from "./guards/google.guard";
 import { LocalAuthGuard } from "./guards/local.guard";
 
-@Controller("auth")
+@Controller({ path: "auth", version: "1" })
 export class AuthController {
   constructor(
     private readonly authService: AuthService,

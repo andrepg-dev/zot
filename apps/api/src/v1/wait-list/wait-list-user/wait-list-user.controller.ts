@@ -1,11 +1,11 @@
-import { Public } from "@api/src/auth/decorators/skip-auth.decorator";
 import { Body, Controller, Delete, Get, Param, Post, Query, Request } from "@nestjs/common";
 import { ParseObjectIdPipe } from "@nestjs/mongoose";
 import { Types } from "mongoose";
+import { Public } from "../../auth/decorators/skip-auth.decorator";
 import { RegisterWaitListUserDto } from "./dto/register-wait-list-user.dto";
 import { WaitListUserService } from "./wait-list-user.service";
 
-@Controller("wait-list/:waitlistId/users")
+@Controller({ path: "wait-list/:waitlistId/users", version: "1" })
 export class WaitListUserController {
   constructor(private readonly waitListUserService: WaitListUserService) {}
 

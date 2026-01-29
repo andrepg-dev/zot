@@ -6,4 +6,4 @@ import { ReactToHtmlService } from "../core/react-to-html/react-to-html.service"
   controllers: [ReactToHtmlController],
   providers: [ReactToHtmlService],
 })
-export class ReactToHtmlModule {}
+export class ReactToHtmlModuleV1 {}

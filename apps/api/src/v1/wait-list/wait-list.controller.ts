@@ -15,7 +15,7 @@ import { CreateWaitListDto } from "./dto/create-wait-list.dto";
 import { UpdateWaitListDto } from "./dto/update-wait-list.dto";
 import { WaitListService } from "./wait-list.service";
 
-@Controller("wait-list")
+@Controller({ path: "wait-list", version: "1" })
 export class WaitListController {
   constructor(private readonly waitListService: WaitListService) {}
 
