@@ -22,9 +22,11 @@
   },
   "dependencies": {
     "@monaco-editor/react": "^4.7.0",
+    "@nestjs/swagger": "^11.2.5",
     "@react-email/components": "1.0.6",
     "client": "^0.0.1",
     "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "react-dom": "19.2.3",
+    "swagger-ui-express": "^5.0.1"
   }
 }
