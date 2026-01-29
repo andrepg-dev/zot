@@ -60,7 +60,7 @@ export class ReactToHtmlService {
     const wrappedCode = `
     const { ${componentNames} } = Components;
     ${transpiled?.code}
-    exports.default = typeof EmailComponent !== "undefined" ? EmailComponent : (typeof Default !== 'undefined' ? Default : null);
+    exports.default = typeof Email !== "undefined" ? Email : (typeof Default !== 'undefined' ? Default : null);
   `;
 
     vm.runInContext(wrappedCode, sandbox, {
@@ -71,7 +71,7 @@ export class ReactToHtmlService {
     const EmailComponent = sandbox.exports.default;
 
     if (!EmailComponent) {
-      throw new Error("No email component found. Export as EmailComponent or Default");
+      throw new Error("No email component found. Export as Email or Default");
     }
 
     const html = await render(React.createElement(EmailComponent));

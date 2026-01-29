@@ -1,3 +1,4 @@
+import { toObjectId } from "@api/src/common/data-transform/to-object-id";
 import { Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, Types } from "mongoose";
@@ -9,15 +10,11 @@ import { WaitList } from "./schemas/wait-list.schema";
 export class WaitListService {
   constructor(@InjectModel(WaitList.name) private WaitListModel: Model<WaitList>) {}
 
-  private toObjectId(id: string | undefined): Types.ObjectId | undefined {
-    return id ? new Types.ObjectId(id) : undefined;
-  }
-
   async create(createWaitListDto: CreateWaitListDto, owner: string | undefined) {
     try {
       return await this.WaitListModel.create({
         ...createWaitListDto,
-        owner: this.toObjectId(owner),
+        owner: toObjectId(owner),
       });
     } catch (error) {
       this.handleDatabaseErrors(error);
@@ -29,7 +26,7 @@ export class WaitListService {
       console.log(owner);
       if (!owner) throw new InternalServerErrorException();
 
-      return await this.WaitListModel.find({ owner: this.toObjectId(owner) });
+      return await this.WaitListModel.find({ owner: toObjectId(owner) });
     } catch (error) {
       this.handleDatabaseErrors(error);
     }
@@ -39,7 +36,7 @@ export class WaitListService {
     try {
       return await this.WaitListModel.findOne({
         _id: id,
-        owner: this.toObjectId(owner),
+        owner: toObjectId(owner),
       });
     } catch (error) {
       this.handleDatabaseErrors(error);
@@ -53,7 +50,7 @@ export class WaitListService {
   ) {
     try {
       const response = await this.WaitListModel.findOneAndUpdate(
-        { _id: id, owner: this.toObjectId(owner) },
+        { _id: id, owner: toObjectId(owner) },
         updateWaitListDto,
         { new: true },
       );
@@ -77,7 +74,7 @@ export class WaitListService {
     try {
       const response = await this.WaitListModel.findOneAndDelete({
         _id: id,
-        owner: this.toObjectId(owner),
+        owner: toObjectId(owner),
       });
 
       if (!response) {
