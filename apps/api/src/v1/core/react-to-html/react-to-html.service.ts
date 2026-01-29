@@ -34,7 +34,7 @@ import * as vm from "vm";
  */
 @Injectable()
 export class ReactToHtmlService {
-  async compile(code: string) {
+  async compile(code: string): Promise<string> {
     this.validateCode(code);
 
     const transpiled = Babel.transformSync(code, {

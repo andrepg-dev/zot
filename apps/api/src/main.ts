@@ -13,6 +13,7 @@ async function bootstrap() {
     new ValidationPipe({
       whitelist: true,
       forbidNonWhitelisted: true,
+      transform: true,
     }),
   );
 
@@ -23,15 +24,60 @@ async function bootstrap() {
     defaultVersion: "1",
   });
 
+  // Swagger configuration
   const config = new DocumentBuilder()
     .setTitle("Zot API")
-    .setDescription("Guiade to use zot api")
-    .setVersion("1")
-    .addTag("Launch")
+    .setDescription(
+      `
+#### Overview
+Zot API provides a comprehensive solution for managing waitlists and user authentication
+
+#### Rate Limiting
+API requests are subject to rate limiting. Please handle 429 responses appropriately.
+    `.trim(),
+    )
+    .setVersion("1.0.0")
+    .setContact("Zot Team", "https://zot.dev", "support@zot.dev")
+    .addServer(process.env.API_URL ?? "http://localhost:3010", "Current Environment")
+    .addBearerAuth(
+      {
+        type: "http",
+        scheme: "bearer",
+        bearerFormat: "JWT",
+        name: "Authorization",
+        description: "Enter your JWT token",
+        in: "header",
+      },
+      "JWT-auth",
+    )
+    .addTag("Health", "API health check endpoints")
+    .addTag("Auth", "Authentication and authorization endpoints")
+    .addTag("WaitList", "Waitlist management endpoints")
+    .addTag("WaitList Users", "Waitlist user registration and management")
+    .addTag("React to HTML", "React component to HTML conversion")
     .build();
 
-  const documentFactory = () => SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup("/", app, documentFactory);
+  const document = SwaggerModule.createDocument(app, config, {
+    operationIdFactory: (controllerKey: string, methodKey: string) => methodKey,
+  });
+
+  SwaggerModule.setup("docs", app, document, {
+    swaggerOptions: {
+      persistAuthorization: true,
+      docExpansion: "none",
+      filter: true,
+      showRequestDuration: true,
+      syntaxHighlight: {
+        activate: true,
+        theme: "monokai",
+      },
+    },
+    customSiteTitle: "Zot API Documentation",
+    customCss: `
+      .swagger-ui .topbar { display: none }
+      .swagger-ui .info .title { font-size: 2.5em }
+    `,
+  });
 
   app.enableCors({
     origin: "https://zot.dev",
