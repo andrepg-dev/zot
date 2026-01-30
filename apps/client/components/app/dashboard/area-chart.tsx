@@ -61,7 +61,8 @@ export default function AreaChartComponent() {
               </linearGradient>
             </defs>
             <CartesianGrid
-              vertical={false}
+              vertical
+              horizontal
               strokeDasharray="3 3"
               stroke={gridColor}
               opacity={0.5}
@@ -103,6 +104,8 @@ export default function AreaChartComponent() {
               stackId="a"
               strokeWidth={0.8}
               strokeDasharray="3 3"
+              dot={{ fill: mobileColor, strokeWidth: 2, r: 4 }}
+              activeDot={{ fill: mobileColor, strokeWidth: 2, r: 5 }}
             />
             <Area
               dataKey="desktop"
@@ -112,6 +115,8 @@ export default function AreaChartComponent() {
               stackId="a"
               strokeWidth={0.8}
               strokeDasharray="3 3"
+              dot={{ fill: desktopColor, strokeWidth: 2, r: 4 }}
+              activeDot={{ fill: desktopColor, strokeWidth: 2, r: 5 }}
             />
           </AreaChart>
         </ResponsiveContainer>

@@ -1,3 +1,5 @@
+// [!] unused code - editor header
+
 "use client";
 
 import PrimaryActionButton from "@/components/global/primary-action-button";

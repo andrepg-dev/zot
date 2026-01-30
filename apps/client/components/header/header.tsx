@@ -2,10 +2,13 @@
 
 import { cn } from "@/lib/utils";
 import useHeaderStore from "@/store/header/header.store";
-import { MagnifyingGlassIcon, SlashIcon } from "@heroicons/react/24/outline";
+import { MagnifyingGlassIcon, PhotoIcon, SlashIcon } from "@heroicons/react/24/outline";
 import { Button } from "@heroui/button";
 import { Kbd } from "@heroui/kbd";
+import { Popover, PopoverContent, PopoverTrigger } from "@heroui/popover";
 import Link from "next/link";
+import GlobalButton from "../global/button";
+import GlobalTextarea from "../global/Textarea";
 
 export default function Header() {
   const { children, navigationItems, postNavigationItems, hidden } = useHeaderStore();
@@ -50,9 +53,30 @@ export default function Header() {
           postNavigationItems
         ) : (
           <div className="flex items-center gap-4">
-            <Button variant="light" className="text-xs text-muted-foreground" size="sm">
-              Feedback
-            </Button>
+
+
+            <Popover radius="sm">
+              <PopoverTrigger>
+                <GlobalButton variant="light" className="text-xs text-muted-foreground">
+                  Feedback
+                </GlobalButton>
+              </PopoverTrigger>
+
+              <PopoverContent className="p-2 flex flex-col gap-2">
+                <GlobalTextarea className="w-[290px]" placeholder="My idea for improve Zot is..." variant="faded" />
+
+                <div className="bg-border w-full h-[1px]"></div>
+
+                <div className="flex justify-end gap-2 w-full">
+                  <GlobalButton isIconOnly variant="faded">
+                    <PhotoIcon className="size-4" />
+                  </GlobalButton>
+                  <GlobalButton color="primary" >
+                    Send feedback
+                  </GlobalButton>
+                </div>
+              </PopoverContent>
+            </Popover>
 
             <Button
               startContent={<MagnifyingGlassIcon className={"size-4"} />}

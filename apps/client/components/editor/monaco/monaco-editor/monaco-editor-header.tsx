@@ -1,3 +1,5 @@
+import GlobalButton from "@/components/global/button";
+import PrimaryActionButton from "@/components/global/primary-action-button";
 import GlobalTooltip from "@/components/global/tooltip";
 import { cn } from "@/lib/utils";
 import { useLandingPageState } from "@/store/landing-page/landing-page.store";
@@ -5,9 +7,10 @@ import {
   ArrowDownTrayIcon,
   Bars3Icon,
   CodeBracketIcon,
-  EyeIcon
+  EyeIcon,
+  RocketLaunchIcon
 } from "@heroicons/react/24/outline";
-import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@heroui/react";
+import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@heroui/react";
 import MonacoEditorTemplate from "./monaco-edito-header-template";
 
 export default function MonacoEditorHeader() {
@@ -69,27 +72,32 @@ export default function MonacoEditorHeader() {
         </GlobalTooltip>
       </div>
 
-      <Dropdown className="border p-0">
-        <DropdownTrigger>
-          <Button size="sm" variant="faded" isIconOnly>
-            <Bars3Icon className="size-4" />
-          </Button>
-        </DropdownTrigger>
-        <DropdownMenu
-          aria-label="Menu de acciones"
-          variant="flat"
-          onAction={(key) => {
-            if (key === "download_zip") {
-              // Aquí puedes agregar la lógica para descargar el ZIP
-              console.log("Download Zip");
-            }
-          }}
-        >
-          <DropdownItem key="download_zip" startContent={<ArrowDownTrayIcon className="size-4" />}>
-            Download Zip
-          </DropdownItem>
-        </DropdownMenu>
-      </Dropdown>
+      <div className="flex gap-2 items-center">
+        <PrimaryActionButton startContent={<RocketLaunchIcon className="size-4" strokeWidth={2} />}>Launch product</PrimaryActionButton>
+
+
+        <Dropdown className="border p-0" disableAnimation>
+          <DropdownTrigger>
+            <GlobalButton size="sm" variant="faded" isIconOnly disableRipple>
+              <Bars3Icon className="size-4" />
+            </GlobalButton>
+          </DropdownTrigger>
+          <DropdownMenu
+            aria-label="Menu de acciones"
+            variant="flat"
+            onAction={(key) => {
+              if (key === "download_zip") {
+                // Aquí puedes agregar la lógica para descargar el ZIP
+                console.log("Download Zip");
+              }
+            }}
+          >
+            <DropdownItem key="download_zip" startContent={<ArrowDownTrayIcon className="size-4" />}>
+              Download code
+            </DropdownItem>
+          </DropdownMenu>
+        </Dropdown>
+      </div>
     </MonacoEditorTemplate>
   );
 }
