@@ -11,7 +11,7 @@ export default function PrimaryActionButton({
   return (
     <Button
       size="sm"
-      className={cn("px-3 py-2 bg-foreground text-white dark:text-black h-max", className)}
+      className={cn("px-3 py-2 bg-foreground text-white dark:text-black h-max border", className)}
       {...props}
     >
       {children}

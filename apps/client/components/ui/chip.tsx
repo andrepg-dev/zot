@@ -11,7 +11,7 @@ export default function Chip({ status, children }: ChipProps) {
   return (
     <span
       className={cn(
-        "px-2 py-1 rounded-full text-xs font-medium",
+        "px-1.5 py-[1px] rounded-full text-[10px] tracking-wide border",
         status === "active" && "bg-success/20 text-success",
         status === "warning" && "bg-warning/20 text-warning",
         status === "neutral" && "bg-default/20 text-default-600",
