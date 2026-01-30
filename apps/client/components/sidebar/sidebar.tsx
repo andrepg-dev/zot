@@ -54,7 +54,7 @@ export default function Sidebar() {
                   "flex items-center gap-2 py-1.5 px-5 h-[45px] text-muted-foreground hover:bg-default/60 text-sm"
                 )}
               >
-                <BookOpenIcon className={cn("size-5")} /> Docs
+                <BookOpenIcon className={cn("size-5")} /> Documentation
               </Link>
 
               <Dropdown
@@ -62,14 +62,14 @@ export default function Sidebar() {
                 classNames={{
                   base: "before:bg-default-200", // change arrow background
                   content:
-                    "py-1 px-1 border border-default-200 bg-linear-to-br from-white to-default-200 dark:from-default-50 dark:to-black"
+                    "py-1 px-1 border bg-linear-to-br from-white to-default-200 dark:from-default-50 dark:to-black"
                 }}
                 radius="sm"
               >
                 <DropdownTrigger>
                   <div className="flex items-center justify-between px-4 h-[45px] hover:bg-default/60">
                     <div className="flex w-full items-center gap-2 cursor-pointer ">
-                      <div className="size-6 flex items-center justify-center bg-default rounded-full text-[9px] font-light text-muted-foreground">
+                      <div className="border size-6 flex items-center justify-center bg-default-100 rounded-full text-[9px] font-light text-muted-foreground">
                         AP
                       </div>
                       <div className="flex flex-col text-[12px] leading-3.5 font-light">
@@ -80,11 +80,11 @@ export default function Sidebar() {
 
                     <Button
                       as={Link}
-                      href="/pricing"
+                      href="/app/billing"
                       size="sm"
                       variant="faded"
                       radius="full"
-                      className="px-5 text-muted-foreground h-[29px] py-2 text-[12px] scale-95"
+                      className="px-5 text-muted-foreground h-[29px] py-2 text-[12px] scale-95 !bg-default-100"
                     >
                       Upgrade
                     </Button>

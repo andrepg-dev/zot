@@ -22,7 +22,7 @@ export default function Dashboard() {
             variant="faded"
             isClosable
             endContent={
-              <Button as={Link} href="/pricing" size="sm" className="mx-4" variant="faded">
+              <Button as={Link} href="/app/billing" size="sm" className="mx-4" variant="faded">
                 Upgrade now
               </Button>
             }
