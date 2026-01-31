@@ -14,8 +14,8 @@ export const UserId = createParamDecorator((data, ctx: ExecutionContext): Types.
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const request = ctx.switchToHttp().getRequest();
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-  const userId = request?.user?.userId as Types.ObjectId;
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
+  const userId = new Types.ObjectId(request?.user?.userId);
 
   if (!userId) {
     throw new InternalServerErrorException("User not authenticated");

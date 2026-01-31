@@ -80,13 +80,15 @@ export class WaitListController {
     @Param("id", ParseObjectIdPipe) id: Types.ObjectId,
     @UserId() userId: Types.ObjectId,
   ) {
-    const response = await this.waitListService.findOne(id, userId);
+    console.log({ message: "waitlist", id, userId });
 
-    if (!response) {
+    const waitlist = await this.waitListService.findOne(id, userId);
+
+    if (!waitlist) {
       throw new NotFoundException(`WaitList ${String(id)} not found`);
     }
 
-    return response;
+    return waitlist;
   }
 
   @Patch(":id")

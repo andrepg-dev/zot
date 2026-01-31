@@ -22,9 +22,6 @@ export class WaitListService {
 
   async findAll(owner: Types.ObjectId) {
     try {
-      console.log(owner);
-      if (!owner) throw new InternalServerErrorException();
-
       return await this.WaitListModel.find({ owner });
     } catch (error) {
       this.handleDatabaseErrors(error);
