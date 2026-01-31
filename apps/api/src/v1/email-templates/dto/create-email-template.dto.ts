@@ -12,5 +12,5 @@ export class CreateEmailTemplateDto {
   code: string;
 
   @IsEnum(["draft", "published"])
-  status: string;
+  status: "draft" | "published";
 }

@@ -1,5 +1,15 @@
 import { UserId } from "@api/src/common/decorators/user-id.decorator";
-import { Body, Controller, Delete, Get, Param, Patch, Post } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  NotFoundException,
+  Param,
+  Patch,
+  Post,
+} from "@nestjs/common";
+import { ParseObjectIdPipe } from "@nestjs/mongoose";
 import { Types } from "mongoose";
 import { CreateEmailTemplateDto } from "./dto/create-email-template.dto";
 import { UpdateEmailTemplateDto } from "./dto/update-email-template.dto";
@@ -20,21 +30,45 @@ export class EmailTemplatesController {
   }
 
   @Get(":id")
-  findOne(@Param("id") id: string, @UserId() userId: Types.ObjectId) {
-    return this.emailTemplatesService.findOne(+id, userId);
+  async findOne(
+    @Param("id", ParseObjectIdPipe) id: Types.ObjectId,
+    @UserId() userId: Types.ObjectId,
+  ) {
+    const template = await this.emailTemplatesService.findOne(id, userId);
+
+    if (!template) {
+      throw new NotFoundException(`Template ${id.toString()} not found.`);
+    }
+
+    return template;
   }
 
   @Patch(":id")
-  update(
-    @Param("id") id: string,
+  async update(
+    @Param("id", ParseObjectIdPipe) id: Types.ObjectId,
     @Body() updateEmailTemplateDto: UpdateEmailTemplateDto,
     @UserId() userId: Types.ObjectId,
   ) {
-    return this.emailTemplatesService.update(+id, updateEmailTemplateDto, userId);
+    const template = await this.emailTemplatesService.update(id, updateEmailTemplateDto, userId);
+
+    if (!template) {
+      throw new NotFoundException(`Template ${id.toString()} not found.`);
+    }
+
+    return template;
   }
 
   @Delete(":id")
-  remove(@Param("id") id: string, @UserId() userId: Types.ObjectId) {
-    return this.emailTemplatesService.remove(+id, userId);
+  async remove(
+    @Param("id", ParseObjectIdPipe) id: Types.ObjectId,
+    @UserId() userId: Types.ObjectId,
+  ) {
+    const template = await this.emailTemplatesService.remove(id, userId);
+
+    if (!template) {
+      throw new NotFoundException(`Template ${id.toString()} not found.`);
+    }
+
+    return template;
   }
 }
