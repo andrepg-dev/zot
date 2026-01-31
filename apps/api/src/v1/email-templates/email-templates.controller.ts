@@ -34,6 +34,8 @@ export class EmailTemplatesController {
     @Param("id", ParseObjectIdPipe) id: Types.ObjectId,
     @UserId() userId: Types.ObjectId,
   ) {
+    console.log(userId, id);
+
     const template = await this.emailTemplatesService.findOne(id, userId);
 
     if (!template) {

@@ -31,7 +31,7 @@ export class EmailTemplatesService {
 
   async findOne(id: Types.ObjectId, owner: Types.ObjectId) {
     try {
-      return await this.EmailTemplateModel.findOne({ id, owner });
+      return await this.EmailTemplateModel.findOne({ _id: id, owner });
     } catch (error) {
       handleDatabaseErrors(error);
     }
@@ -43,7 +43,10 @@ export class EmailTemplatesService {
     owner: Types.ObjectId,
   ) {
     try {
-      return await this.EmailTemplateModel.findOneAndUpdate({ id, owner }, updateEmailTemplateDto);
+      return await this.EmailTemplateModel.findOneAndUpdate(
+        { _id: id, owner },
+        updateEmailTemplateDto,
+      );
     } catch (error) {
       handleDatabaseErrors(error);
     }
@@ -51,7 +54,7 @@ export class EmailTemplatesService {
 
   async remove(id: Types.ObjectId, owner: Types.ObjectId) {
     try {
-      return await this.EmailTemplateModel.findOneAndDelete({ id, owner });
+      return await this.EmailTemplateModel.findOneAndDelete({ _id: id, owner });
     } catch (error) {
       handleDatabaseErrors(error);
     }
