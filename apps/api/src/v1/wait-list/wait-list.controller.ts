@@ -42,7 +42,7 @@ export class WaitListController {
     type: WaitListResponseDto,
   })
   @ApiUnauthorizedResponse({ description: "Not authenticated" })
-  async create(@Body() createWaitListDto: CreateWaitListDto, @UserId() userId: string) {
+  async create(@Body() createWaitListDto: CreateWaitListDto, @UserId() userId: Types.ObjectId) {
     return await this.waitListService.create(createWaitListDto, userId);
   }
 
@@ -56,7 +56,7 @@ export class WaitListController {
     type: [WaitListResponseDto],
   })
   @ApiUnauthorizedResponse({ description: "Not authenticated" })
-  async findAll(@UserId() userId: string) {
+  async findAll(@UserId() userId: Types.ObjectId) {
     return await this.waitListService.findAll(userId);
   }
 
@@ -76,7 +76,10 @@ export class WaitListController {
   })
   @ApiNotFoundResponse({ description: "Waitlist not found" })
   @ApiUnauthorizedResponse({ description: "Not authenticated" })
-  async findOne(@Param("id", ParseObjectIdPipe) id: Types.ObjectId, @UserId() userId: string) {
+  async findOne(
+    @Param("id", ParseObjectIdPipe) id: Types.ObjectId,
+    @UserId() userId: Types.ObjectId,
+  ) {
     const response = await this.waitListService.findOne(id, userId);
 
     if (!response) {
@@ -105,7 +108,7 @@ export class WaitListController {
   async update(
     @Param("id", ParseObjectIdPipe) id: Types.ObjectId,
     @Body() updateWaitListDto: UpdateWaitListDto,
-    @UserId() userId: string,
+    @UserId() userId: Types.ObjectId,
   ) {
     return await this.waitListService.update(id, updateWaitListDto, userId);
   }
@@ -123,7 +126,10 @@ export class WaitListController {
   @ApiOkResponse({ description: "Waitlist deleted successfully" })
   @ApiNotFoundResponse({ description: "Waitlist not found" })
   @ApiUnauthorizedResponse({ description: "Not authenticated" })
-  async remove(@Param("id", ParseObjectIdPipe) id: Types.ObjectId, @UserId() userId: string) {
+  async remove(
+    @Param("id", ParseObjectIdPipe) id: Types.ObjectId,
+    @UserId() userId: Types.ObjectId,
+  ) {
     return await this.waitListService.remove(id, userId);
   }
 }

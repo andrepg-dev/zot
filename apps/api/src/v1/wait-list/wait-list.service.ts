@@ -1,4 +1,3 @@
-import { toObjectId } from "@api/src/common/data-transform/to-object-id";
 import { Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, Types } from "mongoose";
@@ -10,47 +9,43 @@ import { WaitList } from "./schemas/wait-list.schema";
 export class WaitListService {
   constructor(@InjectModel(WaitList.name) private WaitListModel: Model<WaitList>) {}
 
-  async create(createWaitListDto: CreateWaitListDto, owner: string | undefined) {
+  async create(createWaitListDto: CreateWaitListDto, owner: Types.ObjectId) {
     try {
       return await this.WaitListModel.create({
         ...createWaitListDto,
-        owner: toObjectId(owner),
+        owner,
       });
     } catch (error) {
       this.handleDatabaseErrors(error);
     }
   }
 
-  async findAll(owner: string | undefined) {
+  async findAll(owner: Types.ObjectId) {
     try {
       console.log(owner);
       if (!owner) throw new InternalServerErrorException();
 
-      return await this.WaitListModel.find({ owner: toObjectId(owner) });
+      return await this.WaitListModel.find({ owner });
     } catch (error) {
       this.handleDatabaseErrors(error);
     }
   }
 
-  async findOne(id: Types.ObjectId, owner: string | undefined) {
+  async findOne(id: Types.ObjectId, owner: Types.ObjectId) {
     try {
       return await this.WaitListModel.findOne({
         _id: id,
-        owner: toObjectId(owner),
+        owner,
       });
     } catch (error) {
       this.handleDatabaseErrors(error);
     }
   }
 
-  async update(
-    id: Types.ObjectId,
-    updateWaitListDto: UpdateWaitListDto,
-    owner: string | undefined,
-  ) {
+  async update(id: Types.ObjectId, updateWaitListDto: UpdateWaitListDto, owner: Types.ObjectId) {
     try {
       const response = await this.WaitListModel.findOneAndUpdate(
-        { _id: id, owner: toObjectId(owner) },
+        { _id: id, owner },
         updateWaitListDto,
         { new: true },
       );
@@ -70,11 +65,11 @@ export class WaitListService {
     }
   }
 
-  async remove(id: Types.ObjectId, owner: string | undefined) {
+  async remove(id: Types.ObjectId, owner: Types.ObjectId) {
     try {
       const response = await this.WaitListModel.findOneAndDelete({
         _id: id,
-        owner: toObjectId(owner),
+        owner,
       });
 
       if (!response) {

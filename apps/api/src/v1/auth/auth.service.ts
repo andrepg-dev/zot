@@ -1,5 +1,6 @@
-import { Injectable, InternalServerErrorException } from "@nestjs/common";
+import { BadRequestException, Injectable, InternalServerErrorException } from "@nestjs/common";
 import * as bcrypt from "bcrypt";
+import { Types } from "mongoose";
 import { CreateUserDto } from "../users/dto/create-user.dto";
 import { UsersService } from "../users/users.service";
 
@@ -25,15 +26,13 @@ export class AuthService {
     return rest;
   }
 
-  async register(user: CreateUserDto): Promise<{ _id: string } | null> {
-    const unsafeResponse: unknown = await this.usersService.create(user, ["local"]);
+  async register(user: CreateUserDto): Promise<{ _id: Types.ObjectId }> {
+    const response = await this.usersService.create(user, ["local"]);
 
-    if (!unsafeResponse) {
-      return null;
+    if (!response) {
+      throw new BadRequestException("User already exists.");
     }
 
-    const response = unsafeResponse as { _id: unknown };
-
-    return { _id: String(response._id) };
+    return { _id: response._id };
   }
 }

@@ -5,7 +5,6 @@ import {
   Body,
   Controller,
   Get,
-  HttpException,
   InternalServerErrorException,
   Post,
   Request,
@@ -24,6 +23,7 @@ import {
   ApiUnauthorizedResponse,
 } from "@nestjs/swagger";
 import express from "express";
+import { Types } from "mongoose";
 import { CreateUserDto } from "../users/dto/create-user.dto";
 import { AuthService } from "./auth.service";
 import { Public } from "./decorators/skip-auth.decorator";
@@ -59,11 +59,11 @@ export class AuthController {
     type: AccessTokenResponseDto,
   })
   @ApiUnauthorizedResponse({ description: "Invalid credentials" })
-  login(@UserId() userId: string, @Response({ passthrough: true }) res: express.Response) {
+  login(@UserId() userId: Types.ObjectId, @Response({ passthrough: true }) res: express.Response) {
     const access_token = this.jwtService.sign(userId);
 
     this.cookiesService.saveCookie(res, SAVE_ACCESS_TOKEN_IN_COOKIES_KEY, access_token);
-    return { access_token };
+    return { success: true, message: "Logged succesfully" };
   }
 
   @Public()
@@ -84,14 +84,28 @@ export class AuthController {
     @Response({ passthrough: true }) res: express.Response,
   ) {
     const newUser = await this.authService.register(user);
-    if (!newUser) throw new HttpException("User already exists, please login.", 400);
 
-    req.user = { userId: String(newUser._id) };
+    // Inserting user into the request, we need to insert a string into the jwtService at the moment to convert
+    req.user = { userId: newUser._id };
+    /**
+     * En las cookies, guardo el valor de una manera diferente.
+     *
+     * Las cookies y el JWT.Sign son diferentes, cosa que me ha costado diferenciar.
+     *
+     * jwtService => Genera el JWT mediante un string
+     *
+     * CookiesService => Guarda ese JWT
+     *
+     * Nosotros lo que tenemos que hacer, es:
+     * Convertir ese string guardado, y convertirlo a Types.ObjectId
+     *
+     * Guardo el token de dos maneras diferentes: en las cookies de usuario y en la request
+     */
 
-    const access_token = this.jwtService.sign(req.user);
+    const access_token = this.jwtService.sign({ userId: newUser._id.toString() });
     this.cookiesService.saveCookie(res, SAVE_ACCESS_TOKEN_IN_COOKIES_KEY, access_token);
 
-    return { access_token };
+    return { success: true, message: "Registration succesfully" };
   }
 
   @Public()

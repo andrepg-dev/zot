@@ -64,7 +64,7 @@ export class WaitListUserController {
   @ApiUnauthorizedResponse({ description: "Not authenticated or not the waitlist owner" })
   async findAll(
     @Param("waitlistId", ParseObjectIdPipe) waitlistId: Types.ObjectId,
-    @UserId() userId: string,
+    @UserId() userId: Types.ObjectId,
   ) {
     return await this.waitListUserService.findAll(waitlistId, userId);
   }
@@ -82,7 +82,7 @@ export class WaitListUserController {
   @ApiUnauthorizedResponse({ description: "Not authenticated or not the waitlist owner" })
   async count(
     @Param("waitlistId", ParseObjectIdPipe) waitlistId: Types.ObjectId,
-    @UserId() userId: string,
+    @UserId() userId: Types.ObjectId,
   ) {
     const total = await this.waitListUserService.count(waitlistId, userId);
     const referred = await this.waitListUserService.countReferred(waitlistId, userId);
@@ -111,7 +111,7 @@ export class WaitListUserController {
   async findByEmail(
     @Param("waitlistId", ParseObjectIdPipe) waitlistId: Types.ObjectId,
     @Query("email") email: string,
-    @UserId() userId: string,
+    @UserId() userId: Types.ObjectId,
   ) {
     return await this.waitListUserService.findByEmail(waitlistId, email, userId);
   }
@@ -133,7 +133,7 @@ export class WaitListUserController {
   async remove(
     @Param("waitlistId", ParseObjectIdPipe) waitlistId: Types.ObjectId,
     @Param("email") email: string,
-    @UserId() userId: string,
+    @UserId() userId: Types.ObjectId,
   ) {
     return await this.waitListUserService.remove(waitlistId, email, userId);
   }

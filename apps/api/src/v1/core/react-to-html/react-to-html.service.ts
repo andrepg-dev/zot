@@ -1,5 +1,5 @@
 import * as Babel from "@babel/core";
-import { Injectable } from "@nestjs/common";
+import { HttpException, Injectable } from "@nestjs/common";
 import * as ReactEmail from "@react-email/components";
 import { render } from "@react-email/render";
 import React from "react";
@@ -37,45 +37,49 @@ export class ReactToHtmlService {
   async compile(code: string): Promise<string> {
     this.validateCode(code);
 
-    const transpiled = Babel.transformSync(code, {
-      presets: ["@babel/preset-react"],
-    });
+    try {
+      const transpiled = Babel.transformSync(code, {
+        presets: ["@babel/preset-react"],
+      });
 
-    if (!transpiled?.code) {
-      throw new Error("Transpilation failed");
+      if (!transpiled?.code) {
+        throw new Error("Transpilation failed");
+      }
+
+      const sandbox = {
+        React,
+        Components: ReactEmail,
+        exports: {} as { default?: React.ComponentType },
+      };
+
+      vm.createContext(sandbox);
+
+      const componentNames = Object.keys(ReactEmail)
+        .filter((key) => key !== "default")
+        .join(", ");
+
+      const wrappedCode = `
+      const { ${componentNames} } = Components;
+      ${transpiled?.code}
+      exports.default = typeof Email !== "undefined" ? Email : (typeof Default !== 'undefined' ? Default : null);
+    `;
+
+      vm.runInContext(wrappedCode, sandbox, {
+        timeout: 3000,
+        displayErrors: true,
+      });
+
+      const EmailComponent = sandbox.exports.default;
+
+      if (!EmailComponent) {
+        throw new Error("No email component found. Export as Email or Default");
+      }
+
+      const html = await render(React.createElement(EmailComponent));
+      return html;
+    } catch (error) {
+      throw new HttpException(`Bad request ${error}`, 400);
     }
-
-    const sandbox = {
-      React,
-      Components: ReactEmail,
-      exports: {} as { default?: React.ComponentType },
-    };
-
-    vm.createContext(sandbox);
-
-    const componentNames = Object.keys(ReactEmail)
-      .filter((key) => key !== "default")
-      .join(", ");
-
-    const wrappedCode = `
-    const { ${componentNames} } = Components;
-    ${transpiled?.code}
-    exports.default = typeof Email !== "undefined" ? Email : (typeof Default !== 'undefined' ? Default : null);
-  `;
-
-    vm.runInContext(wrappedCode, sandbox, {
-      timeout: 3000,
-      displayErrors: true,
-    });
-
-    const EmailComponent = sandbox.exports.default;
-
-    if (!EmailComponent) {
-      throw new Error("No email component found. Export as Email or Default");
-    }
-
-    const html = await render(React.createElement(EmailComponent));
-    return html;
   }
 
   private validateCode(code: string): void {

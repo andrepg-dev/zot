@@ -19,13 +19,9 @@ export class WaitListUserService {
     @InjectModel(WaitList.name) private WaitListModel: Model<WaitList>,
   ) {}
 
-  private toObjectId(id: string | undefined): Types.ObjectId | undefined {
-    return id ? new Types.ObjectId(id) : undefined;
-  }
-
   private async validateOwnership(
     waitlistId: Types.ObjectId,
-    owner: string | undefined,
+    owner: Types.ObjectId | undefined,
   ): Promise<void> {
     if (!owner) {
       throw new ForbiddenException("You must be authenticated to perform this action.");
@@ -33,7 +29,7 @@ export class WaitListUserService {
 
     const waitlist = await this.WaitListModel.findOne({
       _id: waitlistId,
-      owner: this.toObjectId(owner),
+      owner,
     });
 
     if (!waitlist) {
@@ -81,7 +77,7 @@ export class WaitListUserService {
     }
   }
 
-  async findAll(waitlistId: Types.ObjectId, owner: string | undefined) {
+  async findAll(waitlistId: Types.ObjectId, owner: Types.ObjectId | undefined) {
     try {
       await this.validateOwnership(waitlistId, owner);
 
@@ -94,7 +90,7 @@ export class WaitListUserService {
     }
   }
 
-  async findByEmail(waitlistId: Types.ObjectId, email: string, owner: string | undefined) {
+  async findByEmail(waitlistId: Types.ObjectId, email: string, owner: Types.ObjectId | undefined) {
     try {
       await this.validateOwnership(waitlistId, owner);
 
@@ -116,7 +112,7 @@ export class WaitListUserService {
     }
   }
 
-  async remove(waitlistId: Types.ObjectId, email: string, owner: string | undefined) {
+  async remove(waitlistId: Types.ObjectId, email: string, owner: Types.ObjectId | undefined) {
     try {
       await this.validateOwnership(waitlistId, owner);
 
@@ -138,10 +134,9 @@ export class WaitListUserService {
     }
   }
 
-  async count(waitlistId: Types.ObjectId, owner: string | undefined) {
+  async count(waitlistId: Types.ObjectId, owner: Types.ObjectId | undefined) {
     try {
       await this.validateOwnership(waitlistId, owner);
-
       return await this.WaitListUserModel.countDocuments({ waitlist_id: waitlistId });
     } catch (error) {
       if (error instanceof NotFoundException || error instanceof ForbiddenException) {
@@ -151,7 +146,7 @@ export class WaitListUserService {
     }
   }
 
-  async countReferred(waitlistId: Types.ObjectId, owner: string | undefined) {
+  async countReferred(waitlistId: Types.ObjectId, owner: Types.ObjectId | undefined) {
     try {
       await this.validateOwnership(waitlistId, owner);
 

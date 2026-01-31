@@ -1,4 +1,5 @@
-import { Injectable, InternalServerErrorException } from "@nestjs/common";
+import { handleDatabaseErrors } from "@api/src/common/error-handling/handle-database-errors";
+import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import * as bcrypt from "bcrypt";
 import { Model } from "mongoose";
@@ -15,7 +16,7 @@ export class UsersService {
       const userExists = await this.findByEmail(user.email);
 
       if (userExists !== null) {
-        return null; // Use already exists
+        return null;
       }
 
       const { password, ...rest } = user;
@@ -32,7 +33,7 @@ export class UsersService {
 
       return await this.userModel.create(userDocument);
     } catch (error) {
-      this.handleDatabaseErrors(error);
+      handleDatabaseErrors(error);
     }
   }
 
@@ -43,7 +44,7 @@ export class UsersService {
 
       return user;
     } catch (error) {
-      this.handleDatabaseErrors(error);
+      handleDatabaseErrors(error);
     }
   }
 
@@ -55,7 +56,7 @@ export class UsersService {
 
       return user;
     } catch (error) {
-      this.handleDatabaseErrors(error);
+      handleDatabaseErrors(error);
     }
   }
 
@@ -63,7 +64,7 @@ export class UsersService {
     try {
       return await this.userModel.findByIdAndUpdate(id, data, { new: true });
     } catch (error) {
-      this.handleDatabaseErrors(error);
+      handleDatabaseErrors(error);
     }
   }
 
@@ -71,13 +72,7 @@ export class UsersService {
     try {
       return await this.userModel.findByIdAndDelete(id, { new: true });
     } catch (error) {
-      this.handleDatabaseErrors(error);
+      handleDatabaseErrors(error);
     }
-  }
-
-  handleDatabaseErrors(error: any): never {
-    console.error(error);
-
-    throw new InternalServerErrorException(`Error saving on database: ${error}`);
   }
 }

@@ -1,6 +1,5 @@
 import { Body, Controller, Post } from "@nestjs/common";
 import { ApiBadRequestResponse, ApiOkResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
-import { Public } from "../auth/decorators/skip-auth.decorator";
 import { ReactToHtmlService } from "../core/react-to-html/react-to-html.service";
 import { ReactToHtmlResponseDto } from "./dto/react-to-html-response.dto";
 import { ReactToHtmlDto } from "./dto/react-to-html.dto";
@@ -10,7 +9,6 @@ import { ReactToHtmlDto } from "./dto/react-to-html.dto";
 export class ReactToHtmlController {
   constructor(private react2html: ReactToHtmlService) {}
 
-  @Public()
   @Post()
   @ApiOperation({
     summary: "Compile React to HTML",

@@ -1,18 +1,24 @@
-import { createParamDecorator, ExecutionContext, UnauthorizedException } from "@nestjs/common";
+import {
+  createParamDecorator,
+  ExecutionContext,
+  InternalServerErrorException,
+} from "@nestjs/common";
+import { Types } from "mongoose";
 
 /**
  * Extract userId value with custom decorator
  *
- * @returns "userId"
+ * @returns Mongoose ObjectId
  */
-export const UserId = createParamDecorator((ctx: ExecutionContext): string => {
+export const UserId = createParamDecorator((data, ctx: ExecutionContext): Types.ObjectId => {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const request = ctx.switchToHttp().getRequest();
+
   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-  const userId = request?.user?.userId as string;
+  const userId = request?.user?.userId as Types.ObjectId;
 
   if (!userId) {
-    throw new UnauthorizedException("User not authenticated");
+    throw new InternalServerErrorException("User not authenticated");
   }
 
   return userId;
