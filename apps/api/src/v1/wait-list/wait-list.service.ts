@@ -35,10 +35,16 @@ export class WaitListService {
 
   async findOne(id: Types.ObjectId, owner: Types.ObjectId) {
     try {
-      return await this.WaitListModel.findOne({
+      const waitlist = await this.WaitListModel.findOne({
         _id: id,
         owner,
       });
+
+      if (!waitlist) {
+        throw new NotFoundException(`WaitList "${String(id)}" not found.`);
+      }
+
+      return waitlist;
     } catch (error) {
       handleDatabaseErrors(error);
     }
@@ -46,19 +52,19 @@ export class WaitListService {
 
   async update(id: Types.ObjectId, updateWaitListDto: UpdateWaitListDto, owner: Types.ObjectId) {
     try {
-      const response = await this.WaitListModel.findOneAndUpdate(
+      const waitlist = await this.WaitListModel.findOneAndUpdate(
         { _id: id, owner },
         updateWaitListDto,
         { new: true },
       );
 
-      if (!response) {
+      if (!waitlist) {
         throw new NotFoundException(
           `WaitList "${String(id)}" not found or you don't have permission to update it.`,
         );
       }
 
-      return response;
+      return waitlist;
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw error;
@@ -70,7 +76,7 @@ export class WaitListService {
   async remove(id: Types.ObjectId, owner: Types.ObjectId) {
     try {
       // Delete all the users related to this wait-list
-      const response = await this.WaitListModel.findOneAndDelete({
+      const waitlist = await this.WaitListModel.findOneAndDelete({
         _id: id,
         owner,
       });
@@ -78,11 +84,11 @@ export class WaitListService {
       // Get all the user related to this waitlist id
       const users = await this.WaitListUserModel.deleteMany({ waitlist_id: id });
 
-      if (!response) {
+      if (!waitlist) {
         throw new NotFoundException(`WaitList ${id.toString()} not found.`);
       }
 
-      return { response, users };
+      return { response: waitlist, users };
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw error;

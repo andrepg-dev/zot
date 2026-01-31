@@ -1,14 +1,5 @@
 import { UserId } from "@api/src/common/decorators/user-id.decorator";
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  NotFoundException,
-  Param,
-  Patch,
-  Post,
-} from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Patch, Post } from "@nestjs/common";
 import { ParseObjectIdPipe } from "@nestjs/mongoose";
 import {
   ApiBearerAuth,
@@ -80,14 +71,7 @@ export class WaitListController {
     @Param("id", ParseObjectIdPipe) id: Types.ObjectId,
     @UserId() userId: Types.ObjectId,
   ) {
-    console.log({ message: "waitlist", id, userId });
-
     const waitlist = await this.waitListService.findOne(id, userId);
-
-    if (!waitlist) {
-      throw new NotFoundException(`WaitList ${String(id)} not found`);
-    }
-
     return waitlist;
   }
 
@@ -112,7 +96,8 @@ export class WaitListController {
     @Body() updateWaitListDto: UpdateWaitListDto,
     @UserId() userId: Types.ObjectId,
   ) {
-    return await this.waitListService.update(id, updateWaitListDto, userId);
+    const waitlist = await this.waitListService.update(id, updateWaitListDto, userId);
+    return waitlist;
   }
 
   @Delete(":id")
@@ -132,6 +117,7 @@ export class WaitListController {
     @Param("id", ParseObjectIdPipe) id: Types.ObjectId,
     @UserId() userId: Types.ObjectId,
   ) {
-    return await this.waitListService.remove(id, userId);
+    const waitlist = await this.waitListService.remove(id, userId);
+    return waitlist;
   }
 }
