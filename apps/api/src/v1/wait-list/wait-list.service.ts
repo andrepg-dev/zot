@@ -1,13 +1,18 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
+import { handleDatabaseErrors } from "@api/src/common/error-handling/handle-database-errors";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, Types } from "mongoose";
 import { CreateWaitListDto } from "./dto/create-wait-list.dto";
 import { UpdateWaitListDto } from "./dto/update-wait-list.dto";
+import { WaitListUser } from "./schemas/wait-list-user.schema";
 import { WaitList } from "./schemas/wait-list.schema";
 
 @Injectable()
 export class WaitListService {
-  constructor(@InjectModel(WaitList.name) private WaitListModel: Model<WaitList>) {}
+  constructor(
+    @InjectModel(WaitList.name) private WaitListModel: Model<WaitList>,
+    @InjectModel(WaitListUser.name) private WaitListUserModel: Model<WaitListUser>,
+  ) {}
 
   async create(createWaitListDto: CreateWaitListDto, owner: Types.ObjectId) {
     try {
@@ -16,7 +21,7 @@ export class WaitListService {
         owner,
       });
     } catch (error) {
-      this.handleDatabaseErrors(error);
+      handleDatabaseErrors(error);
     }
   }
 
@@ -24,7 +29,7 @@ export class WaitListService {
     try {
       return await this.WaitListModel.find({ owner });
     } catch (error) {
-      this.handleDatabaseErrors(error);
+      handleDatabaseErrors(error);
     }
   }
 
@@ -35,7 +40,7 @@ export class WaitListService {
         owner,
       });
     } catch (error) {
-      this.handleDatabaseErrors(error);
+      handleDatabaseErrors(error);
     }
   }
 
@@ -58,31 +63,31 @@ export class WaitListService {
       if (error instanceof NotFoundException) {
         throw error;
       }
-      this.handleDatabaseErrors(error);
+      handleDatabaseErrors(error);
     }
   }
 
   async remove(id: Types.ObjectId, owner: Types.ObjectId) {
     try {
+      // Delete all the users related to this wait-list
       const response = await this.WaitListModel.findOneAndDelete({
         _id: id,
         owner,
       });
 
+      // Get all the user related to this waitlist id
+      const users = await this.WaitListUserModel.deleteMany({ waitlist_id: id });
+
       if (!response) {
-        throw new NotFoundException(`WaitList "${String(id)}" not found.`);
+        throw new NotFoundException(`WaitList ${id.toString()} not found.`);
       }
 
-      return response;
+      return { response, users };
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw error;
       }
-      this.handleDatabaseErrors(error);
+      handleDatabaseErrors(error);
     }
-  }
-
-  private handleDatabaseErrors(error: any) {
-    throw new InternalServerErrorException(`Error saving on database: ${error}`);
   }
 }

@@ -2,7 +2,6 @@ import { Module } from "@nestjs/common";
 
 import { CookiesService } from "@api/src/common/cookies.service";
 import { JwtServicesModule } from "@api/src/common/jwt-services/jwt-services.module";
-import { UsersModuleV1 } from "../users/users.module";
 import { AuthController } from "./auth.controller";
 import { AuthService } from "./auth.service";
 import { GitHubStrategy } from "./strategies/github.strategy";
@@ -22,4 +21,4 @@ import { LocalStrategy } from "./strategies/local.strategy";
     GitHubStrategy,
   ],
 })
-export class AuthModuleV1 {}
+export class AuthModule {}

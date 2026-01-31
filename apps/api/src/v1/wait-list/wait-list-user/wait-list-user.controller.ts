@@ -27,7 +27,7 @@ import { WaitListUserService } from "./wait-list-user.service";
   description: "Waitlist MongoDB ObjectId",
   example: "507f1f77bcf86cd799439011",
 })
-@Controller({ path: "wait-list/:waitlistId/users", version: "1" })
+@Controller({ path: "wait-list/:waitlistId/user", version: "1" })
 export class WaitListUserController {
   constructor(private readonly waitListUserService: WaitListUserService) {}
 

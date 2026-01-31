@@ -9,4 +9,4 @@ import { UsersService } from "./users.service";
   providers: [UsersService],
   exports: [UsersService, MongooseModule],
 })
-export class UsersModuleV1 {}
+export class UsersModule {}

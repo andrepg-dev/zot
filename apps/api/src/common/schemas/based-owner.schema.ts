@@ -3,6 +3,6 @@ import { Types } from "mongoose";
 
 @Schema()
 export class BasedOwnerSchema {
-  @Prop({ ref: "user", required: true, index: true })
+  @Prop({ type: Types.ObjectId, ref: "user", required: true, index: true })
   owner: Types.ObjectId;
 }

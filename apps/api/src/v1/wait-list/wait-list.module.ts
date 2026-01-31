@@ -17,4 +17,4 @@ import { WaitListService } from "./wait-list.service";
   controllers: [WaitListController, WaitListUserController],
   providers: [WaitListService, WaitListUserService],
 })
-export class WaitListModuleV1 {}
+export class WaitListModule {}
