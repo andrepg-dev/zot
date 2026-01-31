@@ -1,8 +1,7 @@
 import { Module } from "@nestjs/common";
-import { JwtModule } from "@nestjs/jwt";
 
 import { CookiesService } from "@api/src/common/cookies.service";
-import { JWT } from "@api/src/constants/authentication";
+import { JwtServicesModule } from "@api/src/common/jwt-services/jwt-services.module";
 import { UsersModuleV1 } from "../users/users.module";
 import { AuthController } from "./auth.controller";
 import { AuthService } from "./auth.service";
@@ -12,13 +11,7 @@ import { JwtStrategy } from "./strategies/jwt.strategy";
 import { LocalStrategy } from "./strategies/local.strategy";
 
 @Module({
-  imports: [
-    UsersModuleV1,
-    JwtModule.register({
-      secret: JWT.SECRET,
-      signOptions: { expiresIn: "1h" },
-    }),
-  ],
+  imports: [UsersModuleV1, JwtServicesModule],
   controllers: [AuthController],
   providers: [
     CookiesService,

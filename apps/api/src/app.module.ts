@@ -13,5 +13,6 @@ import { V1Module } from "./v1/app.module";
     V1Module,
   ],
   controllers: [AppController],
+  providers: [],
 })
 export class AppModule {}

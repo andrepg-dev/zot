@@ -16,6 +16,7 @@ export default function GlobalTextarea({
     <Textarea
       className={cn(className)}
       radius={radius}
+      disableAnimation
       {...props}
     />
   );

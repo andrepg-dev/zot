@@ -20,8 +20,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
    * @returns
    */
   async validate(email: string, password: string) {
-    // Use the user authentication service located in auth.service.ts
-    const user = await this.authService.login(email, password);
+    const user = await this.authService.login({ email, password });
 
     if (!user) {
       throw new UnauthorizedException("Invalid credentials");

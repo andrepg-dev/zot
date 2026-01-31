@@ -63,7 +63,7 @@ export default function Header() {
               </PopoverTrigger>
 
               <PopoverContent className="p-2 flex flex-col gap-2">
-                <GlobalTextarea className="w-[290px]" placeholder="My idea for improve Zot is..." variant="faded" />
+                <GlobalTextarea size="sm" className="min-w-[300px]" placeholder="My idea to improve to zot is" variant="faded" />
 
                 <div className="bg-border w-full h-[1px]"></div>
 

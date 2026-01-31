@@ -44,7 +44,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, "google") {
           });
         }
 
-        done(null, { userId: existingUser._id });
+        done(null, { userId: existingUser._id }); // { userId: new ObjecId("userId") }
         return;
       }
 

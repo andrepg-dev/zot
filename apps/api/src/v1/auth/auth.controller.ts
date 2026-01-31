@@ -1,5 +1,6 @@
 import { CookiesService } from "@api/src/common/cookies.service";
 import { UserId } from "@api/src/common/decorators/user-id.decorator";
+import { JwtClassService } from "@api/src/common/jwt-services/jwt-services.service";
 import { SAVE_ACCESS_TOKEN_IN_COOKIES_KEY } from "@api/src/constants/authentication";
 import {
   Body,
@@ -11,7 +12,6 @@ import {
   Response,
   UseGuards,
 } from "@nestjs/common";
-import { JwtService } from "@nestjs/jwt";
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
@@ -42,7 +42,7 @@ import { LocalAuthGuard } from "./guards/local.guard";
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
-    private jwtService: JwtService,
+    private jwtService: JwtClassService,
     private cookiesService: CookiesService,
   ) {}
 
@@ -60,9 +60,9 @@ export class AuthController {
   })
   @ApiUnauthorizedResponse({ description: "Invalid credentials" })
   login(@UserId() userId: Types.ObjectId, @Response({ passthrough: true }) res: express.Response) {
-    const access_token = this.jwtService.sign(userId);
-
+    const access_token = this.jwtService.signUser({ userId });
     this.cookiesService.saveCookie(res, SAVE_ACCESS_TOKEN_IN_COOKIES_KEY, access_token);
+
     return { success: true, message: "Logged succesfully" };
   }
 
@@ -102,7 +102,7 @@ export class AuthController {
      * Guardo el token de dos maneras diferentes: en las cookies de usuario y en la request
      */
 
-    const access_token = this.jwtService.sign({ userId: newUser._id.toString() });
+    const access_token = this.jwtService.signUser({ userId: newUser._id });
     this.cookiesService.saveCookie(res, SAVE_ACCESS_TOKEN_IN_COOKIES_KEY, access_token);
 
     return { success: true, message: "Registration succesfully" };
@@ -135,10 +135,10 @@ export class AuthController {
   ) {
     if (!req.user) throw new InternalServerErrorException("User not found.");
 
-    const access_token = this.jwtService.sign(req.user);
+    const access_token = this.jwtService.signUser(req.user);
     this.cookiesService.saveCookie(res, SAVE_ACCESS_TOKEN_IN_COOKIES_KEY, access_token);
 
-    return req.user;
+    return req.user; // { userId: new ObjectId(""), exp: 324234, iat: 3982 }
   }
 
   @Public()
@@ -154,15 +154,14 @@ export class AuthController {
   })
   @ApiInternalServerErrorResponse({ description: "User not found after OAuth" })
   githubAuthRedirect(
-    @Request() req: express.Request,
+    @UserId() userId: Types.ObjectId,
     @Response({ passthrough: true }) res: express.Response,
+    @Request() req: express.Request,
   ) {
-    if (!req.user) throw new InternalServerErrorException("User not found.");
-
-    const access_token = this.jwtService.sign(req.user);
+    const access_token = this.jwtService.signUser({ userId }); // { userId: Types.ObjectId } => { userId: string }
     this.cookiesService.saveCookie(res, SAVE_ACCESS_TOKEN_IN_COOKIES_KEY, access_token);
 
-    return req.user;
+    return req.user; // { userId: new ObjectId(""), exp: 324234, iat: 3982 }
   }
 
   @Public()
@@ -186,7 +185,7 @@ export class AuthController {
   })
   @ApiUnauthorizedResponse({ description: "Not authenticated" })
   getProfile(@Request() req: express.Request) {
-    return req.user;
+    return req.user; // { userId: new ObjectId(""), exp: 324234, iat: 3982 }
   }
 
   @Get("logout")
