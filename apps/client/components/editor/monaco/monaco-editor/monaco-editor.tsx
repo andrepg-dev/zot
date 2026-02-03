@@ -225,6 +225,7 @@ export default function MonacoEditor({ ...props }: EditorProps) {
       language="typescript"
       theme="OneDarkPro"
       path="file:///index.tsx"
+      loading={<div className="bg-[#0F0F10] h-full w-full text-center flex justify-center items-center"></div>}
       value={editorData}
       onChange={(value) => {
         setEditorData(value ?? "");
