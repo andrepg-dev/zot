@@ -7,7 +7,7 @@ import "@/styles/globals.css";
 import { ToastProvider } from "@heroui/toast";
 import clsx from "clsx";
 import { Metadata } from "next";
-import { Providers } from "./providers";
+import { Providers } from "../providers";
 
 export const metadata: Metadata = {
   title: {

@@ -2,6 +2,7 @@
 
 import { ArrowTrendingUpIcon } from "@heroicons/react/24/outline";
 import { Badge } from "@heroui/react";
+import { useEffect, useState } from "react";
 import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis } from "recharts";
 import CustomGradientBar from "./custom-gradient-bar";
 
@@ -21,8 +22,11 @@ const tooltipText = "#EDEEF0";
 const strokeColor = "#006fee";
 
 export default function BarChartComponent() {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
   return (
-    <div className="col-span-2 flex flex-col rounded-lg border border-dashed p-6 bg-background">
+    <div className="col-span-2 flex min-w-0 flex-col rounded-lg border border-dashed p-6 bg-background">
       <div className="flex flex-col gap-2 mb-4">
         <div className="flex items-center gap-2">
           <h3 className="text-base font-medium">Bar Chart</h3>
@@ -36,33 +40,35 @@ export default function BarChartComponent() {
         </div>
         <p className="text-sm text-muted-foreground">January - June 2025</p>
       </div>
-      <div className="h-64 w-full">
-        <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={barChartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-            <XAxis
-              dataKey="month"
-              tickLine={false}
-              tickMargin={10}
-              axisLine={false}
-              stroke={axisColor}
-              fontSize={12}
-              tick={{ fill: axisColor }}
-              tickFormatter={(value: string) => value.slice(0, 3)}
-            />
-            <Tooltip
-              cursor={false}
-              animationDuration={0}
-              contentStyle={{
-                backgroundColor: tooltipBg,
-                border: `1px solid ${tooltipBorder}`,
-                borderRadius: "4px",
-                color: tooltipText,
-                padding: "8px 12px"
-              }}
-            />
-            <Bar shape={<CustomGradientBar />} dataKey="desktop" fill={strokeColor} />
-          </BarChart>
-        </ResponsiveContainer>
+      <div className="h-64 min-h-[16rem] w-full min-w-0">
+        {mounted && (
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={barChartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+              <XAxis
+                dataKey="month"
+                tickLine={false}
+                tickMargin={10}
+                axisLine={false}
+                stroke={axisColor}
+                fontSize={12}
+                tick={{ fill: axisColor }}
+                tickFormatter={(value: string) => value.slice(0, 3)}
+              />
+              <Tooltip
+                cursor={false}
+                animationDuration={0}
+                contentStyle={{
+                  backgroundColor: tooltipBg,
+                  border: `1px solid ${tooltipBorder}`,
+                  borderRadius: "4px",
+                  color: tooltipText,
+                  padding: "8px 12px"
+                }}
+              />
+              <Bar shape={<CustomGradientBar />} dataKey="desktop" fill={strokeColor} />
+            </BarChart>
+          </ResponsiveContainer>
+        )}
       </div>
     </div>
   );

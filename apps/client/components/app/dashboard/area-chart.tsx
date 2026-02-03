@@ -2,6 +2,7 @@
 
 import { ArrowTrendingUpIcon } from "@heroicons/react/24/outline";
 import { Badge } from "@heroui/react";
+import { useEffect, useState } from "react";
 import {
   Area,
   AreaChart,
@@ -30,8 +31,11 @@ const desktopColor = "#3b82f6";
 const mobileColor = "#10b981";
 
 export default function AreaChartComponent() {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
   return (
-    <div className="col-span-3 flex flex-col rounded-lg border border-dashed p-6 bg-background">
+    <div className="col-span-3 flex min-w-0 flex-col rounded-lg border border-dashed p-6 bg-background">
       <div className="flex flex-col gap-2 mb-4">
         <div className="flex items-center gap-2">
           <h3 className="text-base font-medium">Analitycs overview</h3>
@@ -47,7 +51,8 @@ export default function AreaChartComponent() {
           Showing total visitors for the last 6 months
         </p>
       </div>
-      <div className="h-64 w-full">
+      <div className="h-64 min-h-[16rem] w-full min-w-0">
+        {mounted && (
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={chartData} margin={{ top: 15, right: 10, left: -15, bottom: 0 }}>
             <defs>
@@ -120,6 +125,7 @@ export default function AreaChartComponent() {
             />
           </AreaChart>
         </ResponsiveContainer>
+        )}
       </div>
     </div>
   );
