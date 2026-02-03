@@ -39,7 +39,6 @@ const InputComponent = forwardRef<HTMLInputElement, InputProps>((props, ref) => 
         classNames={{
           inputWrapper:
             "data-[focus=true]:bg-default-100/50 data-[hover=true]:!bg-default-100/50 bg-default-100/50 border",
-          input: "text-xs"
         }}
         startContent={startContent || defaultStartContent}
         endContent={
