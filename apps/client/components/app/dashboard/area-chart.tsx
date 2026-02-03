@@ -1,8 +1,8 @@
 "use client";
 
+import useIsClient from "@/hooks/is-client";
 import { ArrowTrendingUpIcon } from "@heroicons/react/24/outline";
 import { Badge } from "@heroui/react";
-import { useEffect, useState } from "react";
 import {
   Area,
   AreaChart,
@@ -31,8 +31,7 @@ const desktopColor = "#3b82f6";
 const mobileColor = "#10b981";
 
 export default function AreaChartComponent() {
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  const { isClient } = useIsClient()
 
   return (
     <div className="col-span-3 flex min-w-0 flex-col rounded-lg border border-dashed p-6 bg-background">
@@ -52,79 +51,79 @@ export default function AreaChartComponent() {
         </p>
       </div>
       <div className="h-64 min-h-[16rem] w-full min-w-0">
-        {mounted && (
-        <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={chartData} margin={{ top: 15, right: 10, left: -15, bottom: 0 }}>
-            <defs>
-              <linearGradient id="gradient-chart-desktop" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor={desktopColor} stopOpacity={0.5} />
-                <stop offset="95%" stopColor={desktopColor} stopOpacity={0.1} />
-              </linearGradient>
-              <linearGradient id="gradient-chart-mobile" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor={mobileColor} stopOpacity={0.5} />
-                <stop offset="95%" stopColor={mobileColor} stopOpacity={0.1} />
-              </linearGradient>
-            </defs>
-            <CartesianGrid
-              vertical
-              horizontal
-              strokeDasharray="3 3"
-              stroke={gridColor}
-              opacity={0.5}
-            />
-            <XAxis
-              dataKey="month"
-              tickLine={false}
-              axisLine={false}
-              tickMargin={8}
-              stroke={axisColor}
-              fontSize={12}
-              tick={{ fill: axisColor }}
-              tickFormatter={(value: string) => value.slice(0, 3)}
-            />
-            <YAxis
-              tickLine={false}
-              axisLine={false}
-              tickMargin={8}
-              stroke={axisColor}
-              fontSize={12}
-              tick={{ fill: axisColor }}
-            />
-            <Tooltip
-              cursor={false}
-              animationDuration={0}
-              contentStyle={{
-                backgroundColor: tooltipBg,
-                border: `1px solid ${tooltipBorder}`,
-                borderRadius: "4px",
-                color: tooltipText,
-                padding: "8px 12px"
-              }}
-            />
-            <Area
-              dataKey="mobile"
-              fill="url(#gradient-chart-mobile)"
-              fillOpacity={0.4}
-              stroke={mobileColor}
-              stackId="a"
-              strokeWidth={0.8}
-              strokeDasharray="3 3"
-              dot={{ fill: mobileColor, strokeWidth: 2, r: 4 }}
-              activeDot={{ fill: mobileColor, strokeWidth: 2, r: 5 }}
-            />
-            <Area
-              dataKey="desktop"
-              fill="url(#gradient-chart-desktop)"
-              fillOpacity={0.4}
-              stroke={desktopColor}
-              stackId="a"
-              strokeWidth={0.8}
-              strokeDasharray="3 3"
-              dot={{ fill: desktopColor, strokeWidth: 2, r: 4 }}
-              activeDot={{ fill: desktopColor, strokeWidth: 2, r: 5 }}
-            />
-          </AreaChart>
-        </ResponsiveContainer>
+        {isClient && (
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={chartData} margin={{ top: 15, right: 10, left: -15, bottom: 0 }}>
+              <defs>
+                <linearGradient id="gradient-chart-desktop" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor={desktopColor} stopOpacity={0.5} />
+                  <stop offset="95%" stopColor={desktopColor} stopOpacity={0.1} />
+                </linearGradient>
+                <linearGradient id="gradient-chart-mobile" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor={mobileColor} stopOpacity={0.5} />
+                  <stop offset="95%" stopColor={mobileColor} stopOpacity={0.1} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid
+                vertical
+                horizontal
+                strokeDasharray="3 3"
+                stroke={gridColor}
+                opacity={0.5}
+              />
+              <XAxis
+                dataKey="month"
+                tickLine={false}
+                axisLine={false}
+                tickMargin={8}
+                stroke={axisColor}
+                fontSize={12}
+                tick={{ fill: axisColor }}
+                tickFormatter={(value: string) => value.slice(0, 3)}
+              />
+              <YAxis
+                tickLine={false}
+                axisLine={false}
+                tickMargin={8}
+                stroke={axisColor}
+                fontSize={12}
+                tick={{ fill: axisColor }}
+              />
+              <Tooltip
+                cursor={false}
+                animationDuration={0}
+                contentStyle={{
+                  backgroundColor: tooltipBg,
+                  border: `1px solid ${tooltipBorder}`,
+                  borderRadius: "4px",
+                  color: tooltipText,
+                  padding: "8px 12px"
+                }}
+              />
+              <Area
+                dataKey="mobile"
+                fill="url(#gradient-chart-mobile)"
+                fillOpacity={0.4}
+                stroke={mobileColor}
+                stackId="a"
+                strokeWidth={0.8}
+                strokeDasharray="3 3"
+                dot={{ fill: mobileColor, strokeWidth: 2, r: 4 }}
+                activeDot={{ fill: mobileColor, strokeWidth: 2, r: 5 }}
+              />
+              <Area
+                dataKey="desktop"
+                fill="url(#gradient-chart-desktop)"
+                fillOpacity={0.4}
+                stroke={desktopColor}
+                stackId="a"
+                strokeWidth={0.8}
+                strokeDasharray="3 3"
+                dot={{ fill: desktopColor, strokeWidth: 2, r: 4 }}
+                activeDot={{ fill: desktopColor, strokeWidth: 2, r: 5 }}
+              />
+            </AreaChart>
+          </ResponsiveContainer>
         )}
       </div>
     </div>

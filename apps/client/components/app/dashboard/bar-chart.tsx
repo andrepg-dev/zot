@@ -1,8 +1,8 @@
 "use client";
 
+import useIsClient from "@/hooks/is-client";
 import { ArrowTrendingUpIcon } from "@heroicons/react/24/outline";
 import { Badge } from "@heroui/react";
-import { useEffect, useState } from "react";
 import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis } from "recharts";
 import CustomGradientBar from "./custom-gradient-bar";
 
@@ -22,8 +22,7 @@ const tooltipText = "#EDEEF0";
 const strokeColor = "#006fee";
 
 export default function BarChartComponent() {
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  const { isClient } = useIsClient()
 
   return (
     <div className="col-span-2 flex min-w-0 flex-col rounded-lg border border-dashed p-6 bg-background">
@@ -41,7 +40,7 @@ export default function BarChartComponent() {
         <p className="text-sm text-muted-foreground">January - June 2025</p>
       </div>
       <div className="h-64 min-h-[16rem] w-full min-w-0">
-        {mounted && (
+        {isClient && (
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={barChartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
               <XAxis
