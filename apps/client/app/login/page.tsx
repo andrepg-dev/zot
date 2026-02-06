@@ -1,12 +1,10 @@
 "use client";
 
-import GlobalButton from "@/components/global/button";
 import InputComponent from "@/components/ui/input";
 import { siteConfig } from "@/config/site";
 import { cn } from "@/lib/utils";
-import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
+import { ChevronLeftIcon } from "@heroicons/react/24/outline";
 import { Button } from "@heroui/button";
-import { Input } from "@heroui/input";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
@@ -15,17 +13,30 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center justify-center px-4 py-12">
-      <div className="w-full max-w-[480px] flex flex-col items-center gap-4">
+    <div className="min-h-screen flex flex-col items-center justify-center px-4 py-12 relative">
+      {/* Fondo con fade-in */}
+      <div
+        className={cn(
+          "absolute inset-0 bg-cover bg-center bg-no-repeat ",
+          "bg-[url('/zot-background-3.png')]",
+        )}
+        aria-hidden
+      />
+
+      <Button as={Link} href="/home" className="absolute top-8 left-8 !p-0 !hover:bg-transparent text-muted-foreground" variant="light" startContent={<ChevronLeftIcon className="size-4" />}>
+        Home
+      </Button>
+
+      <div className="w-full max-w-[480px] flex flex-col items-center gap-4 relative z-10">
         {/* Logo */}
         <Link href="/" className="flex items-center justify-center mb-3">
-          <div className="w-10 h-10 rounded-lg bg-foreground/10 flex items-center justify-center border border-border">
+          <div className="w-10 h-10 rounded-lg flex items-center justify-center border">
             <Image
               width={300}
               height={300}
               src="/zot-icon.svg"
               alt={siteConfig.name}
-              className="w-10 rounded-lg text-foreground"
+              className="w-10 rounded-lg"
             />
           </div>
         </Link>
@@ -40,7 +51,7 @@ export default function LoginPage() {
               href="/signup"
               className="text-foreground font-medium hover:underline underline-offset-2"
             >
-              Sign up.
+              Sign up<span className="text-muted-foreground">.</span>
             </Link>
           </p>
         </div>
@@ -50,9 +61,10 @@ export default function LoginPage() {
             <Button
               className={cn(
                 "flex-1 min-w-0 h-10 font-medium",
-                "bg-default-100/50 border border-border",
+                "bg-default-100/50 border border-border backdrop-blur-[25px]",
                 "text-foreground justify-center gap-2 px-3"
               )}
+              disableRipple
               startContent={
                 <Image
                   src={"/icons/google-icon.svg"}
@@ -68,7 +80,7 @@ export default function LoginPage() {
             <Button
               className={cn(
                 "flex-1 min-w-0 h-10 font-medium",
-                "bg-default-100/50 border border-border",
+                "bg-default-100/50 border border-border backdrop-blur-[25px]",
                 "text-foreground justify-center gap-2 px-3"
               )}
               startContent={
@@ -80,6 +92,7 @@ export default function LoginPage() {
                   className="w-5 h-5 shrink-0 brightness-0 invert"
                 />
               }
+              disableRipple
             >
               Login with GitHub
             </Button>
@@ -106,61 +119,16 @@ export default function LoginPage() {
               id="email"
               type="email"
               placeholder="alan.turing@example.com"
-            />
-          </div>
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <label
-                htmlFor="password"
-                className="text-sm text-muted-foreground block"
-              >
-                Password
-              </label>
-              <Link
-                href="/forgot-password"
-                className="text-xs text-muted-foreground hover:text-foreground hover:underline underline-offset-2"
-              >
-                Forgot your password?
-              </Link>
-            </div>
-            <Input
-              id="password"
-              type={showPassword ? "text" : "password"}
-              placeholder="••••••••"
-              variant="faded"
-
-              className={cn(
-                "flex-1 rounded-lg outline-primary data-[focus=true]:outline-2 hover:!bg-transparent"
-              )}
               classNames={{
                 inputWrapper:
-                  "data-[focus=true]:bg-default-100/50 data-[hover=true]:!bg-default-100/50 bg-default-100/50 border",
+                  "data-[focus=true]:bg-default-100/50 data-[hover=true]:!bg-default-100/50 bg-default-100/50 border backdrop-blur-[25px]",
               }}
-
-              endContent={
-                <GlobalButton
-                  type="button"
-                  variant="light"
-                  isIconOnly
-                  onPress={() => setShowPassword((p) => !p)}
-                  size="sm"
-                  disableRipple
-                  aria-label={showPassword ? "Hidde password" : "Show password"}
-                  className="text-muted-foreground"
-                  radius="sm"
-                >
-                  {showPassword ? (
-                    <EyeSlashIcon className="size-5" />
-                  ) : (
-                    <EyeIcon className="size-5" />
-                  )}
-                </GlobalButton>
-              }
             />
           </div>
+
           <Button
             type="submit"
-            className="w-full h-10 rounded-xl !text-sm bg-default-50 border text-muted-foreground hover:bg-default-300"
+            className="w-full h-10 rounded-xl !text-sm bg-default-50 border text-muted-foreground hover:bg-default-300 backdrop-blur-[25px]"
             size="lg"
             radius="lg"
             isDisabled
