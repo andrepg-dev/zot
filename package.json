@@ -18,7 +18,7 @@
   "devDependencies": {
     "@react-email/preview-server": "5.2.5",
     "react-email": "5.2.5",
-    "turbo": "^2.6.1"
+    "turbo": "^2.8.3"
   },
   "dependencies": {
     "@monaco-editor/react": "^4.7.0",

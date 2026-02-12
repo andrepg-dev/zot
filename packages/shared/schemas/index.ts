@@ -1,1 +1,2 @@
-export * from './submit-watlist.zod';
+export * from "./login.zod";
+export * from "./submit-watlist.zod";
