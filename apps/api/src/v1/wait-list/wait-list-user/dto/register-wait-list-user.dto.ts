@@ -16,5 +16,5 @@ export class RegisterWaitListUserDto {
   })
   @IsOptional()
   @IsString()
-  referred_by?: string;
+  referredBy?: string;
 }

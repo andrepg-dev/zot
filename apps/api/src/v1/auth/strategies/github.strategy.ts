@@ -59,7 +59,7 @@ export class GitHubStrategy extends PassportStrategy(Strategy, "github") {
       const dto = {
         email,
         name: firstName,
-        last_name: lastName,
+        lastName: lastName,
         avatar: photos?.[0]?.value ?? undefined,
       };
 
@@ -69,7 +69,7 @@ export class GitHubStrategy extends PassportStrategy(Strategy, "github") {
       const document = await this.userModel.create({
         ...dto,
         providers: ["github"],
-        username: `${dto.name}${dto.last_name}${randomObjectId}`,
+        username: `${dto.name}${dto.lastName}${randomObjectId}`,
       });
 
       done(null, { userId: document._id }); // { userId: new ObjecId("userId") }

@@ -9,7 +9,7 @@ export type DocumentOfSchema = WaitListUser & Document;
   toJSON: {
     virtuals: true,
     transform(doc, ret: Record<string, any>) {
-      delete ret.waitlist_id;
+      delete ret.waitlistId;
       return ret;
     },
   },
@@ -20,20 +20,20 @@ export class WaitListUser {
   email: string;
 
   @Prop({ ref: "WaitList", required: true })
-  waitlist_id: Types.ObjectId;
+  waitlistId: Types.ObjectId;
 
   @Prop()
-  referred_by?: string;
+  referredBy?: string;
 
   @Prop()
   position?: number;
 
   @Virtual({
     get: function (this: DocumentOfSchema): boolean {
-      return !!this.referred_by;
+      return !!this.referredBy;
     },
   })
-  is_referred: boolean;
+  isReferred: boolean;
 }
 
 export const WaitListUserSchema = SchemaFactory.createForClass(WaitListUser);

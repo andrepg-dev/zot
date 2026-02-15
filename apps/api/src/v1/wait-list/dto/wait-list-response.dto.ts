@@ -17,13 +17,13 @@ export class WaitListResponseDto {
     description: "Whether confirmation emails are sent to new signups",
     example: true,
   })
-  send_email_to_new_signup: boolean;
+  sendEmailToNewSignup: boolean;
 
   @ApiPropertyOptional({
     description: "Webhook URL for new signup notifications",
     example: "https://your-server.com/webhooks/waitlist",
   })
-  webhook_url?: string;
+  webhookUrl?: string;
 
   @ApiPropertyOptional({
     description: "Associated widget ID",
@@ -35,7 +35,7 @@ export class WaitListResponseDto {
     description: "Whether the waitlist is accepting signups",
     example: true,
   })
-  is_available: boolean;
+  isAvailable: boolean;
 
   @ApiProperty({
     description: "Owner user ID",

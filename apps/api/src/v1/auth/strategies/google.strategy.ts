@@ -51,7 +51,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, "google") {
       const dto = {
         email,
         name: name.givenName,
-        last_name: name.familyName,
+        lastName: name.familyName,
         avatar: photos?.[0].value ?? undefined,
       };
 
@@ -61,7 +61,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, "google") {
       const document = await this.userModel.create({
         ...dto,
         providers: ["google"],
-        username: `${dto.name}${dto.last_name}${randomObjectId}`,
+        username: `${dto.name}${dto.lastName}${randomObjectId}`,
       });
 
       done(null, { userId: document._id }); // -> envia a google straty

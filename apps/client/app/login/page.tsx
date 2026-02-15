@@ -3,12 +3,12 @@
 import { loginAction } from "@/actions/login";
 import InputComponent from "@/components/ui/input";
 import { siteConfig } from "@/config/site";
-import { loginSchema, type LoginFormValues } from "@repo/packages/shared/schemas/index";
 import { cn } from "@/lib/utils";
 import { ChevronLeftIcon, EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import { Button } from "@heroui/button";
 import { addToast } from "@heroui/toast";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { loginSchema, type LoginFormValues } from "@repo/packages/shared/schemas/index";
 import { useMutation } from "@tanstack/react-query";
 import Image from "next/image";
 import Link from "next/link";
@@ -26,29 +26,29 @@ export default function LoginPage() {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors }
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
-    defaultValues: { email: "", password: "" },
+    defaultValues: { email: "", password: "" }
   });
 
   const { isPending, mutate } = useMutation({
-    mutationFn: loginAction,
+    mutationFn: async (data: LoginFormValues) => await loginAction(data),
     onSuccess: () => {
       addToast({
-        title: "Login successfully",
-        description: "Welcome again!",
-        color: "success",
+        title: "Success",
+        description: "You will be redirected."
       });
-      router.push("/home");
+
+      router.replace("/app/dashboard");
     },
     onError: (err: Error) => {
       addToast({
-        title: "Login error",
+        title: "Error",
         description: err.message,
-        color: "danger",
+        color: "danger"
       });
-    },
+    }
   });
 
   const onSubmit = (data: LoginFormValues) => mutate(data);
@@ -58,14 +58,14 @@ export default function LoginPage() {
       <div
         className={cn(
           "absolute inset-0 bg-cover bg-center bg-no-repeat ",
-          "bg-[url('/zot-background-3.png')]",
+          "bg-[url('/zot-background-3.png')]"
         )}
         aria-hidden
       />
 
       <Button
         as={Link}
-        href="/home"
+        href="/"
         className="absolute top-8 left-8 !p-0 !hover:bg-transparent text-muted-foreground"
         variant="light"
         startContent={<ChevronLeftIcon className="size-4" />}
@@ -87,9 +87,7 @@ export default function LoginPage() {
         </Link>
 
         <div className="text-center w-full">
-          <h1 className="text-2xl font-semibold text-foreground">
-            Log in to {siteConfig.name}
-          </h1>
+          <h1 className="text-2xl font-semibold text-foreground">Log in to {siteConfig.name}</h1>
           <p className="text-sm text-muted-foreground">
             Don&apos;t have an account?{" "}
             <Link
@@ -107,7 +105,7 @@ export default function LoginPage() {
               className={cn(
                 "flex-1 min-w-0 h-10 font-medium",
                 "bg-default-100/50 border border-border backdrop-blur-[25px]",
-                "text-foreground justify-center gap-2 px-3",
+                "text-foreground justify-center gap-2 px-3"
               )}
               disableRipple
               startContent={
@@ -126,7 +124,7 @@ export default function LoginPage() {
               className={cn(
                 "flex-1 min-w-0 h-10 font-medium",
                 "bg-default-100/50 border border-border backdrop-blur-[25px]",
-                "text-foreground justify-center gap-2 px-3",
+                "text-foreground justify-center gap-2 px-3"
               )}
               startContent={
                 <Image
@@ -162,9 +160,7 @@ export default function LoginPage() {
               classNames={{ inputWrapper: inputWrapperClass }}
               {...register("email")}
             />
-            {errors.email && (
-              <p className="text-xs text-danger">{errors.email.message}</p>
-            )}
+            {errors.email && <p className="text-xs text-danger">{errors.email.message}</p>}
           </div>
 
           <div className="space-y-2">
@@ -193,9 +189,7 @@ export default function LoginPage() {
               }
               {...register("password")}
             />
-            {errors.password && (
-              <p className="text-xs text-danger">{errors.password.message}</p>
-            )}
+            {errors.password && <p className="text-xs text-danger">{errors.password.message}</p>}
           </div>
 
           <Button

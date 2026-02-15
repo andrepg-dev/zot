@@ -27,7 +27,43 @@ export class WaitListService {
 
   async findAll(owner: Types.ObjectId) {
     try {
-      return await this.WaitListModel.find({ owner });
+      // return await this.WaitListModel.find({ owner }).populate("users").exec();
+
+      return this.WaitListModel.aggregate([
+        {
+          $match: { owner },
+        },
+        {
+          $lookup: {
+            from: "waitlistusers",
+            foreignField: "waitlistId",
+            as: "usersPopulate",
+            localField: "_id",
+          },
+        },
+        {
+          $addFields: {
+            users: {
+              registered: { $size: "$usersPopulate" },
+              referred: {
+                $size: {
+                  $filter: {
+                    input: "$usersPopulate",
+                    as: "u",
+                    cond: { $ne: [{ $ifNull: ["$$u.referredBy", null] }, null] },
+                  },
+                },
+              },
+            },
+          },
+        },
+        {
+          $project: {
+            usersPopulate: 0,
+            owner: 0,
+          },
+        },
+      ]);
     } catch (error) {
       handleDatabaseErrors(error);
     }
@@ -82,7 +118,7 @@ export class WaitListService {
       });
 
       // Get all the user related to this waitlist id
-      const users = await this.WaitListUserModel.deleteMany({ waitlist_id: id });
+      const users = await this.WaitListUserModel.deleteMany({ waitlistId: id });
 
       if (!waitlist) {
         throw new NotFoundException(`WaitList ${id.toString()} not found.`);

@@ -1,9 +1,16 @@
-import type { NextRequest } from "next/server";
-import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
+import { NextResponse, type NextRequest } from "next/server";
 
-// This function can be marked `async` if using `await` inside
-export function middleware(request: NextRequest) {
-  return NextResponse.redirect(new URL("/login", request.url));
+export async function middleware(request: NextRequest) {
+  const cookieStore = await cookies();
+  const access_token = cookieStore.get("access_token");
+  const access_token_value = access_token?.value;
+
+  if (!access_token_value) {
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
+
+  return NextResponse.next();
 }
 
 // See "Matching Paths" below to learn more

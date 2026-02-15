@@ -18,7 +18,7 @@ export class CreateUserDto {
   })
   @IsString()
   @MinLength(2)
-  last_name: string;
+  lastName: string;
 
   @ApiProperty({
     description: "User email address (must be unique)",

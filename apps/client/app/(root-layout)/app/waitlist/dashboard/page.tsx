@@ -23,8 +23,10 @@ import {
   getKeyValue
 } from "@heroui/react";
 
+import { getWaitList } from "@/actions/wait-list";
 import Title from "@/components/global/title";
 import Chip from "@/components/ui/chip";
+import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -33,6 +35,11 @@ type ViewMode = "table" | "cards";
 
 export default function WaitListPage() {
   const [viewMode, setViewMode] = useState<ViewMode>("cards");
+
+  const { status, data, error, isPending } = useQuery({
+    queryKey: ["todos"],
+    queryFn: getWaitList
+  });
 
   const rows = [
     {
@@ -78,12 +85,14 @@ export default function WaitListPage() {
     router.push(`/app/launch/waitlist/${key}`);
   };
 
-
   return (
     <PageComponent>
       <Title description="Setup your wait-list to launch your product" className="mb-6">
         Wait-List
       </Title>
+      <pre>
+        {JSON.stringify(data, null, 2)}
+      </pre>
 
       <div className="flex flex-col gap-4">
         <div className="flex justify-between">
@@ -202,7 +211,7 @@ export default function WaitListPage() {
                           <h3 className="font-medium text-sm">{item.name}</h3>
                           <p className="text-xs text-muted-foreground">ID: {item.id}</p>
                         </div>
-                        <Chip status={"active"} >{item.status}</Chip>
+                        <Chip status={"active"}>{item.status}</Chip>
                       </div>
                       <div className="flex flex-col gap-2 pt-2 border-t border-default-200">
                         <div className="flex justify-between items-center">

@@ -42,7 +42,7 @@ export class WaitListUserService {
       // Validate that the waitlist exists and is available
       const waitlist = await this.WaitListModel.findOne({
         _id: waitlistId,
-        is_available: true,
+        isAvailable: true,
       });
 
       if (!waitlist) {
@@ -50,7 +50,7 @@ export class WaitListUserService {
       }
 
       const existingUser = await this.WaitListUserModel.findOne({
-        waitlist_id: waitlistId,
+        waitlistId: waitlistId,
         email: dto.email,
       });
 
@@ -60,14 +60,14 @@ export class WaitListUserService {
         );
       }
 
-      const position =
-        (await this.WaitListUserModel.countDocuments({ waitlist_id: waitlistId })) + 1;
+      const position: number =
+        (await this.WaitListUserModel.countDocuments({ waitlistId: waitlistId })) + 1;
 
       return await this.WaitListUserModel.create({
         email: dto.email,
-        waitlist_id: waitlistId,
-        referred_by: dto.referred_by,
+        waitlistId: waitlistId,
         position,
+        referredBy: dto.referredBy as string | undefined,
       });
     } catch (error) {
       if (error instanceof ConflictException || error instanceof NotFoundException) {
@@ -81,7 +81,7 @@ export class WaitListUserService {
     try {
       await this.validateOwnership(waitlistId, owner);
 
-      return await this.WaitListUserModel.find({ waitlist_id: waitlistId }).sort({ position: 1 });
+      return await this.WaitListUserModel.find({ waitlistId: waitlistId }).sort({ position: 1 });
     } catch (error) {
       if (error instanceof NotFoundException || error instanceof ForbiddenException) {
         throw error;
@@ -95,7 +95,7 @@ export class WaitListUserService {
       await this.validateOwnership(waitlistId, owner);
 
       const user = await this.WaitListUserModel.findOne({
-        waitlist_id: waitlistId,
+        waitlistId: waitlistId,
         email,
       });
 
@@ -117,7 +117,7 @@ export class WaitListUserService {
       await this.validateOwnership(waitlistId, owner);
 
       const response = await this.WaitListUserModel.findOneAndDelete({
-        waitlist_id: waitlistId,
+        waitlistId: waitlistId,
         email,
       });
 
@@ -137,7 +137,7 @@ export class WaitListUserService {
   async count(waitlistId: Types.ObjectId, owner: Types.ObjectId | undefined) {
     try {
       await this.validateOwnership(waitlistId, owner);
-      return await this.WaitListUserModel.countDocuments({ waitlist_id: waitlistId });
+      return await this.WaitListUserModel.countDocuments({ waitlistId: waitlistId });
     } catch (error) {
       if (error instanceof NotFoundException || error instanceof ForbiddenException) {
         throw error;
@@ -151,8 +151,8 @@ export class WaitListUserService {
       await this.validateOwnership(waitlistId, owner);
 
       return await this.WaitListUserModel.countDocuments({
-        waitlist_id: waitlistId,
-        is_referred: true,
+        waitlistId: waitlistId,
+        isReferred: true,
       });
     } catch (error) {
       if (error instanceof NotFoundException || error instanceof ForbiddenException) {

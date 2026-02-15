@@ -22,7 +22,7 @@ export class UsersService {
       const { password, ...rest } = user;
 
       // generate username
-      const username = `${rest.name}${rest.last_name}`;
+      const username = `${rest.name}${rest.lastName}`;
 
       const userDocument = new this.userModel({
         ...rest,

@@ -15,7 +15,7 @@ export class CreateWaitListDto {
     example: true,
   })
   @IsBoolean()
-  send_email_to_new_signup: boolean;
+  sendEmailToNewSignup: boolean;
 
   @ApiPropertyOptional({
     description: "Webhook URL to notify when a new user signs up",
@@ -24,7 +24,7 @@ export class CreateWaitListDto {
   })
   @IsUrl()
   @IsOptional()
-  webhook_url?: string;
+  webhookUrl?: string;
 
   @ApiPropertyOptional({
     description: "Associated widget ID for embedding",
@@ -42,5 +42,5 @@ export class CreateWaitListDto {
   })
   @IsBoolean()
   @IsOptional()
-  is_available?: boolean;
+  isAvailable?: boolean;
 }

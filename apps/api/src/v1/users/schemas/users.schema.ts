@@ -6,7 +6,7 @@ export class User {
   name?: string;
 
   @Prop({ required: false, maxLength: 100, min: 2 })
-  last_name?: string;
+  lastName?: string;
 
   @Prop({ required: true, unique: true, maxLength: 100, index: true })
   email: string;

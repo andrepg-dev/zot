@@ -17,13 +17,13 @@ export class WaitListUserResponseDto {
     description: "Waitlist ID this user belongs to",
     example: "507f1f77bcf86cd799439011",
   })
-  waitlist_id: string;
+  waitlistId: string;
 
   @ApiPropertyOptional({
     description: "Referral code of the user who referred this signup",
     example: "ref_abc123xyz",
   })
-  referred_by?: string;
+  referredBy?: string;
 
   @ApiProperty({
     description: "Unique referral code for this user to share",

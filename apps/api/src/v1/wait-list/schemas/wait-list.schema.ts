@@ -1,29 +1,39 @@
 import { BasedOwnerSchema } from "@api/src/common/schemas/based-owner.schema";
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { Prop, Schema, SchemaFactory, Virtual } from "@nestjs/mongoose";
+import { WaitListUser } from "./wait-list-user.schema";
 
-@Schema({ timestamps: true, versionKey: false })
+@Schema({
+  timestamps: true,
+  versionKey: false,
+  toJSON: { virtuals: true },
+  toObject: { virtuals: true },
+  id: false,
+})
 export class WaitList extends BasedOwnerSchema {
   @Prop({ required: true })
   name: string;
 
   @Prop({ required: true, default: true })
-  send_email_to_new_signup: boolean;
+  sendEmailToNewSignup: boolean;
 
   @Prop({ required: true, default: false })
-  is_security_active: boolean;
+  isSecurityActive: boolean;
 
   @Prop({ required: true, default: true })
-  is_available: boolean;
+  isAvailable: boolean;
 
   // General configuration
   @Prop()
-  emails_sent: number;
+  emailsSent: number;
 
   @Prop()
-  fake_users_blocked: number;
+  fakeUsersBlocked: number;
 
   @Prop()
-  webhook_url: string;
+  webhookUrl: string;
+
+  @Virtual({ options: { ref: "WaitListUser", localField: "_id", foreignField: "waitlistId" } })
+  users: WaitListUser[];
 }
 
 export const WaitListSchema = SchemaFactory.createForClass(WaitList);
