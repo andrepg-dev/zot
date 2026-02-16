@@ -44,7 +44,15 @@ export class WaitListService {
         {
           $addFields: {
             users: {
-              registered: { $size: "$usersPopulate" },
+              organic: {
+                $size: {
+                  $filter: {
+                    input: "$usersPopulate",
+                    as: "u",
+                    cond: { $eq: [{ $ifNull: ["$$u.referredBy", null] }, null] },
+                  },
+                },
+              },
               referred: {
                 $size: {
                   $filter: {
@@ -54,6 +62,7 @@ export class WaitListService {
                   },
                 },
               },
+              total: { $size: "$usersPopulate" },
             },
           },
         },
