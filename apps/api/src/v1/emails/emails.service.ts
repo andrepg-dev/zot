@@ -1,13 +1,20 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, Types } from "mongoose";
-import { ResendService } from "nestjs-resend";
+import { EmailSendingService } from "../core/email-sending/email-sending.service";
+
+interface SendEmailParams {
+  waitlistId: string;
+  waitlistUserId: string;
+  userId: Types.ObjectId;
+  quantity: number;
+}
 
 @Injectable()
 export class EmailsService {
   constructor(
     @InjectModel(EmailsService.name) private EmailModel: Model<EmailsService>,
-    private readonly resendService: ResendService,
+    private readonly emailService: EmailSendingService,
   ) {}
 
   /**
@@ -21,28 +28,20 @@ export class EmailsService {
    *
    * For now, i can include not to send with template
    *
-   * @param { waitlistId, waitlistUserId, userId, quantity }
+   * @param {SendEmailParams} SendEmailParams
    * @returns
    */
-  async sendEmail({
-    waitlistId,
-    waitlistUserId,
-    userId,
-    quantity,
-  }: {
-    waitlistId: string;
-    waitlistUserId: string;
-    userId: Types.ObjectId;
-    quantity: number;
-  }) {
+  async sendEmail({ waitlistId, waitlistUserId, userId, quantity }: SendEmailParams) {
     // I need to configure this to send emails, for more information I can look at: https://github.com/jiangtaste/nestjs-resend
-    await this.resendService.send({
-      from: "",
-      to: "",
+    await this.emailService.send({
+      from: "Zot WaitList <mail@zot.so>",
+      to: ["asponceg@gmail.com"],
+      provider: "resend",
       subject: "",
-      text: "",
+      options: {
+        html: "",
+      },
     });
-
     // Send email to users with resend service SDK
     return { waitlistId, waitlistUserId, owner: userId, quantity };
   }

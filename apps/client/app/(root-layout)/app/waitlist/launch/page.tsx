@@ -117,7 +117,7 @@ export default function LaunchWaitList() {
 
             <FormField
               title="Add security to your WaitList"
-              description="Prevent fake emails from being sent to your WaitList with Dymo Security Services."
+              description={<>Prevent fake emails from being sent to your WaitList with <Link href={"https://dymo.tpeoficial.com/"} target="_blank"><Type variant="link">Dymo Security Services.</Type></Link></>}
               isPremiumFeature
               error={errors.addSecurity}
               className="p-4"

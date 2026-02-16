@@ -27,8 +27,6 @@ export class WaitListService {
 
   async findAll(owner: Types.ObjectId) {
     try {
-      // return await this.WaitListModel.find({ owner }).populate("users").exec();
-
       return this.WaitListModel.aggregate([
         {
           $match: { owner },

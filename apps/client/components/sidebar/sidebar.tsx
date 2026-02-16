@@ -91,7 +91,7 @@ export default function Sidebar() {
                   </div>
                 </DropdownTrigger>
                 <DropdownMenu aria-label="Dropdown menu with description">
-                  <DropdownSection title="User configuration" showDivider>
+                  <DropdownSection title="Config" showDivider>
                     <DropdownItem
                       className="!transition-none"
                       key="theme"
@@ -128,10 +128,6 @@ export default function Sidebar() {
                   </DropdownSection>
 
                   <DropdownSection>
-                    <DropdownItem key="help_and_feedback" className="!transition-none">
-                      Help & Feedback
-                    </DropdownItem>
-
                     <DropdownItem className="!transition-none" key="logout">
                       Logout
                     </DropdownItem>

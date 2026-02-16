@@ -25,6 +25,9 @@ export class User {
 
   @Prop()
   avatar?: string;
+
+  @Prop({ default: "FREE", enum: ["FREE", "PREMIUM", "SCALE"] })
+  suscriptionPlan: "FREE" | "PREMIUM" | "SCALE";
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
