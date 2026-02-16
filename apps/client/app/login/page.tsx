@@ -156,7 +156,7 @@ export default function LoginPage() {
             <InputComponent
               id="email"
               type="email"
-              placeholder="alan.turing@example.com"
+              placeholder="andrew@example.com"
               classNames={{ inputWrapper: inputWrapperClass }}
               {...register("email")}
             />
