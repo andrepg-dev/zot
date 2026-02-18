@@ -1,6 +1,8 @@
 import DarkVeil from "@/components/DarkVeil";
+import GradientText from "@/components/GradientText";
 import LogoLoop from "@/components/LogoLoop";
 import ShinyText from "@/components/ShinyText";
+import Image from "next/image";
 import Link from "next/link";
 
 export default function HomePage() {
@@ -16,7 +18,6 @@ export default function HomePage() {
 
   return (
     <div className="font-sans">
-
       <div className="w-full h-screen absolute -z-10">
         <DarkVeil
           speed={1.4}
@@ -28,8 +29,14 @@ export default function HomePage() {
         />
       </div>
 
-      <header className="px-12 py-9 text-muted-foreground absolute">
-        <div className="flex gap-4 items-center">
+      <header className="px-16 py-9 text-muted-foreground absolute">
+        <div className="flex gap-6 items-center">
+          <Image
+            src="/icons/zot-icon-only.svg"
+            alt="Zot"
+            width={28}
+            height={28}
+          />
           <Link href={"#integration"}>Integration</Link>
           <Link href={"#integration"}>Pricing</Link>
           <Link href={"#integration"}>Testimonial</Link>
@@ -60,7 +67,7 @@ export default function HomePage() {
 
           <h1 className="text-6xl font-light">Build, measure, feedback</h1>
           <h3 className="text-muted-foreground italic text-xl text-center w-[50ch]">
-            For developers launching new products, analytics and tools should be the backbone. We provide it.
+            For developers launching new products, analytics and AI tools should be the backbone. We provide it.
           </h3>
 
           <div className="flex gap-6">
@@ -87,6 +94,26 @@ export default function HomePage() {
               fadeOutColor="#000"
               ariaLabel="Technology partners"
             />
+          </div>
+        </div>
+      </div>
+
+      <div className="px-16 py-32 bg-[#000000]">
+        <div className="flex flex-col gap-4">
+          <div className="flex justify-center font-mono tracking-wider text-sm">
+            Productivity insights
+          </div>
+
+          <div className="flex items-center justify-center text-5xl font-light leading-tight text-center gap-2">
+            <span>Advanced</span>
+            <GradientText
+              colors={["#5227FF", "#ffffff"]}
+              animationSpeed={16}
+              showBorder={false}
+              className="font-light! text-center"
+            >
+              Analytics
+            </GradientText>
           </div>
         </div>
 
