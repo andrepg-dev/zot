@@ -4,8 +4,8 @@ import { Model, Types } from "mongoose";
 import { EmailSendingService } from "../core/email-sending/email-sending.service";
 
 interface SendEmailParams {
-  waitlistId: string;
-  waitlistUserId: string;
+  waitlistId: Types.ObjectId;
+  waitlistUserId: Types.ObjectId;
   userId: Types.ObjectId;
   quantity: number;
 }
@@ -31,18 +31,19 @@ export class EmailsService {
    * @param {SendEmailParams} SendEmailParams
    * @returns
    */
-  async sendEmail({ waitlistId, waitlistUserId, userId, quantity }: SendEmailParams) {
+
+  async sendEmail({ userId, waitlistId, waitlistUserId, quantity }: SendEmailParams) {
     // I need to configure this to send emails, for more information I can look at: https://github.com/jiangtaste/nestjs-resend
-    await this.emailService.send({
+
+    // Send email to users with resend service SDK
+    return await this.emailService.send({
       from: "Zot WaitList <mail@zot.so>",
       to: ["asponceg@gmail.com"],
       provider: "resend",
-      subject: "",
+      subject: "Testing if this works or not.",
       options: {
-        html: "",
+        html: "<bold>First email sending with zot.</bold>",
       },
     });
-    // Send email to users with resend service SDK
-    return { waitlistId, waitlistUserId, owner: userId, quantity };
   }
 }

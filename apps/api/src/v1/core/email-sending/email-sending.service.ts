@@ -1,23 +1,20 @@
 import { HttpException, Injectable, InternalServerErrorException } from "@nestjs/common";
-import { ResendService } from "nestjs-resend";
+import { CreateEmailResponse, ResendService } from "nestjs-resend";
 import { EmailParams, EmailSending, ResendEmail } from "../../types/email-sending";
 
 @Injectable()
 export class EmailSendingService implements EmailSending {
   constructor(protected resendService: ResendService) {}
 
-  async send(params: EmailParams): Promise<{ successful: boolean }> {
+  async send(params: EmailParams) {
     switch (params.provider) {
       case "resend": {
         const provider = new ResendProvider(this.resendService);
-        await provider.send(params);
-        break;
+        return await provider.send(params);
       }
       default:
         throw new HttpException("Email provider not sent, please provide one.", 500);
     }
-
-    return { successful: true };
   }
 }
 
@@ -29,15 +26,17 @@ export class ResendProvider extends EmailSendingService implements EmailSending 
   /**
    * Function to send emails using resend services
    */
-  async send(options: ResendEmail): Promise<any> {
-    try {
-      return await this.resendService.send({
-        ...options,
-        text: options.options.text ?? "",
-      });
-    } catch (err) {
-      throw new InternalServerErrorException(`Error sending email: ${err}`);
+  async send(options: ResendEmail): Promise<CreateEmailResponse> {
+    const response = await this.resendService.send({
+      ...options,
+      text: options.options.text ?? "",
+    });
+
+    if (response.error) {
+      throw new InternalServerErrorException(`Error sending email: ${response.error.message}`);
     }
+
+    return response;
   }
 }
 

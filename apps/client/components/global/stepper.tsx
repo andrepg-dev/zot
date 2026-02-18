@@ -15,7 +15,7 @@ export interface StepperProps {
 
 export default function Stepper({ steps, className }: StepperProps) {
   return (
-    <div className={cn("text-sm p-4 px-6 flex flex-col max-w-[500px]", className)}>
+    <div className={cn("text-sm py-6 px-4 flex flex-col max-w-[500px]", className)}>
       {steps.map((step, index) => {
         const isLast = index === steps.length - 1;
         const isActive = step.active;
