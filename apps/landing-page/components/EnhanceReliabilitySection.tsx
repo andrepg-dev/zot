@@ -8,7 +8,7 @@ import ReliabilityGlobe from "./ReliabilityGlobe";
 export default function EnhanceReliabilitySection() {
   return (
     <AnimatedContent
-      distance={120}
+      distance={0}
       direction="vertical"
       reverse={false}
       duration={0.8}

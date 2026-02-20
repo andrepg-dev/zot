@@ -105,7 +105,7 @@ export default function HomePage() {
         </div>
       </div>
 
-      <div className="px-16 pb-32 bg-[#000000]">
+      <section className="px-16 pb-32 bg-[#000000]">
         <LandingPageTitle
           subtitle="Productivity insights"
           title={{ before: "Advanced", gradient: "Analytics" }}
@@ -114,7 +114,7 @@ export default function HomePage() {
         />
 
         {/* Card container */}
-        <div className="grid grid-cols-2 gap-4 mt-16">
+        <div className="grid grid-cols-2 gap-6 mt-16">
           <AnimatedContent
             distance={120}
             direction="horizontal"
@@ -192,7 +192,18 @@ export default function HomePage() {
 
         {/* Enhance Reliability Section */}
         <EnhanceReliabilitySection />
-      </div>
+      </section>
+
+      <section className="px-16 pb-32 flex flex-col gap-16">
+        <LandingPageTitle
+          subtitle="Integrated community"
+          title={{ before: "Seamless", gradient: "team collaboration" }}
+          gradient={{ colors: ["#5227FF", "#ffffff"], animationSpeed: 16 }}
+          description="Keep everyone in sync with instant updates that ensure all team members have the latest information."
+        />
+
+        Hola de nuevo :)
+      </section>
     </div >
   )
 }
