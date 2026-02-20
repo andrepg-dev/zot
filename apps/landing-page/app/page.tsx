@@ -1,4 +1,5 @@
 import AnimatedContent from "@/components/AnimatedContent";
+import CardSwap, { Card } from "@/components/CardSwap";
 import DarkVeil from "@/components/DarkVeil";
 import EnhanceReliabilitySection from "@/components/EnhanceReliabilitySection";
 import LandingPageTitle from "@/components/LandingPageTitle";
@@ -6,6 +7,7 @@ import LogoLoop from "@/components/LogoLoop";
 import ProductivityInsightsCard from "@/components/ProductivityInsightsCard";
 import ProjectsChartSVG from "@/components/ProjectsChartSVG";
 import ShinyText from "@/components/ShinyText";
+import WebWindowCard from "@/components/WebWindowCard";
 import { ChartColumnIcon, PlusSignIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import Image from "next/image";
@@ -194,7 +196,7 @@ export default function HomePage() {
         <EnhanceReliabilitySection />
       </section>
 
-      <section className="px-16 pb-32 flex flex-col gap-16">
+      <section className="px-16 pb-32 flex flex-col gap-16 overflow-hidden">
         <LandingPageTitle
           subtitle="Integrated community"
           title={{ before: "Seamless", gradient: "team collaboration" }}
@@ -202,7 +204,38 @@ export default function HomePage() {
           description="Keep everyone in sync with instant updates that ensure all team members have the latest information."
         />
 
-        Hola de nuevo :)
+        <div className="h-[550px] relative overflow-hidden pt-28 -mb-12">
+          <CardSwap
+            cardDistance={60}
+            verticalDistance={70}
+            delay={5000}
+            pauseOnHover={false}
+            height={500}
+            width={700}
+          >
+            <Card>
+              <WebWindowCard
+                url="collab.zot.so"
+                title="Real-time updates"
+                description="See every change your team makes as it happens in a familiar web-style interface."
+              />
+            </Card>
+            <Card>
+              <WebWindowCard
+                url="team.zot.so"
+                title="Shared workspaces"
+                description="Organize projects, documents, and feedback in a single, collaborative web view."
+              />
+            </Card>
+            <Card>
+              <WebWindowCard
+                url="updates.zot.so"
+                title="Status at a glance"
+                description="Track what changed, who did it, and when, without leaving the browser experience."
+              />
+            </Card>
+          </CardSwap>
+        </div>
       </section>
     </div >
   )
