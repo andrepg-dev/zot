@@ -1,5 +1,6 @@
 import AnimatedContent from "@/components/AnimatedContent";
 import DarkVeil from "@/components/DarkVeil";
+import EnhanceReliabilitySection from "@/components/EnhanceReliabilitySection";
 import LandingPageTitle from "@/components/LandingPageTitle";
 import LogoLoop from "@/components/LogoLoop";
 import ProductivityInsightsCard from "@/components/ProductivityInsightsCard";
@@ -147,7 +148,6 @@ export default function HomePage() {
             <HugeiconsIcon icon={PlusSignIcon} size={26} strokeWidth={1} className="absolute -right-3 -top-3 z-50 text-zinc-700" />
             <HugeiconsIcon icon={PlusSignIcon} size={26} strokeWidth={1} className="absolute -left-3 -bottom-3 z-50 text-zinc-700" />
 
-
             <div
               className="border border-white/10 rounded-xl rounded-bl-none rounded-tr-none aspect-square relative overflow-hidden"
               style={{
@@ -189,6 +189,9 @@ export default function HomePage() {
             </div>
           </AnimatedContent>
         </div>
+
+        {/* Enhance Reliability Section */}
+        <EnhanceReliabilitySection />
       </div>
     </div >
   )
