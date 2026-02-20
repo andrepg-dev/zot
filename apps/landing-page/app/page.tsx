@@ -1,6 +1,5 @@
 import DarkVeil from "@/components/DarkVeil";
-import GradientText from "@/components/GradientText";
-import LogoLoop from "@/components/LogoLoop";
+import LandingPageTitle from "@/components/LandingPageTitle";
 import ShinyText from "@/components/ShinyText";
 import Image from "next/image";
 import Link from "next/link";
@@ -76,12 +75,12 @@ export default function HomePage() {
           </div>
         </div>
 
-        <div className="absolute bottom-16 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3">
+        {/* <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3">
           <span className="text-sm text-foreground/80 text-center">
             Join over 1,000 startups and start to maximize your productivity.
           </span>
 
-          <div className="h-[100px] w-[75%] relative overflow-hidden">
+          <div className="h-[100px] w-[80%] relative overflow-hidden">
             <LogoLoop
               logos={techLogos}
               speed={30}
@@ -95,26 +94,19 @@ export default function HomePage() {
               ariaLabel="Technology partners"
             />
           </div>
-        </div>
+        </div> */}
       </div>
 
-      <div className="px-16 py-32 bg-[#000000]">
-        <div className="flex flex-col gap-4">
-          <div className="flex justify-center font-mono tracking-wider text-sm">
-            Productivity insights
-          </div>
+      <div className="px-16 pb-32 bg-[#000000]">
+        <LandingPageTitle
+          subtitle="Productivity insights"
+          title={{ before: "Advanced", gradient: "Analytics" }}
+          gradient={{ colors: ["#5227FF", "#ffffff"], animationSpeed: 16 }}
+          description="Gain valuable insights into your productivity with detailed reports that help you understand your habits."
+        />
 
-          <div className="flex items-center justify-center text-5xl font-light leading-tight text-center gap-2">
-            <span>Advanced</span>
-            <GradientText
-              colors={["#5227FF", "#ffffff"]}
-              animationSpeed={16}
-              showBorder={false}
-              className="font-light! text-center"
-            >
-              Analytics
-            </GradientText>
-          </div>
+        <div className="flex gap-4">
+          Hola
         </div>
 
 
