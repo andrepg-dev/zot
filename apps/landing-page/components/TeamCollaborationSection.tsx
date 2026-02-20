@@ -76,8 +76,8 @@ export default function TeamCollaborationSection() {
                   key={button.id}
                   onClick={() => handleButtonClick(index)}
                   className={`w-full min-h-[100px] text-left rounded-3xl px-7 py-5 flex flex-col gap-3 transition-colors cursor-pointer border ${isActive
-                      ? "bg-zinc-900 border-border shadow-[0_0_0_1px_rgba(255,255,255,0.06)]"
-                      : "bg-zinc-900/20 text-muted-foreground hover:text-white/90 hover:bg-zinc-900/40 border-transparent"
+                    ? "bg-zinc-900 border-border shadow-[0_0_0_1px_rgba(255,255,255,0.06)]"
+                    : "bg-zinc-900/20 text-muted-foreground hover:text-white/90 hover:bg-zinc-900/40 border-transparent"
                     }`}
                 >
                   <div className="flex items-center gap-3">
@@ -104,14 +104,12 @@ export default function TeamCollaborationSection() {
         </div>
 
         <CardSwap
-          ref={cardSwapRef}
           cardDistance={60}
           verticalDistance={70}
-          delay={5000}
-          pauseOnHover={false}
           height={500}
           width={700}
-          activeCardIndex={activeCardIndex}
+          simultaneousCards={2}
+          delay={3000}
         >
           {cards.map((card, index) => (
             <Card key={index}>

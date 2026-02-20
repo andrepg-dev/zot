@@ -14,7 +14,7 @@ export default function WebWindowCard({ url, title, description }: WebWindowCard
           <div className="aspect-square h-3 w-3 bg-muted-foreground border rounded-full" />
         </div>
 
-        <div className="border rounded bg-muted-foreground/30 text-muted-foreground px-4 text-xs ml-auto mr-32">
+        <div className="border rounded bg-muted-foreground/30 text-muted-foreground px-4 text-xs ml-auto mr-44">
           {url}
         </div>
       </header>
