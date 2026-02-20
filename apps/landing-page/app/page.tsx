@@ -5,7 +5,7 @@ import LogoLoop from "@/components/LogoLoop";
 import ProductivityInsightsCard from "@/components/ProductivityInsightsCard";
 import ProjectsChartSVG from "@/components/ProjectsChartSVG";
 import ShinyText from "@/components/ShinyText";
-import { ChartColumnIcon } from "@hugeicons/core-free-icons";
+import { ChartColumnIcon, PlusSignIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import Image from "next/image";
 import Link from "next/link";
@@ -123,7 +123,10 @@ export default function HomePage() {
             initialOpacity={0}
             animateOpacity
             delay={0}
+            className="relative"
           >
+            <HugeiconsIcon icon={PlusSignIcon} size={26} strokeWidth={1} className="absolute -left-3 -top-3 z-50 text-zinc-700" />
+
             <ProductivityInsightsCard
               previewImage={{ src: "/analytics-4.png", alt: "Screenshot de analytics" }}
               previewUrl="zot.so"
@@ -139,9 +142,14 @@ export default function HomePage() {
             initialOpacity={0}
             animateOpacity
             delay={0}
+            className="relative"
           >
+            <HugeiconsIcon icon={PlusSignIcon} size={26} strokeWidth={1} className="absolute -right-3 -top-3 z-50 text-zinc-700" />
+            <HugeiconsIcon icon={PlusSignIcon} size={26} strokeWidth={1} className="absolute -left-3 -bottom-3 z-50 text-zinc-700" />
+
+
             <div
-              className="border border-white/10 rounded-xl overflow-hidden aspect-square"
+              className="border border-white/10 rounded-xl rounded-bl-none rounded-tr-none aspect-square relative overflow-hidden"
               style={{
                 background:
                   "radial-gradient(ellipse 80% 80% at 50% 40%, rgba(82, 39, 255, 0.35) 0%, rgba(82, 39, 255, 0.12) 35%, transparent 70%), #000000",

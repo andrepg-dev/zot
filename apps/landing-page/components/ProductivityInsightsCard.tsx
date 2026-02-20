@@ -18,7 +18,7 @@ export default function ProductivityInsightsCard({
 }: ProductivityInsightsCardProps) {
   return (
     <div
-      className="border border-white/10 rounded-xl overflow-hidden aspect-square"
+      className="border border-white/10 rounded-xl rounded-tl-none overflow-hidden aspect-square"
       style={{
         background:
           "radial-gradient(ellipse 80% 80% at 50% 40%, rgba(82, 39, 255, 0.35) 0%, rgba(82, 39, 255, 0.12) 35%, transparent 70%), #000000",
