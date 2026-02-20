@@ -45,6 +45,7 @@ export default function HomePage() {
             height={28}
             className="[filter:drop-shadow(0_0_4px_rgba(255,255,255,0.75))_drop-shadow(0_0_10px_rgba(255,255,255,0.4))_drop-shadow(0_0_18px_rgba(59,130,246,0.5))_drop-shadow(0_0_26px_rgba(30,58,138,0.45))]"
           />
+
           <Link href={"#integration"} className="ml-4">Integration</Link>
           <Link href={"#integration"}>Pricing</Link>
           <Link href={"#integration"}>Testimonial</Link>
@@ -196,6 +197,15 @@ export default function HomePage() {
       </section>
 
       <TeamCollaborationSection />
+
+      <section className="px-16 pb-32 bg-[#000000]">
+        <LandingPageTitle
+          subtitle="Automated scheduling"
+          title={{ before: "Comprehensive", gradient: "task management" }}
+          gradient={{ colors: ["#22C55E", "#00FF88"], animationSpeed: 16 }}
+          description="Effortlessly manage and prioritize your tasks using Ra diyal's intuitive interface, keeping your workload organized."
+        />
+      </section>
     </div >
   )
 }

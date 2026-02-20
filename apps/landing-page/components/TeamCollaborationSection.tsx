@@ -3,6 +3,7 @@
 import { PlusSignIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { useRef, useState } from "react";
+import AnimatedContent from "./AnimatedContent";
 import CardSwap, { Card, CardSwapRef } from "./CardSwap";
 import LandingPageTitle from "./LandingPageTitle";
 import WebWindowCard from "./WebWindowCard";
@@ -58,7 +59,7 @@ export default function TeamCollaborationSection() {
   };
 
   return (
-    <section className="px-16 pb-32 flex flex-col gap-16 overflow-hidden">
+    <section className="p-16 pb-36 flex flex-col gap-16 overflow-hidden">
       <LandingPageTitle
         subtitle="Integrated community"
         title={{ before: "Seamless", gradient: "team collaboration" }}
@@ -108,8 +109,8 @@ export default function TeamCollaborationSection() {
           verticalDistance={70}
           height={500}
           width={700}
-          simultaneousCards={2}
-          delay={3000}
+          simultaneousCards={1}
+          delay={5000}
         >
           {cards.map((card, index) => (
             <Card key={index}>
@@ -117,6 +118,63 @@ export default function TeamCollaborationSection() {
             </Card>
           ))}
         </CardSwap>
+      </div>
+
+      {/* Statistics Section */}
+      <div className="grid grid-cols-3 gap-16 mt-16">
+        <AnimatedContent
+          distance={60}
+          direction="vertical"
+          reverse={false}
+          duration={0.8}
+          ease="power3.out"
+          initialOpacity={0}
+          animateOpacity
+          delay={0.1}
+          className="flex flex-col items-center text-center gap-4"
+        >
+          <h2 className="text-5xl text-white">98%</h2>
+          <h3 className="text-2xl font-medium text-white">Team adoption</h3>
+          <p className="text-base text-muted-foreground max-w-[35ch]">
+            98% team adoption highlights widespread tool use and effective communication.
+          </p>
+        </AnimatedContent>
+
+        <AnimatedContent
+          distance={60}
+          direction="vertical"
+          reverse={false}
+          duration={0.8}
+          ease="power3.out"
+          initialOpacity={0}
+          animateOpacity
+          delay={0.2}
+          className="flex flex-col items-center text-center gap-4"
+        >
+          <h2 className="text-5xl text-white">30+</h2>
+          <h3 className="text-2xl font-medium text-white">Projects managed</h3>
+          <p className="text-base text-muted-foreground max-w-[35ch]">
+            Our platform manages 30+ projects concurrently, maintaining flexibility and productivity.
+          </p>
+        </AnimatedContent>
+
+        <AnimatedContent
+          distance={60}
+          direction="vertical"
+          reverse={false}
+          duration={0.8}
+          ease="power3.out"
+          initialOpacity={0}
+          animateOpacity
+          delay={0.3}
+          className="flex flex-col items-center text-center gap-4"
+        >
+          <h2 className="text-5xl text-white">100+</h2>
+          <h3 className="text-2xl font-medium text-white">Seamless integration</h3>
+          <p className="text-base text-muted-foreground max-w-[35ch]">
+            Seamlessly integrates with key tools, ensuring smooth workflow and collaboration.
+          </p>
+        </AnimatedContent>
       </div>
     </section>
   );
