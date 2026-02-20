@@ -1,9 +1,12 @@
+import AnimatedContent from "@/components/AnimatedContent";
 import DarkVeil from "@/components/DarkVeil";
 import LandingPageTitle from "@/components/LandingPageTitle";
 import LogoLoop from "@/components/LogoLoop";
+import ProductivityInsightsCard from "@/components/ProductivityInsightsCard";
+import ProjectsChartSVG from "@/components/ProjectsChartSVG";
 import ShinyText from "@/components/ShinyText";
-import { WaterfallUp01Icon } from '@hugeicons/core-free-icons';
-import { HugeiconsIcon } from '@hugeicons/react';
+import { ChartColumnIcon } from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -70,7 +73,7 @@ export default function HomePage() {
 
           <h1 className="text-6xl text-center">Build, measure, feedback</h1>
           <h3 className="text-muted-foreground text-xl text-center w-[50ch]">
-            For developers launching new products, analytics and AI tools should be the backbone. We provide it.
+            For developers validating their products, analytics and AI tools should be the backbone. We provide it.
           </h3>
 
           <div className="flex gap-6">
@@ -111,40 +114,72 @@ export default function HomePage() {
 
         {/* Card container */}
         <div className="grid grid-cols-2 gap-4 mt-16">
-          <div
-            className="border border-white/10 rounded-xl overflow-hidden aspect-square"
-            style={{
-              background:
-                "radial-gradient(ellipse 80% 80% at 50% 40%, rgba(82, 39, 255, 0.35) 0%, rgba(82, 39, 255, 0.12) 35%, transparent 70%), #000000",
-            }}
+          <AnimatedContent
+            distance={120}
+            direction="horizontal"
+            reverse={true}
+            duration={0.8}
+            ease="power3.out"
+            initialOpacity={0}
+            animateOpacity
+            delay={0}
           >
-            <div className="p-12">
-              <div className="flex flex-col gap-4">
-                <HugeiconsIcon icon={WaterfallUp01Icon} strokeWidth={2} />
-                <h3 className="text-3xl">Productivity insights</h3>
-                <h4 className="text-muted-foreground max-w-[40ch]">
-                  Get detailed reports on your productivity. Identify patterns, understand your habits, and make informed decisions to improve your workflow.
-                </h4>
+            <ProductivityInsightsCard
+              previewImage={{ src: "/analytics-4.png", alt: "Screenshot de analytics" }}
+              previewUrl="zot.so"
+            />
+          </AnimatedContent>
+
+          <AnimatedContent
+            distance={140}
+            direction="vertical"
+            reverse={false}
+            duration={0.8}
+            ease="power3.out"
+            initialOpacity={0}
+            animateOpacity
+            delay={0}
+          >
+            <div
+              className="border border-white/10 rounded-xl overflow-hidden aspect-square"
+              style={{
+                background:
+                  "radial-gradient(ellipse 80% 80% at 50% 40%, rgba(82, 39, 255, 0.35) 0%, rgba(82, 39, 255, 0.12) 35%, transparent 70%), #000000",
+              }}>
+              <div className="p-12">
+                <div className="flex flex-col gap-4">
+                  <HugeiconsIcon icon={ChartColumnIcon} />
+                  <h3 className="text-3xl">Goal tracking</h3>
+                  <h4 className="text-muted-foreground max-w-[40ch]">
+                    Set personal or team goals and track your progress.
+                    See how close you are to achieving your objectives and stay motivated.
+                  </h4>
+                </div>
+              </div>
+
+              <div className="border-t border-l ml-auto w-5/6 h-full rounded-lg rounded-tr-none bg-black backdrop-blur-3xl relative">
+                <div className="m-2 bg-zinc-900 border rounded-lg w-full h-[200px] p-4 relative">
+                  <h4 className="text-lg font-medium">Projects completed</h4>
+                  <h6 className="text-muted-foreground">
+                    Hey! You&apos;re doing a great job, it <br /> looks like you&apos;re <span className="text-white font-medium">on track!</span>
+                  </h6>
+
+                  <div className="absolute bottom-6 left-6 flex items-center">
+                    <h2 className="text-4xl font-semibold">3.2k</h2>
+                    <div className="flex ml-6 gap-2">
+                      <div className="border border-green-700 bg-green-500/20 rounded-full text-emerald-700 px-2 flex items-center text-xs">
+                        26%
+                      </div>
+                      <span className="text-muted-foreground text-sm">Compared to last month</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="w-full h-full">
+                  <ProjectsChartSVG />
+                </div>
               </div>
             </div>
-
-            <div className="border-t border-l ml-auto w-5/6 h-full rounded-lg">
-              <header className="flex p-3 gap-1.5">
-                <div className="flex gap-1.5 mt-1">
-                  <div className="aspect-square h-3 w-3 bg-muted-foreground border rounded-full"></div>
-                  <div className="aspect-square h-3 w-3 bg-muted-foreground border rounded-full"></div>
-                  <div className="aspect-square h-3 w-3 bg-muted-foreground border rounded-full"></div>
-                </div>
-
-                <div className="border rounded bg-muted-foreground/30 text-muted-foreground px-4 text-xs ml-auto mr-32">
-                  zot.so
-                </div>
-              </header>
-
-              <div className="mx-2 border-t border-l h-full w-full rounded-lg"></div>
-            </div>
-
-          </div>
+          </AnimatedContent>
         </div>
       </div>
     </div >
