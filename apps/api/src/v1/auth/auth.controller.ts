@@ -12,6 +12,7 @@ import {
   Response,
   UseGuards,
 } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
@@ -44,6 +45,7 @@ export class AuthController {
     private readonly authService: AuthService,
     private jwtService: JwtClassService,
     private cookiesService: CookiesService,
+    private configService: ConfigService,
   ) {}
 
   @Public()
@@ -122,23 +124,17 @@ export class AuthController {
   @UseGuards(GoogleAuthGuard)
   @ApiOperation({
     summary: "Google OAuth callback",
-    description: "Handles Google OAuth2 callback after successful authentication.",
-  })
-  @ApiOkResponse({
-    description: "Successfully authenticated via Google",
-    type: UserProfileResponseDto,
+    description: "Handles Google OAuth2 callback. Sets cookie and redirects to frontend.",
   })
   @ApiInternalServerErrorResponse({ description: "User not found after OAuth" })
-  googleAuthRedirect(
-    @Request() req: express.Request,
-    @Response({ passthrough: true }) res: express.Response,
-  ) {
+  googleAuthRedirect(@Request() req: express.Request, @Response() res: express.Response) {
     if (!req.user) throw new InternalServerErrorException("User not found.");
 
     const access_token = this.jwtService.signUser(req.user);
     this.cookiesService.saveCookie(res, SAVE_ACCESS_TOKEN_IN_COOKIES_KEY, access_token);
 
-    return req.user; // { userId: new ObjectId(""), exp: 324234, iat: 3982 }
+    const frontendUrl = this.configService.get<string>("FRONTEND_URL");
+    return res.redirect(`${frontendUrl}/app/dashboard`);
   }
 
   @Public()
@@ -146,22 +142,15 @@ export class AuthController {
   @UseGuards(GitHubAuthGuard)
   @ApiOperation({
     summary: "GitHub OAuth callback",
-    description: "Handles GitHub OAuth2 callback after successful authentication.",
-  })
-  @ApiOkResponse({
-    description: "Successfully authenticated via GitHub",
-    type: UserProfileResponseDto,
+    description: "Handles GitHub OAuth2 callback. Sets cookie and redirects to frontend.",
   })
   @ApiInternalServerErrorResponse({ description: "User not found after OAuth" })
-  githubAuthRedirect(
-    @UserId() userId: Types.ObjectId,
-    @Response({ passthrough: true }) res: express.Response,
-    @Request() req: express.Request,
-  ) {
-    const access_token = this.jwtService.signUser({ userId }); // { userId: Types.ObjectId } => { userId: string }
+  githubAuthRedirect(@UserId() userId: Types.ObjectId, @Response() res: express.Response) {
+    const access_token = this.jwtService.signUser({ userId });
     this.cookiesService.saveCookie(res, SAVE_ACCESS_TOKEN_IN_COOKIES_KEY, access_token);
 
-    return req.user; // { userId: new ObjectId(""), exp: 324234, iat: 3982 }
+    const frontendUrl = this.configService.get<string>("FRONTEND_URL");
+    return res.redirect(`${frontendUrl}/app/dashboard`);
   }
 
   @Public()

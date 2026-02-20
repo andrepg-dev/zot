@@ -14,6 +14,7 @@ export default () => ({
 
     // General
     BACKEND_URL: joi.string().required(),
+    FRONTEND_URL: joi.string().required(),
 
     // RESEND_API_KEY
     RESEND_API_KEY: joi.string().required(),

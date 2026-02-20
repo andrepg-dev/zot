@@ -30,7 +30,7 @@ export async function FetchWrapper<T>(
     headers["Cookie"] = `access_token=${accessToken}`;
   }
 
-  const res = await fetch(`${process.env.NEXT_PUBLIC_NESTJS_API_URL}${endpoint}`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}${endpoint}`, {
     ...options,
     headers,
     credentials: "include"

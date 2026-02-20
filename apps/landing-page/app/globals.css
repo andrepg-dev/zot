@@ -128,3 +128,11 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+/* Resplandor suave alrededor del icono (halo luminoso) */
+.icon-glow {
+  filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.95))
+    drop-shadow(0 0 12px rgba(255, 255, 255, 0.6))
+    drop-shadow(0 0 20px rgba(147, 112, 219, 0.4))
+    drop-shadow(0 0 28px rgba(74, 222, 128, 0.25));
+}

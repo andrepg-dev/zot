@@ -107,6 +107,9 @@ export default function LoginPage() {
                 "bg-default-100/50 border border-border backdrop-blur-[25px]",
                 "text-foreground justify-center gap-2 px-3"
               )}
+              onPress={() => {
+                router.push(`${process.env.NEXT_PUBLIC_BACKEND_URL}/v1/auth/google`)
+              }}
               disableRipple
               startContent={
                 <Image

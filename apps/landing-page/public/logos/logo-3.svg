@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 32" fill="none">
+  <path d="M4 14 Q10 8 16 14 Q22 20 28 14" stroke="#e5e5e5" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.9"/>
+  <path d="M4 22 Q10 16 16 22 Q22 28 28 22" stroke="#e5e5e5" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.6"/>
+  <text x="36" y="22" fill="#e5e5e5" font-family="system-ui, sans-serif" font-size="14" font-weight="600">Logoipsum</text>
+</svg>
