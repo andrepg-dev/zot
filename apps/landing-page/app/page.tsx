@@ -2,13 +2,15 @@ import DarkVeil from "@/components/DarkVeil";
 import LandingPageTitle from "@/components/LandingPageTitle";
 import LogoLoop from "@/components/LogoLoop";
 import ShinyText from "@/components/ShinyText";
+import { WaterfallUp01Icon } from '@hugeicons/core-free-icons';
+import { HugeiconsIcon } from '@hugeicons/react';
 import Image from "next/image";
 import Link from "next/link";
 
 const logoipsumLogos = [
   { src: "/logos/logo-1.svg", alt: "Logoipsum", title: "Logoipsum", width: 120, height: 32 },
   { src: "/logos/logo-2.svg", alt: "Logoipsum", title: "Logoipsum", width: 120, height: 32 },
-  { src: "/logos/logo-4.svg", alt: "Logoipsum", title: "Logoipsum", width: 120, height: 32 },
+  { src: "/logos/logo-3.svg", alt: "Logoipsum", title: "Logoipsum", width: 120, height: 32 },
   { src: "/logos/logo-6.svg", alt: "Logoipsum", title: "Logoipsum", width: 120, height: 32 },
   { src: "/logos/logo-5.svg", alt: "Logoipsum", title: "Logoipsum", width: 120, height: 32 },
   { src: "/logos/logo-6.svg", alt: "Logoipsum", title: "Logoipsum", width: 120, height: 32 },
@@ -47,7 +49,7 @@ export default function HomePage() {
 
       <div aria-label="Hero section" className="flex justify-center items-center w-full h-screen flex-col">
         <div className="mb-26 flex justify-center items-center w-full gap-6 flex-col">
-          <div className="bg-black/30 hover:bg-zinc-600/10 transition backdrop-blur-md px-6 pr-2 py-2 rounded-full border flex items-center gap-4 cursor-pointer">
+          <div className="bg-black/30 hover:bg-zinc-600/10 transition backdrop-blur-md px-5 pr-2 py-1.5 rounded-full border flex items-center gap-4 cursor-pointer">
             <ShinyText
               text="Start measuring your clients"
               speed={2}
@@ -109,12 +111,41 @@ export default function HomePage() {
 
         {/* Card container */}
         <div className="grid grid-cols-2 gap-4 mt-16">
-          <div className="border p-6 rounded-xl">
-            hola
+          <div
+            className="border border-white/10 rounded-xl overflow-hidden aspect-square"
+            style={{
+              background:
+                "radial-gradient(ellipse 80% 80% at 50% 40%, rgba(82, 39, 255, 0.35) 0%, rgba(82, 39, 255, 0.12) 35%, transparent 70%), #000000",
+            }}
+          >
+            <div className="p-12">
+              <div className="flex flex-col gap-4">
+                <HugeiconsIcon icon={WaterfallUp01Icon} strokeWidth={2} />
+                <h3 className="text-3xl">Productivity insights</h3>
+                <h4 className="text-muted-foreground max-w-[40ch]">
+                  Get detailed reports on your productivity. Identify patterns, understand your habits, and make informed decisions to improve your workflow.
+                </h4>
+              </div>
+            </div>
+
+            <div className="border-t border-l ml-auto w-5/6 h-full rounded-lg">
+              <header className="flex p-3 gap-1.5">
+                <div className="flex gap-1.5 mt-1">
+                  <div className="aspect-square h-3 w-3 bg-muted-foreground border rounded-full"></div>
+                  <div className="aspect-square h-3 w-3 bg-muted-foreground border rounded-full"></div>
+                  <div className="aspect-square h-3 w-3 bg-muted-foreground border rounded-full"></div>
+                </div>
+
+                <div className="border rounded bg-muted-foreground/30 text-muted-foreground px-4 text-xs ml-auto mr-32">
+                  zot.so
+                </div>
+              </header>
+
+              <div className="mx-2 border-t border-l h-full w-full rounded-lg"></div>
+            </div>
+
           </div>
         </div>
-
-
       </div>
     </div >
   )

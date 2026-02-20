@@ -11,7 +11,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/app/dashboard", request.url));
   }
 
-  if (!access_token_value) {
+  if (pathname !== "/login" && !access_token_value) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 

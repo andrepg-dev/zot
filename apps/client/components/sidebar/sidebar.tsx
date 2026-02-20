@@ -74,11 +74,11 @@ export default function Sidebar() {
                       </div>
                       <div className="flex flex-col text-[12px] leading-3.5 font-light">
                         <p>Andre Ponce</p>
-                        <p className="text-muted-foreground">Free</p>
+                        <p className="text-muted-foreground">Premium</p>
                       </div>
                     </div>
 
-                    <Button
+                    {/* <Button
                       as={Link}
                       href="/app/billing"
                       size="sm"
@@ -87,7 +87,7 @@ export default function Sidebar() {
                       className="px-5 text-muted-foreground h-[29px] py-2 text-[12px] scale-95 !bg-default-100"
                     >
                       Upgrade
-                    </Button>
+                    </Button> */}
                   </div>
                 </DropdownTrigger>
                 <DropdownMenu aria-label="Dropdown menu with description">
