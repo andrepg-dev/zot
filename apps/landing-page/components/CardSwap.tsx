@@ -10,6 +10,7 @@ import React, {
   ReactNode,
   RefObject,
   useEffect,
+  useImperativeHandle,
   useMemo,
   useRef
 } from 'react';
@@ -24,7 +25,12 @@ export interface CardSwapProps {
   onCardClick?: (idx: number) => void;
   skewAmount?: number;
   easing?: 'linear' | 'elastic';
+  activeCardIndex?: number;
   children: ReactNode;
+}
+
+export interface CardSwapRef {
+  goToCard: (index: number) => void;
 }
 
 export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -68,7 +74,7 @@ const placeNow = (el: HTMLElement, slot: Slot, skew: number) =>
     force3D: true
   });
 
-const CardSwap: React.FC<CardSwapProps> = ({
+const CardSwap = forwardRef<CardSwapRef, CardSwapProps>(({
   width = 500,
   height = 400,
   cardDistance = 60,
@@ -78,8 +84,9 @@ const CardSwap: React.FC<CardSwapProps> = ({
   onCardClick,
   skewAmount = 6,
   easing = 'elastic',
+  activeCardIndex,
   children
-}) => {
+}, ref) => {
   const config =
     easing === 'elastic'
       ? {
@@ -107,6 +114,67 @@ const CardSwap: React.FC<CardSwapProps> = ({
   const tlRef = useRef<gsap.core.Timeline | null>(null);
   const intervalRef = useRef<number>(0);
   const container = useRef<HTMLDivElement>(null);
+  const swapFnRef = useRef<(() => void) | null>(null);
+
+  const goToCard = (targetIndex: number) => {
+    if (targetIndex < 0 || targetIndex >= refs.length) return;
+    
+    // Pausar animación actual
+    tlRef.current?.kill();
+    clearInterval(intervalRef.current);
+    
+    // Reorganizar el orden para que la card objetivo esté al frente
+    const currentOrder = order.current;
+    const targetPosition = currentOrder.indexOf(targetIndex);
+    
+    if (targetPosition === 0) return; // Ya está al frente
+    
+    // Crear nuevo orden: la card objetivo al frente, luego las demás
+    const newOrder = [
+      targetIndex,
+      ...currentOrder.filter(idx => idx !== targetIndex)
+    ];
+    
+    order.current = newOrder;
+    
+    // Animar todas las cards a sus nuevas posiciones
+    const tl = gsap.timeline();
+    tlRef.current = tl;
+    
+    newOrder.forEach((idx, i) => {
+      const el = refs[idx].current!;
+      const slot = makeSlot(i, cardDistance, verticalDistance, refs.length);
+      tl.set(el, { zIndex: slot.zIndex }, i === 0 ? 0 : `-=${0.1}`);
+      tl.to(
+        el,
+        {
+          x: slot.x,
+          y: slot.y,
+          z: slot.z,
+          duration: config.durMove,
+          ease: config.ease
+        },
+        i === 0 ? 0 : `-=${config.durMove * 0.8}`
+      );
+    });
+    
+    // Reanudar auto-swap después de un tiempo
+    setTimeout(() => {
+      if (swapFnRef.current) {
+        intervalRef.current = window.setInterval(swapFnRef.current, delay);
+      }
+    }, delay);
+  };
+
+  useImperativeHandle(ref, () => ({
+    goToCard
+  }));
+
+  useEffect(() => {
+    if (activeCardIndex !== undefined) {
+      goToCard(activeCardIndex);
+    }
+  }, [activeCardIndex]);
 
   useEffect(() => {
     const total = refs.length;
@@ -170,6 +238,7 @@ const CardSwap: React.FC<CardSwapProps> = ({
       });
     };
 
+    swapFnRef.current = swap;
     swap();
     intervalRef.current = window.setInterval(swap, delay);
 
@@ -217,6 +286,8 @@ const CardSwap: React.FC<CardSwapProps> = ({
       {rendered}
     </div>
   );
-};
+});
+
+CardSwap.displayName = 'CardSwap';
 
 export default CardSwap;
