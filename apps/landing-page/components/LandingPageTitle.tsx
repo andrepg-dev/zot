@@ -1,4 +1,5 @@
 import GradientText from "@/components/GradientText";
+import { cn } from "@/lib/utils";
 
 export interface LandingPageTitleProps {
   /** Etiqueta pequeña sobre el título (ej. "Productivity insights") */
@@ -9,6 +10,10 @@ export interface LandingPageTitleProps {
   gradient: { colors: [string, string]; animationSpeed?: number };
   /** Descripción debajo del título */
   description: string;
+
+  classNames?: {
+    description: string
+  }
 }
 
 export default function LandingPageTitle({
@@ -16,6 +21,7 @@ export default function LandingPageTitle({
   title,
   gradient,
   description,
+  classNames
 }: LandingPageTitleProps) {
   const { colors, animationSpeed = 16 } = gradient;
   return (
@@ -38,7 +44,7 @@ export default function LandingPageTitle({
         </div>
 
         <div className="flex justify-center">
-          <span className="text-muted-foreground text-center max-w-[40ch] flex justify-center text-lg">
+          <span className={cn("text-muted-foreground text-center max-w-[40ch] flex justify-center text-lg", classNames?.description)}>
             {description}
           </span>
         </div>
