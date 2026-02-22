@@ -37,7 +37,7 @@ export default function FaqSection() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
-    <section className="px-16 pb-24 pt-16 bg-[#000000]">
+    <section className="px-4 sm:px-6 md:px-8 lg:px-16 pb-16 sm:pb-20 lg:pb-24 pt-12 sm:pt-14 lg:pt-16 bg-[#000000]">
       <LandingPageTitle
         subtitle="Support"
         title={{ before: "Frequently asked", gradient: "question" }}
@@ -45,7 +45,7 @@ export default function FaqSection() {
         description="No matter what project you're working on, we've got you covered with the best tools for analytics and task management."
       />
 
-      <div className="mx-auto mt-12 flex max-w-2xl flex-col gap-3">
+      <div className="mx-auto mt-8 sm:mt-10 lg:mt-12 flex max-w-2xl flex-col gap-3 px-0">
         {FAQ_ITEMS.map((item, index) => {
           const isOpen = openIndex === index;
           return (
@@ -56,12 +56,12 @@ export default function FaqSection() {
               <button
                 type="button"
                 onClick={() => setOpenIndex(isOpen ? null : index)}
-                className="flex w-full cursor-pointer items-center justify-between gap-4 px-5 py-4 text-left"
+                className="flex w-full cursor-pointer items-center justify-between gap-3 sm:gap-4 px-4 sm:px-5 py-3 sm:py-4 text-left"
                 aria-expanded={isOpen}
                 aria-controls={`faq-answer-${index}`}
                 id={`faq-question-${index}`}
               >
-                <span className="text-white font-medium">{item.question}</span>
+                <span className="text-white font-medium text-sm sm:text-base">{item.question}</span>
                 <span
                   className="flex shrink-0 transition-transform duration-200"
                   style={{ transform: isOpen ? "rotate(45deg)" : "rotate(0deg)" }}
@@ -84,7 +84,7 @@ export default function FaqSection() {
                 }}
               >
                 <div className="overflow-hidden">
-                  <p className="border-t border-white/10 px-5 py-4 text-muted-foreground text-sm">
+                  <p className="border-t border-white/10 px-4 sm:px-5 py-3 sm:py-4 text-muted-foreground text-sm">
                     {item.answer}
                   </p>
                 </div>

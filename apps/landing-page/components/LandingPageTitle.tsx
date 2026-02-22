@@ -25,13 +25,13 @@ export default function LandingPageTitle({
 }: LandingPageTitleProps) {
   const { colors, animationSpeed = 16 } = gradient;
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex justify-center font-mono tracking-wider text-sm">
+    <div className="flex flex-col gap-3 sm:gap-4 px-2">
+      <div className="flex justify-center font-mono tracking-wider text-xs sm:text-sm">
         {subtitle}
       </div>
 
-      <div className="flex flex-col text-center gap-4">
-        <div className="flex items-center justify-center text-5xl font-light leading-tight text-center gap-2">
+      <div className="flex flex-col text-center gap-3 sm:gap-4">
+        <div className="flex flex-wrap items-center justify-center text-3xl sm:text-4xl lg:text-5xl font-light leading-tight text-center gap-2">
           <span>{title.before}</span>
           <GradientText
             colors={colors}
@@ -43,8 +43,8 @@ export default function LandingPageTitle({
           </GradientText>
         </div>
 
-        <div className="flex justify-center">
-          <span className={cn("text-muted-foreground text-center max-w-[40ch] flex justify-center text-lg", classNames?.description)}>
+        <div className="flex justify-center px-2">
+          <span className={cn("text-muted-foreground text-center max-w-[40ch] flex justify-center text-sm sm:text-base lg:text-lg", classNames?.description)}>
             {description}
           </span>
         </div>

@@ -10,6 +10,7 @@ import ProjectsChartSVG from "@/components/ProjectsChartSVG";
 import ReadyToStartSection from "@/components/ReadyToStartSection";
 import ShinyText from "@/components/ShinyText";
 import TeamCollaborationSection from "@/components/TeamCollaborationSection";
+import TestimonialsSection from "@/components/TestimonialsSection";
 import { getDashboardUrl } from "@/lib/dashboard-url";
 import {
   ChartColumnIcon,
@@ -40,7 +41,7 @@ export default function HomePage() {
   const dashboardUrl = getDashboardUrl();
 
   return (
-    <div className="font-sans">
+    <div className="font-sans overflow-x-hidden">
       <div className="w-full h-screen absolute -z-10">
         <DarkVeil
           speed={2.4}
@@ -52,26 +53,47 @@ export default function HomePage() {
         />
       </div>
 
-      <header className="px-32 py-9 text-muted-foreground absolute">
-        <div className="flex gap-6 items-center">
+      {/* Top announcement banner - full width above header */}
+      <div
+        className="fixed top-0 left-0 right-0 z-30 h-10 flex items-center justify-center px-4 border-b border-white/5 backdrop-blur-md"
+        style={{
+          background: "linear-gradient(180deg, rgba(30, 27, 75, 0.98) 0%, rgba(15, 15, 18, 0.98) 100%)",
+        }}
+      >
+        <div className="w-full max-w-6xl flex flex-wrap items-center justify-center gap-6 sm:gap-8 text-center">
+          <p className="text-xs sm:text-sm text-white/90 font-medium">
+            We&apos;re taking early adopters - get exclusive discounts on Zot.
+          </p>
+          <Link
+            href="#pricing"
+            className="inline-flex items-center text-xs sm:text-sm font-medium text-white hover:text-white/90 transition-colors shrink-0"
+          >
+            Try now →
+          </Link>
+        </div>
+      </div>
+
+      <header className="px-4 sm:px-6 md:px-8 lg:px-16 xl:px-32 py-5 sm:py-7 lg:py-9 text-muted-foreground absolute top-8 left-0 right-0 z-20">
+        <div className="flex flex-wrap gap-3 sm:gap-4 md:gap-6 items-center">
           <Image
             src="/icons/zot-icon-only.svg"
             alt="Zot"
             width={28}
             height={28}
-            className="[filter:drop-shadow(0_0_4px_rgba(255,255,255,0.75))_drop-shadow(0_0_10px_rgba(255,255,255,0.4))_drop-shadow(0_0_18px_rgba(59,130,246,0.5))_drop-shadow(0_0_26px_rgba(30,58,138,0.45))]"
+            className="shrink-0 filter-[drop-shadow(0_0_4px_rgba(255,255,255,0.75))_drop-shadow(0_0_10px_rgba(255,255,255,0.4))_drop-shadow(0_0_18px_rgba(59,130,246,0.5))_drop-shadow(0_0_26px_rgba(30,58,138,0.45))]"
           />
-
-          <Link href="#integration" className="ml-4">Integration</Link>
-          <Link href="#pricing">Pricing</Link>
-          <Link href="#testimonial">Testimonial</Link>
-          <Link href="#contact">Contact</Link>
+          <nav className="flex flex-wrap gap-3 sm:gap-4 md:gap-6 items-center">
+            <Link href="#integration" className="ml-0 md:ml-4 text-sm hover:text-foreground">Integration</Link>
+            <Link href="#pricing" className="text-sm hover:text-foreground">Pricing</Link>
+            <Link href="#testimonial" className="text-sm hover:text-foreground">Testimonial</Link>
+            <Link href="#contact" className="text-sm hover:text-foreground">Contact</Link>
+          </nav>
         </div>
       </header>
 
-      <div aria-label="Hero section" className="flex justify-center items-center w-full h-screen flex-col">
-        <div className="mb-26 flex justify-center items-center w-full gap-6 flex-col">
-          <div className="bg-black/30 hover:bg-zinc-600/10 transition backdrop-blur-md px-5 pr-2 py-1.5 rounded-full border flex items-center gap-4 cursor-pointer">
+      <div aria-label="Hero section" className="flex justify-center items-center w-full min-h-screen flex-col pt-28 sm:pt-32 pb-32 sm:pb-24">
+        <div className="mb-16 sm:mb-20 lg:mb-26 flex justify-center items-center w-full gap-4 sm:gap-6 flex-col px-4 sm:px-6">
+          <div className="bg-black/30 hover:bg-zinc-600/10 transition backdrop-blur-md px-3 sm:px-5 pr-2 py-1.5 rounded-full border flex items-center gap-2 sm:gap-4 cursor-pointer flex-wrap justify-center">
             <ShinyText
               text="Start measuring your clients"
               speed={2}
@@ -84,29 +106,30 @@ export default function HomePage() {
               pauseOnHover={false}
               disabled={false}
             />
-
-            <button className="bg-zinc-900 rounded-full text-white px-4 py-1 text-sm">
+            <button className="bg-zinc-900 rounded-full text-white px-3 sm:px-4 py-1 text-xs sm:text-sm shrink-0">
               Join now
             </button>
           </div>
 
-          <h1 className="text-6xl text-center">Build, measure, feedback</h1>
-          <h3 className="text-muted-foreground text-xl text-center w-[50ch]">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl text-center font-light leading-tight px-2">
+            Build, measure, feedback
+          </h1>
+          <h3 className="text-muted-foreground text-base sm:text-lg md:text-xl text-center max-w-[50ch] px-4">
             For developers validating their products, analytics and AI tools should be the backbone. We provide it.
           </h3>
 
-          <div className="flex gap-6">
-            <Link href={dashboardUrl} className="bg-zinc-300 text-black px-6 py-1.5 border rounded-full cursor-pointer inline-flex items-center justify-center">Get started</Link>
-            <Link href={dashboardUrl} className="backdrop-blur-md border px-6 py-1.5 rounded-full cursor-pointer inline-flex items-center justify-center">Start free trial</Link>
+          <div className="flex flex-wrap gap-3 sm:gap-6 justify-center">
+            <Link href={dashboardUrl} className="bg-zinc-300 text-black px-5 sm:px-6 py-1.5 border rounded-full cursor-pointer inline-flex items-center justify-center text-sm sm:text-base">Get started</Link>
+            <Link href={dashboardUrl} className="backdrop-blur-md border px-5 sm:px-6 py-1.5 rounded-full cursor-pointer inline-flex items-center justify-center text-sm sm:text-base">Start free trial</Link>
           </div>
         </div>
 
-        <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 w-full max-w-4xl">
-          <span className="text-sm text-foreground/80 text-center">
+        <div className="absolute bottom-8 sm:bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 w-full max-w-4xl px-4">
+          <span className="text-xs sm:text-sm text-foreground/80 text-center">
             Join over 1,000 startups and start to maximize your productivity.
           </span>
 
-          <div className="h-[48px] w-[95%] relative overflow-hidden">
+          <div className="h-[40px] sm:h-[48px] w-full max-w-[95%] relative overflow-hidden">
             <LogoLoop
               logos={logoipsumLogos}
               speed={30}
@@ -123,7 +146,7 @@ export default function HomePage() {
         </div>
       </div>
 
-      <section className="px-16 pb-32 bg-[#000000]">
+      <section className="px-4 sm:px-6 md:px-8 lg:px-16 pb-20 sm:pb-24 lg:pb-32 bg-[#000000]">
         <LandingPageTitle
           subtitle="Productivity insights"
           title={{ before: "Advanced", gradient: "Analytics" }}
@@ -132,7 +155,7 @@ export default function HomePage() {
         />
 
         {/* Card container */}
-        <div className="grid grid-cols-2 gap-6 mt-16">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-10 sm:mt-12 lg:mt-16">
           <AnimatedContent
             distance={120}
             direction="horizontal"
@@ -167,16 +190,16 @@ export default function HomePage() {
             <HugeiconsIcon icon={PlusSignIcon} size={26} strokeWidth={1} className="absolute -left-3 -bottom-3 z-50 text-zinc-700" />
 
             <div
-              className="border border-white/10 rounded-xl rounded-bl-none rounded-tr-none aspect-square relative overflow-hidden"
+              className="border border-white/10 rounded-xl rounded-bl-none rounded-tr-none aspect-square min-h-[280px] sm:min-h-[320px] relative overflow-hidden"
               style={{
                 background:
                   "radial-gradient(ellipse 80% 80% at 50% 40%, rgba(82, 39, 255, 0.35) 0%, rgba(82, 39, 255, 0.12) 35%, transparent 70%), #000000",
               }}>
-              <div className="p-12">
-                <div className="flex flex-col gap-4">
-                  <HugeiconsIcon icon={ChartColumnIcon} />
-                  <h3 className="text-3xl">Goal tracking</h3>
-                  <h4 className="text-muted-foreground max-w-[40ch]">
+              <div className="p-6 sm:p-8 lg:p-12">
+                <div className="flex flex-col gap-3 sm:gap-4">
+                  <HugeiconsIcon icon={ChartColumnIcon} className="w-8 h-8 sm:w-9 sm:h-9" />
+                  <h3 className="text-2xl sm:text-3xl">Goal tracking</h3>
+                  <h4 className="text-muted-foreground max-w-[40ch] text-sm sm:text-base">
                     Set personal or team goals and track your progress.
                     See how close you are to achieving your objectives and stay motivated.
                   </h4>
@@ -184,19 +207,19 @@ export default function HomePage() {
               </div>
 
               <div className="border-t border-l ml-auto w-5/6 h-full rounded-lg rounded-tr-none bg-black backdrop-blur-3xl relative">
-                <div className="m-2 bg-zinc-900 border rounded-lg w-full h-[200px] p-4 relative">
-                  <h4 className="text-lg font-medium">Projects completed</h4>
-                  <h6 className="text-muted-foreground">
-                    Hey! You&apos;re doing a great job, it <br /> looks like you&apos;re <span className="text-white font-medium">on track!</span>
+                <div className="m-2 bg-zinc-900 border rounded-lg w-full min-h-[160px] sm:h-[200px] p-3 sm:p-4 relative">
+                  <h4 className="text-base sm:text-lg font-medium">Projects completed</h4>
+                  <h6 className="text-muted-foreground text-sm">
+                    Hey! You&apos;re doing a great job, it <br className="hidden sm:block" /> looks like you&apos;re <span className="text-white font-medium">on track!</span>
                   </h6>
 
-                  <div className="absolute bottom-6 left-6 flex items-center">
-                    <h2 className="text-4xl font-semibold">3.2k</h2>
-                    <div className="flex ml-6 gap-2">
+                  <div className="absolute bottom-3 sm:bottom-6 left-3 sm:left-6 flex flex-wrap items-center gap-2 sm:gap-0">
+                    <h2 className="text-2xl sm:text-4xl font-semibold">3.2k</h2>
+                    <div className="flex ml-2 sm:ml-6 gap-2 flex-wrap items-center">
                       <div className="border border-green-700 bg-green-500/20 rounded-full text-emerald-700 px-2 flex items-center text-xs">
                         26%
                       </div>
-                      <span className="text-muted-foreground text-sm">Compared to last month</span>
+                      <span className="text-muted-foreground text-xs sm:text-sm">Compared to last month</span>
                     </div>
                   </div>
                 </div>
@@ -215,7 +238,7 @@ export default function HomePage() {
       <TeamCollaborationSection />
 
 
-      <section className="px-32 pb-32 bg-[#000000]">
+      <section className="px-4 sm:px-6 md:px-8 lg:px-16 xl:px-32 pb-20 sm:pb-24 lg:pb-32 bg-[#000000]">
         <LandingPageTitle
           subtitle="Automated scheduling"
           title={{ before: "Comprehensive", gradient: "task management" }}
@@ -224,10 +247,10 @@ export default function HomePage() {
         />
 
         {/* Card principal: imagen (con difuminado) a la izquierda, texto a la derecha */}
-        <div className="mt-16 relative">
+        <div className="mt-10 sm:mt-12 lg:mt-16 relative">
           <HugeiconsIcon icon={PlusSignIcon} size={26} strokeWidth={1} className="absolute -left-3 -top-3 z-50 text-zinc-700" />
           <HugeiconsIcon icon={PlusSignIcon} size={26} strokeWidth={1} className="absolute -right-3 -bottom-3 z-50 text-zinc-700" />
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 overflow-hidden border border-white/10 rounded-xl rounded-br-none rounded-tl-none min-h-[320px]"
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 overflow-hidden border border-white/10 rounded-xl rounded-br-none rounded-tl-none min-h-[280px] sm:min-h-[320px]"
             style={{
               background:
                 "radial-gradient(ellipse 60% 80% at 80% 50%, rgba(82, 39, 255, 0.2) 0%, rgba(82, 39, 255, 0.06) 40%, transparent 70%), #000000",
@@ -256,11 +279,11 @@ export default function HomePage() {
             </div>
 
             {/* Lado derecho: texto */}
-            <div className="flex flex-col justify-center gap-4 p-10 lg:p-12">
-              <h3 className="text-2xl lg:text-3xl">
+            <div className="flex flex-col justify-center gap-3 sm:gap-4 p-6 sm:p-8 lg:p-10 xl:p-12">
+              <h3 className="text-xl sm:text-2xl lg:text-3xl">
                 Efficient Task Organization
               </h3>
-              <p className="text-muted-foreground max-w-[44ch]">
+              <p className="text-muted-foreground max-w-[44ch] text-sm sm:text-base">
                 Streamline your workflow by organizing tasks intuitively and
                 efficiently. With smart task management, you can easily create,
                 categorize, and prioritize tasks, ensuring nothing falls through
@@ -278,7 +301,7 @@ export default function HomePage() {
         </div>
 
         {/* Tres cards de características */}
-        <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="mt-6 sm:mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {[
             {
               icon: Layers01Icon,
@@ -301,7 +324,7 @@ export default function HomePage() {
           ].map((item) => (
             <div
               key={item.title}
-              className="relative border border-white/10 rounded-xl rounded-br-none rounded-tl-none overflow-hidden pt-10 pb-8 px-8 flex flex-col gap-4 transition hover:border-white/15"
+              className="relative border border-white/10 rounded-xl rounded-br-none rounded-tl-none overflow-hidden pt-6 sm:pt-8 lg:pt-10 pb-6 sm:pb-8 px-5 sm:px-6 lg:px-8 flex flex-col gap-3 sm:gap-4 transition hover:border-white/15"
               style={{
                 background:
                   "radial-gradient(ellipse 80% 60% at 50% 0%, rgba(82, 39, 255, 0.12) 0%, rgba(82, 39, 255, 0.04) 40%, transparent 70%), #000000",
@@ -313,7 +336,7 @@ export default function HomePage() {
                 strokeWidth={1.5}
                 className="text-foreground"
               />
-              <h4 className="text-xl font-semibold">{item.title}</h4>
+              <h4 className="text-lg sm:text-xl font-semibold">{item.title}</h4>
               <p className="text-muted-foreground text-sm max-w-[36ch]">
                 {item.description}
               </p>
@@ -329,6 +352,8 @@ export default function HomePage() {
         </div>
       </section>
 
+      <TestimonialsSection />
+
       <PricingSection />
 
       <ReadyToStartSection />
@@ -337,10 +362,10 @@ export default function HomePage() {
 
       <footer
         id="contact"
-        className="relative px-6 py-16 text-center"
+        className="relative px-4 sm:px-6 py-12 sm:py-16 text-center"
         style={{ backgroundColor: "#0B0B0E" }}
       >
-        <div className="mx-auto flex max-w-2xl flex-col items-center gap-8">
+        <div className="mx-auto flex max-w-2xl flex-col items-center gap-6 sm:gap-8">
           <Link href="/" className="inline-flex focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50 rounded-full">
             <Image
               src="/icons/zot-icon-only.svg"
@@ -351,7 +376,7 @@ export default function HomePage() {
             />
           </Link>
 
-          <nav className="flex flex-wrap items-center justify-center gap-6 text-sm text-white/90">
+          <nav className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-sm text-white/90">
             <Link href="#integration" className="hover:text-white transition-colors">
               Integration
             </Link>
@@ -366,7 +391,7 @@ export default function HomePage() {
             </Link>
           </nav>
 
-          <div className="flex items-center justify-center gap-6" aria-label="Redes sociales">
+          <div className="flex items-center justify-center gap-4 sm:gap-6" aria-label="Redes sociales">
             <a href="#" className="text-white/80 hover:text-white transition-colors" aria-label="X (Twitter)">
               <HugeiconsIcon icon={NewTwitterIcon} size={22} strokeWidth={1.5} />
             </a>

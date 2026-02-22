@@ -82,7 +82,7 @@ const PLANS = [
 export default function PricingSection() {
   const dashboardUrl = getDashboardUrl();
   return (
-    <section className="px-16 pb-24 pt-16 bg-[#000000]" id="pricing">
+    <section className="px-4 sm:px-6 md:px-8 lg:px-16 pb-16 sm:pb-20 lg:pb-24 pt-12 sm:pt-14 lg:pt-16 bg-[#000000]" id="pricing">
       <LandingPageTitle
         subtitle="Pricing"
         title={{ before: "Choose the plan that", gradient: "fits" }}
@@ -90,7 +90,7 @@ export default function PricingSection() {
         description="Transparent pricing with zero surprises. Upgrade when you need more room to scale launches, emails, and domains."
       />
 
-      <div className="mx-auto mt-16 grid max-w-6xl grid-cols-1 gap-3 lg:grid-cols-3 items-start">
+      <div className="mx-auto mt-10 sm:mt-12 lg:mt-16 grid max-w-6xl grid-cols-1 gap-3 sm:gap-4 lg:grid-cols-3 items-start px-0">
         {PLANS.map((plan) => {
           const isPremium = "earlyUserOffer" in plan && plan.earlyUserOffer;
           return (
@@ -142,7 +142,7 @@ export default function PricingSection() {
                 )}
               </div>
 
-              <div className={`relative z-10 flex flex-col flex-1 p-6 ${isPremium ? "bg-[#0D0D0E]/60" : "bg-black/40"}`}>
+              <div className={`relative z-10 flex flex-col flex-1 p-4 sm:p-5 lg:p-6 ${isPremium ? "bg-[#0D0D0E]/60" : "bg-black/40"}`}>
                 {"earlyUserOffer" in plan && plan.earlyUserOffer && (
                   <span className="absolute right-4 top-4 rounded-full bg-[#4338ca] px-3 py-1 text-xs font-semibold text-white z-20">
                     Early user offer
@@ -150,7 +150,7 @@ export default function PricingSection() {
                 )}
 
                 <div className="space-y-2">
-                  <p className="text-xs uppercase tracking-wide text-white/70">
+                  <p className="text-xs uppercase tracking-wide text-[#a78bfa]">
                     {plan.name}
                   </p>
                   <p className="text-lg font-semibold text-foreground">
@@ -164,7 +164,7 @@ export default function PricingSection() {
                   <div className="flex flex-wrap items-baseline gap-2">
                     {"earlyUserOffer" in plan && plan.earlyUserOffer ? (
                       <>
-                        <span className="text-4xl font-semibold text-foreground">
+                        <span className="text-3xl sm:text-4xl font-semibold text-foreground">
                           {plan.earlyUserOffer.price}
                         </span>
                         <span className="text-muted-foreground">
@@ -176,7 +176,7 @@ export default function PricingSection() {
                       </>
                     ) : (
                       <>
-                        <span className="text-4xl font-semibold text-foreground">
+                        <span className="text-3xl sm:text-4xl font-semibold text-foreground">
                           {plan.price}
                         </span>
                         <span className="text-muted-foreground">{plan.frequency}</span>

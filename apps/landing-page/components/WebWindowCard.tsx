@@ -19,9 +19,9 @@ export default function WebWindowCard({ url, title, description }: WebWindowCard
         </div>
       </header>
 
-      <div className="mx-2 mb-4 border rounded-lg overflow-hidden h-[90%] bg-black/10 flex flex-col justify-center px-8">
-        <h3 className="text-xl font-medium mb-2">{title}</h3>
-        <p className="text-sm text-muted-foreground max-w-[36ch]">{description}</p>
+      <div className="mx-1.5 sm:mx-2 mb-3 sm:mb-4 border rounded-lg overflow-hidden h-[90%] bg-black/10 flex flex-col justify-center px-4 sm:px-6 lg:px-8">
+        <h3 className="text-base sm:text-lg lg:text-xl font-medium mb-1 sm:mb-2">{title}</h3>
+        <p className="text-xs sm:text-sm text-muted-foreground max-w-[36ch]">{description}</p>
       </div>
     </div>
   );
