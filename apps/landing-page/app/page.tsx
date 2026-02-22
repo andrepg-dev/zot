@@ -4,11 +4,13 @@ import EnhanceReliabilitySection from "@/components/EnhanceReliabilitySection";
 import FaqSection from "@/components/FaqSection";
 import LandingPageTitle from "@/components/LandingPageTitle";
 import LogoLoop from "@/components/LogoLoop";
+import PricingSection from "@/components/PricingSection";
 import ProductivityInsightsCard from "@/components/ProductivityInsightsCard";
 import ProjectsChartSVG from "@/components/ProjectsChartSVG";
 import ReadyToStartSection from "@/components/ReadyToStartSection";
 import ShinyText from "@/components/ShinyText";
 import TeamCollaborationSection from "@/components/TeamCollaborationSection";
+import { getDashboardUrl } from "@/lib/dashboard-url";
 import {
   ChartColumnIcon,
   Clock01Icon,
@@ -35,6 +37,7 @@ const logoipsumLogos = [
 ];
 
 export default function HomePage() {
+  const dashboardUrl = getDashboardUrl();
 
   return (
     <div className="font-sans">
@@ -59,10 +62,10 @@ export default function HomePage() {
             className="[filter:drop-shadow(0_0_4px_rgba(255,255,255,0.75))_drop-shadow(0_0_10px_rgba(255,255,255,0.4))_drop-shadow(0_0_18px_rgba(59,130,246,0.5))_drop-shadow(0_0_26px_rgba(30,58,138,0.45))]"
           />
 
-          <Link href={"#integration"} className="ml-4">Integration</Link>
-          <Link href={"#integration"}>Pricing</Link>
-          <Link href={"#integration"}>Testimonial</Link>
-          <Link href={"#integration"}>Contact</Link>
+          <Link href="#integration" className="ml-4">Integration</Link>
+          <Link href="#pricing">Pricing</Link>
+          <Link href="#testimonial">Testimonial</Link>
+          <Link href="#contact">Contact</Link>
         </div>
       </header>
 
@@ -93,8 +96,8 @@ export default function HomePage() {
           </h3>
 
           <div className="flex gap-6">
-            <button className="bg-zinc-300 text-black px-6 py-1.5 border rounded-full cursor-pointer">Get started</button>
-            <button className="backdrop-blur-md border px-6 py-1.5 rounded-full cursor-pointer">Start free trial</button>
+            <Link href={dashboardUrl} className="bg-zinc-300 text-black px-6 py-1.5 border rounded-full cursor-pointer inline-flex items-center justify-center">Get started</Link>
+            <Link href={dashboardUrl} className="backdrop-blur-md border px-6 py-1.5 rounded-full cursor-pointer inline-flex items-center justify-center">Start free trial</Link>
           </div>
         </div>
 
@@ -211,7 +214,8 @@ export default function HomePage() {
 
       <TeamCollaborationSection />
 
-      <section className="px-24 pb-32 bg-[#000000]">
+
+      <section className="px-32 pb-32 bg-[#000000]">
         <LandingPageTitle
           subtitle="Automated scheduling"
           title={{ before: "Comprehensive", gradient: "task management" }}
@@ -220,52 +224,56 @@ export default function HomePage() {
         />
 
         {/* Card principal: imagen (con difuminado) a la izquierda, texto a la derecha */}
-        <div className="mt-16 grid grid-cols-1 lg:grid-cols-2 gap-0 overflow-hidden border border-white/10 rounded-xl rounded-br-none rounded-tl-none min-h-[320px]"
-          style={{
-            background:
-              "radial-gradient(ellipse 60% 80% at 80% 50%, rgba(34, 197, 94, 0.2) 0%, rgba(0, 255, 136, 0.06) 40%, transparent 70%), #000000",
-          }}
-        >
-          {/* Lado izquierdo: imagen con difuminado en el borde derecho */}
-          <div className="relative h-[280px] lg:h-auto lg:min-h-[320px] shrink-0">
-            <div className="absolute inset-0 bg-zinc-900/80">
-              {/* Sustituir por <Image /> cuando tengas la imagen en /public (ej. task-management-preview.png) */}
+        <div className="mt-16 relative">
+          <HugeiconsIcon icon={PlusSignIcon} size={26} strokeWidth={1} className="absolute -left-3 -top-3 z-50 text-zinc-700" />
+          <HugeiconsIcon icon={PlusSignIcon} size={26} strokeWidth={1} className="absolute -right-3 -bottom-3 z-50 text-zinc-700" />
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 overflow-hidden border border-white/10 rounded-xl rounded-br-none rounded-tl-none min-h-[320px]"
+            style={{
+              background:
+                "radial-gradient(ellipse 60% 80% at 80% 50%, rgba(82, 39, 255, 0.2) 0%, rgba(82, 39, 255, 0.06) 40%, transparent 70%), #000000",
+            }}
+          >
+            {/* Lado izquierdo: imagen con difuminado en el borde derecho */}
+            <div className="relative h-[280px] lg:h-auto lg:min-h-[320px] shrink-0">
+              <div className="absolute inset-0 bg-zinc-900/80">
+                {/* Sustituir por <Image /> cuando tengas la imagen en /public (ej. task-management-preview.png) */}
+                <div
+                  className="absolute inset-0 bg-cover bg-center"
+                  style={{
+                    backgroundImage: "url(/ai-editor-2.png)",
+                    backgroundColor: "rgb(39 39 42)", // fallback si no hay imagen
+                  }}
+                />
+              </div>
+              {/* Difuminado: gradiente para integrar la imagen con el fondo de la card */}
               <div
-                className="absolute inset-0 bg-cover bg-center"
+                className="absolute inset-y-0 right-0 w-1/3 min-w-[120px] pointer-events-none"
                 style={{
-                  backgroundImage: "url(/task-management-preview.png)",
-                  backgroundColor: "rgb(39 39 42)", // fallback si no hay imagen
+                  background:
+                    "linear-gradient(to left, #000000 0%, rgba(0,0,0,0.85) 35%, transparent 100%)",
                 }}
               />
             </div>
-            {/* Difuminado: gradiente para integrar la imagen con el fondo de la card */}
-            <div
-              className="absolute inset-y-0 right-0 w-1/3 min-w-[120px] pointer-events-none"
-              style={{
-                background:
-                  "linear-gradient(to left, #000000 0%, rgba(0,0,0,0.85) 35%, transparent 100%)",
-              }}
-            />
-          </div>
 
-          {/* Lado derecho: texto */}
-          <div className="flex flex-col justify-center gap-4 p-10 lg:p-12">
-            <h3 className="text-2xl lg:text-3xl font-semibold">
-              Efficient Task Organization
-            </h3>
-            <p className="text-muted-foreground max-w-[44ch]">
-              Streamline your workflow by organizing tasks intuitively and
-              efficiently. With smart task management, you can easily create,
-              categorize, and prioritize tasks, ensuring nothing falls through
-              the cracks and every goal is tackled with precision and timeliness.
-            </p>
-            <Link
-              href="#integration"
-              className="text-sm text-foreground/90 hover:text-foreground inline-flex items-center gap-1 w-fit"
-            >
-              Learn more
-              <span aria-hidden className="ml-0.5">→</span>
-            </Link>
+            {/* Lado derecho: texto */}
+            <div className="flex flex-col justify-center gap-4 p-10 lg:p-12">
+              <h3 className="text-2xl lg:text-3xl">
+                Efficient Task Organization
+              </h3>
+              <p className="text-muted-foreground max-w-[44ch]">
+                Streamline your workflow by organizing tasks intuitively and
+                efficiently. With smart task management, you can easily create,
+                categorize, and prioritize tasks, ensuring nothing falls through
+                the cracks and every goal is tackled with precision and timeliness.
+              </p>
+              <Link
+                href="#integration"
+                className="text-sm text-foreground/90 hover:text-foreground inline-flex items-center gap-1 w-fit"
+              >
+                Learn more
+                <span aria-hidden className="ml-0.5">→</span>
+              </Link>
+            </div>
           </div>
         </div>
 
@@ -293,10 +301,10 @@ export default function HomePage() {
           ].map((item) => (
             <div
               key={item.title}
-              className="border border-white/10 rounded-xl rounded-br-none rounded-tl-none overflow-hidden p-8 flex flex-col gap-4 transition hover:border-white/15"
+              className="relative border border-white/10 rounded-xl rounded-br-none rounded-tl-none overflow-hidden pt-10 pb-8 px-8 flex flex-col gap-4 transition hover:border-white/15"
               style={{
                 background:
-                  "radial-gradient(ellipse 80% 60% at 50% 0%, rgba(34, 197, 94, 0.12) 0%, rgba(0, 255, 136, 0.04) 40%, transparent 70%), #000000",
+                  "radial-gradient(ellipse 80% 60% at 50% 0%, rgba(82, 39, 255, 0.12) 0%, rgba(82, 39, 255, 0.04) 40%, transparent 70%), #000000",
               }}
             >
               <HugeiconsIcon
@@ -321,11 +329,14 @@ export default function HomePage() {
         </div>
       </section>
 
+      <PricingSection />
+
       <ReadyToStartSection />
 
       <FaqSection />
 
       <footer
+        id="contact"
         className="relative px-6 py-16 text-center"
         style={{ backgroundColor: "#0B0B0E" }}
       >
@@ -344,13 +355,13 @@ export default function HomePage() {
             <Link href="#integration" className="hover:text-white transition-colors">
               Integration
             </Link>
-            <Link href="#integration" className="hover:text-white transition-colors">
+            <Link href="#pricing" className="hover:text-white transition-colors">
               Pricing
             </Link>
-            <Link href="#integration" className="hover:text-white transition-colors">
+            <Link href="#testimonial" className="hover:text-white transition-colors">
               Testimonial
             </Link>
-            <Link href="#integration" className="hover:text-white transition-colors">
+            <Link href="#contact" className="hover:text-white transition-colors">
               Contact
             </Link>
           </nav>

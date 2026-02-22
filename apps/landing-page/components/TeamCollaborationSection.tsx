@@ -2,15 +2,13 @@
 
 import { PlusSignIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import AnimatedContent from "./AnimatedContent";
-import CardSwap, { Card, CardSwapRef } from "./CardSwap";
 import LandingPageTitle from "./LandingPageTitle";
 import WebWindowCard from "./WebWindowCard";
 
 export default function TeamCollaborationSection() {
   const [activeCardIndex, setActiveCardIndex] = useState(0);
-  const cardSwapRef = useRef<CardSwapRef>(null);
 
   const buttons = [
     {
@@ -53,13 +51,12 @@ export default function TeamCollaborationSection() {
 
   const handleButtonClick = (index: number) => {
     setActiveCardIndex(index);
-    if (cardSwapRef.current) {
-      cardSwapRef.current.goToCard(index);
-    }
   };
 
+  const activeCard = cards[activeCardIndex];
+
   return (
-    <section className="p-16 pb-36 flex flex-col gap-16 overflow-hidden">
+    <section id="integration" className="px-16 pb-36 flex flex-col gap-16 overflow-hidden">
       <LandingPageTitle
         subtitle="Integrated community"
         title={{ before: "Seamless", gradient: "team collaboration" }}
@@ -67,15 +64,16 @@ export default function TeamCollaborationSection() {
         description="Keep everyone in sync with instant updates that ensure all team members have the latest information."
       />
 
-      <div className="h-[550px] relative overflow-hidden pt-24 -mb-12">
-        <div className="absolute left-28 top-1/2 -translate-y-1/2">
-          <div className="flex flex-col gap-5 w-[420px]">
+      <div className="h-[550px] relative pt-24 -mb-12 flex flex-col lg:flex-row gap-12 lg:gap-0">
+        <div className="lg:absolute left-28 top-1/2 lg:-translate-y-1/2 z-10">
+          <div className="flex flex-col gap-5 w-full lg:w-[420px] max-w-[420px]">
             {buttons.map((button, index) => {
               const isActive = activeCardIndex === index;
               return (
                 <button
                   key={button.id}
                   onClick={() => handleButtonClick(index)}
+                  type="button"
                   className={`w-full min-h-[100px] text-left rounded-3xl px-7 py-5 flex flex-col gap-3 transition-colors cursor-pointer border ${isActive
                     ? "bg-zinc-900 border-border shadow-[0_0_0_1px_rgba(255,255,255,0.06)]"
                     : "bg-zinc-900/20 text-muted-foreground hover:text-white/90 hover:bg-zinc-900/40 border-transparent"
@@ -104,20 +102,15 @@ export default function TeamCollaborationSection() {
           </div>
         </div>
 
-        <CardSwap
-          cardDistance={60}
-          verticalDistance={70}
-          height={500}
-          width={700}
-          simultaneousCards={1}
-          delay={5000}
-        >
-          {cards.map((card, index) => (
-            <Card key={index}>
-              <WebWindowCard url={card.url} title={card.title} description={card.description} />
-            </Card>
-          ))}
-        </CardSwap>
+        <div className="flex-1 flex items-center justify-center lg:justify-end lg:pr-16 lg:pl-8 min-h-[400px]">
+          <div className="w-full max-w-[700px] h-[500px] rounded-xl border overflow-hidden bg-black border-border">
+            <WebWindowCard
+              url={activeCard.url}
+              title={activeCard.title}
+              description={activeCard.description}
+            />
+          </div>
+        </div>
       </div>
 
       {/* Statistics Section */}

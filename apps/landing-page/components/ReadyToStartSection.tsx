@@ -1,10 +1,12 @@
+import { getDashboardUrl } from "@/lib/dashboard-url";
 import LandingPageTitle from "@/components/LandingPageTitle";
 import Silk from "@/components/Silk";
 import Link from "next/link";
 
 export default function ReadyToStartSection() {
+  const dashboardUrl = getDashboardUrl();
   return (
-    <section className="px-16 pb-24 pt-16">
+    <section id="testimonial" className="px-24 pb-24 pt-16">
       <div
         className="relative w-full overflow-hidden rounded-2xl shadow-[0_0_40px_rgba(82,39,255,0.25),0_0_80px_rgba(0,0,0,0.4)]"
       >
@@ -37,13 +39,13 @@ export default function ReadyToStartSection() {
 
           <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
             <Link
-              href="#integration"
+              href={dashboardUrl}
               className="cursor-pointer rounded-full bg-white px-6 py-2.5 text-sm font-medium text-black transition hover:bg-white/90"
             >
               Get started
             </Link>
             <Link
-              href="#integration"
+              href={dashboardUrl}
               className="cursor-pointer rounded-full border border-white/30 bg-zinc-900/80 px-6 py-2.5 text-sm font-medium text-white backdrop-blur transition hover:border-white/50 hover:bg-zinc-800/80"
             >
               Start free trial
