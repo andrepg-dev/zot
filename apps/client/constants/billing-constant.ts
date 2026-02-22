@@ -22,7 +22,7 @@ export const plans = [
   },
   {
     name: "Premium",
-    price: "$50",
+    price: "$49",
     frequency: "/ month",
     blurb: "For products in production that need headroom and support.",
     ctaLabel: "Upgrade now",
