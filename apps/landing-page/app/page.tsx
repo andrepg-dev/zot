@@ -58,7 +58,7 @@ export default function HomePage() {
         </div>
       </div>
 
-      <div className="w-full h-screen absolute -z-10 bg-[#4338ca]/5">
+      <div className="w-full h-screen absolute -z-10 bg-black bg-[url('/background.png')] bg-cover bg-center">
         <DarkVeil
           speed={1}
           hueShift={0}
@@ -77,6 +77,7 @@ export default function HomePage() {
             width={28}
             height={28}
             className="shrink-0 filter-[drop-shadow(0_0_4px_rgba(255,255,255,0.75))_drop-shadow(0_0_10px_rgba(255,255,255,0.4))_drop-shadow(0_0_18px_rgba(59,130,246,0.5))_drop-shadow(0_0_26px_rgba(30,58,138,0.45))]"
+            priority
           />
           <nav className="flex flex-wrap gap-3 sm:gap-4 md:gap-6 items-center">
             <Link href="#integration" className="ml-0 md:ml-4 text-sm hover:text-foreground">Integration</Link>
@@ -108,15 +109,15 @@ export default function HomePage() {
           </div>
 
           <h1 className="text-4xl sm:text-5xl md:text-6xl text-center leading-tight px-2 relative">
-            Build, measure, feedback
+            Launch, measure, action
           </h1>
           <h3 className="text-muted-foreground text-base sm:text-lg md:text-xl text-center max-w-[50ch] px-4">
-            For developers validating their product, AI tools and analytics are the backbone, launch products and collect leads with Zot.
+            For developers validating their products, AI tools and analytics are the backbone, launch products and collect leads with Zot.
             {/* , turn your data into actions with Zot */}
           </h3>
 
           <div className="flex flex-wrap gap-3 sm:gap-6 justify-center mt-2">
-            <Link href={dashboardUrl} className="bg-zinc-200 hover:px-8 transition-all hover:bg-zinc-300 ring-2 ring-zinc-700 text-black px-5 sm:px-6 py-1.5 border rounded-full cursor-pointer inline-flex items-center justify-center text-sm sm:text-base">Get started</Link>
+            <Link href={dashboardUrl} className="bg-zinc-200 hover:px-8 transition-all hover:bg-zinc-300 ring-2 ring-zinc-700 text-black px-5 sm:px-6 py-1.5 border rounded-full cursor-pointer inline-flex items-center justify-center text-sm sm:text-base">Start Launching</Link>
             <Link href={dashboardUrl} className="backdrop-blur-md border px-5 sm:px-6 py-1.5 rounded-full cursor-pointer inline-flex items-center justify-center text-sm sm:text-base">Start free trial</Link>
           </div>
         </div>
