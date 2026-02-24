@@ -12,7 +12,7 @@ export default function ReadyToStartSection() {
       >
         <div className="absolute inset-0 z-0 h-full min-h-[280px] sm:min-h-[320px] w-full">
           <Silk
-            speed={2}
+            speed={2.5}
             scale={1}
             color="#5227ff"
             noiseIntensity={5}

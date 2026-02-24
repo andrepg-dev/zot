@@ -42,9 +42,25 @@ export default function HomePage() {
 
   return (
     <div className="font-sans overflow-x-hidden">
-      <div className="w-full h-screen absolute -z-10">
+      <div
+        className="absolute top-5 left-0 w-3/6 right-0 z-30 h-10 flex items-center justify-center px-4 bg-[#5227FF]/10 ml-auto border-l-8"
+      >
+        <div className="w-full max-w-6xl flex flex-wrap items-center justify-center gap-6 sm:gap-8 text-center">
+          <p className="text-xs sm:text-sm text-white/90">
+            We&apos;re taking early adopters - get exclusive discounts on Zot.
+          </p>
+          <Link
+            href="#pricing"
+            className="inline-flex items-center text-xs sm:text-sm font-medium text-white hover:text-white/90 transition-colors shrink-0 underline decoration-2"
+          >
+            Try now →
+          </Link>
+        </div>
+      </div>
+
+      <div className="w-full h-screen absolute -z-10 bg-[#4338ca]/5">
         <DarkVeil
-          speed={2.4}
+          speed={1}
           hueShift={0}
           noiseIntensity={0.1}
           scanlineIntensity={5}
@@ -53,24 +69,7 @@ export default function HomePage() {
         />
       </div>
 
-      {/* Top announcement banner - full width above header */}
-      <div
-        className="fixed top-0 left-0 right-0 z-30 h-10 flex items-center justify-center px-4 bg-black/50 backdrop-blur-md"
-      >
-        <div className="w-full max-w-6xl flex flex-wrap items-center justify-center gap-6 sm:gap-8 text-center">
-          <p className="text-xs sm:text-sm text-white/90 font-medium">
-            We&apos;re taking early adopters - get exclusive discounts on Zot.
-          </p>
-          <Link
-            href="#pricing"
-            className="inline-flex items-center text-xs sm:text-sm font-medium text-white hover:text-white/90 transition-colors shrink-0"
-          >
-            Try now →
-          </Link>
-        </div>
-      </div>
-
-      <header className="px-4 sm:px-6 md:px-8 lg:px-16 xl:px-32 py-5 sm:py-7 lg:py-9 text-muted-foreground absolute top-8 left-0 right-0 z-20">
+      <header className="px-4 sm:px-6 md:px-8 lg:px-16 xl:px-32 text-muted-foreground absolute top-8 left-0 right-0 z-20">
         <div className="flex flex-wrap gap-3 sm:gap-4 md:gap-6 items-center">
           <Image
             src="/icons/zot-icon-only.svg"
@@ -92,7 +91,7 @@ export default function HomePage() {
         <div className="mb-16 sm:mb-20 lg:mb-36 flex justify-center items-center w-full gap-4 sm:gap-4 flex-col px-4 sm:px-6">
           <div className="bg-black/30 hover:bg-zinc-600/10 transition backdrop-blur-md px-3 sm:px-5 pr-2 py-1.5 rounded-full border flex items-center gap-2 sm:gap-4 cursor-pointer flex-wrap justify-center">
             <ShinyText
-              text="Start measuring your clients"
+              text="Start measuring your idea"
               speed={2}
               delay={0}
               color="#b5b5b5"
@@ -121,7 +120,7 @@ export default function HomePage() {
           </div>
         </div>
 
-        <div className="absolute bottom-8 sm:bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 w-full max-w-4xl px-4">
+        <div className="absolute bottom-8 sm:bottom-16 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 w-full max-w-4xl px-4">
           <span className="text-xs sm:text-sm text-foreground/80 text-center">
             Join over 1,000 startups and start to maximize your productivity.
           </span>
