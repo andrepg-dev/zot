@@ -15,10 +15,10 @@ export default function Header() {
 
   return (
     <header
-      className={cn("overflow-hidden transition-all duration-700", hidden ? "h-2" : "h-14")}
+      className={cn("overflow-hidden transition-all duration-700", hidden ? "h-2" : "h-12")}
       id="header"
     >
-      <div className="shrink-0 bg-sidebar p-4 flex items-center justify-between overflow-hidden h-14">
+      <div className="shrink-0 bg-sidebar p-4 flex items-center justify-between overflow-hidden h-12">
         <div className="flex gap-2 items-center">
           {/* <Image src={"/only-icon.svg"} width={30} height={30} alt={"zot logo"} className=" top- opacity-30" /> */}
           <Link href={"/app/dashboard"}>

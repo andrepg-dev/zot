@@ -90,10 +90,6 @@ export default function WaitListPage() {
       <Title description="Setup your wait-list to launch your product" className="mb-6">
         Wait-List
       </Title>
-      <pre>
-        {JSON.stringify(data, null, 2)}
-      </pre>
-
       <div className="flex flex-col gap-4">
         <div className="flex justify-between">
           <div className="flex gap-2">
