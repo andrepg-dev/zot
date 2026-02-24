@@ -111,7 +111,8 @@ export default function HomePage() {
             Build, measure, feedback
           </h1>
           <h3 className="text-muted-foreground text-base sm:text-lg md:text-xl text-center max-w-[50ch] px-4">
-            For developers validating their products, analytics and AI tools are the backbone, turn your data into actions with Zot
+            For developers validating their product, AI tools and analytics are the backbone, launch products and collect leads with Zot.
+            {/* , turn your data into actions with Zot */}
           </h3>
 
           <div className="flex flex-wrap gap-3 sm:gap-6 justify-center mt-2">
@@ -144,7 +145,7 @@ export default function HomePage() {
 
       <section className="px-4 sm:px-6 md:px-8 lg:px-16 pb-20 sm:pb-24 lg:pb-32 bg-[#000000]">
         <LandingPageTitle
-          subtitle="Productivity insights"
+          subtitle="WaitList insights"
           title={{ before: "Advanced", gradient: "Analytics" }}
           gradient={{ colors: ["#5227FF", "#ffffff"], animationSpeed: 16 }}
           description="Gain valuable insights into your productivity with detailed reports that help you understand your habits."
