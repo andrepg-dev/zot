@@ -18,11 +18,11 @@ export default function EnhanceReliabilitySection() {
       delay={0.2}
       className="mt-8 relative"
     >
-      <HugeiconsIcon icon={PlusSignIcon} size={26} strokeWidth={1} className="absolute -left-3 -top-3 z-50 text-zinc-700" />
-      <HugeiconsIcon icon={PlusSignIcon} size={26} strokeWidth={1} className="absolute -right-3 -bottom-3 z-50 text-zinc-700" />
+      <HugeiconsIcon icon={PlusSignIcon} size={26} strokeWidth={1} className="absolute -left-[12.5px] -top-[12.5px] z-50 text-zinc-700" />
+      <HugeiconsIcon icon={PlusSignIcon} size={26} strokeWidth={1} className="absolute -right-[12.5px] -bottom-[12.5px] z-50 text-zinc-700" />
 
       <div
-        className="border border-white/10 rounded-xl rounded-br-none rounded-tl-none overflow-hidden relative min-h-[280px] sm:min-h-[320px]"
+        className="border border-white/10 rounded-br-none rounded-tl-none overflow-hidden relative min-h-[280px] sm:min-h-[320px]"
         style={{
           background:
             "radial-gradient(ellipse 80% 80% at 50% 40%, rgba(82, 39, 255, 0.35) 0%, rgba(82, 39, 255, 0.12) 35%, transparent 70%), #000000",
@@ -43,7 +43,7 @@ export default function EnhanceReliabilitySection() {
         </div>
 
         {/* Lado derecho - Globo: visible en desktop, más pequeño/oculto en móvil */}
-        <div className="absolute -bottom-20 sm:-bottom-28 lg:-bottom-32 -right-8 sm:-right-12 lg:-right-16 h-[280px] sm:h-[360px] lg:h-[500px] -mr-4 sm:-mr-8 lg:-mr-12 flex items-center justify-end overflow-visible pointer-events-none">
+        <div className="absolute -bottom-20 sm:-bottom-28 lg:-bottom-[12.5px]2 -right-8 sm:-right-12 lg:-right-16 h-[280px] sm:h-[360px] lg:h-[500px] -mr-4 sm:-mr-8 lg:-mr-12 flex items-center justify-end overflow-visible pointer-events-none">
           <div className="w-full max-w-[400px] sm:max-w-[500px] lg:max-w-[700px] h-full opacity-80 lg:opacity-100">
             <ReliabilityGlobe />
           </div>

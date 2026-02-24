@@ -51,7 +51,7 @@ export default function FaqSection() {
           return (
             <div
               key={index}
-              className="rounded-xl border border-white/10 bg-zinc-900/80 transition-colors hover:border-white/15"
+              className="rounded border border-white/10 bg-zinc-900/80 transition-colors hover:border-white/15"
             >
               <button
                 type="button"

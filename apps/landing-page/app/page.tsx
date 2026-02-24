@@ -55,10 +55,7 @@ export default function HomePage() {
 
       {/* Top announcement banner - full width above header */}
       <div
-        className="fixed top-0 left-0 right-0 z-30 h-10 flex items-center justify-center px-4 border-b border-white/5 backdrop-blur-md"
-        style={{
-          background: "linear-gradient(180deg, rgba(30, 27, 75, 0.98) 0%, rgba(15, 15, 18, 0.98) 100%)",
-        }}
+        className="fixed top-0 left-0 right-0 z-30 h-10 flex items-center justify-center px-4 bg-black/50 backdrop-blur-md"
       >
         <div className="w-full max-w-6xl flex flex-wrap items-center justify-center gap-6 sm:gap-8 text-center">
           <p className="text-xs sm:text-sm text-white/90 font-medium">
@@ -92,7 +89,7 @@ export default function HomePage() {
       </header>
 
       <div aria-label="Hero section" className="flex justify-center items-center w-full min-h-screen flex-col pt-28 sm:pt-32 pb-32 sm:pb-24">
-        <div className="mb-16 sm:mb-20 lg:mb-26 flex justify-center items-center w-full gap-4 sm:gap-6 flex-col px-4 sm:px-6">
+        <div className="mb-16 sm:mb-20 lg:mb-36 flex justify-center items-center w-full gap-4 sm:gap-4 flex-col px-4 sm:px-6">
           <div className="bg-black/30 hover:bg-zinc-600/10 transition backdrop-blur-md px-3 sm:px-5 pr-2 py-1.5 rounded-full border flex items-center gap-2 sm:gap-4 cursor-pointer flex-wrap justify-center">
             <ShinyText
               text="Start measuring your clients"
@@ -111,15 +108,15 @@ export default function HomePage() {
             </button>
           </div>
 
-          <h1 className="text-4xl sm:text-5xl md:text-6xl text-center font-light leading-tight px-2 relative">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl text-center leading-tight px-2 relative">
             Build, measure, feedback
           </h1>
           <h3 className="text-muted-foreground text-base sm:text-lg md:text-xl text-center max-w-[50ch] px-4">
             For developers validating their products, analytics and AI tools are the backbone, turn your data into actions with Zot
           </h3>
 
-          <div className="flex flex-wrap gap-3 sm:gap-6 justify-center">
-            <Link href={dashboardUrl} className="bg-zinc-300 text-black px-5 sm:px-6 py-1.5 border rounded-full cursor-pointer inline-flex items-center justify-center text-sm sm:text-base">Get started</Link>
+          <div className="flex flex-wrap gap-3 sm:gap-6 justify-center mt-2">
+            <Link href={dashboardUrl} className="bg-zinc-200 hover:px-8 transition-all hover:bg-zinc-300 ring-2 ring-zinc-700 text-black px-5 sm:px-6 py-1.5 border rounded-full cursor-pointer inline-flex items-center justify-center text-sm sm:text-base">Get started</Link>
             <Link href={dashboardUrl} className="backdrop-blur-md border px-5 sm:px-6 py-1.5 rounded-full cursor-pointer inline-flex items-center justify-center text-sm sm:text-base">Start free trial</Link>
           </div>
         </div>
@@ -167,7 +164,7 @@ export default function HomePage() {
             delay={0}
             className="relative"
           >
-            <HugeiconsIcon icon={PlusSignIcon} size={26} strokeWidth={1} className="absolute -left-3 -top-3 z-50 text-zinc-700" />
+            <HugeiconsIcon icon={PlusSignIcon} size={26} strokeWidth={1} className="absolute -left-[12.5px] -top-[12.5px] z-50 text-zinc-700" />
 
             <ProductivityInsightsCard
               previewImage={{ src: "/analytics-4.png", alt: "Screenshot de analytics" }}
@@ -186,11 +183,11 @@ export default function HomePage() {
             delay={0}
             className="relative"
           >
-            <HugeiconsIcon icon={PlusSignIcon} size={26} strokeWidth={1} className="absolute -right-3 -top-3 z-50 text-zinc-700" />
-            <HugeiconsIcon icon={PlusSignIcon} size={26} strokeWidth={1} className="absolute -left-3 -bottom-3 z-50 text-zinc-700" />
+            <HugeiconsIcon icon={PlusSignIcon} size={26} strokeWidth={1} className="absolute -right-[12.5px] -top-[12.5px] z-50 text-zinc-700" />
+            <HugeiconsIcon icon={PlusSignIcon} size={26} strokeWidth={1} className="absolute -left-[12.5px] -bottom-[12.5px] z-50 text-zinc-700" />
 
             <div
-              className="border border-white/10 rounded-xl rounded-bl-none rounded-tr-none aspect-square min-h-[280px] sm:min-h-[320px] relative overflow-hidden"
+              className="border border-white/10 rounded-none rounded-bl-none rounded-tr-none aspect-square min-h-[280px] sm:min-h-[320px] relative overflow-hidden"
               style={{
                 background:
                   "radial-gradient(ellipse 80% 80% at 50% 40%, rgba(82, 39, 255, 0.35) 0%, rgba(82, 39, 255, 0.12) 35%, transparent 70%), #000000",
@@ -206,8 +203,8 @@ export default function HomePage() {
                 </div>
               </div>
 
-              <div className="border-t border-l ml-auto w-5/6 h-full rounded-lg rounded-tr-none bg-black backdrop-blur-3xl relative">
-                <div className="m-2 bg-zinc-900 border rounded-lg w-full min-h-[160px] sm:h-[200px] p-3 sm:p-4 relative">
+              <div className="border-t border-l ml-auto w-5/6 h-full rounded rounded-tr-none bg-black backdrop-blur-3xl relative">
+                <div className="m-2 bg-zinc-900 border rounded w-full min-h-[160px] sm:h-[200px] p-3 sm:p-4 relative">
                   <h4 className="text-base sm:text-lg font-medium">Projects completed</h4>
                   <h6 className="text-muted-foreground text-sm">
                     Hey! You&apos;re doing a great job, it <br className="hidden sm:block" /> looks like you&apos;re <span className="text-white font-medium">on track!</span>
@@ -248,9 +245,9 @@ export default function HomePage() {
 
         {/* Card principal: imagen (con difuminado) a la izquierda, texto a la derecha */}
         <div className="mt-10 sm:mt-12 lg:mt-16 relative">
-          <HugeiconsIcon icon={PlusSignIcon} size={26} strokeWidth={1} className="absolute -left-3 -top-3 z-50 text-zinc-700" />
-          <HugeiconsIcon icon={PlusSignIcon} size={26} strokeWidth={1} className="absolute -right-3 -bottom-3 z-50 text-zinc-700" />
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 overflow-hidden border border-white/10 rounded-xl rounded-br-none rounded-tl-none min-h-[280px] sm:min-h-[320px]"
+          <HugeiconsIcon icon={PlusSignIcon} size={26} strokeWidth={1} className="absolute -left-[12.5px] -top-[12.5px] z-50 text-zinc-700" />
+          <HugeiconsIcon icon={PlusSignIcon} size={26} strokeWidth={1} className="absolute -right-[12.5px] -bottom-[12.5px] z-50 text-zinc-700" />
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 overflow-hidden border border-white/10 rounded-br-none rounded-tl-none min-h-[280px] sm:min-h-[320px]"
             style={{
               background:
                 "radial-gradient(ellipse 60% 80% at 80% 50%, rgba(82, 39, 255, 0.2) 0%, rgba(82, 39, 255, 0.06) 40%, transparent 70%), #000000",
@@ -324,7 +321,7 @@ export default function HomePage() {
           ].map((item) => (
             <div
               key={item.title}
-              className="relative border border-white/10 rounded-xl rounded-br-none rounded-tl-none overflow-hidden pt-6 sm:pt-8 lg:pt-10 pb-6 sm:pb-8 px-5 sm:px-6 lg:px-8 flex flex-col gap-3 sm:gap-4 transition hover:border-white/15"
+              className="relative border border-white/10 rounded-lg rounded-br-none rounded-tl-none overflow-hidden pt-6 sm:pt-8 lg:pt-10 pb-6 sm:pb-8 px-5 sm:px-6 lg:px-8 flex flex-col gap-3 sm:gap-4 transition hover:border-white/15"
               style={{
                 background:
                   "radial-gradient(ellipse 80% 60% at 50% 0%, rgba(82, 39, 255, 0.12) 0%, rgba(82, 39, 255, 0.04) 40%, transparent 70%), #000000",

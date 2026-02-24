@@ -96,7 +96,7 @@ export default function PricingSection() {
           return (
             <div
               key={plan.name}
-              className={`relative flex flex-col rounded-lg border overflow-hidden border-white/10 bg-black/30 ${isPremium ? "" : "backdrop-blur"}`}
+              className={`relative flex flex-col border overflow-hidden border-white/10 bg-black/30 ${isPremium ? "" : "backdrop-blur"}`}
             >
               {/* Background: Grainient solo en card central; laterales fondo oscuro plano */}
               <div className="absolute inset-0 pointer-events-none w-full h-full min-h-[400px]">
@@ -187,7 +187,7 @@ export default function PricingSection() {
 
                 <Link
                   href={plan.ctaHref === "__dashboard__" ? dashboardUrl : plan.ctaHref}
-                  className={`mt-6 inline-flex h-10 w-full cursor-pointer items-center justify-center rounded-md border px-5 py-2.5 text-sm font-medium transition ${isPremium
+                  className={`mt-6 inline-flex h-10 w-full cursor-pointer items-center justify-center rounded border px-5 py-2.5 text-sm font-medium transition ${isPremium
                     ? "border-[#4338ca]/60 bg-[#4338ca] text-white hover:bg-[#3730a3] hover:border-[#4338ca]"
                     : "border border-zinc-600/80 bg-[#131315] text-white hover:bg-zinc-800/80 hover:border-zinc-500"
                     }`}

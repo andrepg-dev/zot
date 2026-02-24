@@ -18,7 +18,7 @@ export default function ProductivityInsightsCard({
 }: ProductivityInsightsCardProps) {
   return (
     <div
-      className="border border-white/10 rounded-xl rounded-br-none rounded-tl-none overflow-hidden aspect-square min-h-[300px] sm:min-h-0"
+      className="border border-white/10 rounded-br-none rounded-tl-none overflow-hidden aspect-square min-h-[300px] sm:min-h-0"
       style={{
         background:
           "radial-gradient(ellipse 80% 80% at 50% 40%, rgba(82, 39, 255, 0.35) 0%, rgba(82, 39, 255, 0.12) 35%, transparent 70%), #000000",
@@ -36,7 +36,7 @@ export default function ProductivityInsightsCard({
         </div>
       </div>
 
-      <div className="border-t border-l ml-auto w-5/6 h-full rounded-lg rounded-tr-none bg-black/20 backdrop-blur-3xl">
+      <div className="border-t border-l ml-auto w-5/6 h-full rounded-lg rounded-tr-none bg-black/40 backdrop-blur-3xl">
         <header className="flex p-2 sm:p-3 gap-1.5 items-center">
           <div className="flex gap-1.5 mt-1 shrink-0">
             <div className="aspect-square h-2.5 w-2.5 sm:h-3 sm:w-3 bg-red-500 border rounded-full"></div>
@@ -49,13 +49,13 @@ export default function ProductivityInsightsCard({
           </div>
         </header>
 
-        <div className="mx-2 mr-0 border-t rounded-lg rounded-tr-none overflow-hidden bg-black/10 min-h-[200px] sm:min-h-[280px] lg:min-h-[320px]">
+        <div className="mx-2 mr-0 border-t overflow-hidden rounded rounded-tr-none bg-black/10 min-h-[200px] sm:min-h-[280px] lg:min-h-[320px]">
           <Image
             src={previewImage.src}
             width={800}
             height={800}
             alt={previewImage.alt ?? "Vista previa"}
-            className="object-cover"
+            className="object-cover rounded"
           />
         </div>
       </div>

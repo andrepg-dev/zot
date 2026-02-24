@@ -1,6 +1,6 @@
-import { getDashboardUrl } from "@/lib/dashboard-url";
 import LandingPageTitle from "@/components/LandingPageTitle";
 import Silk from "@/components/Silk";
+import { getDashboardUrl } from "@/lib/dashboard-url";
 import Link from "next/link";
 
 export default function ReadyToStartSection() {
@@ -8,11 +8,11 @@ export default function ReadyToStartSection() {
   return (
     <section id="testimonial" className="px-4 sm:px-6 md:px-8 lg:px-16 xl:px-24 pb-16 sm:pb-20 lg:pb-24 pt-12 sm:pt-14 lg:pt-16">
       <div
-        className="relative w-full overflow-hidden rounded-xl sm:rounded-2xl shadow-[0_0_40px_rgba(82,39,255,0.25),0_0_80px_rgba(0,0,0,0.4)]"
+        className="relative w-full overflow-hidden shadow-[0_0_20px_rgba(82,39,255,0.25),0_0_0px_rgba(0,0,0,0.4)]"
       >
         <div className="absolute inset-0 z-0 h-full min-h-[280px] sm:min-h-[320px] w-full">
           <Silk
-            speed={1}
+            speed={2}
             scale={1}
             color="#5227ff"
             noiseIntensity={5}
@@ -28,7 +28,7 @@ export default function ReadyToStartSection() {
         >
           <LandingPageTitle
             subtitle=""
-            title={{ before: "Ready to start?", gradient: "" }}
+            title={{ before: "Ready to growth?", gradient: "" }}
             gradient={{ colors: ["#c4b5fd", "#ffffff"], animationSpeed: 16 }}
             description="Whether you're a professional, student, or entrepreneur, our innovative tools and features are designed to help you succeed. Sign up now and unlock a world of possibilities!"
             classNames={{
@@ -36,11 +36,10 @@ export default function ReadyToStartSection() {
             }}
           />
 
-
           <div className="mt-6 sm:mt-8 lg:mt-10 flex flex-wrap items-center justify-center gap-3 sm:gap-4">
             <Link
               href={dashboardUrl}
-              className="cursor-pointer rounded-full bg-white px-5 sm:px-6 py-2 sm:py-2.5 text-sm font-medium text-black transition hover:bg-white/90"
+              className="cursor-pointer rounded-full bg-white hover:px-8 transition-all px-5 sm:px-6 py-2 sm:py-2.5 text-sm font-medium text-black hover:bg-white/90"
             >
               Get started
             </Link>

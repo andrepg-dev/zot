@@ -6,7 +6,7 @@ interface WebWindowCardProps {
 
 export default function WebWindowCard({ url, title, description }: WebWindowCardProps) {
   return (
-    <div className="overflow-hidden ml-auto w-full h-full rounded-lg rounded-tr-none bg-black/20 backdrop-blur-3xl">
+    <div className="overflow-hidden ml-auto w-full h-full rounded rounded-tr-none bg-black/20 backdrop-blur-3xl">
       <header className="relative flex items-center justify-center p-3">
         <div className="absolute left-3 flex gap-1.5">
           <div className="aspect-square h-3 w-3 bg-muted-foreground border rounded-full" />
