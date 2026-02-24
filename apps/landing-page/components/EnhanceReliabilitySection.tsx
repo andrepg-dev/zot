@@ -32,7 +32,7 @@ export default function EnhanceReliabilitySection() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-12 items-center relative z-10">
             {/* Lado izquierdo - Contenido de texto */}
             <div className="flex flex-col gap-3 sm:gap-4">
-              <HugeiconsIcon icon={AiIdeaIcon} strokeWidth={2} className="w-8 h-8 sm:w-9 sm:h-9" />
+              <HugeiconsIcon icon={AiIdeaIcon} strokeWidth={2} className="size-7" />
 
               <h3 className="text-2xl sm:text-3xl">Enhance reliability</h3>
               <h4 className="text-muted-foreground max-w-[40ch] text-sm sm:text-base">

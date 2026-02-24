@@ -26,7 +26,7 @@ export default function ProductivityInsightsCard({
     >
       <div className="p-6 sm:p-8 lg:p-12">
         <div className="flex flex-col gap-3 sm:gap-4">
-          <HugeiconsIcon icon={WaterfallUp01Icon} strokeWidth={2} className="w-8 h-8 sm:w-9 sm:h-9" />
+          <HugeiconsIcon icon={WaterfallUp01Icon} strokeWidth={2} className="size-7" />
           <h3 className="text-2xl sm:text-3xl">Productivity insights</h3>
           <h4 className="text-muted-foreground max-w-[40ch] text-sm sm:text-base">
             Get detailed reports on your productivity. Identify patterns,
@@ -49,7 +49,7 @@ export default function ProductivityInsightsCard({
           </div>
         </header>
 
-        <div className="mx-1.5 sm:mx-2 mr-0 border-t rounded-lg rounded-tr-none overflow-hidden bg-black/10 min-h-[200px] sm:min-h-[280px] lg:min-h-[320px]">
+        <div className="mx-2 mr-0 border-t rounded-lg rounded-tr-none overflow-hidden bg-black/10 min-h-[200px] sm:min-h-[280px] lg:min-h-[320px]">
           <Image
             src={previewImage.src}
             width={800}

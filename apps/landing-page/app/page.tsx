@@ -111,11 +111,11 @@ export default function HomePage() {
             </button>
           </div>
 
-          <h1 className="text-4xl sm:text-5xl md:text-6xl text-center font-light leading-tight px-2">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl text-center font-light leading-tight px-2 relative">
             Build, measure, feedback
           </h1>
           <h3 className="text-muted-foreground text-base sm:text-lg md:text-xl text-center max-w-[50ch] px-4">
-            For developers validating their products, analytics and AI tools should be the backbone. We provide it.
+            For developers validating their products, analytics and AI tools are the backbone, turn your data into actions with Zot
           </h3>
 
           <div className="flex flex-wrap gap-3 sm:gap-6 justify-center">
@@ -197,7 +197,7 @@ export default function HomePage() {
               }}>
               <div className="p-6 sm:p-8 lg:p-12">
                 <div className="flex flex-col gap-3 sm:gap-4">
-                  <HugeiconsIcon icon={ChartColumnIcon} className="w-8 h-8 sm:w-9 sm:h-9" />
+                  <HugeiconsIcon icon={ChartColumnIcon} className="size-7" />
                   <h3 className="text-2xl sm:text-3xl">Goal tracking</h3>
                   <h4 className="text-muted-foreground max-w-[40ch] text-sm sm:text-base">
                     Set personal or team goals and track your progress.
