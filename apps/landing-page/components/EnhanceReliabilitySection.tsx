@@ -36,14 +36,14 @@ export default function EnhanceReliabilitySection() {
 
               <h3 className="text-2xl sm:text-3xl">Enhance reliability</h3>
               <h4 className="text-muted-foreground max-w-[40ch] text-sm sm:text-base">
-                Zot&apos;s innovative network architecture removes the central bottlenecks of traditional solutions, accelerating team performance and enhancing the reliability of your security stack by preventing outages and service disruptions. No matter where you are.
+                Zot&apos;s innovative network architecture removes the central bottlenecks of traditional solutions, accelerating team performance and enhancing the reliability of your security stack by preventing outages and service disruptions—from continent to continent, no matter where you are.
               </h4>
             </div>
           </div>
         </div>
 
         {/* Lado derecho - Globo: visible en desktop, más pequeño/oculto en móvil */}
-        <div className="absolute -bottom-20 sm:-bottom-28 lg:-bottom-[12.5px]2 -right-8 sm:-right-12 lg:-right-16 h-[280px] sm:h-[360px] lg:h-[500px] -mr-4 sm:-mr-8 lg:-mr-12 flex items-center justify-end overflow-visible pointer-events-none">
+        <div className="absolute -bottom-20 sm:-bottom-28 lg:-bottom-12 -right-8 sm:-right-12 lg:-right-16 h-[280px] sm:h-[360px] lg:h-[500px] -mr-4 sm:-mr-8 lg:-mr-12 flex items-center justify-end overflow-visible pointer-events-none">
           <div className="w-full max-w-[400px] sm:max-w-[500px] lg:max-w-[700px] h-full opacity-80 lg:opacity-100">
             <ReliabilityGlobe />
           </div>

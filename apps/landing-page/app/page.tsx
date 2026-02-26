@@ -72,11 +72,11 @@ export default function HomePage() {
       <header className="px-4 sm:px-6 md:px-8 lg:px-16 xl:px-32 text-muted-foreground absolute top-8 left-0 right-0 z-20">
         <div className="flex flex-wrap gap-3 sm:gap-4 md:gap-6 items-center">
           <Image
-            src="/icons/zot-icon-only.svg"
+            src="/zot-icon.svg"
             alt="Zot"
             width={28}
             height={28}
-            className="shrink-0 filter-[drop-shadow(0_0_4px_rgba(255,255,255,0.75))_drop-shadow(0_0_10px_rgba(255,255,255,0.4))_drop-shadow(0_0_18px_rgba(59,130,246,0.5))_drop-shadow(0_0_26px_rgba(30,58,138,0.45))]"
+            className="shrink-0"
             priority
           />
           <nav className="flex flex-wrap gap-3 sm:gap-4 md:gap-6 items-center">
@@ -90,9 +90,9 @@ export default function HomePage() {
 
       <div aria-label="Hero section" className="flex justify-center items-center w-full min-h-screen flex-col pt-28 sm:pt-32 pb-32 sm:pb-24">
         <div className="mb-16 sm:mb-20 lg:mb-36 flex justify-center items-center w-full gap-4 sm:gap-4 flex-col px-4 sm:px-6">
-          <div className="bg-black/30 hover:bg-zinc-600/10 transition backdrop-blur-md px-3 sm:px-5 pr-2 py-1.5 rounded-full border flex items-center gap-2 sm:gap-4 cursor-pointer flex-wrap justify-center">
+          <div className="bg-black/30 hover:bg-zinc-600/10 transition backdrop-blur-md px-3 sm:px-5 sm:pr-2 pr-2 py-1.5 rounded-full border flex items-center gap-2 sm:gap-4 cursor-pointer flex-wrap justify-center">
             <ShinyText
-              text="Start measuring your idea"
+              text="Start executing your business idea with our services"
               speed={2}
               delay={0}
               color="#b5b5b5"
@@ -109,22 +109,24 @@ export default function HomePage() {
           </div>
 
           <h1 className="text-4xl sm:text-5xl md:text-6xl text-center leading-tight px-2 relative">
-            Launch, measure, action
+            Build products  <br /> The world actually needs
           </h1>
           <h3 className="text-muted-foreground text-base sm:text-lg md:text-xl text-center max-w-[50ch] px-4">
-            For developers validating their products, AI tools and analytics are the backbone, launch products and collect leads with Zot.
+            For developers validating their products, AI tools and analytics are the backbone, launch products and collect leads with <span className="text-zinc-300">Zot.</span>
             {/* , turn your data into actions with Zot */}
           </h3>
 
           <div className="flex flex-wrap gap-3 sm:gap-6 justify-center mt-2">
-            <Link href={dashboardUrl} className="bg-zinc-200 hover:px-8 transition-all hover:bg-zinc-300 ring-2 ring-zinc-700 text-black px-5 sm:px-6 py-1.5 border rounded-full cursor-pointer inline-flex items-center justify-center text-sm sm:text-base">Start Launching</Link>
+            <Link href={dashboardUrl} className="bg-zinc-200 hover:px-8 transition-all hover:bg-zinc-300 ring-2 ring-zinc-700 text-black px-5 sm:px-6 py-1.5 border rounded-full cursor-pointer inline-flex items-center justify-center text-sm sm:text-base">
+              Start Launching
+            </Link>
             <Link href={dashboardUrl} className="backdrop-blur-md border px-5 sm:px-6 py-1.5 rounded-full cursor-pointer inline-flex items-center justify-center text-sm sm:text-base">Start free trial</Link>
           </div>
         </div>
 
         <div className="absolute bottom-8 sm:bottom-16 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 w-full max-w-4xl px-4">
           <span className="text-xs sm:text-sm text-foreground/80 text-center">
-            Join over 1,000 startups and start to maximize your productivity.
+            Connect with top startups and founders to accelerate your growth
           </span>
 
           <div className="h-[40px] sm:h-[48px] w-full max-w-[95%] relative overflow-hidden">
@@ -144,7 +146,7 @@ export default function HomePage() {
         </div>
       </div>
 
-      <section className="px-4 sm:px-6 md:px-8 lg:px-16 pb-20 sm:pb-24 lg:pb-32 bg-[#000000]">
+      <section className="px-4 sm:px-6 md:px-8 lg:px-16 pb-20 sm:pb-24 lg:pb-32 bg-black">
         <LandingPageTitle
           subtitle="WaitList insights"
           title={{ before: "Advanced", gradient: "Analytics" }}
@@ -360,8 +362,8 @@ export default function HomePage() {
 
       <footer
         id="contact"
-        className="relative px-4 sm:px-6 py-12 sm:py-16 text-center"
-        style={{ backgroundColor: "#0B0B0E" }}
+        className="relative px-4 sm:px-6 py-12 sm:py-16 text-center border-t"
+        style={{ backgroundColor: "#121214" }}
       >
         <div className="mx-auto flex max-w-2xl flex-col items-center gap-6 sm:gap-8">
           <Link href="/" className="inline-flex focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50 rounded-full">

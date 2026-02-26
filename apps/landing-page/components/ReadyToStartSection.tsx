@@ -30,9 +30,9 @@ export default function ReadyToStartSection() {
             subtitle=""
             title={{ before: "Ready to growth?", gradient: "" }}
             gradient={{ colors: ["#c4b5fd", "#ffffff"], animationSpeed: 16 }}
-            description="Whether you're a professional, student, or entrepreneur, our innovative tools and features are designed to help you succeed. Sign up now and unlock a world of possibilities!"
+            description="Whether you're a professional, student, or entrepreneur, our innovative tools and features are designed to help you succeed. Sign up and unlock a world of possibilities!"
             classNames={{
-              description: "max-w-[70ch]"
+              description: "max-w-[70ch] !text-xl"
             }}
           />
 
