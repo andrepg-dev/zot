@@ -3,7 +3,7 @@
 import HeaderNavigation from "@/components/navigation/header.navigation";
 import SidebarNavigation from "@/components/navigation/sidebar.navigation";
 import Chip from "@/components/ui/chip";
-import { BoltIcon, Cog6ToothIcon, EnvelopeIcon, HomeIcon, KeyIcon } from "@heroicons/react/24/outline";
+import { ArrowUturnLeftIcon, BoltIcon, Cog6ToothIcon, EnvelopeIcon, HomeIcon, KeyIcon } from "@heroicons/react/24/outline";
 import { useParams } from "next/navigation";
 
 export default function WaitListLayout({ children }: { children: React.ReactNode }) {
@@ -13,6 +13,12 @@ export default function WaitListLayout({ children }: { children: React.ReactNode
     <>
       <SidebarNavigation
         navItems={[
+          {
+            href: `/app/waitlist/dashboard`,
+            icon: ArrowUturnLeftIcon,
+            label: "Back to waitlist"
+          },
+          { type: "divider" },
           {
             href: `/app/launch/waitlist/${id}`,
             icon: HomeIcon,

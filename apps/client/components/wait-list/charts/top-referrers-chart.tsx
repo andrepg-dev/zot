@@ -1,6 +1,6 @@
 "use client";
 
-import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import CustomGradientBar from "./custom-gradient-bar";
 
 interface TopReferrersChartProps {
@@ -23,6 +23,7 @@ const defaultData = [
   { name: "rachel.garcia@email.com", referrals: 12 }
 ];
 
+const gridColor = "rgba(255, 255, 255, 0.1)";
 const axisColor = "#b4b4b4";
 const tooltipBg = "rgb(37, 37, 37)";
 const tooltipBorder = "rgba(255, 255, 255, 0.1)";
@@ -39,6 +40,12 @@ export default function TopReferrersChart({ data = defaultData }: TopReferrersCh
       <div className="h-96 w-full">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={data} layout="vertical" margin={{ top: 10, right: 10, left: 10, bottom: 0 }}>
+            <CartesianGrid
+              horizontal={false}
+              strokeDasharray="3 3"
+              stroke={gridColor}
+              opacity={0.5}
+            />
             <XAxis
               type="number"
               tickLine={false}
