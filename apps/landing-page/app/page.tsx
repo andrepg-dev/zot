@@ -3,6 +3,7 @@ import DarkVeil from "@/components/DarkVeil";
 import EnhanceReliabilitySection from "@/components/EnhanceReliabilitySection";
 import FaqSection from "@/components/FaqSection";
 import LandingPageTitle from "@/components/LandingPageTitle";
+import type { LogoItem } from "@/components/LogoLoop";
 import LogoLoop from "@/components/LogoLoop";
 import PricingSection from "@/components/PricingSection";
 import ProductivityInsightsCard from "@/components/ProductivityInsightsCard";
@@ -28,13 +29,10 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import Image from "next/image";
 import Link from "next/link";
 
-const logoipsumLogos = [
-  { src: "/logos/logo-1.svg", alt: "Logoipsum", title: "Logoipsum", width: 120, height: 32 },
-  { src: "/logos/logo-2.svg", alt: "Logoipsum", title: "Logoipsum", width: 120, height: 32 },
-  { src: "/logos/logo-3.svg", alt: "Logoipsum", title: "Logoipsum", width: 120, height: 32 },
-  { src: "/logos/logo-6.svg", alt: "Logoipsum", title: "Logoipsum", width: 120, height: 32 },
-  { src: "/logos/logo-5.svg", alt: "Logoipsum", title: "Logoipsum", width: 120, height: 32 },
-  { src: "/logos/logo-6.svg", alt: "Logoipsum", title: "Logoipsum", width: 120, height: 32 },
+const logoipsumLogos: LogoItem[] = [
+  { src: "/icons/zot-icon-only.svg", alt: "Zot", title: "Zot", width: 55, height: 32 },
+  { src: "/logos/hopta-logo.svg", alt: "Hopta", title: "Hopta", width: 120, height: 32 },
+  { src: "/logos/dymo-logo.svg", alt: "Dymo", title: "Dymo", width: 120, height: 32 },
 ];
 
 export default function HomePage() {
@@ -132,7 +130,7 @@ export default function HomePage() {
           <div className="h-[40px] sm:h-[48px] w-full max-w-[95%] relative overflow-hidden">
             <LogoLoop
               logos={logoipsumLogos}
-              speed={30}
+              speed={10}
               direction="left"
               logoHeight={32}
               gap={48}

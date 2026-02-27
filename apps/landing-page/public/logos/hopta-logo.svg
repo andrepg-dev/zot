@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 32" fill="none">
+  <g transform="translate(1, 2) scale(0.016)" stroke="#e5e5e5" stroke-width="112.97" stroke-linecap="round" stroke-miterlimit="10" fill="none" opacity="0.9">
+    <line x1="461.34" y1="507.18" x2="461.34" y2="1055.11"/>
+    <line x1="841.46" y1="507.18" x2="841.46" y2="1055.11"/>
+    <line x1="461.34" y1="781.14" x2="841.46" y2="781.14"/>
+    <path d="M1245.9,781.14c0,152.2-58.07,304.39-174.19,420.53l-420.53,420.53-420.53-420.53c-115.06-115.08-173.13-265.58-174.17-416.4"/>
+    <polyline points="56.72 487.59 651.17 69.08 1245.68 487.59"/>
+  </g>
+  <text x="28" y="22" fill="#e5e5e5" font-family="system-ui, sans-serif" font-size="18" font-weight="600">hopta</text>
+</svg>
