@@ -40,8 +40,16 @@ export default function HomePage() {
 
   return (
     <div className="font-sans overflow-x-hidden">
-      <div
-        className="absolute top-5 left-0 w-3/6 right-0 z-30 h-10 flex items-center justify-center px-4 bg-[#5227FF]/10 ml-auto border-l-8"
+      <AnimatedContent
+        distance={80}
+        direction="horizontal"
+        duration={1.2}
+        reverse
+        ease="power3.out"
+        initialOpacity={0}
+        animateOpacity
+        delay={0.1}
+        className="absolute top-5 border-l-primary left-0 w-3/6 right-0 z-30 h-10 flex items-center justify-center px-4 bg-[#5227FF]/10 ml-auto border-l-8"
       >
         <div className="w-full max-w-6xl flex flex-wrap items-center justify-center gap-6 sm:gap-8 text-center">
           <p className="text-xs sm:text-sm text-white/90">
@@ -54,7 +62,7 @@ export default function HomePage() {
             Try now →
           </Link>
         </div>
-      </div>
+      </AnimatedContent>
 
       <div className="w-full h-screen absolute -z-10 bg-black bg-[url('/background.png')] bg-cover bg-center">
         <DarkVeil
@@ -110,7 +118,7 @@ export default function HomePage() {
             Build products  <br /> The world actually needs
           </h1>
           <h3 className="text-muted-foreground text-base sm:text-lg md:text-xl text-center max-w-[50ch] px-4">
-            For developers validating their products, AI tools and analytics are the backbone, launch products and collect leads with <span className="text-zinc-300">Zot.</span>
+            For developers validating their products, AI tools and analytics are the backbone, launch products and collect leads with Zot
             {/* , turn your data into actions with Zot */}
           </h3>
 
@@ -207,7 +215,7 @@ export default function HomePage() {
               <div className="border-t border-l ml-auto w-5/6 h-full rounded rounded-tr-none bg-black backdrop-blur-3xl relative">
                 <div className="m-2 bg-zinc-900 border rounded w-full min-h-[160px] sm:h-[200px] p-3 sm:p-4 relative">
                   <h4 className="text-base sm:text-lg font-medium">Projects completed</h4>
-                  <h6 className="text-muted-foreground text-sm">
+                  <h6 className="text-muted-foreground">
                     Hey! You&apos;re doing a great job, it <br className="hidden sm:block" /> looks like you&apos;re <span className="text-white font-medium">on track!</span>
                   </h6>
 

@@ -16,7 +16,7 @@ export default function WaitListLayout({ children }: { children: React.ReactNode
           {
             href: `/app/waitlist/dashboard`,
             icon: ArrowUturnLeftIcon,
-            label: "Back to waitlist"
+            label: "Back to WaitLists"
           },
           { type: "divider" },
           {
