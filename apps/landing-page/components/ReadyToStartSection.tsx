@@ -32,7 +32,7 @@ export default function ReadyToStartSection() {
             gradient={{ colors: ["#c4b5fd", "#ffffff"], animationSpeed: 16 }}
             description="Stop guessing, start measuring. Launch your waitlist today and find out if the world actually needs what you're building."
             classNames={{
-              description: "max-w-[70ch] !text-xl"
+              description: "max-w-[70ch] !text-xl text-balance"
             }}
           />
 
