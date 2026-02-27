@@ -2,6 +2,7 @@ import AnimatedContent from "@/components/AnimatedContent";
 import DarkVeil from "@/components/DarkVeil";
 import EnhanceReliabilitySection from "@/components/EnhanceReliabilitySection";
 import FaqSection from "@/components/FaqSection";
+import HeroCascade from "@/components/HeroCascade";
 import LandingPageTitle from "@/components/LandingPageTitle";
 import type { LogoItem } from "@/components/LogoLoop";
 import LogoLoop from "@/components/LogoLoop";
@@ -40,15 +41,7 @@ export default function HomePage() {
 
   return (
     <div className="font-sans overflow-x-hidden">
-      <AnimatedContent
-        distance={80}
-        direction="horizontal"
-        duration={1.2}
-        reverse
-        ease="power3.out"
-        initialOpacity={0}
-        animateOpacity
-        delay={0.1}
+      <div
         className="absolute top-5 border-l-primary left-0 w-3/6 right-0 z-30 h-10 flex items-center justify-center px-4 bg-[#5227FF]/10 ml-auto border-l-8"
       >
         <div className="w-full max-w-6xl flex flex-wrap items-center justify-center gap-6 sm:gap-8 text-center">
@@ -62,7 +55,7 @@ export default function HomePage() {
             Try now →
           </Link>
         </div>
-      </AnimatedContent>
+      </div>
 
       <div className="w-full h-screen absolute -z-10 bg-black bg-[url('/background.png')] bg-cover bg-center">
         <DarkVeil
@@ -94,9 +87,9 @@ export default function HomePage() {
         </div>
       </header>
 
-      <div aria-label="Hero section" className="flex justify-center items-center w-full min-h-screen flex-col pt-28 sm:pt-32 pb-32 sm:pb-24">
+      <HeroCascade className="flex justify-center items-center w-full min-h-screen flex-col pt-28 sm:pt-32 pb-32 sm:pb-24" aria-label="Hero section">
         <div className="mb-16 sm:mb-20 lg:mb-36 flex justify-center items-center w-full gap-4 sm:gap-4 flex-col px-4 sm:px-6">
-          <div className="bg-black/30 hover:bg-zinc-600/10 transition backdrop-blur-md px-3 sm:px-5 sm:pr-2 pr-2 py-1.5 rounded-full border flex items-center gap-2 sm:gap-4 cursor-pointer flex-wrap justify-center">
+          <div data-hero-badge style={{ opacity: 0 }} className="bg-black/30 hover:bg-zinc-600/10 transition backdrop-blur-md px-3 sm:px-5 sm:pr-2 pr-2 py-1.5 rounded-full border flex items-center gap-2 sm:gap-4 cursor-pointer flex-wrap justify-center">
             <ShinyText
               text="Start executing your business idea with our services"
               speed={2}
@@ -114,23 +107,28 @@ export default function HomePage() {
             </button>
           </div>
 
-          <h1 className="text-4xl sm:text-5xl md:text-6xl text-center leading-tight px-2 relative">
+          <h1
+            data-hero-heading
+            style={{ opacity: 0 }}
+            className="text-4xl sm:text-5xl md:text-6xl text-center leading-tight px-2 relative perspective-[600px]"
+          >
             Build products  <br /> The world actually needs
           </h1>
-          <h3 className="text-muted-foreground text-base sm:text-lg md:text-xl text-center max-w-[50ch] px-4">
+          <h3 data-hero-subtitle style={{ opacity: 0 }} className="text-muted-foreground text-base sm:text-lg md:text-xl text-center max-w-[50ch] px-4">
             For developers validating their products, AI tools and analytics are the backbone, launch products and collect leads with Zot
-            {/* , turn your data into actions with Zot */}
           </h3>
 
-          <div className="flex flex-wrap gap-3 sm:gap-6 justify-center mt-2">
+          <div data-hero-ctas style={{ opacity: 0 }} className="flex flex-wrap gap-3 sm:gap-6 justify-center mt-2">
             <Link href={dashboardUrl} className="bg-zinc-200 hover:px-8 transition-all hover:bg-zinc-300 ring-2 ring-zinc-700 text-black px-5 sm:px-6 py-1.5 border rounded-full cursor-pointer inline-flex items-center justify-center text-sm sm:text-base">
               Start Launching
             </Link>
-            <Link href={dashboardUrl} className="backdrop-blur-md border px-5 sm:px-6 py-1.5 rounded-full cursor-pointer inline-flex items-center justify-center text-sm sm:text-base">Start free trial</Link>
+            <Link href={dashboardUrl} className="backdrop-blur-md border px-5 sm:px-6 py-1.5 rounded-full cursor-pointer inline-flex items-center justify-center text-sm sm:text-base transition-all hover:px-8">
+              Start free trial
+            </Link>
           </div>
         </div>
 
-        <div className="absolute bottom-8 sm:bottom-16 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 w-full max-w-4xl px-4">
+        <div data-hero-bottom style={{ opacity: 0 }} className="absolute bottom-8 sm:bottom-16 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 w-full max-w-4xl px-4">
           <span className="text-xs sm:text-sm text-foreground/80 text-center">
             Connect with top startups and founders to accelerate your growth
           </span>
@@ -150,7 +148,7 @@ export default function HomePage() {
             />
           </div>
         </div>
-      </div>
+      </HeroCascade>
 
       <section className="px-4 sm:px-6 md:px-8 lg:px-16 pb-20 sm:pb-24 lg:pb-32 bg-black">
         <LandingPageTitle
