@@ -7,29 +7,44 @@ import { useState } from "react";
 
 const FAQ_ITEMS = [
   {
-    question: "How do I get started with analytics?",
+    question: "What is Zot and who is it for?",
     answer:
-      "Sign up for a free account, connect your project, and add our snippet or SDK. You'll see your first events within minutes.",
+      "Zot is a waitlist management platform for developers and founders validating product ideas. It lets you create waitlists, collect leads, track analytics, send emails, and block fake sign ups, all from one dashboard.",
   },
   {
-    question: "What platforms and frameworks are supported?",
+    question: "How quickly can I set up a waitlist?",
     answer:
-      "We support web (React, Next.js, Vue, plain JS), mobile (React Native, iOS, Android), and server-side tracking. No matter what project you're working on, we've got you covered.",
+      "You can create and launch a waitlist in under five minutes. Sign up, name your waitlist, and start sharing your link. No technical setup required.",
   },
   {
-    question: "Can I try Zot before committing?",
+    question: "How does the fake email protection work?",
     answer:
-      "Yes. Start with a free trial that includes core analytics and task management. No credit card required.",
+      "Zot automatically detects and blocks disposable and temporary email addresses when users try to sign up. This ensures every lead on your waitlist is a real person with a valid email, giving you clean data to validate your idea.",
   },
   {
-    question: "How is my data stored and protected?",
+    question: "Can I send emails to my waitlist users?",
     answer:
-      "Data is encrypted in transit and at rest. We comply with common privacy frameworks and do not sell your data.",
+      "Yes. Zot lets you create and edit email templates with code using React Email. You have full control over the design and content, and can send updates, welcome messages, and announcements directly to your waitlist.",
   },
   {
-    question: "How does pricing work for teams?",
+    question: "What analytics does Zot provide?",
     answer:
-      "Plans scale by team size and usage. You can upgrade or change plan at any time from your account settings.",
+      "You get real-time metrics including total sign ups, referrals, daily registrations, emails sent, fake users blocked, traffic sources, top referrers, and conversion rates. Everything you need to measure traction.",
+  },
+  {
+    question: "How do webhooks work?",
+    answer:
+      "You can configure a webhook URL in your waitlist settings. Zot will automatically send HTTP callbacks when users sign up or are offboarded. You also get email notifications every 20 registered users.",
+  },
+  {
+    question: "Can I try Zot for free?",
+    answer:
+      "Yes. The free plan includes up to 15,000 user sign ups, 3 waitlists, email sending for up to 2,000 users per month, and full analytics. No credit card required.",
+  },
+  {
+    question: "Can I export my waitlist data?",
+    answer:
+      "Absolutely. All plans include data export so you can download your sign ups and use them in your own tools, CRM, or email marketing platform whenever you need.",
   },
 ];
 
@@ -37,12 +52,12 @@ export default function FaqSection() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
-    <section className="px-4 sm:px-6 md:px-8 lg:px-16 pb-16 sm:pb-20 lg:pb-24 pt-12 sm:pt-14 lg:pt-16 bg-[#000000]">
+    <section id="faq" className="px-4 sm:px-6 md:px-8 lg:px-16 pb-16 sm:pb-20 lg:pb-24 pt-12 sm:pt-14 lg:pt-16 bg-[#000000]">
       <LandingPageTitle
         subtitle="Support"
         title={{ before: "Frequently asked", gradient: "question" }}
         gradient={{ colors: ["#a1a1aa", "#ffffff"], animationSpeed: 16 }}
-        description="No matter what project you're working on, we've got you covered with the best tools for analytics and task management."
+        description="Everything you need to know about launching and managing your waitlist with Zot."
       />
 
       <div className="mx-auto mt-8 sm:mt-10 lg:mt-12 flex max-w-2xl flex-col gap-3 px-0">

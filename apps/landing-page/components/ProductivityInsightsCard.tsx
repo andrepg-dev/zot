@@ -1,4 +1,4 @@
-import { WaterfallUp01Icon } from "@hugeicons/core-free-icons";
+import { UserAdd01Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import Image from "next/image";
 
@@ -26,12 +26,10 @@ export default function ProductivityInsightsCard({
     >
       <div className="p-6 sm:p-8 lg:p-12">
         <div className="flex flex-col gap-3 sm:gap-4">
-          <HugeiconsIcon icon={WaterfallUp01Icon} strokeWidth={2} className="size-7" />
-          <h3 className="text-2xl sm:text-3xl">Productivity insights</h3>
+          <HugeiconsIcon icon={UserAdd01Icon} strokeWidth={2} className="size-7" />
+          <h3 className="text-2xl sm:text-3xl">Waitlist dashboard</h3>
           <h4 className="text-muted-foreground max-w-[40ch] text-sm sm:text-base">
-            Get detailed reports on your productivity. Identify patterns,
-            understand your habits, and make informed decisions to improve your
-            workflow.
+            See total sign ups, referrals, daily registrations, and emails sent at a glance. All the metrics you need to validate your product idea, in one place.
           </h4>
         </div>
       </div>

@@ -15,13 +15,13 @@ import TestimonialsSection from "@/components/TestimonialsSection";
 import { getDashboardUrl } from "@/lib/dashboard-url";
 import {
   ChartColumnIcon,
-  Clock01Icon,
   Facebook01Icon,
   InstagramIcon,
-  Layers01Icon,
+  Mail01Icon,
   NewTwitterIcon,
+  Notification03Icon,
   PlusSignIcon,
-  RepeatIcon,
+  ShieldKeyIcon,
   TiktokIcon,
   YoutubeIcon,
 } from "@hugeicons/core-free-icons";
@@ -86,9 +86,9 @@ export default function HomePage() {
             priority
           />
           <nav className="flex flex-wrap gap-3 sm:gap-4 md:gap-6 items-center">
-            <Link href="#integration" className="ml-0 md:ml-4 text-sm hover:text-foreground">Integration</Link>
+            <Link href="#integration" className="ml-0 md:ml-4 text-sm hover:text-foreground">Features</Link>
             <Link href="#pricing" className="text-sm hover:text-foreground">Pricing</Link>
-            <Link href="#testimonial" className="text-sm hover:text-foreground">Testimonial</Link>
+            <Link href="#faq" className="text-sm hover:text-foreground">FAQ</Link>
             <Link href="#contact" className="text-sm hover:text-foreground">Contact</Link>
           </nav>
         </div>
@@ -157,7 +157,10 @@ export default function HomePage() {
           subtitle="WaitList insights"
           title={{ before: "Advanced", gradient: "Analytics" }}
           gradient={{ colors: ["#5227FF", "#ffffff"], animationSpeed: 16 }}
-          description="Gain valuable insights into your productivity with detailed reports that help you understand your habits."
+          description="Track sign ups, referrals, and engagement in real time. Know exactly if your idea has traction or if it's time to pivot."
+          classNames={{
+            description: "max-w-[50ch]"
+          }}
         />
 
         {/* Card container */}
@@ -204,26 +207,26 @@ export default function HomePage() {
               <div className="p-6 sm:p-8 lg:p-12">
                 <div className="flex flex-col gap-3 sm:gap-4">
                   <HugeiconsIcon icon={ChartColumnIcon} className="size-7" />
-                  <h3 className="text-2xl sm:text-3xl">Goal tracking</h3>
+                  <h3 className="text-2xl sm:text-3xl">Growth tracking</h3>
                   <h4 className="text-muted-foreground max-w-[40ch] text-sm sm:text-base">
-                    Set personal or team goals and track your progress.
-                    See how close you are to achieving your objectives and stay motivated.
+                    Monitor daily sign ups, referral performance, and conversion rates.
+                    See if your community is growing and make data-driven decisions.
                   </h4>
                 </div>
               </div>
 
               <div className="border-t border-l ml-auto w-5/6 h-full rounded rounded-tr-none bg-black backdrop-blur-3xl relative">
                 <div className="m-2 bg-zinc-900 border rounded w-full min-h-[160px] sm:h-[200px] p-3 sm:p-4 relative">
-                  <h4 className="text-base sm:text-lg font-medium">Projects completed</h4>
+                  <h4 className="text-base sm:text-lg font-medium">Total sign ups</h4>
                   <h6 className="text-muted-foreground">
-                    Hey! You&apos;re doing a great job, it <br className="hidden sm:block" /> looks like you&apos;re <span className="text-white font-medium">on track!</span>
+                    Your waitlist is growing, it <br className="hidden sm:block" /> looks like there&apos;s <span className="text-white font-medium">real traction!</span>
                   </h6>
 
                   <div className="absolute bottom-3 sm:bottom-6 left-3 sm:left-6 flex flex-wrap items-center gap-2 sm:gap-0">
-                    <h2 className="text-2xl sm:text-4xl font-semibold">3.2k</h2>
+                    <h2 className="text-2xl sm:text-4xl font-semibold">18.2k</h2>
                     <div className="flex ml-2 sm:ml-6 gap-2 flex-wrap items-center">
                       <div className="border border-green-700 bg-green-500/20 rounded-full text-emerald-700 px-2 flex items-center text-xs">
-                        26%
+                        +12.5%
                       </div>
                       <span className="text-muted-foreground text-xs sm:text-sm">Compared to last month</span>
                     </div>
@@ -246,10 +249,10 @@ export default function HomePage() {
 
       <section className="px-4 sm:px-6 md:px-8 lg:px-16 xl:px-32 pb-20 sm:pb-24 lg:pb-32 bg-[#000000]">
         <LandingPageTitle
-          subtitle="Automated scheduling"
-          title={{ before: "Comprehensive", gradient: "task management" }}
+          subtitle="Stay connected"
+          title={{ before: "Emails &", gradient: "notifications" }}
           gradient={{ colors: ["#22C55E", "#00FF88"], animationSpeed: 16 }}
-          description="Effortlessly manage and prioritize your tasks using Ra diyal's intuitive interface, keeping your workload organized."
+          description="Build email templates with code using React Email, send them to your waitlist, and get real-time notifications. Full control, zero guesswork."
         />
 
         {/* Card principal: imagen (con difuminado) a la izquierda, texto a la derecha */}
@@ -287,13 +290,13 @@ export default function HomePage() {
             {/* Lado derecho: texto */}
             <div className="flex flex-col justify-center gap-3 sm:gap-4 p-6 sm:p-8 lg:p-10 xl:p-12">
               <h3 className="text-xl sm:text-2xl lg:text-3xl">
-                Efficient Task Organization
+                Code your emails, own the design
               </h3>
               <p className="text-muted-foreground max-w-[44ch] text-sm sm:text-base">
-                Streamline your workflow by organizing tasks intuitively and
-                efficiently. With smart task management, you can easily create,
-                categorize, and prioritize tasks, ensuring nothing falls through
-                the cracks and every goal is tackled with precision and timeliness.
+                Create and edit email templates directly with code using
+                React Email. You stay close to the code, with full control
+                over every pixel. Send updates, referral links, and
+                announcements to your waitlist whenever you need.
               </p>
               <Link
                 href="#integration"
@@ -310,22 +313,22 @@ export default function HomePage() {
         <div className="mt-6 sm:mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {[
             {
-              icon: Layers01Icon,
-              title: "Organize with ease",
+              icon: Mail01Icon,
+              title: "Code-first templates",
               description:
-                "Create, categorize, and prioritize tasks effortlessly.",
+                "Write your email templates with React Email. Full code control to craft exactly the emails your users deserve.",
             },
             {
-              icon: Clock01Icon,
-              title: "Deadline reminders",
+              icon: Notification03Icon,
+              title: "Milestone alerts",
               description:
-                "Set task reminders to receive notifications on time.",
+                "Get notified about new sign ups at the frequency you choose.",
             },
             {
-              icon: RepeatIcon,
-              title: "Recurring tasks",
+              icon: ShieldKeyIcon,
+              title: "Fake email blocking",
               description:
-                "Set recurring tasks for regular activities to save time.",
+                "Disposable and fake emails are automatically blocked, keeping your leads clean.",
             },
           ].map((item) => (
             <div
@@ -384,13 +387,13 @@ export default function HomePage() {
 
           <nav className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-sm text-white/90">
             <Link href="#integration" className="hover:text-white transition-colors">
-              Integration
+              Features
             </Link>
             <Link href="#pricing" className="hover:text-white transition-colors">
               Pricing
             </Link>
-            <Link href="#testimonial" className="hover:text-white transition-colors">
-              Testimonial
+            <Link href="#faq" className="hover:text-white transition-colors">
+              FAQ
             </Link>
             <Link href="#contact" className="hover:text-white transition-colors">
               Contact

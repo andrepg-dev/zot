@@ -7,30 +7,30 @@ import { useCallback, useState } from "react";
 const TESTIMONIALS = [
   {
     quote:
-      "Zot boosts efficiency with reminders and tracking, ensuring our team stays organized and delivers top-notch service.",
+      "We launched our waitlist with Zot in under 10 minutes. Within a week we had 2,000 sign ups and clear data showing our idea had real demand.",
     name: "David Martinez",
-    role: "Head of Sales",
+    role: "Indie Founder",
     avatarFallback: "DM",
   },
   {
     quote:
-      "The analytics and task management in one place saved us countless hours. Our launch pipeline has never been smoother.",
+      "The fake email blocking alone saved us from a list full of junk. Every lead on our waitlist is a real person. That changes everything when you're validating.",
     name: "Sarah Chen",
     role: "Product Lead",
     avatarFallback: "SC",
   },
   {
     quote:
-      "We needed a single source of truth for our team. Zot gave us that with a clean interface and powerful integrations.",
+      "Webhooks plus coding our own email templates with React Email meant we automated the entire onboarding flow. Zot let us focus on building instead of managing spreadsheets.",
     name: "Marcus Johnson",
-    role: "Engineering Manager",
+    role: "CTO, Early-stage Startup",
     avatarFallback: "MJ",
   },
   {
     quote:
-      "From waitlists to analytics, everything we need to validate and scale our product is here. Highly recommend.",
+      "I needed to know if my SaaS idea was worth pursuing before writing a single line of code. Zot's analytics gave me that answer in days, not months.",
     name: "Elena Rodriguez",
-    role: "Founder",
+    role: "Solo Founder",
     avatarFallback: "ER",
   },
 ];

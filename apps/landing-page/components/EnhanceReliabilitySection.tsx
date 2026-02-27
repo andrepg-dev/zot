@@ -1,6 +1,6 @@
 "use client";
 
-import { AiIdeaIcon, PlusSignIcon } from "@hugeicons/core-free-icons";
+import { PlusSignIcon, SecurityCheckIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import AnimatedContent from "./AnimatedContent";
 import ReliabilityGlobe from "./ReliabilityGlobe";
@@ -32,11 +32,11 @@ export default function EnhanceReliabilitySection() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-12 items-center relative z-10">
             {/* Lado izquierdo - Contenido de texto */}
             <div className="flex flex-col gap-3 sm:gap-4">
-              <HugeiconsIcon icon={AiIdeaIcon} strokeWidth={2} className="size-7" />
+              <HugeiconsIcon icon={SecurityCheckIcon} strokeWidth={2} className="size-7" />
 
-              <h3 className="text-2xl sm:text-3xl">Enhance reliability</h3>
+              <h3 className="text-2xl sm:text-3xl">Built in security</h3>
               <h4 className="text-muted-foreground max-w-[40ch] text-sm sm:text-base">
-                Zot&apos;s innovative network architecture removes the central bottlenecks of traditional solutions, accelerating team performance and enhancing the reliability of your security stack by preventing outages and service disruptions—from continent to continent, no matter where you are.
+                Protect your waitlist from fake and disposable emails automatically. Zot blocks fraudulent sign ups so every lead in your list is a real person genuinely interested in your product, giving you clean data you can trust.
               </h4>
             </div>
           </div>

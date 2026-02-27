@@ -28,9 +28,9 @@ export default function ReadyToStartSection() {
         >
           <LandingPageTitle
             subtitle=""
-            title={{ before: "Ready to growth?", gradient: "" }}
+            title={{ before: "Ready to validate?", gradient: "" }}
             gradient={{ colors: ["#c4b5fd", "#ffffff"], animationSpeed: 16 }}
-            description="Whether you're a professional, student, or entrepreneur, our innovative tools and features are designed to help you succeed. Sign up and unlock a world of possibilities!"
+            description="Stop guessing, start measuring. Launch your waitlist today and find out if the world actually needs what you're building."
             classNames={{
               description: "max-w-[70ch] !text-xl"
             }}

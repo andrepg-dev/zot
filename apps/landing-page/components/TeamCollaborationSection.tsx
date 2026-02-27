@@ -1,6 +1,6 @@
 "use client";
 
-import { PlusSignIcon } from "@hugeicons/core-free-icons";
+import { Mail01Icon, PlusSignIcon, WebhookIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { useState } from "react";
 import AnimatedContent from "./AnimatedContent";
@@ -13,39 +13,39 @@ export default function TeamCollaborationSection() {
   const buttons = [
     {
       id: 0,
-      title: "Team projects",
-      description: "Work together with your team on shared projects. Assign tasks and track progress all in one place.",
-      icon: PlusSignIcon,
+      title: "Webhook callbacks",
+      description: "Automatically receive webhook notifications on user signup and offboarding events. Integrate with your existing stack in minutes.",
+      icon: WebhookIcon,
     },
     {
       id: 1,
-      title: "Real-time updates",
-      description: "Stay in sync with real-time updates. Every change is instantly visible to all team members.",
-      icon: PlusSignIcon,
+      title: "Email campaigns",
+      description: "Build email templates with React Email and send them directly to your waitlist users. Stay close to the code, keep your audience engaged.",
+      icon: Mail01Icon,
     },
     {
       id: 2,
-      title: "In-app chat",
-      description: "Discuss tasks, share updates, and stay connected without switching platforms or tools.",
+      title: "Smart notifications",
+      description: "Get notified via email on every 20 users registered. Stay on top of your growth without checking the dashboard.",
       icon: PlusSignIcon,
     },
   ];
 
   const cards = [
     {
-      url: "collab.zot.so",
-      title: "Real-time updates",
-      description: "See every change your team makes as it happens in a familiar web-style interface.",
+      url: "api.zot.so/webhooks",
+      title: "Webhook integration",
+      description: "Connect your waitlist events to any service via webhooks. Automate workflows when users sign up or leave.",
     },
     {
-      url: "team.zot.so",
-      title: "Shared workspaces",
-      description: "Organize projects, documents, and feedback in a single, collaborative web view.",
+      url: "app.zot.so/emails",
+      title: "Email editor",
+      description: "Edit your email templates with code powered by React Email. Preview, tweak, and ship beautiful emails without leaving your workflow.",
     },
     {
-      url: "updates.zot.so",
-      title: "Status at a glance",
-      description: "Track what changed, who did it, and when, without leaving the browser experience.",
+      url: "app.zot.so/notifications",
+      title: "Growth alerts",
+      description: "Receive milestone notifications as your waitlist grows. Never miss a key moment in your product validation.",
     },
   ];
 
@@ -58,10 +58,13 @@ export default function TeamCollaborationSection() {
   return (
     <section id="integration" className="px-4 sm:px-6 md:px-8 lg:px-16 pb-20 sm:pb-28 lg:pb-36 flex flex-col gap-10 sm:gap-12 lg:gap-16 overflow-hidden">
       <LandingPageTitle
-        subtitle="Integrated community"
-        title={{ before: "Seamless", gradient: "team collaboration" }}
+        subtitle="Integrations"
+        title={{ before: "Powerful", gradient: "automation tools" }}
         gradient={{ colors: ["#5227FF", "#ffffff"], animationSpeed: 16 }}
-        description="Keep everyone in sync with instant updates that ensure all team members have the latest information."
+        classNames={{
+          description: "max-w-[50ch]"
+        }}
+        description="Webhooks, email campaigns, and smart notifications. Automate your workflow and stay connected to your users."
       />
 
       <div className="min-h-[500px] lg:min-h-[550px] lg:h-[550px] relative pt-12 sm:pt-16 lg:pt-24 -mb-8 lg:-mb-12 flex flex-col lg:flex-row gap-8 sm:gap-10 lg:gap-0">
@@ -126,10 +129,10 @@ export default function TeamCollaborationSection() {
           delay={0.1}
           className="flex flex-col items-center text-center gap-4"
         >
-          <h2 className="text-4xl sm:text-5xl text-white">98%</h2>
-          <h3 className="text-xl sm:text-2xl font-medium text-white">Team adoption</h3>
+          <h2 className="text-4xl sm:text-5xl text-white">5 min</h2>
+          <h3 className="text-xl sm:text-2xl font-medium text-white">Setup time</h3>
           <p className="text-sm sm:text-base text-muted-foreground max-w-[35ch] mx-auto">
-            98% team adoption highlights widespread tool use and effective communication.
+            Create a waitlist, configure webhooks, and start collecting leads in under five minutes.
           </p>
         </AnimatedContent>
 
@@ -144,10 +147,10 @@ export default function TeamCollaborationSection() {
           delay={0.2}
           className="flex flex-col items-center text-center gap-4"
         >
-          <h2 className="text-4xl sm:text-5xl text-white">30+</h2>
-          <h3 className="text-xl sm:text-2xl font-medium text-white">Projects managed</h3>
+          <h2 className="text-4xl sm:text-5xl text-white">50+</h2>
+          <h3 className="text-xl sm:text-2xl font-medium text-white">Waitlists per account</h3>
           <p className="text-sm sm:text-base text-muted-foreground max-w-[35ch] mx-auto">
-            Our platform manages 30+ projects concurrently, maintaining flexibility and productivity.
+            Run multiple waitlists simultaneously for different products, features, or markets.
           </p>
         </AnimatedContent>
 
@@ -162,10 +165,10 @@ export default function TeamCollaborationSection() {
           delay={0.3}
           className="flex flex-col items-center text-center gap-4"
         >
-          <h2 className="text-4xl sm:text-5xl text-white">100+</h2>
-          <h3 className="text-xl sm:text-2xl font-medium text-white">Seamless integration</h3>
+          <h2 className="text-4xl sm:text-5xl text-white">100%</h2>
+          <h3 className="text-xl sm:text-2xl font-medium text-white">Clean leads</h3>
           <p className="text-sm sm:text-base text-muted-foreground max-w-[35ch] mx-auto">
-            Seamlessly integrates with key tools, ensuring smooth workflow and collaboration.
+            Fake email detection ensures every sign up on your waitlist is a real, interested user.
           </p>
         </AnimatedContent>
       </div>
