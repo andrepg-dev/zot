@@ -13,7 +13,7 @@ const PLANS = [
     frequency: "/ month",
     blurb: "Perfect to validate an idea and run simple launches.",
     ctaLabel: "Get started",
-    ctaHref: "__dashboard__",
+    ctaHref: "#testimonial",
     popular: false,
     features: [
       "15,000 users signup limit",
@@ -40,7 +40,7 @@ const PLANS = [
     },
     blurb: "For products in production that need headroom and support.",
     ctaLabel: "Start free trial",
-    ctaHref: "__dashboard__",
+    ctaHref: "#testimonial",
     popular: true,
     features: [
       "Unlimited users signup",
@@ -62,10 +62,10 @@ const PLANS = [
     frequency: "/ month",
     blurb: "Built for fast-growing teams with heavy launch pipelines.",
     ctaLabel: "Contact sales",
-    ctaHref: "#contact",
+    ctaHref: "#testimonial",
     popular: false,
     features: [
-      "500,000 users per month signup limit",
+      "Unlimited users per month signup limit",
       "100 waitlists maximum",
       "100 landing pages maximum",
       "200 email templates",
@@ -185,15 +185,22 @@ export default function PricingSection() {
                   </div>
                 </div>
 
-                <Link
-                  href={plan.ctaHref === "__dashboard__" ? dashboardUrl : plan.ctaHref}
-                  className={`mt-6 inline-flex h-10 w-full cursor-pointer items-center justify-center rounded border px-5 py-2.5 text-sm font-medium transition ${isPremium
-                    ? "border-[#4338ca]/60 bg-[#4338ca] text-white hover:bg-[#3730a3] hover:border-[#4338ca]"
-                    : "border border-zinc-600/80 bg-[#131315] text-white hover:bg-zinc-800/80 hover:border-zinc-500"
-                    }`}
-                >
-                  {plan.ctaLabel}
-                </Link>
+                <div className="mt-6">
+                  <Link
+                    href={plan.ctaHref === "__dashboard__" ? dashboardUrl : plan.ctaHref}
+                    className={`inline-flex h-10 w-full cursor-pointer items-center justify-center rounded border px-5 py-2.5 text-sm font-medium transition ${isPremium
+                      ? "border-[#4338ca]/60 bg-[#4338ca] text-white hover:bg-[#3730a3] hover:border-[#4338ca]"
+                      : "border border-zinc-600/80 bg-[#131315] text-white hover:bg-zinc-800/80 hover:border-zinc-500"
+                      }`}
+                  >
+                    {plan.ctaLabel}
+                  </Link>
+                  {(plan.name === "Premium" || plan.name === "Scale") && (
+                    <p className="mt-2 text-xs text-zinc-500 text-center">
+                      This offer is valid during our early user adoption phase. You won&apos;t be charged.
+                    </p>
+                  )}
+                </div>
 
                 <div className="mt-6 flex-1 space-y-3">
                   {plan.features.map((feature) => (
@@ -222,6 +229,11 @@ export default function PricingSection() {
             </div>
           );
         })}
+      </div>
+
+      <div className="mx-auto mt-8 sm:mt-10 max-w-2xl text-center text-xs text-zinc-500 space-y-1">
+        <p>Prices and plans may change.</p>
+        <p>We&apos;re currently in beta and testing.</p>
       </div>
     </section>
   );

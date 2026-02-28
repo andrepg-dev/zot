@@ -37,9 +37,9 @@ const FAQ_ITEMS = [
       "You can configure a webhook URL in your waitlist settings. Zot will automatically send HTTP callbacks when users sign up or are offboarded. You also get email notifications every 20 registered users.",
   },
   {
-    question: "Can I try Zot for free?",
+    question: "If I sign up on the landing page and pick a plan, will I be charged?",
     answer:
-      "Yes. The free plan includes up to 15,000 user sign ups, 3 waitlists, email sending for up to 2,000 users per month, and full analytics. No credit card required.",
+      "No. Right now we're only collecting email addresses. Registering on the landing page and selecting a plan does not result in any charge or payment. We'll notify you when we're ready to launch and open billing.",
   },
   {
     question: "Can I export my waitlist data?",

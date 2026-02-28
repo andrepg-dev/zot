@@ -48,12 +48,23 @@ export default function Header() {
         </div>
 
         {/* Default header content */}
-
         {postNavigationItems ? (
           postNavigationItems
         ) : (
           <div className="flex items-center gap-4">
+            <Button
+              startContent={<MagnifyingGlassIcon className={"size-4"} />}
+              radius="full"
+              variant="bordered"
+              className="text-muted-foreground text-xs flex hover:border-muted"
+              size="sm"
+            >
+              <span>Search...</span>
 
+              <Kbd keys={["command"]} className="scale-95 bg-transparent text-muted-foreground">
+                k
+              </Kbd>
+            </Button>
 
             <Popover radius="sm">
               <PopoverTrigger>
@@ -78,19 +89,13 @@ export default function Header() {
               </PopoverContent>
             </Popover>
 
-            <Button
-              startContent={<MagnifyingGlassIcon className={"size-4"} />}
-              radius="full"
-              variant="bordered"
-              className="text-muted-foreground text-xs flex hover:border-muted"
-              size="sm"
-            >
-              <span>Search...</span>
+            {/* <PrimaryActionButton size="sm" className="py-1 flex items-center gap-2">
+              <span className="font-mono">Build with AI</span>
 
-              <Kbd keys={["command"]} className="scale-95 bg-transparent text-muted-foreground">
-                k
+              <Kbd keys={["command"]} className="scale-90 font-mono rounded text-xs">
+                B
               </Kbd>
-            </Button>
+            </PrimaryActionButton> */}
           </div>
         )}
       </div>

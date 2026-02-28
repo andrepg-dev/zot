@@ -12,4 +12,7 @@ export const fontMono = Fira_Code({
   variable: "--font-mono"
 });
 
-export const geistMonoFont = Geist_Mono();
+export const geistMonoFont = Geist_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono"
+});

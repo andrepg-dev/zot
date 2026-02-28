@@ -1,5 +1,5 @@
 import QueryProvider from "@/components/query-provider";
-import { interFont } from "@/config/fonts";
+import { geistMonoFont, interFont } from "@/config/fonts";
 import { siteConfig } from "@/config/site";
 import "@/styles/globals.css";
 import { ToastProvider } from "@heroui/toast";
@@ -26,7 +26,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <body
           className={clsx(
             "min-h-screen text-foreground font-sans antialiased relative",
-            interFont.variable
+            interFont.variable,
+            geistMonoFont.variable
           )}
         >
           <ToastProvider />

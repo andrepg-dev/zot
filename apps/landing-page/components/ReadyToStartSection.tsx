@@ -1,10 +1,20 @@
+"use client";
+
 import LandingPageTitle from "@/components/LandingPageTitle";
 import Silk from "@/components/Silk";
-import { getDashboardUrl } from "@/lib/dashboard-url";
-import Link from "next/link";
+import { ArrowRight02Icon } from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { useState } from "react";
 
 export default function ReadyToStartSection() {
-  const dashboardUrl = getDashboardUrl();
+  const [email, setEmail] = useState("");
+
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    // TODO: tu lógica de envío (ej. registrar en waitlist)
+    alert(email);
+  }
+
   return (
     <section id="testimonial" className="px-4 sm:px-6 md:px-8 lg:px-16 xl:px-24 pb-16 sm:pb-20 lg:pb-24 pt-12 sm:pt-14 lg:pt-16">
       <div
@@ -28,28 +38,36 @@ export default function ReadyToStartSection() {
         >
           <LandingPageTitle
             subtitle=""
-            title={{ before: "Ready to validate?", gradient: "" }}
+            title={{ before: "Early user", gradient: "discounts" }}
             gradient={{ colors: ["#c4b5fd", "#ffffff"], animationSpeed: 16 }}
-            description="Stop guessing, start measuring. Launch your waitlist today and find out if the world actually needs what you're building."
+            description="Early adopters get exclusive pricing on Zot. Leave your email and we&apos;ll send you an offer when we launch."
             classNames={{
-              description: "max-w-[70ch] !text-xl text-balance"
+              description: "max-w-[50ch] !text-xl text-balance"
             }}
           />
 
-          <div className="mt-6 sm:mt-8 lg:mt-10 flex flex-wrap items-center justify-center gap-3 sm:gap-4">
-            <Link
-              href={dashboardUrl}
-              className="cursor-pointer rounded-full bg-white hover:px-8 transition-all px-5 sm:px-6 py-2 sm:py-2.5 text-sm font-medium text-black hover:bg-white/90"
-            >
-              Get started
-            </Link>
-            <Link
-              href={dashboardUrl}
-              className="cursor-pointer rounded-full border border-white/30 bg-zinc-900/80 px-5 sm:px-6 py-2 sm:py-2.5 text-sm font-medium text-white backdrop-blur transition hover:border-white/50 hover:bg-zinc-800/80"
-            >
-              Start free trial
-            </Link>
-          </div>
+          <form
+            onSubmit={handleSubmit}
+            className="mt-6 sm:mt-8 lg:mt-10 flex items-center justify-center w-full"
+          >
+            <div className="relative flex items-center w-full max-w-md">
+              <input
+                type="email"
+                id="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@example.com"
+                className="w-full h-11 sm:h-12  border border-white/20 bg-black/50 backdrop-blur-md pl-5 pr-28 sm:pr-32 text-sm text-white placeholder:text-white/40 outline-none transition focus:border-[#5227FF] focus:ring-1 focus:ring-[#5227FF]/50"
+              />
+              <button
+                type="submit"
+                className="absolute right-1.5 h-8 sm:h-9 bg-white px-4 sm:px-5 text-sm font-medium text-black transition-all hover:bg-white/90 hover:px-6 sm:hover:px-7 inline-flex items-center gap-1.5 cursor-pointer"
+              >
+                Join
+                <HugeiconsIcon icon={ArrowRight02Icon} size={16} strokeWidth={2} />
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </section>

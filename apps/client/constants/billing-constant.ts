@@ -51,7 +51,7 @@ export const plans = [
     ctaHref: "/app/billing",
     popular: false,
     features: [
-      "500,000 users per month signup limit",
+      "Unlimited users per month signup limit",
       "100 waitlists maximum",
       "100 landing pages maximum",
       "200 email templates",
