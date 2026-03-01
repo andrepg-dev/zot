@@ -70,6 +70,7 @@ export default function RootLayout({
     <html lang="en" className="dark">
       <body
         className={`${geistMono.variable} ${figTree.variable} antialiased overflow-x-hidden`}
+        style={{ backgroundColor: "#000000" }}
       >
         {children}
       </body>

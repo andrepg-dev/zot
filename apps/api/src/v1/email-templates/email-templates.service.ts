@@ -1,5 +1,4 @@
-import { handleDatabaseErrors } from "@api/src/common/error-handling/handle-database-errors";
-import { Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, Types } from "mongoose";
 import { CreateEmailTemplateDto } from "./dto/create-email-template.dto";
@@ -17,7 +16,8 @@ export class EmailTemplatesService {
         owner,
       });
     } catch (error) {
-      handleDatabaseErrors(error);
+      if (error instanceof HttpException) throw error;
+      throw new HttpException("Error creating email template.", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -25,15 +25,24 @@ export class EmailTemplatesService {
     try {
       return await this.EmailTemplateModel.find({ owner });
     } catch (error) {
-      handleDatabaseErrors(error);
+      if (error instanceof HttpException) throw error;
+      throw new HttpException("Error fetching email templates.", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
   async findOne(id: Types.ObjectId, owner: Types.ObjectId) {
     try {
-      return await this.EmailTemplateModel.findOne({ _id: id, owner });
+      const template = await this.EmailTemplateModel.findOne({ _id: id, owner });
+      if (!template) {
+        throw new HttpException(
+          `Template ${id.toString()} not found or you don't have permission to access it.`,
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+      return template;
     } catch (error) {
-      handleDatabaseErrors(error);
+      if (error instanceof HttpException) throw error;
+      throw new HttpException("Error fetching email template.", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -48,7 +57,8 @@ export class EmailTemplatesService {
         updateEmailTemplateDto,
       );
     } catch (error) {
-      handleDatabaseErrors(error);
+      if (error instanceof HttpException) throw error;
+      throw new HttpException("Error updating email template.", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -56,7 +66,8 @@ export class EmailTemplatesService {
     try {
       return await this.EmailTemplateModel.findOneAndDelete({ _id: id, owner });
     } catch (error) {
-      handleDatabaseErrors(error);
+      if (error instanceof HttpException) throw error;
+      throw new HttpException("Error deleting email template.", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }

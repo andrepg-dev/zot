@@ -1,5 +1,4 @@
-import { handleDatabaseErrors } from "@api/src/common/error-handling/handle-database-errors";
-import { Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import * as bcrypt from "bcrypt";
 import { Model } from "mongoose";
@@ -33,7 +32,8 @@ export class UsersService {
 
       return await this.userModel.create(userDocument);
     } catch (error) {
-      handleDatabaseErrors(error);
+      if (error instanceof HttpException) throw error;
+      throw new HttpException("Error creating user.", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -45,7 +45,8 @@ export class UsersService {
 
       return user;
     } catch (error) {
-      handleDatabaseErrors(error);
+      if (error instanceof HttpException) throw error;
+      throw new HttpException("Error fetching user by email.", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -57,7 +58,8 @@ export class UsersService {
 
       return user;
     } catch (error) {
-      handleDatabaseErrors(error);
+      if (error instanceof HttpException) throw error;
+      throw new HttpException("Error fetching user.", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -65,7 +67,8 @@ export class UsersService {
     try {
       return await this.userModel.findByIdAndUpdate(id, data, { new: true });
     } catch (error) {
-      handleDatabaseErrors(error);
+      if (error instanceof HttpException) throw error;
+      throw new HttpException("Error updating user.", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -73,7 +76,8 @@ export class UsersService {
     try {
       return await this.userModel.findByIdAndDelete(id, { new: true });
     } catch (error) {
-      handleDatabaseErrors(error);
+      if (error instanceof HttpException) throw error;
+      throw new HttpException("Error deleting user.", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }

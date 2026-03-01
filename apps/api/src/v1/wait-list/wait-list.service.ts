@@ -1,5 +1,4 @@
-import { handleDatabaseErrors } from "@api/src/common/error-handling/handle-database-errors";
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, Types } from "mongoose";
 import { CreateWaitListDto } from "./dto/create-wait-list.dto";
@@ -21,7 +20,8 @@ export class WaitListService {
         owner,
       });
     } catch (error) {
-      handleDatabaseErrors(error);
+      if (error instanceof HttpException) throw error;
+      throw new HttpException("Error creating waitlist.", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -72,25 +72,25 @@ export class WaitListService {
         },
       ]);
     } catch (error) {
-      handleDatabaseErrors(error);
+      if (error instanceof HttpException) throw error;
+      throw new HttpException("Error fetching waitlists.", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
   async findOne(id: Types.ObjectId, owner: Types.ObjectId) {
-    try {
-      const waitlist = await this.WaitListModel.findOne({
-        _id: id,
-        owner,
-      });
+    const waitlist = await this.WaitListModel.findOne({
+      _id: id,
+      owner,
+    });
 
-      if (!waitlist) {
-        throw new NotFoundException(`WaitList "${String(id)}" not found.`);
-      }
-
-      return waitlist;
-    } catch (error) {
-      handleDatabaseErrors(error);
+    if (!waitlist) {
+      throw new HttpException(
+        `WaitList "${String(id)}" not found or you don't have permission to access it.`,
+        HttpStatus.BAD_REQUEST,
+      );
     }
+
+    return waitlist;
   }
 
   async update(id: Types.ObjectId, updateWaitListDto: UpdateWaitListDto, owner: Types.ObjectId) {
@@ -102,17 +102,16 @@ export class WaitListService {
       );
 
       if (!waitlist) {
-        throw new NotFoundException(
-          `WaitList "${String(id)}" not found or you don't have permission to update it.`,
+        throw new HttpException(
+          `WaitList ${id.toString()} not found or you don't have permission to update it.`,
+          HttpStatus.BAD_REQUEST,
         );
       }
 
       return waitlist;
     } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw error;
-      }
-      handleDatabaseErrors(error);
+      if (error instanceof HttpException) throw error;
+      throw new HttpException("Error updating waitlist.", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -128,15 +127,16 @@ export class WaitListService {
       const users = await this.WaitListUserModel.deleteMany({ waitlistId: id });
 
       if (!waitlist) {
-        throw new NotFoundException(`WaitList ${id.toString()} not found.`);
+        throw new HttpException(
+          `WaitList ${id.toString()} not found or you don't have permission to delete it.`,
+          HttpStatus.BAD_REQUEST,
+        );
       }
 
       return { response: waitlist, users };
     } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw error;
-      }
-      handleDatabaseErrors(error);
+      if (error instanceof HttpException) throw error;
+      throw new HttpException("Error deleting waitlist.", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }

@@ -1,9 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import * as bcrypt from "bcrypt";
 import { Types } from "mongoose";
 import { CreateUserDto } from "../users/dto/create-user.dto";
@@ -18,11 +13,11 @@ export class AuthService {
     const user = await this.usersService.findByEmail(userDto.email);
 
     if (!user) {
-      throw new NotFoundException("User not found.");
+      throw new HttpException("User not found.", HttpStatus.BAD_REQUEST);
     }
 
     if (!user?.password) {
-      throw new InternalServerErrorException("Password not provided");
+      throw new HttpException("Password not provided", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     const isPasswordLegit = await bcrypt.compare(userDto.password, user?.password);
@@ -40,7 +35,7 @@ export class AuthService {
     const response = await this.usersService.create(user, ["local"]);
 
     if (!response) {
-      throw new BadRequestException("User already exists.");
+      throw new HttpException("User already exists.", HttpStatus.BAD_REQUEST);
     }
 
     return { _id: response._id };

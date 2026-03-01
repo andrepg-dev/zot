@@ -1,14 +1,5 @@
 import { UserId } from "@api/src/common/decorators/user-id.decorator";
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  NotFoundException,
-  Param,
-  Patch,
-  Post,
-} from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Patch, Post } from "@nestjs/common";
 import { ParseObjectIdPipe } from "@nestjs/mongoose";
 import { Types } from "mongoose";
 import { CreateEmailTemplateDto } from "./dto/create-email-template.dto";
@@ -37,7 +28,10 @@ export class EmailTemplatesController {
     const template = await this.emailTemplatesService.findOne(id, userId);
 
     if (!template) {
-      throw new NotFoundException(`Template ${id.toString()} not found.`);
+      throw new HttpException(
+        `Template ${id.toString()} not found or you don't have permission to access it.`,
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     return template;
@@ -52,7 +46,10 @@ export class EmailTemplatesController {
     const template = await this.emailTemplatesService.update(id, updateEmailTemplateDto, userId);
 
     if (!template) {
-      throw new NotFoundException(`Template ${id.toString()} not found.`);
+      throw new HttpException(
+        `Template ${id.toString()} not found or you don't have permission to update it.`,
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     return template;
@@ -66,7 +63,10 @@ export class EmailTemplatesController {
     const template = await this.emailTemplatesService.remove(id, userId);
 
     if (!template) {
-      throw new NotFoundException(`Template ${id.toString()} not found.`);
+      throw new HttpException(
+        `Template ${id.toString()} not found or you don't have permission to delete it.`,
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     return template;

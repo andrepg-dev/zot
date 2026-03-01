@@ -1,10 +1,4 @@
-import { handleDatabaseErrors } from "@api/src/common/error-handling/handle-database-errors";
-import {
-  ConflictException,
-  ForbiddenException,
-  Injectable,
-  NotFoundException,
-} from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, Types } from "mongoose";
 import { WaitListUser } from "../schemas/wait-list-user.schema";
@@ -24,7 +18,10 @@ export class WaitListUserService {
     owner: Types.ObjectId | undefined,
   ): Promise<void> {
     if (!owner) {
-      throw new ForbiddenException("You must be authenticated to perform this action.");
+      throw new HttpException(
+        "You must be authenticated to perform this action.",
+        HttpStatus.FORBIDDEN,
+      );
     }
 
     const waitlist = await this.WaitListModel.findOne({
@@ -33,7 +30,7 @@ export class WaitListUserService {
     });
 
     if (!waitlist) {
-      throw new NotFoundException("Waitlist not found.");
+      throw new HttpException("Waitlist not found.", HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -46,7 +43,10 @@ export class WaitListUserService {
       });
 
       if (!waitlist) {
-        throw new NotFoundException("Waitlist not found or is not available for registration.");
+        throw new HttpException(
+          "Waitlist not found or is not available for registration.",
+          HttpStatus.BAD_REQUEST,
+        );
       }
 
       const existingUser = await this.WaitListUserModel.findOne({
@@ -55,8 +55,9 @@ export class WaitListUserService {
       });
 
       if (existingUser) {
-        throw new ConflictException(
+        throw new HttpException(
           `User with email "${dto.email}" is already registered in this waitlist.`,
+          HttpStatus.CONFLICT,
         );
       }
 
@@ -67,13 +68,11 @@ export class WaitListUserService {
         email: dto.email,
         waitlistId: waitlistId,
         position,
-        referredBy: dto.referredBy as string | undefined,
+        referredBy: dto.referredBy,
       });
     } catch (error) {
-      if (error instanceof ConflictException || error instanceof NotFoundException) {
-        throw error;
-      }
-      handleDatabaseErrors(error);
+      if (error instanceof HttpException) throw error;
+      throw new HttpException("Error registering in waitlist.", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -83,10 +82,8 @@ export class WaitListUserService {
 
       return await this.WaitListUserModel.find({ waitlistId: waitlistId }).sort({ position: 1 });
     } catch (error) {
-      if (error instanceof NotFoundException || error instanceof ForbiddenException) {
-        throw error;
-      }
-      handleDatabaseErrors(error);
+      if (error instanceof HttpException) throw error;
+      throw new HttpException("Error fetching waitlist users.", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -100,15 +97,16 @@ export class WaitListUserService {
       });
 
       if (!user) {
-        throw new NotFoundException(`User with email "${email}" not found in this waitlist.`);
+        throw new HttpException(
+          `User with email "${email}" not found in this waitlist.`,
+          HttpStatus.BAD_REQUEST,
+        );
       }
 
       return user;
     } catch (error) {
-      if (error instanceof NotFoundException || error instanceof ForbiddenException) {
-        throw error;
-      }
-      handleDatabaseErrors(error);
+      if (error instanceof HttpException) throw error;
+      throw new HttpException("Error fetching waitlist user.", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -122,15 +120,19 @@ export class WaitListUserService {
       });
 
       if (!response) {
-        throw new NotFoundException(`User with email "${email}" not found in this waitlist.`);
+        throw new HttpException(
+          `User with email "${email}" not found in this waitlist.`,
+          HttpStatus.BAD_REQUEST,
+        );
       }
 
       return response;
     } catch (error) {
-      if (error instanceof NotFoundException || error instanceof ForbiddenException) {
-        throw error;
-      }
-      handleDatabaseErrors(error);
+      if (error instanceof HttpException) throw error;
+      throw new HttpException(
+        "Error removing user from waitlist.",
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -139,10 +141,8 @@ export class WaitListUserService {
       await this.validateOwnership(waitlistId, owner);
       return await this.WaitListUserModel.countDocuments({ waitlistId: waitlistId });
     } catch (error) {
-      if (error instanceof NotFoundException || error instanceof ForbiddenException) {
-        throw error;
-      }
-      handleDatabaseErrors(error);
+      if (error instanceof HttpException) throw error;
+      throw new HttpException("Error counting waitlist users.", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -155,10 +155,11 @@ export class WaitListUserService {
         isReferred: true,
       });
     } catch (error) {
-      if (error instanceof NotFoundException || error instanceof ForbiddenException) {
-        throw error;
-      }
-      handleDatabaseErrors(error);
+      if (error instanceof HttpException) throw error;
+      throw new HttpException(
+        "Error counting referred users in waitlist.",
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 }
