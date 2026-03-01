@@ -42,7 +42,7 @@ export default function HomePage() {
   return (
     <div className="font-sans overflow-x-hidden">
       <div
-        className="absolute top-5 border-l-primary left-0 w-3/6 right-0 z-30 h-10 flex items-center justify-center px-4 bg-[#5227FF]/10 ml-auto border-l-8"
+        className="absolute top-5 border-l-primary left-0 w-3/6 right-0 z-30 h-10 hidden sm:flex items-center justify-center px-4 bg-[#5227FF]/10 ml-auto border-l-8"
       >
         <div className="w-full max-w-6xl flex flex-wrap items-center justify-center gap-6 sm:gap-8 text-center">
           <p className="text-xs sm:text-sm text-white/90">
@@ -88,8 +88,8 @@ export default function HomePage() {
       </header>
 
       <HeroCascade className="flex justify-center items-center w-full min-h-screen flex-col pt-28 sm:pt-32 pb-32 sm:pb-24" aria-label="Hero section">
-        <div className="mb-16 sm:mb-20 lg:mb-36 flex justify-center items-center w-full gap-4 sm:gap-4 flex-col px-4 sm:px-6">
-          <div data-hero-badge style={{ opacity: 0 }} className="bg-black/30 hover:bg-zinc-600/10 transition backdrop-blur-md px-3 sm:px-5 sm:pr-2 pr-2 py-1.5 rounded-full border flex items-center gap-2 sm:gap-4 cursor-pointer flex-wrap justify-center">
+        <div className="flex mb-16 sm:mb-20 lg:mb-36 justify-center items-center w-full gap-4 sm:gap-4 flex-col px-4 sm:px-6">
+          <div data-hero-badge style={{ opacity: 0 }} className="hidden sm:flex bg-black/30 hover:bg-zinc-600/10 transition backdrop-blur-md px-3 sm:px-5 sm:pr-2 pr-2 py-1.5 rounded-full border items-center gap-2 sm:gap-4 cursor-pointer flex-wrap justify-center">
             <ShinyText
               text="Start executing your business idea with our services"
               speed={2}
