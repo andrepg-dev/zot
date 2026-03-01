@@ -3,6 +3,7 @@ import { Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
 import { ResendModule } from "nestjs-resend";
 import { EmailSendingService } from "../core/email-sending/email-sending.service";
+import { WaitListModule } from "../wait-list/wait-list.module";
 import { EmailsController } from "./emails.controller";
 import { EmailsService } from "./emails.service";
 import { EmailSchema } from "./schemas/email.schema";
@@ -11,6 +12,7 @@ import { EmailSchema } from "./schemas/email.schema";
   imports: [
     MongooseModule.forFeature([{ name: EmailsService.name, schema: EmailSchema }]),
     ResendModule.forRoot({ apiKey: RESEND.API_KEY }),
+    WaitListModule,
   ],
   controllers: [EmailsController],
   providers: [EmailsService, EmailSendingService],

@@ -2,10 +2,10 @@ import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, Types } from "mongoose";
 import { EmailSendingService } from "../core/email-sending/email-sending.service";
+import { WaitListUserService } from "../wait-list/wait-list-user/wait-list-user.service";
 
 interface SendEmailParams {
   waitlistId: Types.ObjectId;
-  waitlistUserId: Types.ObjectId;
   userId: Types.ObjectId;
   quantity: number;
 }
@@ -15,6 +15,7 @@ export class EmailsService {
   constructor(
     @InjectModel(EmailsService.name) private EmailModel: Model<EmailsService>,
     private readonly emailService: EmailSendingService,
+    private readonly WaitListUserService: WaitListUserService,
   ) {}
 
   /**
@@ -32,13 +33,51 @@ export class EmailsService {
    * @returns
    */
 
-  async sendEmail({ userId, waitlistId, waitlistUserId, quantity }: SendEmailParams) {
+  async sendEmail({ userId, waitlistId, quantity }: SendEmailParams) {
     // I need to configure this to send emails, for more information I can look at: https://github.com/jiangtaste/nestjs-resend
+
+    // Get the wailitst users
+    const users: Array<{ emails: Array<string> }> | null = await this.WaitListUserService.findAll(
+      waitlistId,
+      userId,
+      [
+        {
+          $limit: quantity,
+        },
+        {
+          $project: { email: 1, _id: 0 },
+        },
+        {
+          $group: {
+            _id: null,
+            emails: { $push: "$email" },
+          },
+        },
+        {
+          $project: { _id: 0, emails: 1 },
+        },
+      ],
+    );
+
+    const usersList = users[0].emails;
+
+    if (!usersList) {
+      return { message: "There is not user to send emails." };
+    }
+
+    const userEmailsAmountCredits = 100;
+    const emailUsageSending = usersList.length;
+
+    return {
+      quantity,
+      users: usersList,
+      mailsAvailableToSend: userEmailsAmountCredits - emailUsageSending,
+    };
 
     // Send email to users with resend service SDK
     return await this.emailService.send({
       from: "Zot WaitList <mail@zot.so>",
-      to: ["asponceg@gmail.com"],
+      to: usersList,
       provider: "resend",
       subject: "Testing if this works or not.",
       options: {

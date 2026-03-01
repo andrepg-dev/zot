@@ -5,9 +5,6 @@ export class SendEmailDto {
   @IsMongoId()
   waitlistId: Types.ObjectId;
 
-  @IsMongoId()
-  waitlistUserId: Types.ObjectId;
-
   @IsNumber()
   @IsPositive()
   quantity: number;
