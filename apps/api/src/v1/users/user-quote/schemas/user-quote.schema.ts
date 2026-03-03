@@ -1,8 +1,11 @@
-import { Prop, Schema, SchemaFactory, Virtual } from "@nestjs/mongoose";
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Types } from "mongoose";
 
-@Schema({ versionKey: false, toJSON: { virtuals: true }, toObject: { virtuals: true }, id: false })
+@Schema({ versionKey: false })
 export class UserQuote {
+  @Prop({ type: Types.ObjectId, ref: "user", required: true, index: true, select: false })
+  owner: Types.ObjectId;
+
   @Prop({ type: Number, required: true })
   userSignUp: number;
 
@@ -20,16 +23,6 @@ export class UserQuote {
 
   @Prop({ type: Number, required: true })
   domains: number;
-
-  @Virtual({
-    options: {
-      ref: "User",
-      localField: "_id",
-      foreignField: "quote",
-      justOne: true,
-    },
-  })
-  owner: Types.ObjectId;
 }
 
 export const UserQuoteSchema = SchemaFactory.createForClass(UserQuote);

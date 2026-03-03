@@ -29,8 +29,16 @@ export class UsersService {
       const randomUuid = randomUUID();
       const username = `${rest.name}${rest.lastName}${randomUuid}`;
 
+      const userDocument = new this.userModel({
+        ...rest,
+        password: bcrypt.hashSync(password, 10),
+        username,
+        providers,
+      });
+
       // FREE PLAN
       const userQuote = await this.userQuoteModel.create({
+        owner: userDocument._id,
         userSignUp: 15000,
         waitlist: 3,
         landingPage: 3,
@@ -39,15 +47,9 @@ export class UsersService {
         domains: 0,
       });
 
-      const userDocument = new this.userModel({
-        ...rest,
-        password: bcrypt.hashSync(password, 10),
-        username,
-        providers,
-        quote: userQuote._id,
-      });
+      userDocument.quote = userQuote._id;
 
-      return await this.userModel.create(userDocument);
+      return await userDocument.save();
     } catch (error) {
       if (error instanceof HttpException) throw error;
       throw new HttpException(`Error creating user. ${error}`, HttpStatus.INTERNAL_SERVER_ERROR);

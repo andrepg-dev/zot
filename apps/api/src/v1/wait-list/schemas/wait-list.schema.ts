@@ -1,5 +1,5 @@
-import { BasedOwnerSchema } from "@api/src/common/schemas/based-owner.schema";
 import { Prop, Schema, SchemaFactory, Virtual } from "@nestjs/mongoose";
+import { Types } from "mongoose";
 import { WaitListUser } from "./wait-list-user.schema";
 
 @Schema({
@@ -9,7 +9,11 @@ import { WaitListUser } from "./wait-list-user.schema";
   toObject: { virtuals: true },
   id: false,
 })
-export class WaitList extends BasedOwnerSchema {
+export class WaitList {
+  // hidden owner
+  @Prop({ type: Types.ObjectId, ref: "user", required: true, index: true, select: false })
+  owner: Types.ObjectId;
+
   @Prop({ required: true })
   name: string;
 

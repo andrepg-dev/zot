@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, Types } from "mongoose";
 import { EmailSendingService } from "../core/email-sending/email-sending.service";
+import { UserQuoteService } from "../users/user-quote/user-quote.service";
 import { WaitListUserService } from "../wait-list/wait-list-user/wait-list-user.service";
 
 interface SendEmailParams {
@@ -16,6 +17,7 @@ export class EmailsService {
     @InjectModel(EmailsService.name) private EmailModel: Model<EmailsService>,
     private readonly emailService: EmailSendingService,
     private readonly WaitListUserService: WaitListUserService,
+    private readonly userquoteService: UserQuoteService,
   ) {}
 
   /**
@@ -65,13 +67,17 @@ export class EmailsService {
       return { message: "There is not user to send emails." };
     }
 
-    const userEmailsAmountCredits = 100;
     const emailUsageSending = usersList.length;
+
+    const usage = await this.userquoteService.editUserQuote(userId, {
+      service: "emailsSent",
+      decrease: emailUsageSending,
+    });
 
     return {
       quantity,
       users: usersList,
-      mailsAvailableToSend: userEmailsAmountCredits - emailUsageSending,
+      mailsAvailableToSend: usage.emailsSent,
     };
 
     // Send email to users with resend service SDK
