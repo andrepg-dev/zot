@@ -61,10 +61,10 @@ export class EmailsService {
       ],
     );
 
-    const usersList = users[0].emails;
+    const usersList = users[0]?.emails ?? null;
 
     if (!usersList) {
-      return { message: "There is not user to send emails." };
+      return { message: "WaitList users empty" };
     }
 
     const emailUsageSending = usersList.length;

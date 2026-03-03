@@ -19,7 +19,7 @@ export class WaitListUser {
   @Prop({ required: true })
   email: string;
 
-  @Prop({ ref: "WaitList", required: true })
+  @Prop({ ref: "WaitList", required: true, select: false })
   waitlistId: Types.ObjectId;
 
   @Prop()

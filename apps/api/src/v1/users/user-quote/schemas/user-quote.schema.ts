@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Types } from "mongoose";
 
-@Schema({ versionKey: false })
+@Schema({ versionKey: false, timestamps: true })
 export class UserQuote {
   @Prop({ type: Types.ObjectId, ref: "user", required: true, index: true, select: false })
   owner: Types.ObjectId;

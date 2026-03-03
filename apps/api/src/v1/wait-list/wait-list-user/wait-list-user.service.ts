@@ -91,6 +91,11 @@ export class WaitListUserService {
         {
           $sort: { position: 1 },
         },
+        {
+          $project: {
+            waitlistId: 0,
+          },
+        },
       ];
 
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
