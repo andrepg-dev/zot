@@ -11,7 +11,7 @@ export const plans = [
       "15,000 users signup limit",
       "3 waitlists maximum",
       "3 landing pages maximum",
-      "2,000 users emailed per month",
+      "100 users emailed per month",
       "10 email templates",
       "Custom email creation",
       "Export your data",

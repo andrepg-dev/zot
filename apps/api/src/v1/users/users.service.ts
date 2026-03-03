@@ -29,11 +29,14 @@ export class UsersService {
       const randomUuid = randomUUID();
       const username = `${rest.name}${rest.lastName}${randomUuid}`;
 
-      // Created in the free plan
+      // FREE PLAN
       const userQuote = await this.userQuoteModel.create({
-        emailSending: 100,
-        emailTemplates: 3,
-        waitlist: 10,
+        userSignUp: 15000,
+        waitlist: 3,
+        landingPage: 3,
+        emailsSent: 100,
+        emailsTemplates: 10,
+        domains: 0,
       });
 
       const userDocument = new this.userModel({

@@ -3,23 +3,23 @@ import { Types } from "mongoose";
 
 @Schema({ versionKey: false, toJSON: { virtuals: true }, toObject: { virtuals: true }, id: false })
 export class UserQuote {
-  /**
-   * EmailSendingQuote, this is to save the actual state of the user
-   */
   @Prop({ type: Number, required: true })
-  emailSending: number;
+  userSignUp: number;
 
-  /**
-   * Amount of templates saved in the user account
-   */
-  @Prop({ type: Number, required: true })
-  emailTemplates: number;
-
-  /**
-   * Amount of wailitst saved
-   */
   @Prop({ type: Number, required: true })
   waitlist: number;
+
+  @Prop({ type: Number, required: true })
+  landingPage: number;
+
+  @Prop({ type: Number, required: true })
+  emailsSent: number;
+
+  @Prop({ type: Number, required: true })
+  emailsTemplates: number;
+
+  @Prop({ type: Number, required: true })
+  domains: number;
 
   @Virtual({
     options: {
