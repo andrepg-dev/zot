@@ -1,14 +1,19 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import * as bcrypt from "bcrypt";
-import { Model } from "mongoose";
+import { randomUUID } from "crypto";
+import { Model, Types } from "mongoose";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { User } from "./schemas/users.schema";
+import { UserQuote } from "./user-quote/schemas/user-quote.schema";
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel(User.name) private userModel: Model<User>) {}
+  constructor(
+    @InjectModel(User.name) private userModel: Model<User>,
+    @InjectModel(UserQuote.name) private userQuoteModel: Model<UserQuote>,
+  ) {}
 
   async create(user: CreateUserDto, providers: Array<"local" | "google" | "github">) {
     try {
@@ -21,19 +26,28 @@ export class UsersService {
       const { password, ...rest } = user;
 
       // generate username
-      const username = `${rest.name}${rest.lastName}`;
+      const randomUuid = randomUUID();
+      const username = `${rest.name}${rest.lastName}${randomUuid}`;
+
+      // Created in the free plan
+      const userQuote = await this.userQuoteModel.create({
+        emailSending: 100,
+        emailTemplates: 3,
+        waitlist: 10,
+      });
 
       const userDocument = new this.userModel({
         ...rest,
         password: bcrypt.hashSync(password, 10),
         username,
         providers,
+        quote: userQuote._id,
       });
 
       return await this.userModel.create(userDocument);
     } catch (error) {
       if (error instanceof HttpException) throw error;
-      throw new HttpException("Error creating user.", HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(`Error creating user. ${error}`, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -50,16 +64,29 @@ export class UsersService {
     }
   }
 
-  async findById(id: string) {
+  async findByEmailWithPassword(email: string) {
     try {
-      const user = await this.userModel.findById({ id });
+      const user = await this.userModel.findOne({ email }).select("+password");
 
       if (!user) return null;
 
       return user;
     } catch (error) {
       if (error instanceof HttpException) throw error;
-      throw new HttpException("Error fetching user.", HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException("Error fetching user by email.", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async findById(id: Types.ObjectId) {
+    try {
+      const user = await this.userModel.findById(id).populate("quote");
+
+      if (!user) return null;
+
+      return user;
+    } catch (error) {
+      if (error instanceof HttpException) throw error;
+      throw new HttpException(`Error fetching user. ${error}`, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 

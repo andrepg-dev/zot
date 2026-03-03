@@ -24,7 +24,7 @@ import {
   ApiUnauthorizedResponse,
 } from "@nestjs/swagger";
 import express from "express";
-import { Types } from "mongoose";
+import mongoose, { Types } from "mongoose";
 import { CreateUserDto } from "../users/dto/create-user.dto";
 import { AuthService } from "./auth.service";
 import { Public } from "./decorators/skip-auth.decorator";
@@ -173,8 +173,8 @@ export class AuthController {
     type: UserProfileResponseDto,
   })
   @ApiUnauthorizedResponse({ description: "Not authenticated" })
-  getProfile(@Request() req: express.Request) {
-    return req.user; // { userId: new ObjectId(""), exp: 324234, iat: 3982 }
+  async getProfile(@UserId() userId: string) {
+    return await this.authService.profile(new mongoose.Types.ObjectId(userId)); // { userId: new ObjectId(""), exp: 324234, iat: 3982 }
   }
 
   @Get("logout")
