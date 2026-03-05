@@ -21,9 +21,23 @@ export class UserQuoteService {
     "domains",
   ];
 
+  async createFreeUserQuote(ownerId: Types.ObjectId | string) {
+    const id = typeof ownerId === "string" ? new Types.ObjectId(ownerId) : ownerId;
+    return this.userQuoteModel.create({
+      owner: id,
+      userSignUp: 15000,
+      waitlist: 3,
+      landingPage: 3,
+      emailsSent: 100,
+      emailsTemplates: 10,
+      domains: 0,
+    });
+  }
+
   async findUserQuote(userId: Types.ObjectId): Promise<UserQuote> {
     try {
-      const quote = await this.userQuoteModel.findOne({ owner: userId }).select("+owner");
+      const ownerId = typeof userId === "string" ? new Types.ObjectId(userId) : userId;
+      const quote = await this.userQuoteModel.findOne({ owner: ownerId }).select("+owner");
 
       if (!quote) {
         throw new NotFoundException("Quote not found");
@@ -51,10 +65,11 @@ export class UserQuoteService {
         throw new BadRequestException("Amount must be greater than 0");
       }
 
-      const quote = await this.userQuoteModel.findOne({ owner: userId }).select("+owner");
+      const ownerId = typeof userId === "string" ? new Types.ObjectId(userId) : userId;
+      let quote = await this.userQuoteModel.findOne({ owner: ownerId }).select("+owner");
 
       if (!quote) {
-        throw new NotFoundException("Quote not found");
+        quote = await this.createFreeUserQuote(ownerId);
       }
 
       const currentValue = quote[update.service] as number;
@@ -73,7 +88,10 @@ export class UserQuoteService {
         throw error;
       }
 
-      throw new InternalServerErrorException("Cannot update the <quote> of the user in database");
+      throw new InternalServerErrorException(
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        error?.response ?? "Cannot update the <quote> of the user in database",
+      );
     }
   }
 }

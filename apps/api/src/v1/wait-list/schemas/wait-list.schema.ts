@@ -1,6 +1,5 @@
-import { Prop, Schema, SchemaFactory, Virtual } from "@nestjs/mongoose";
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Types } from "mongoose";
-import { WaitListUser } from "./wait-list-user.schema";
 
 @Schema({
   timestamps: true,
@@ -26,18 +25,11 @@ export class WaitList {
   @Prop({ required: true, default: true })
   isAvailable: boolean;
 
-  // General configuration
-  @Prop()
-  emailsSent: number;
-
   @Prop()
   fakeUsersBlocked: number;
 
   @Prop()
   webhookUrl: string;
-
-  @Virtual({ options: { ref: "WaitListUser", localField: "_id", foreignField: "waitlistId" } })
-  users: WaitListUser[];
 }
 
 export const WaitListSchema = SchemaFactory.createForClass(WaitList);

@@ -34,9 +34,17 @@ export class WaitListService {
         {
           $lookup: {
             from: "waitlistusers",
+            localField: "_id",
             foreignField: "waitlistId",
             as: "usersPopulate",
+          },
+        },
+        {
+          $lookup: {
+            from: "emailsendrecords",
             localField: "_id",
+            foreignField: "waitlistId",
+            as: "emailsSent",
           },
         },
         {

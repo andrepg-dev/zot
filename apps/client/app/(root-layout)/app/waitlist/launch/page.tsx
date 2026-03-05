@@ -48,7 +48,7 @@ export default function LaunchWaitList() {
   };
 
   return (
-    <PageComponent className="p-8">
+    <PageComponent>
       <HeaderNavigation
         navigationItems={[
           {

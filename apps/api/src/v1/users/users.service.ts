@@ -6,13 +6,13 @@ import { Model, Types } from "mongoose";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { User } from "./schemas/users.schema";
-import { UserQuote } from "./user-quote/schemas/user-quote.schema";
+import { UserQuoteService } from "./user-quote/user-quote.service";
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel(User.name) private userModel: Model<User>,
-    @InjectModel(UserQuote.name) private userQuoteModel: Model<UserQuote>,
+    private readonly userQuoteService: UserQuoteService,
   ) {}
 
   async create(user: CreateUserDto, providers: Array<"local" | "google" | "github">) {
@@ -36,16 +36,7 @@ export class UsersService {
         providers,
       });
 
-      // FREE PLAN
-      const userQuote = await this.userQuoteModel.create({
-        owner: userDocument._id,
-        userSignUp: 15000,
-        waitlist: 3,
-        landingPage: 3,
-        emailsSent: 100,
-        emailsTemplates: 10,
-        domains: 0,
-      });
+      const userQuote = await this.userQuoteService.createFreeUserQuote(userDocument._id);
 
       userDocument.quote = userQuote._id;
 
