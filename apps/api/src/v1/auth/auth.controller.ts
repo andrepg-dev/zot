@@ -131,10 +131,10 @@ export class AuthController {
     if (!req.user) throw new InternalServerErrorException("User not found.");
 
     const access_token = this.jwtService.signUser(req.user);
-    this.cookiesService.saveCookie(res, SAVE_ACCESS_TOKEN_IN_COOKIES_KEY, access_token);
-
     const frontendUrl = this.configService.get<string>("FRONTEND_URL");
-    return res.redirect(`${frontendUrl}/app/dashboard`);
+    // Redirigir al frontend con el token para que lo guarde en cookies de su dominio.
+    // La cookie seteada aquí sería del dominio del API y no es visible en el frontend.
+    return res.redirect(`${frontendUrl}/api/auth/callback?access_token=${encodeURIComponent(access_token)}`);
   }
 
   @Public()
@@ -147,10 +147,8 @@ export class AuthController {
   @ApiInternalServerErrorResponse({ description: "User not found after OAuth" })
   githubAuthRedirect(@UserId() userId: Types.ObjectId, @Response() res: express.Response) {
     const access_token = this.jwtService.signUser({ userId });
-    this.cookiesService.saveCookie(res, SAVE_ACCESS_TOKEN_IN_COOKIES_KEY, access_token);
-
     const frontendUrl = this.configService.get<string>("FRONTEND_URL");
-    return res.redirect(`${frontendUrl}/app/dashboard`);
+    return res.redirect(`${frontendUrl}/api/auth/callback?access_token=${encodeURIComponent(access_token)}`);
   }
 
   @Public()
