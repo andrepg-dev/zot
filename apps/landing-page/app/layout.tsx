@@ -1,3 +1,4 @@
+import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";
 import { Figtree, Geist_Mono } from "next/font/google";
 import "./globals.css";
@@ -73,6 +74,7 @@ export default function RootLayout({
         style={{ backgroundColor: "#000000" }}
       >
         {children}
+        <Analytics />
       </body>
     </html>
   );

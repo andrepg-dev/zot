@@ -34,9 +34,17 @@ export class WaitListService {
         {
           $lookup: {
             from: "waitlistusers",
+            localField: "_id",
             foreignField: "waitlistId",
             as: "usersPopulate",
+          },
+        },
+        {
+          $lookup: {
+            from: "emailsendrecords",
             localField: "_id",
+            foreignField: "waitlistId",
+            as: "emailsSentPopulate",
           },
         },
         {
@@ -62,12 +70,16 @@ export class WaitListService {
               },
               total: { $size: "$usersPopulate" },
             },
+            emailsSent: {
+              $sum: "$emailsSentPopulate.quantitySent",
+            },
           },
         },
         {
           $project: {
             usersPopulate: 0,
             owner: 0,
+            emailsSentPopulate: 0,
           },
         },
       ]);

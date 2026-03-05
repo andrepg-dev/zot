@@ -1,7 +1,7 @@
 import { CreateEmailOptions } from "nestjs-resend";
 
 export type BaseEmail = {
-  to: string | [string];
+  to: string | Array<string>;
   from: string;
   subject: string;
 };

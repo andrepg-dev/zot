@@ -35,7 +35,7 @@ export default function TaskCards() {
         <Link key={task.id} href={task.href}>
           <div
             className={cn(
-              "flex flex-col gap-4 py-5 px-5 rounded-lg border border-dashed hover:from-background hover:to-zinc-950 hover:bg-radial-[at_50%_25%]",
+              "flex flex-col gap-4 py-5 px-5 rounded border border-dashed hover:from-background hover:to-zinc-950 hover:bg-radial-[at_50%_25%]",
               index === 0
                 ? "hover:from-background hover:to-zinc-950 hover:bg-radial-[at_50%_25%] border-r border-b border-t border-l-4 !border-l-primary/70 hover:!border-l-primary rounded-l-none !border-r-zinc-800"
                 : "hover:!border-zinc-700"

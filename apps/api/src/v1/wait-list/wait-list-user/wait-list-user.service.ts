@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { Model, Types } from "mongoose";
+import mongoose, { Model, Types } from "mongoose";
 import { WaitListUser } from "../schemas/wait-list-user.schema";
 import { WaitList } from "../schemas/wait-list.schema";
 import { RegisterWaitListUserDto } from "./dto/register-wait-list-user.dto";
@@ -15,7 +15,7 @@ export class WaitListUserService {
 
   private async validateOwnership(
     waitlistId: Types.ObjectId,
-    owner: Types.ObjectId | undefined,
+    owner: Types.ObjectId,
   ): Promise<void> {
     if (!owner) {
       throw new HttpException(
@@ -76,18 +76,37 @@ export class WaitListUserService {
     }
   }
 
-  async findAll(waitlistId: Types.ObjectId, owner: Types.ObjectId | undefined) {
+  async findAll(
+    waitlistId: Types.ObjectId,
+    owner: Types.ObjectId,
+    pipeline: mongoose.PipelineStage[] = [],
+  ) {
     try {
       await this.validateOwnership(waitlistId, owner);
 
-      return await this.WaitListUserModel.find({ waitlistId: waitlistId }).sort({ position: 1 });
+      const basePipeline: mongoose.PipelineStage[] = [
+        {
+          $match: { waitlistId },
+        },
+        {
+          $sort: { position: 1 },
+        },
+        {
+          $project: {
+            waitlistId: 0,
+          },
+        },
+      ];
+
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+      return await this.WaitListUserModel.aggregate([...basePipeline, ...pipeline]).exec();
     } catch (error) {
       if (error instanceof HttpException) throw error;
       throw new HttpException("Error fetching waitlist users.", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
-  async findByEmail(waitlistId: Types.ObjectId, email: string, owner: Types.ObjectId | undefined) {
+  async findByEmail(waitlistId: Types.ObjectId, email: string, owner: Types.ObjectId) {
     try {
       await this.validateOwnership(waitlistId, owner);
 
@@ -110,7 +129,7 @@ export class WaitListUserService {
     }
   }
 
-  async remove(waitlistId: Types.ObjectId, email: string, owner: Types.ObjectId | undefined) {
+  async remove(waitlistId: Types.ObjectId, email: string, owner: Types.ObjectId) {
     try {
       await this.validateOwnership(waitlistId, owner);
 
@@ -136,7 +155,7 @@ export class WaitListUserService {
     }
   }
 
-  async count(waitlistId: Types.ObjectId, owner: Types.ObjectId | undefined) {
+  async count(waitlistId: Types.ObjectId, owner: Types.ObjectId) {
     try {
       await this.validateOwnership(waitlistId, owner);
       return await this.WaitListUserModel.countDocuments({ waitlistId: waitlistId });
@@ -146,7 +165,7 @@ export class WaitListUserService {
     }
   }
 
-  async countReferred(waitlistId: Types.ObjectId, owner: Types.ObjectId | undefined) {
+  async countReferred(waitlistId: Types.ObjectId, owner: Types.ObjectId) {
     try {
       await this.validateOwnership(waitlistId, owner);
 

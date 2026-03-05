@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable, NotFoundException } from "@nestjs/common";
 import * as bcrypt from "bcrypt";
 import { Types } from "mongoose";
 import { CreateUserDto } from "../users/dto/create-user.dto";
@@ -10,7 +10,7 @@ export class AuthService {
   constructor(private usersService: UsersService) {}
 
   async login(userDto: LoginUserDto) {
-    const user = await this.usersService.findByEmail(userDto.email);
+    const user = await this.usersService.findByEmailWithPassword(userDto.email);
 
     if (!user) {
       throw new HttpException("User not found.", HttpStatus.BAD_REQUEST);
@@ -39,5 +39,15 @@ export class AuthService {
     }
 
     return { _id: response._id };
+  }
+
+  async profile(user: Types.ObjectId) {
+    const userProfile = await this.usersService.findById(user);
+
+    if (!userProfile) {
+      throw new NotFoundException("User not found");
+    }
+
+    return userProfile;
   }
 }

@@ -9,7 +9,7 @@ export default function PageComponent({
   
 
   return (
-    <div {...props} className={cn("p-8 text-sm", className)}>
+    <div {...props} className={cn("p-6 text-sm", className)}>
       {children}
     </div>
   );

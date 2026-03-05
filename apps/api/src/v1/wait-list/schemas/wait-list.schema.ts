@@ -1,6 +1,5 @@
-import { BasedOwnerSchema } from "@api/src/common/schemas/based-owner.schema";
-import { Prop, Schema, SchemaFactory, Virtual } from "@nestjs/mongoose";
-import { WaitListUser } from "./wait-list-user.schema";
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { Types } from "mongoose";
 
 @Schema({
   timestamps: true,
@@ -9,7 +8,11 @@ import { WaitListUser } from "./wait-list-user.schema";
   toObject: { virtuals: true },
   id: false,
 })
-export class WaitList extends BasedOwnerSchema {
+export class WaitList {
+  // hidden owner
+  @Prop({ type: Types.ObjectId, ref: "user", required: true, index: true, select: false })
+  owner: Types.ObjectId;
+
   @Prop({ required: true })
   name: string;
 
@@ -22,18 +25,11 @@ export class WaitList extends BasedOwnerSchema {
   @Prop({ required: true, default: true })
   isAvailable: boolean;
 
-  // General configuration
-  @Prop()
-  emailsSent: number;
-
   @Prop()
   fakeUsersBlocked: number;
 
   @Prop()
   webhookUrl: string;
-
-  @Virtual({ options: { ref: "WaitListUser", localField: "_id", foreignField: "waitlistId" } })
-  users: WaitListUser[];
 }
 
 export const WaitListSchema = SchemaFactory.createForClass(WaitList);

@@ -1,4 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import mongoose, { Types } from "mongoose";
+import { UserQuote } from "../user-quote/schemas/user-quote.schema";
 
 @Schema({ timestamps: true })
 export class User {
@@ -14,10 +16,10 @@ export class User {
   @Prop({ required: true, unique: true })
   username: string;
 
-  @Prop({ required: false })
+  @Prop({ required: false, select: false })
   password?: string;
 
-  @Prop({ default: "local" }) // Local, Google, Github
+  @Prop({ default: "local" })
   providers: Array<"google" | "local" | "github">;
 
   @Prop()
@@ -28,6 +30,9 @@ export class User {
 
   @Prop({ default: "FREE", enum: ["FREE", "PREMIUM", "SCALE"] })
   suscriptionPlan: "FREE" | "PREMIUM" | "SCALE";
+
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: UserQuote.name, required: true })
+  quote: Types.ObjectId;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

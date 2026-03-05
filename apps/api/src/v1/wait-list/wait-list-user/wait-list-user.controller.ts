@@ -66,6 +66,7 @@ export class WaitListUserController {
     @Param("waitlistId", ParseObjectIdPipe) waitlistId: Types.ObjectId,
     @UserId() userId: Types.ObjectId,
   ) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return await this.waitListUserService.findAll(waitlistId, userId);
   }
 
