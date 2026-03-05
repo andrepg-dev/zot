@@ -25,7 +25,7 @@ export default function BarChartComponent() {
   const { isClient } = useIsClient()
 
   return (
-    <div className="col-span-2 flex min-w-0 flex-col rounded-lg border border-dashed p-6 bg-background">
+    <div className="col-span-2 flex min-w-0 flex-col rounded border border-dashed p-6 bg-background">
       <div className="flex flex-col gap-2 mb-4">
         <div className="flex items-center gap-2">
           <h3 className="text-base font-medium">Bar Chart</h3>

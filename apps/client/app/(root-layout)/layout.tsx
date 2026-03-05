@@ -1,4 +1,4 @@
-import RootLayoutContent from "@/components/global/root-layout-content";
+import RootLayoutContent from "@/components/layouts/root-layout-content";
 import Header from "@/components/header/header";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

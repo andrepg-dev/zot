@@ -88,7 +88,7 @@ export default function LaunchedWaitList({ params }: { params: Promise<{ id: str
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mt-4 rounded-default">
         {stats.map((stat) => (
-          <div key={stat.id} className="border border-dashed rounded-lg bg-background">
+          <div key={stat.id} className="border border-dashed rounded bg-background">
             <div className="p-6 py-5">
               <div className="flex flex-col gap-2">
                 <NumberFlow value={parseInt(stat.value ?? 0)} className="text-2xl font-semibold" />

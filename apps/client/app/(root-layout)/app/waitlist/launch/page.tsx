@@ -95,7 +95,7 @@ export default function LaunchWaitList() {
               description="This shows up to Signups in the no-code widget, when they sign up, and in any emails."
               error={errors.name}
               isRequired
-              className="p-4"
+              className="p-4 rounded"
             >
               <InputComponent placeholder="App Launch" maxLength={30} {...register("name")} autoFocus />
             </FormField>
