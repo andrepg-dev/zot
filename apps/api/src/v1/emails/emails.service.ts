@@ -74,13 +74,6 @@ export class EmailsService {
 
     const emailUsageSending = usersList.length;
 
-    const usage = await this.userquoteService.editUserQuote(userId, {
-      service: "emailsSent",
-      decrease: emailUsageSending,
-    });
-
-    console.log({ emailUsageSending, usage });
-
     // How to save emails sending stats
     /**
      * Puedo hacer algo, ya sea guardar los datos de la waitlist en el mismo esquema, o hacer un esquema completamente aparte, que contenga a los usuarios
@@ -120,13 +113,27 @@ export class EmailsService {
         failedEmails: [],
       });
 
+      const usage = await this.userquoteService.editUserQuote(userId, {
+        service: "emailsSent",
+        decrease: emailUsageSending,
+      });
+
       return {
         ...result,
         quantity: emailUsageSending,
         users: usersList,
         emailsQuoteAvailable: usage.emailsSent,
       };
-    } catch (error) {
+    } catch (err) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      if (err?.status != 500) {
+        // If the problem is from the server, should not be in the user quote
+        await this.userquoteService.editUserQuote(userId, {
+          service: "emailsSent",
+          decrease: emailUsageSending,
+        });
+      }
+
       await this.emailSendRecordModel.create({
         owner: userId,
         waitlistId,
@@ -136,7 +143,8 @@ export class EmailsService {
         failedCount: usersList.length,
         failedEmails: usersList,
       });
-      throw error;
+
+      throw err;
     }
   }
 }
