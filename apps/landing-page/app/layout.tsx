@@ -38,7 +38,7 @@ export const metadata: Metadata = {
     siteName: "Zot",
     images: [
       {
-        url: "/og-image.png",
+        url: "/og-image.webp",
         width: 1200,
         height: 630,
         alt: "Zot dashboard showing waitlist analytics and product launch metrics",
@@ -52,7 +52,7 @@ export const metadata: Metadata = {
     title: "Zot | Launch and validate products with waitlist analytics",
     description:
       "Zot helps developers launch and validate new products with high converting waitlists, real time analytics, and code first email templates.",
-    images: ["/og-image.png"],
+    images: ["/og-image.webp"],
   },
   icons: {
     icon: "/zot-icon.svg",
