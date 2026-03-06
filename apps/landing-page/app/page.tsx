@@ -57,7 +57,7 @@ export default function HomePage() {
         </div>
       </div>
 
-      <div className="w-full h-screen absolute -z-10 bg-black bg-[url('/background.png')] bg-cover bg-center">
+      <div className="w-full h-screen absolute -z-10 bg-black bg-[url('/background.webp')] bg-cover bg-center">
         <DarkVeil
           speed={2.5}
           hueShift={0}
@@ -177,7 +177,7 @@ export default function HomePage() {
             <HugeiconsIcon icon={PlusSignIcon} size={26} strokeWidth={1} className="absolute -left-[12.5px] -top-[12.5px] z-50 text-zinc-700" />
 
             <ProductivityInsightsCard
-              previewImage={{ src: "/analytics-4.png", alt: "Screenshot de analytics" }}
+              previewImage={{ src: "/analytics-4.webp", alt: "Screenshot de analytics" }}
               previewUrl="zot.so"
             />
           </AnimatedContent>
@@ -266,11 +266,11 @@ export default function HomePage() {
             {/* Lado izquierdo: imagen con difuminado en el borde derecho */}
             <div className="relative h-[280px] lg:h-auto lg:min-h-[320px] shrink-0">
               <div className="absolute inset-0 bg-zinc-900/80">
-                {/* Sustituir por <Image /> cuando tengas la imagen en /public (ej. task-management-preview.png) */}
+                {/* Sustituir por <Image /> cuando tengas la imagen en /public (ej. task-management-preview.webp) */}
                 <div
                   className="absolute inset-0 bg-cover bg-center"
                   style={{
-                    backgroundImage: "url(/ai-editor-2.png)",
+                    backgroundImage: "url(/ai-editor-2.webp)",
                     backgroundColor: "rgb(39 39 42)", // fallback si no hay imagen
                   }}
                 />
