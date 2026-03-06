@@ -136,3 +136,9 @@ body {
     drop-shadow(0 0 20px rgba(147, 112, 219, 0.4))
     drop-shadow(0 0 28px rgba(74, 222, 128, 0.25));
 }
+
+/* Below-the-fold: skip rendering until near viewport (rendering-content-visibility) */
+.content-visibility-auto {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 500px;
+}

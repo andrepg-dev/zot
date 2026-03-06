@@ -1,18 +1,9 @@
-import AnimatedContent from "@/components/AnimatedContent";
-import DarkVeil from "@/components/DarkVeil";
-import EnhanceReliabilitySection from "@/components/EnhanceReliabilitySection";
-import FaqSection from "@/components/FaqSection";
-import HeroCascade from "@/components/HeroCascade";
 import LandingPageTitle from "@/components/LandingPageTitle";
 import type { LogoItem } from "@/components/LogoLoop";
 import LogoLoop from "@/components/LogoLoop";
-import PricingSection from "@/components/PricingSection";
 import ProductivityInsightsCard from "@/components/ProductivityInsightsCard";
 import ProjectsChartSVG from "@/components/ProjectsChartSVG";
-import ReadyToStartSection from "@/components/ReadyToStartSection";
 import ShinyText from "@/components/ShinyText";
-import TeamCollaborationSection from "@/components/TeamCollaborationSection";
-import TestimonialsSection from "@/components/TestimonialsSection";
 import { getDashboardUrl } from "@/lib/dashboard-url";
 import {
   ChartColumnIcon,
@@ -27,8 +18,48 @@ import {
   YoutubeIcon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
+import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
+
+const DarkVeil = dynamic(() => import("@/components/DarkVeil"), {
+  loading: () => <div className="absolute inset-0" aria-hidden />,
+});
+
+const HeroCascade = dynamic(() => import("@/components/HeroCascade"), {
+  loading: () => (
+    <div
+      className="flex justify-center items-center w-full min-h-screen flex-col pt-28 sm:pt-32 pb-32 sm:pb-24"
+      aria-label="Hero section"
+    >
+      <div className="flex mb-16 sm:mb-20 lg:mb-36 justify-center items-center w-full gap-4 flex-col px-4 sm:px-6 min-h-[50vh]" />
+    </div>
+  ),
+});
+
+const AnimatedContent = dynamic(() => import("@/components/AnimatedContent"), {
+  loading: () => <div className="min-h-[200px]" />,
+});
+
+const EnhanceReliabilitySection = dynamic(
+  () => import("@/components/EnhanceReliabilitySection")
+);
+
+const TeamCollaborationSection = dynamic(
+  () => import("@/components/TeamCollaborationSection")
+);
+
+const TestimonialsSection = dynamic(
+  () => import("@/components/TestimonialsSection")
+);
+
+const PricingSection = dynamic(() => import("@/components/PricingSection"));
+
+const ReadyToStartSection = dynamic(
+  () => import("@/components/ReadyToStartSection")
+);
+
+const FaqSection = dynamic(() => import("@/components/FaqSection"));
 
 const logoipsumLogos: LogoItem[] = [
   { src: "/icons/zot-icon-only.svg", alt: "Zot", title: "Zot", width: 55, height: 32 },
@@ -150,7 +181,7 @@ export default function HomePage() {
         </div>
       </HeroCascade>
 
-      <section className="px-4 sm:px-6 md:px-8 lg:px-16 pb-20 sm:pb-24 lg:pb-32 bg-black">
+      <section className="content-visibility-auto px-4 sm:px-6 md:px-8 lg:px-16 pb-20 sm:pb-24 lg:pb-32 bg-black">
         <LandingPageTitle
           subtitle="WaitList insights"
           title={{ before: "Advanced", gradient: "Analytics" }}
@@ -242,10 +273,12 @@ export default function HomePage() {
         <EnhanceReliabilitySection />
       </section>
 
-      <TeamCollaborationSection />
+      <div className="content-visibility-auto">
+        <TeamCollaborationSection />
+      </div>
 
 
-      <section className="px-4 sm:px-6 md:px-8 lg:px-16 xl:px-32 pb-20 sm:pb-24 lg:pb-32 bg-[#000000]">
+      <section className="content-visibility-auto px-4 sm:px-6 md:px-8 lg:px-16 xl:px-32 pb-20 sm:pb-24 lg:pb-32 bg-[#000000]">
         <LandingPageTitle
           subtitle="Stay connected"
           title={{ before: "Emails &", gradient: "notifications" }}
@@ -359,13 +392,21 @@ export default function HomePage() {
         </div>
       </section>
 
-      <TestimonialsSection />
+      <div className="content-visibility-auto">
+        <TestimonialsSection />
+      </div>
 
-      <PricingSection />
+      <div className="content-visibility-auto">
+        <PricingSection />
+      </div>
 
-      <ReadyToStartSection />
+      <div className="content-visibility-auto">
+        <ReadyToStartSection />
+      </div>
 
-      <FaqSection />
+      <div className="content-visibility-auto">
+        <FaqSection />
+      </div>
 
       <footer
         id="contact"
