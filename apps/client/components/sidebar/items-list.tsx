@@ -87,10 +87,9 @@ export default function ItemList({ navItems }: { navItems: NavItemOrDivider[] | 
               {hasSubItems ? (
                 <div
                   className={clsx(
-                    "flex items-center gap-2 py-1.5 px-2 h-[35px] text-muted-foreground rounded-sm cursor-pointer hover:bg-default-50",
-                    {
-                      "text-white": isActive
-                    }
+                    "flex items-center gap-2 py-1.5 px-2 h-[35px] text-muted-foreground rounded-sm cursor-pointer",
+                    !isActive && "hover:bg-default-50",
+                    isActive && "text-white"
                   )}
                   onClick={() => toggleExpand(itemId)}
                 >
@@ -107,10 +106,9 @@ export default function ItemList({ navItems }: { navItems: NavItemOrDivider[] | 
                 <Link
                   href={href}
                   className={clsx(
-                    "flex items-center gap-2 py-1.5 px-2 h-[35px] text-muted-foreground rounded-sm hover:bg-default-50",
-                    {
-                      "text-white bg-default-100": isActive
-                    }
+                    "flex items-center gap-2 py-1.5 px-2 h-[35px] text-muted-foreground rounded-sm",
+                    !isActive && "hover:bg-default-50",
+                    isActive && "text-white bg-default-100"
                   )}
                 >
                   {Icon ? <Icon className={cn("size-4", isActive && "text-primary-400")} /> : null}
@@ -127,9 +125,9 @@ export default function ItemList({ navItems }: { navItems: NavItemOrDivider[] | 
                         <Link
                           href={sub.href}
                           className={cn(
-                            "flex items-center gap-2 py-1.5 px-3 !rounded-l-none h-[35px] text-muted-foreground rounded-sm",
-                            isSubActive && "text-white border-l-3",
-                            !isSubActive && "hover:text-zinc-300 !border-l-transparent border-l-3"
+                            "flex items-center gap-2 py-1.5 px-3 !rounded-l-none h-[35px] text-muted-foreground rounded-sm border-l-3",
+                            isSubActive && "text-white",
+                            !isSubActive && "hover:text-zinc-300 !border-l-transparent"
                           )}
                         >
                           {SubIcon ? (
