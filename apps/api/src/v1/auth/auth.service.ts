@@ -1,13 +1,29 @@
-import { HttpException, HttpStatus, Injectable, NotFoundException } from "@nestjs/common";
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from "@nestjs/common";
+import { InjectModel } from "@nestjs/mongoose";
 import * as bcrypt from "bcrypt";
-import { Types } from "mongoose";
+import { Model, Types } from "mongoose";
+
+import { toObjectId } from "@api/src/common/data-transform/to-object-id";
+import { JwtClassService } from "@api/src/common/jwt-services/jwt-services.service";
 import { CreateUserDto } from "../users/dto/create-user.dto";
 import { LoginUserDto } from "../users/dto/login-user.dto";
 import { UsersService } from "../users/users.service";
+import { RefreshToken } from "./schemas/refresh_token.schema";
 
 @Injectable()
 export class AuthService {
-  constructor(private usersService: UsersService) {}
+  constructor(
+    private usersService: UsersService,
+    private readonly jwtClassService: JwtClassService,
+    @InjectModel(RefreshToken.name)
+    private readonly refreshTokenModel: Model<RefreshToken>,
+  ) {}
 
   async login(userDto: LoginUserDto) {
     const user = await this.usersService.findByEmailWithPassword(userDto.email);
@@ -51,9 +67,41 @@ export class AuthService {
     return userProfile;
   }
 
-  // I'm going to receieve the access_token via headers, so I need to make this, before this function will
-  // be executed another one as firsts.
-  // The middleware.
-  // Also, i need to see again who is assigning the JWT and refresh_token to save the refresh_token.
-  async refresh_token() {}
+  async createRefreshToken(userId: Types.ObjectId): Promise<string> {
+    const refreshToken = this.jwtClassService.signUser({ userId }, { expiresIn: "7d" });
+
+    await this.refreshTokenModel.create({
+      refresh_token: refreshToken,
+      user: userId,
+    });
+
+    return refreshToken;
+  }
+
+  async refresh_token(refreshToken: string | undefined): Promise<{ userId: Types.ObjectId }> {
+    if (!refreshToken) {
+      throw new UnauthorizedException("Refresh token not provided");
+    }
+
+    let payload: { userId: string };
+
+    try {
+      payload = this.jwtClassService.verifyToken<{ userId: string }>(refreshToken);
+    } catch {
+      throw new UnauthorizedException("Invalid refresh token");
+    }
+
+    const userId = toObjectId(payload.userId);
+
+    const storedToken = await this.refreshTokenModel.findOne({
+      refresh_token: refreshToken,
+      user: userId,
+    });
+
+    if (!storedToken) {
+      throw new UnauthorizedException("Refresh token not found");
+    }
+
+    return { userId };
+  }
 }

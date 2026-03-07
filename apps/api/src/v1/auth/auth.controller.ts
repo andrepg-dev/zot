@@ -2,7 +2,10 @@ import { CookiesService } from "@api/src/common/cookies.service";
 import { UserId } from "@api/src/common/decorators/user-id.decorator";
 import { JwtClassService } from "@api/src/common/jwt-services/jwt-services.service";
 import { SaveJWTInCookiesService } from "@api/src/common/saveJWT-in-cookies.service";
-import { SAVE_ACCESS_TOKEN_IN_COOKIES_KEY } from "@api/src/constants/authentication";
+import {
+  SAVE_ACCESS_TOKEN_IN_COOKIES_KEY,
+  SAVE_REFRESH_TOKEN_IN_COOKIES_KEY,
+} from "@api/src/constants/authentication";
 import {
   Body,
   Controller,
@@ -63,8 +66,16 @@ export class AuthController {
     type: AccessTokenResponseDto,
   })
   @ApiUnauthorizedResponse({ description: "Invalid credentials" })
-  login(@UserId() userId: Types.ObjectId, @Response({ passthrough: true }) res: express.Response) {
+  async login(
+    @UserId() userId: Types.ObjectId,
+    @Response({ passthrough: true }) res: express.Response,
+  ) {
     this.saveJWTInCookiesService.saveAccessToken(res, { userId });
+
+    // save in database, and save in cookies
+    const refreshToken = await this.authService.createRefreshToken(userId);
+    this.saveJWTInCookiesService.saveRefreshToken(res, refreshToken);
+
     return { success: true, message: "Logged succesfully" };
   }
 
@@ -91,7 +102,36 @@ export class AuthController {
     req.user = { userId: newUser._id };
     this.saveJWTInCookiesService.saveAccessToken(res, { userId: newUser._id });
 
+    const refreshToken = await this.authService.createRefreshToken(newUser._id);
+    this.saveJWTInCookiesService.saveRefreshToken(res, refreshToken);
+
     return { success: true, message: "Registration succesfully" };
+  }
+
+  @Public()
+  @Get("refresh")
+  @ApiOperation({
+    summary: "Refresh access token",
+    description: "Uses the refresh token cookie to issue a new access token.",
+  })
+  @ApiOkResponse({
+    description: "Access token refreshed successfully",
+    type: AccessTokenResponseDto,
+  })
+  @ApiUnauthorizedResponse({ description: "Invalid or missing refresh token" })
+  async refresh(
+    @Request() req: express.Request,
+    @Response({ passthrough: true }) res: express.Response,
+  ) {
+    const refreshToken = req.cookies?.[SAVE_REFRESH_TOKEN_IN_COOKIES_KEY] as string | undefined;
+
+    // verify refresh_token
+    const { userId } = await this.authService.refresh_token(refreshToken);
+
+    // Generate and save access token based of the response of the refresh token
+    this.saveJWTInCookiesService.saveAccessToken(res, { userId });
+
+    return { success: true, message: "Access token refreshed successfully" };
   }
 
   @Public()
@@ -175,6 +215,7 @@ export class AuthController {
   })
   logout(@Response({ passthrough: true }) res: express.Response) {
     this.cookiesService.clearCookie(res, SAVE_ACCESS_TOKEN_IN_COOKIES_KEY);
+    this.cookiesService.clearCookie(res, SAVE_REFRESH_TOKEN_IN_COOKIES_KEY);
     return { message: "Logged out successfully" };
   }
 }
