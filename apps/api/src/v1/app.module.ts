@@ -8,7 +8,7 @@ import { EmailsModule } from "./emails/emails.module";
 import { ReactToHtmlModule } from "./react-to-html/react-to-html.module";
 import { UsersModule } from "./users/users.module";
 import { WaitListModule } from "./wait-list/wait-list.module";
-import { EmailSendingService } from './core/email-sending/email-sending.service';
+import { EmailSendingService } from "./core/email-sending/email-sending.service";
 
 @Module({
   imports: [

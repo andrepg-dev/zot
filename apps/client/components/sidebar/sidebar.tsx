@@ -13,7 +13,6 @@ import Link from "next/link";
 
 import useSidebarStore from "@/store/sidebar/sidebar.store";
 import {
-  Button,
   Dropdown,
   DropdownItem,
   DropdownMenu,
