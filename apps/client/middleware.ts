@@ -4,14 +4,18 @@ import { NextResponse, type NextRequest } from "next/server";
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
   const cookieStore = await cookies();
-  const extract_access_token = cookieStore.get("access_token");
-  const access_token_value = extract_access_token?.value;
 
-  if (pathname === "/login" && access_token_value) {
+  const extract_refresh_token = cookieStore.get("refresh_token");
+
+  const refresh_token_value = extract_refresh_token?.value;
+
+  const tokensExists = refresh_token_value;
+
+  if (pathname === "/login" && tokensExists) {
     return NextResponse.redirect(new URL("/app/dashboard", request.url));
   }
 
-  if (pathname !== "/login" && !access_token_value) {
+  if (pathname !== "/login" && !tokensExists) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 

@@ -72,6 +72,7 @@ export class AuthController {
     @Response({ passthrough: true }) res: express.Response,
   ) {
     this.saveJWTInCookiesService.saveAccessToken(res, { userId });
+    // This is different of the up of us
     await this.authService.createRefreshToken(res, userId);
 
     return { success: true, message: "Logged succesfully" };
