@@ -134,7 +134,9 @@ export class AuthController {
     const frontendUrl = this.configService.get<string>("FRONTEND_URL");
     // Redirigir al frontend con el token para que lo guarde en cookies de su dominio.
     // La cookie seteada aquí sería del dominio del API y no es visible en el frontend.
-    return res.redirect(`${frontendUrl}/api/auth/callback?access_token=${encodeURIComponent(access_token)}`);
+    return res.redirect(
+      `${frontendUrl}/api/auth/callback?access_token=${encodeURIComponent(access_token)}`,
+    );
   }
 
   @Public()
@@ -148,7 +150,9 @@ export class AuthController {
   githubAuthRedirect(@UserId() userId: Types.ObjectId, @Response() res: express.Response) {
     const access_token = this.jwtService.signUser({ userId });
     const frontendUrl = this.configService.get<string>("FRONTEND_URL");
-    return res.redirect(`${frontendUrl}/api/auth/callback?access_token=${encodeURIComponent(access_token)}`);
+    return res.redirect(
+      `${frontendUrl}/api/auth/callback?access_token=${encodeURIComponent(access_token)}`,
+    );
   }
 
   @Public()

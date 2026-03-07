@@ -50,4 +50,10 @@ export class AuthService {
 
     return userProfile;
   }
+
+  // I'm going to receieve the access_token via headers, so I need to make this, before this function will
+  // be executed another one as firsts.
+  // The middleware.
+  // Also, i need to see again who is assigning the JWT and refresh_token to save the refresh_token.
+  async refresh_token() {}
 }
