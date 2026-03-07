@@ -14,6 +14,7 @@ import {
   Post,
   Request,
   Response,
+  UnauthorizedException,
   UseGuards,
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
@@ -71,10 +72,7 @@ export class AuthController {
     @Response({ passthrough: true }) res: express.Response,
   ) {
     this.saveJWTInCookiesService.saveAccessToken(res, { userId });
-
-    // save in database, and save in cookies
-    const refreshToken = await this.authService.createRefreshToken(userId);
-    this.saveJWTInCookiesService.saveRefreshToken(res, refreshToken);
+    await this.authService.createRefreshToken(res, userId);
 
     return { success: true, message: "Logged succesfully" };
   }
@@ -101,37 +99,9 @@ export class AuthController {
     // Inserting user into the request, we need to insert a string into the jwtService at the moment to convert
     req.user = { userId: newUser._id };
     this.saveJWTInCookiesService.saveAccessToken(res, { userId: newUser._id });
-
-    const refreshToken = await this.authService.createRefreshToken(newUser._id);
-    this.saveJWTInCookiesService.saveRefreshToken(res, refreshToken);
+    await this.authService.createRefreshToken(res, newUser._id);
 
     return { success: true, message: "Registration succesfully" };
-  }
-
-  @Public()
-  @Get("refresh")
-  @ApiOperation({
-    summary: "Refresh access token",
-    description: "Uses the refresh token cookie to issue a new access token.",
-  })
-  @ApiOkResponse({
-    description: "Access token refreshed successfully",
-    type: AccessTokenResponseDto,
-  })
-  @ApiUnauthorizedResponse({ description: "Invalid or missing refresh token" })
-  async refresh(
-    @Request() req: express.Request,
-    @Response({ passthrough: true }) res: express.Response,
-  ) {
-    const refreshToken = req.cookies?.[SAVE_REFRESH_TOKEN_IN_COOKIES_KEY] as string | undefined;
-
-    // verify refresh_token
-    const { userId } = await this.authService.refresh_token(refreshToken);
-
-    // Generate and save access token based of the response of the refresh token
-    this.saveJWTInCookiesService.saveAccessToken(res, { userId });
-
-    return { success: true, message: "Access token refreshed successfully" };
   }
 
   @Public()
@@ -201,6 +171,23 @@ export class AuthController {
   @ApiUnauthorizedResponse({ description: "Not authenticated" })
   async getProfile(@UserId() userId: string) {
     return await this.authService.profile(new mongoose.Types.ObjectId(userId)); // { userId: new ObjectId(""), exp: 324234, iat: 3982 }
+  }
+
+  @Public()
+  @Get("refresh-token")
+  async profile(
+    @Response({ passthrough: true }) res: express.Response,
+    @Request() req: express.Request,
+  ) {
+    // get value from the header cookies
+    const refresh_token = req.cookies[SAVE_REFRESH_TOKEN_IN_COOKIES_KEY] as string | undefined;
+    if (!refresh_token) throw new UnauthorizedException("Refresh token not provided");
+
+    const { userId } = await this.authService.ValidateRefreshToken(refresh_token);
+
+    this.saveJWTInCookiesService.saveAccessToken(res, { userId });
+
+    return { success: true, message: "Access token generated successfully" };
   }
 
   @Get("logout")
