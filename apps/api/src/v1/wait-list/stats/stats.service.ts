@@ -12,6 +12,7 @@ export type WaitListStats = Omit<WaitList, "owner"> & {
   emailsSent: number;
   dailyRegistration: Array<{ createdAt: Date; registrations: number }>;
   topReferrers: Array<{ email: string; referrals: number }>;
+  conversionRateOverTime: Array<{ createdAt: Date; conversionRate: number }>;
 };
 
 @Injectable()
@@ -157,12 +158,24 @@ export class StatsService {
       },
     ]);
 
-    /**
-     * Top Referrers
-     *
-     * [ {email: "", referrals: number} ]
-     */
+    const stat = stats[0];
 
-    return stats[0];
+    const maxRegistrations =
+      stat?.dailyRegistration && stat.dailyRegistration.length > 0
+        ? Math.max(...stat.dailyRegistration.map((d) => d.registrations))
+        : 0;
+
+    const conversionRateOverTime =
+      maxRegistrations > 0 && stat?.dailyRegistration
+        ? stat.dailyRegistration.map((d) => ({
+            createdAt: d.createdAt,
+            conversionRate: (d.registrations / maxRegistrations) * 100,
+          }))
+        : [];
+
+    return {
+      ...stat,
+      conversionRateOverTime,
+    };
   }
 }
