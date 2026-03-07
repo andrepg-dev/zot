@@ -1,6 +1,7 @@
 import { CookiesService } from "@api/src/common/cookies.service";
 import { UserId } from "@api/src/common/decorators/user-id.decorator";
 import { JwtClassService } from "@api/src/common/jwt-services/jwt-services.service";
+import { SaveJWTInCookiesService } from "@api/src/common/saveJWT-in-cookies.service";
 import { SAVE_ACCESS_TOKEN_IN_COOKIES_KEY } from "@api/src/constants/authentication";
 import {
   Body,
@@ -46,6 +47,7 @@ export class AuthController {
     private jwtService: JwtClassService,
     private cookiesService: CookiesService,
     private configService: ConfigService,
+    private readonly saveJWTInCookiesService: SaveJWTInCookiesService,
   ) {}
 
   @Public()
@@ -62,9 +64,7 @@ export class AuthController {
   })
   @ApiUnauthorizedResponse({ description: "Invalid credentials" })
   login(@UserId() userId: Types.ObjectId, @Response({ passthrough: true }) res: express.Response) {
-    const access_token = this.jwtService.signUser({ userId });
-    this.cookiesService.saveCookie(res, SAVE_ACCESS_TOKEN_IN_COOKIES_KEY, access_token);
-
+    this.saveJWTInCookiesService.saveAccessToken(res, { userId });
     return { success: true, message: "Logged succesfully" };
   }
 
@@ -89,23 +89,7 @@ export class AuthController {
 
     // Inserting user into the request, we need to insert a string into the jwtService at the moment to convert
     req.user = { userId: newUser._id };
-    /**
-     * En las cookies, guardo el valor de una manera diferente.
-     *
-     * Las cookies y el JWT.Sign son diferentes, cosa que me ha costado diferenciar.
-     *
-     * jwtService => Genera el JWT mediante un string
-     *
-     * CookiesService => Guarda ese JWT
-     *
-     * Nosotros lo que tenemos que hacer, es:
-     * Convertir ese string guardado, y convertirlo a Types.ObjectId
-     *
-     * Guardo el token de dos maneras diferentes: en las cookies de usuario y en la request
-     */
-
-    const access_token = this.jwtService.signUser({ userId: newUser._id });
-    this.cookiesService.saveCookie(res, SAVE_ACCESS_TOKEN_IN_COOKIES_KEY, access_token);
+    this.saveJWTInCookiesService.saveAccessToken(res, { userId: newUser._id });
 
     return { success: true, message: "Registration succesfully" };
   }

@@ -2,6 +2,7 @@ import { Module } from "@nestjs/common";
 
 import { CookiesService } from "@api/src/common/cookies.service";
 import { JwtServicesModule } from "@api/src/common/jwt-services/jwt-services.module";
+import { SaveJWTInCookiesService } from "@api/src/common/saveJWT-in-cookies.service";
 import { UsersModule } from "../users/users.module";
 import { AuthController } from "./auth.controller";
 import { AuthService } from "./auth.service";
@@ -15,6 +16,7 @@ import { LocalStrategy } from "./strategies/local.strategy";
   controllers: [AuthController],
   providers: [
     CookiesService,
+    SaveJWTInCookiesService,
     AuthService,
     LocalStrategy,
     JwtStrategy,
