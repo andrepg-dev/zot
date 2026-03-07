@@ -17,4 +17,8 @@ export class JwtClassService {
   signUser(param: { userId: Types.ObjectId }, options?: JwtSignOptions): string {
     return this.jwtService.sign({ userId: param.userId.toString() }, options);
   }
+
+  verifyToken<T extends object = any>(token: string): T {
+    return this.jwtService.verify<T>(token);
+  }
 }

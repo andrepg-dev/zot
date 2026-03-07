@@ -106,4 +106,3 @@ describe("WaitListUserController", () => {
     expect(result).toBe(expected);
   });
 });
-

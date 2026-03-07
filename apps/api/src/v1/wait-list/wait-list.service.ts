@@ -27,7 +27,8 @@ export class WaitListService {
 
   async findAll(owner: Types.ObjectId) {
     try {
-      return this.WaitListModel.aggregate([
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+      return await this.WaitListModel.aggregate([
         {
           $match: { owner },
         },

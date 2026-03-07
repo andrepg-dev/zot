@@ -1,4 +1,5 @@
-import { Analytics } from "@vercel/analytics/next";
+import { AnalyticsClient } from "@/components/AnalyticsClient";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
 import { Figtree, Geist_Mono } from "next/font/google";
 import "./globals.css";
@@ -74,7 +75,8 @@ export default function RootLayout({
         style={{ backgroundColor: "#000000" }}
       >
         {children}
-        <Analytics />
+        <AnalyticsClient />
+        <SpeedInsights />
       </body>
     </html>
   );

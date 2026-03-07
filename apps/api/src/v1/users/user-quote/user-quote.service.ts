@@ -1,3 +1,4 @@
+import { toObjectId } from "@api/src/common/data-transform/to-object-id";
 import {
   BadRequestException,
   Injectable,
@@ -22,7 +23,7 @@ export class UserQuoteService {
   ];
 
   async createFreeUserQuote(ownerId: Types.ObjectId | string) {
-    const id = typeof ownerId === "string" ? new Types.ObjectId(ownerId) : ownerId;
+    const id = toObjectId(ownerId);
     return this.userQuoteModel.create({
       owner: id,
       userSignUp: 15000,
@@ -36,7 +37,7 @@ export class UserQuoteService {
 
   async findUserQuote(userId: Types.ObjectId): Promise<UserQuote> {
     try {
-      const ownerId = typeof userId === "string" ? new Types.ObjectId(userId) : userId;
+      const ownerId = toObjectId(userId);
       const quote = await this.userQuoteModel.findOne({ owner: ownerId }).select("+owner");
 
       if (!quote) {
@@ -65,7 +66,7 @@ export class UserQuoteService {
         throw new InternalServerErrorException("Amount must be greater than 0");
       }
 
-      const ownerId = typeof userId === "string" ? new Types.ObjectId(userId) : userId;
+      const ownerId = toObjectId(userId);
       let quote = await this.userQuoteModel.findOne({ owner: ownerId }).select("+owner");
 
       if (!quote) {

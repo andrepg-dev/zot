@@ -36,6 +36,11 @@ export async function FetchWrapper<T>(
     credentials: "include"
   });
 
+  // if (res.status === 401) {
+  //   // Use the refresh token
+  //   return;
+  // }
+
   if (!res.ok) {
     const errorResponse = await res.json().catch((e) => console.log({ e }));
     throw new ApiError(res.status, errorResponse.message ?? "Unexpected error", errorResponse);

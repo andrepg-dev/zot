@@ -48,6 +48,7 @@ export class WaitListController {
   })
   @ApiUnauthorizedResponse({ description: "Not authenticated" })
   async findAll(@UserId() userId: Types.ObjectId) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return await this.waitListService.findAll(userId);
   }
 

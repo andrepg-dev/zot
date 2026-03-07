@@ -10,8 +10,8 @@ export class CookiesService {
     maxAge: 3600000, // 1 hora en milisegundos
   };
 
-  saveCookie(res: Response, key: string, value: any) {
-    return res.cookie(key, value, this.options);
+  saveCookie(res: Response, key: string, value: any, options?: CookieOptions) {
+    return res.cookie(key, value, { ...this.options, ...options });
   }
 
   clearCookie(res: Response, key: string) {
