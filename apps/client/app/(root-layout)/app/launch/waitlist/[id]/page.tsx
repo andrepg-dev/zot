@@ -7,7 +7,6 @@ import ConversionRateChart from "@/components/wait-list/charts/conversion-rate-c
 import DailyRegistrationsChart from "@/components/wait-list/charts/daily-registrations-chart";
 import FakeUsersBlockedChart from "@/components/wait-list/charts/fake-users-blocked-chart";
 import TopReferrersChart from "@/components/wait-list/charts/top-referrers-chart";
-import TrafficSourcesChart from "@/components/wait-list/charts/traffic-sources-chart";
 import { cn } from "@/lib/utils";
 import {
   EnvelopeIcon,
@@ -121,9 +120,9 @@ export default function LaunchedWaitList({ params }: { params: Promise<{ id: str
         <div className="break-inside-avoid">
           <TopReferrersChart />
         </div>
-        <div className="break-inside-avoid">
+        {/* <div className="break-inside-avoid">
           <TrafficSourcesChart />
-        </div>
+        </div> */}
         <div className="break-inside-avoid">
           <ConversionRateChart />
         </div>
