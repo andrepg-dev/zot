@@ -1,3 +1,4 @@
+import { HttpService } from "@api/src/common/http-service/http.service";
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import mongoose, { Model, Types } from "mongoose";
@@ -15,6 +16,7 @@ export class WaitListUserService {
     @InjectModel(WaitList.name) private WaitListModel: Model<WaitList>,
     private readonly emailSecurityService: EmailSecurityService,
     @InjectModel(EmailSecurity.name) private EmailSecurityModel: Model<EmailSecurity>,
+    private readonly httpService: HttpService,
   ) {}
 
   private async validateOwnership(
@@ -62,6 +64,23 @@ export class WaitListUserService {
           "Waitlist not found or is not available for registration.",
           HttpStatus.BAD_REQUEST,
         );
+      }
+
+      // Is webhook is configured, send the webhook to the webhook url
+      if (waitlist.webhookUrl) {
+        await this.httpService
+          .post(waitlist.webhookUrl, {
+            email: dto.email,
+            waitlist: {
+              id: waitlistId.toString(),
+              name: waitlist.name,
+            },
+            referredBy: dto.referredBy,
+            event: "waitlist_user_registered",
+          })
+          .catch(() => {
+            console.log("Webhook failed");
+          });
       }
 
       const existingUser = await this.WaitListUserModel.findOne({
