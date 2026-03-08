@@ -6,6 +6,7 @@ import { EmailSecurityService } from "../../core/email-security/email-security.s
 import { EmailSecurity } from "../../core/email-security/schemas/email-security.schema";
 import { WaitListUser } from "../schemas/wait-list-user.schema";
 import { WaitList } from "../schemas/wait-list.schema";
+import { WaitlistWebhookEvent } from "../schemas/waitlist-webhooks-events.schema";
 import { RegisterWaitListUserDto } from "./dto/register-wait-list-user.dto";
 
 @Injectable()
@@ -16,6 +17,8 @@ export class WaitListUserService {
     @InjectModel(WaitList.name) private WaitListModel: Model<WaitList>,
     private readonly emailSecurityService: EmailSecurityService,
     @InjectModel(EmailSecurity.name) private EmailSecurityModel: Model<EmailSecurity>,
+    @InjectModel(WaitlistWebhookEvent.name)
+    private WaitlistWebhookEventModel: Model<WaitlistWebhookEvent>,
     private readonly httpService: HttpService,
   ) {}
 
@@ -93,8 +96,6 @@ export class WaitListUserService {
        * I need to count the amount of users registered in the waitlist, and if that number is divisible by the range, send the webhook to the webhook url
        */
       if (waitlist.webhook?.url && waitlist.webhook?.range > 0) {
-        console.log("Se envía el webhook por un rango de", waitlist.webhook.range, "usuarios");
-
         const usersCount = await this.WaitListUserModel.countDocuments({ waitlistId: waitlistId });
 
         if (usersCount % waitlist.webhook.range === 0) {
@@ -112,9 +113,35 @@ export class WaitListUserService {
             webhookBody.referredBy = dto.referredBy;
           }
 
-          await this.httpService.post(waitlist.webhook.url, webhookBody).catch(() => {
+          try {
+            const response = await this.httpService.post(waitlist.webhook.url, webhookBody);
+
+            await this.WaitlistWebhookEventModel.create({
+              waitlistId,
+              event: "waitlist_user_registered",
+              url: waitlist.webhook.url,
+              payload: webhookBody,
+              status: "success",
+              responseStatusCode: response.status,
+              responseBody: JSON.stringify(response.data ?? null),
+              sentAt: new Date(),
+            });
+          } catch (error) {
+            const errorMessage =
+              error instanceof Error ? error.message : "Unknown error sending webhook";
+
+            await this.WaitlistWebhookEventModel.create({
+              waitlistId,
+              event: "waitlist_user_registered",
+              url: waitlist.webhook.url,
+              payload: webhookBody,
+              status: "failed",
+              errorMessage,
+              sentAt: new Date(),
+            }).catch(() => undefined);
+
             console.log("Webhook failed");
-          });
+          }
         }
       }
 
