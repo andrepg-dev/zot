@@ -4,8 +4,6 @@ import { Types } from "mongoose";
 @Schema({
   timestamps: true,
   versionKey: false,
-  toJSON: { virtuals: true },
-  toObject: { virtuals: true },
   id: false,
 })
 export class WaitList {
@@ -28,8 +26,14 @@ export class WaitList {
   @Prop()
   fakeUsersBlocked: number;
 
-  @Prop()
-  webhookUrl: string;
+  @Prop({
+    type: { url: String, range: Number },
+    required: false,
+  })
+  webhook: {
+    url: string | undefined;
+    range: number;
+  };
 }
 
 export const WaitListSchema = SchemaFactory.createForClass(WaitList);

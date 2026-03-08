@@ -66,26 +66,6 @@ export class WaitListUserService {
         );
       }
 
-      // Is webhook is configured, send the webhook to the webhook url
-      if (waitlist.webhookUrl) {
-        const webhookBody: Record<string, any> = {
-          email: dto.email,
-          event: "waitlist_user_registered",
-          waitlist: {
-            id: waitlistId.toString(),
-            name: waitlist.name,
-          },
-        };
-
-        if (dto.referredBy) {
-          webhookBody.referredBy = dto.referredBy;
-        }
-
-        await this.httpService.post(waitlist.webhookUrl, webhookBody).catch(() => {
-          console.log("Webhook failed");
-        });
-      }
-
       const existingUser = await this.WaitListUserModel.findOne({
         waitlistId: waitlistId,
         email: dto.email,
@@ -101,15 +81,50 @@ export class WaitListUserService {
       const position: number =
         (await this.WaitListUserModel.countDocuments({ waitlistId: waitlistId })) + 1;
 
-      return await this.WaitListUserModel.create({
+      const user = await this.WaitListUserModel.create({
         email: dto.email,
         waitlistId: waitlistId,
         position,
         referredBy: dto.referredBy,
       });
+
+      // Send the webhook to the webhook URL
+      /**
+       * I need to count the amount of users registered in the waitlist, and if that number is divisible by the range, send the webhook to the webhook url
+       */
+      if (waitlist.webhook?.url && waitlist.webhook?.range > 0) {
+        console.log("Se envía el webhook por un rango de", waitlist.webhook.range, "usuarios");
+
+        const usersCount = await this.WaitListUserModel.countDocuments({ waitlistId: waitlistId });
+
+        if (usersCount % waitlist.webhook.range === 0) {
+          // Send by range
+          const webhookBody: Record<string, any> = {
+            email: dto.email,
+            event: "waitlist_user_registered",
+            waitlist: {
+              id: waitlistId.toString(),
+              name: waitlist.name,
+            },
+          };
+
+          if (dto.referredBy) {
+            webhookBody.referredBy = dto.referredBy;
+          }
+
+          await this.httpService.post(waitlist.webhook.url, webhookBody).catch(() => {
+            console.log("Webhook failed");
+          });
+        }
+      }
+
+      return user;
     } catch (error) {
       if (error instanceof HttpException) throw error;
-      throw new HttpException("Error registering in waitlist.", HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(
+        error instanceof Error ? error.message : "Error registering in waitlist.",
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 

@@ -1,5 +1,36 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { IsBoolean, IsMongoId, IsNotEmpty, IsOptional, IsString, IsUrl } from "class-validator";
+import { Type } from "class-transformer";
+import {
+  IsBoolean,
+  IsInt,
+  IsMongoId,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsUrl,
+  Min,
+  ValidateNested,
+} from "class-validator";
+
+export class WebhookConfigDto {
+  @ApiPropertyOptional({
+    description: "Webhook URL to notify when a new user signs up",
+    example: "https://your-server.com/webhooks/waitlist",
+    format: "uri",
+  })
+  @IsUrl()
+  @IsNotEmpty()
+  url: string;
+
+  @ApiPropertyOptional({
+    description: "Notify webhook every N users registered",
+    example: 10,
+    default: 10,
+  })
+  @IsInt()
+  @Min(1)
+  range: number;
+}
 
 export class CreateWaitListDto {
   @ApiProperty({
@@ -15,16 +46,17 @@ export class CreateWaitListDto {
     example: true,
   })
   @IsBoolean()
-  sendEmailToNewSignup: boolean;
+  @IsOptional()
+  sendEmailToNewSignup?: boolean;
 
   @ApiPropertyOptional({
-    description: "Webhook URL to notify when a new user signs up",
-    example: "https://your-server.com/webhooks/waitlist",
-    format: "uri",
+    description: "Webhook configuration for new signup notifications",
+    type: WebhookConfigDto,
   })
-  @IsUrl()
+  @ValidateNested()
+  @Type(() => WebhookConfigDto)
   @IsOptional()
-  webhookUrl?: string;
+  webhook?: WebhookConfigDto;
 
   @ApiPropertyOptional({
     description: "Associated widget ID for embedding",
