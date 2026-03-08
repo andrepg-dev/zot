@@ -1,5 +1,6 @@
 import { Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
+import { EmailSecurityService } from "../core/email-security/email-security.service";
 import { WaitListUser, WaitListUserSchema } from "./schemas/wait-list-user.schema";
 import { WaitList, WaitListSchema } from "./schemas/wait-list.schema";
 import { StatsModule } from "./stats/stats.module";
@@ -17,7 +18,7 @@ import { WaitListService } from "./wait-list.service";
     StatsModule,
   ],
   controllers: [WaitListController, WaitListUserController],
-  providers: [WaitListService, WaitListUserService],
+  providers: [WaitListService, WaitListUserService, EmailSecurityService],
   exports: [WaitListService, WaitListUserService],
 })
 export class WaitListModule {}

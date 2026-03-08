@@ -1,6 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import mongoose, { Model, Types } from "mongoose";
+import { EmailSecurityService } from "../../core/email-security/email-security.service";
 import { WaitListUser } from "../schemas/wait-list-user.schema";
 import { WaitList } from "../schemas/wait-list.schema";
 import { RegisterWaitListUserDto } from "./dto/register-wait-list-user.dto";
@@ -11,6 +12,7 @@ export class WaitListUserService {
     @InjectModel(WaitListUser.name)
     private WaitListUserModel: Model<WaitListUser>,
     @InjectModel(WaitList.name) private WaitListModel: Model<WaitList>,
+    private readonly emailSecurityService: EmailSecurityService,
   ) {}
 
   private async validateOwnership(
@@ -36,6 +38,11 @@ export class WaitListUserService {
 
   async register(waitlistId: Types.ObjectId, dto: RegisterWaitListUserDto) {
     try {
+      const isEmailValid = await this.emailSecurityService.verifyEmail(dto.email);
+      if (!isEmailValid) throw new HttpException("Email not allowed.", HttpStatus.BAD_REQUEST);
+
+      console.log({ isEmailValid });
+
       // Validate that the waitlist exists and is available
       const waitlist = await this.WaitListModel.findOne({
         _id: waitlistId,
