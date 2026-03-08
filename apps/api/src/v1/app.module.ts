@@ -9,6 +9,7 @@ import { ReactToHtmlModule } from "./react-to-html/react-to-html.module";
 import { UsersModule } from "./users/users.module";
 import { WaitListModule } from "./wait-list/wait-list.module";
 import { EmailSendingService } from "./core/email-sending/email-sending.service";
+import { EmailSecurityService } from './core/email-security/email-security.service';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { EmailSendingService } from "./core/email-sending/email-sending.service"
     },
     ReactToHtmlService,
     EmailSendingService,
+    EmailSecurityService,
   ],
 })
 export class V1Module {}

@@ -18,5 +18,8 @@ export default () => ({
 
     // RESEND_API_KEY
     RESEND_API_KEY: joi.string().required(),
+
+    // DYMO_API_KEY
+    DYMO_API_KEY: joi.string().required(),
   }),
 });

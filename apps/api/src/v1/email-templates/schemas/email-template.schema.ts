@@ -13,6 +13,9 @@ export class EmailTemplate extends BasedOwnerSchema {
   @Prop({ required: true })
   code: string;
 
+  @Prop()
+  html: string;
+
   @Prop({
     type: String,
     default: EmailTemplateStatus.DRAFT,

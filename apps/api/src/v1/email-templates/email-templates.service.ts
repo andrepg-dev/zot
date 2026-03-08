@@ -1,18 +1,23 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, Types } from "mongoose";
+import { ReactToHtmlService } from "../core/react-to-html/react-to-html.service";
 import { CreateEmailTemplateDto } from "./dto/create-email-template.dto";
 import { UpdateEmailTemplateDto } from "./dto/update-email-template.dto";
 import { EmailTemplate } from "./schemas/email-template.schema";
 
 @Injectable()
 export class EmailTemplatesService {
-  constructor(@InjectModel(EmailTemplate.name) private EmailTemplateModel: Model<EmailTemplate>) {}
+  constructor(
+    @InjectModel(EmailTemplate.name) private EmailTemplateModel: Model<EmailTemplate>,
+    private readonly reactToHtmlService: ReactToHtmlService,
+  ) {}
 
   async create(createEmailTemplateDto: CreateEmailTemplateDto, owner: Types.ObjectId) {
     try {
       return await this.EmailTemplateModel.create({
         ...createEmailTemplateDto,
+        html: await this.reactToHtmlService.compile(createEmailTemplateDto.code),
         owner,
       });
     } catch (error) {

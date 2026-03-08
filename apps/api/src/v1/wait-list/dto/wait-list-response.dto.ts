@@ -22,8 +22,12 @@ export class WaitListResponseDto {
   @ApiPropertyOptional({
     description: "Webhook URL for new signup notifications",
     example: "https://your-server.com/webhooks/waitlist",
+    format: "uri",
   })
-  webhookUrl?: string;
+  webhook?: {
+    url: string;
+    range: number;
+  };
 
   @ApiPropertyOptional({
     description: "Associated widget ID",
