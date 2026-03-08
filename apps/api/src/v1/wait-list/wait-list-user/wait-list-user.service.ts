@@ -68,19 +68,22 @@ export class WaitListUserService {
 
       // Is webhook is configured, send the webhook to the webhook url
       if (waitlist.webhookUrl) {
-        await this.httpService
-          .post(waitlist.webhookUrl, {
-            email: dto.email,
-            waitlist: {
-              id: waitlistId.toString(),
-              name: waitlist.name,
-            },
-            referredBy: dto.referredBy,
-            event: "waitlist_user_registered",
-          })
-          .catch(() => {
-            console.log("Webhook failed");
-          });
+        const webhookBody: Record<string, any> = {
+          email: dto.email,
+          event: "waitlist_user_registered",
+          waitlist: {
+            id: waitlistId.toString(),
+            name: waitlist.name,
+          },
+        };
+
+        if (dto.referredBy) {
+          webhookBody.referredBy = dto.referredBy;
+        }
+
+        await this.httpService.post(waitlist.webhookUrl, webhookBody).catch(() => {
+          console.log("Webhook failed");
+        });
       }
 
       const existingUser = await this.WaitListUserModel.findOne({
