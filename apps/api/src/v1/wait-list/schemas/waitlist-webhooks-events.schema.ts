@@ -6,7 +6,7 @@ export const WAITLIST_WEBHOOK_EVENTS = ["waitlist_user_registered"] as const;
 export type WaitlistWebhookEventType = (typeof WAITLIST_WEBHOOK_EVENTS)[number];
 
 @Schema({
-  timestamps: true,
+  timestamps: false,
   versionKey: false,
   id: false,
 })
