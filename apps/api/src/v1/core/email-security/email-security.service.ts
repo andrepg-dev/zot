@@ -19,7 +19,7 @@ export class EmailSecurityService {
     });
   }
 
-  async verifyEmail(email: string): Promise<boolean> {
+  async verifyEmail(email: string): Promise<{ isBlocked: boolean; reasons: string[] }> {
     if (!email) {
       throw new HttpException("Email is required.", HttpStatus.BAD_REQUEST);
     }
@@ -28,17 +28,13 @@ export class EmailSecurityService {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const decision = await this.dymoClient.isValidEmail(email);
 
-      // According to Dymo API docs, the property is `allow`, not `allowed`.
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       if (!decision?.allow) {
-        throw new HttpException(
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-          `Email not allowed: ${decision?.reasons?.join(", ")}`,
-          HttpStatus.BAD_REQUEST,
-        );
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        return { isBlocked: true, reasons: decision?.reasons as string[] };
       }
 
-      return true;
+      return { isBlocked: false, reasons: [] };
     } catch (error) {
       if (error instanceof HttpException) throw error;
       throw new HttpException(
