@@ -2,7 +2,7 @@ import { WaitList } from "@api/src/v1/wait-list/schemas/wait-list.schema";
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Types } from "mongoose";
 
-@Schema({ timestamps: true, versionKey: false })
+@Schema({ versionKey: false })
 export class EmailSecurity {
   @Prop({ type: Types.ObjectId, ref: WaitList.name, required: true, index: true, select: false })
   waitlistId: Types.ObjectId;
@@ -15,6 +15,9 @@ export class EmailSecurity {
 
   @Prop({ type: Array<string>, default: [] })
   reasons: string[];
+
+  @Prop({ type: Date, default: new Date() })
+  createdAt: Date;
 }
 
 export const EmailSecuritySchema = SchemaFactory.createForClass(EmailSecurity);

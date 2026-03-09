@@ -13,7 +13,7 @@ export class EmailSecurityService {
       apiKey: dymoApiKey,
       rules: {
         email: {
-          deny: ["FRAUD", "INVALID", "NO_MX_RECORDS", "NO_REPLY_EMAIL"],
+          deny: ["FRAUD", "INVALID", "NO_REPLY_EMAIL"],
         },
       },
     });

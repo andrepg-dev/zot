@@ -49,6 +49,25 @@ export class WaitListService {
           },
         },
         {
+          $lookup: {
+            from: "emailsecurities",
+            localField: "_id",
+            foreignField: "waitlistId",
+            as: "emailSecurity",
+            pipeline: [
+              {
+                $project: {
+                  waitlistId: 0,
+                  _id: 0,
+                  createdAt: 0,
+                  isBlocked: 0,
+                  reasons: 0,
+                },
+              },
+            ],
+          },
+        },
+        {
           $addFields: {
             users: {
               organic: {
@@ -74,6 +93,9 @@ export class WaitListService {
             emailsSent: {
               $sum: "$emailsSentPopulate.quantitySent",
             },
+            usersBlocked: {
+              $size: "$emailSecurity",
+            },
           },
         },
         {
@@ -81,6 +103,7 @@ export class WaitListService {
             usersPopulate: 0,
             owner: 0,
             emailsSentPopulate: 0,
+            emailSecurity: 0,
           },
         },
       ]);

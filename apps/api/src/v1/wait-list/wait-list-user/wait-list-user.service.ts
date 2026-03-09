@@ -45,17 +45,6 @@ export class WaitListUserService {
 
   async register(waitlistId: Types.ObjectId, dto: RegisterWaitListUserDto) {
     try {
-      // const emailValidation = await this.emailSecurityService.verifyEmail(dto.email);
-      // if (emailValidation.isBlocked) {
-      //   throw new HttpException("Email not allowed.", HttpStatus.BAD_REQUEST);
-      // }
-
-      // await this.EmailSecurityModel.create({
-      //   ...emailValidation,
-      //   waitlistId,
-      //   email: dto.email,
-      // });
-
       // Validate that the waitlist exists and is available
       const waitlist = await this.WaitListModel.findOne({
         _id: waitlistId,
@@ -76,8 +65,35 @@ export class WaitListUserService {
 
       if (existingUser) {
         throw new HttpException(
-          `User with email "${dto.email}" is already registered in this waitlist.`,
+          `User with email ${dto.email} is already registered in this waitlist.`,
           HttpStatus.CONFLICT,
+        );
+      }
+
+      const emailSecurity = await this.EmailSecurityModel.findOne({
+        waitlistId,
+        email: dto.email,
+      });
+
+      if (emailSecurity?.isBlocked) {
+        throw new HttpException(
+          `Email not allowed. ${emailSecurity.reasons.join(", ")}`,
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
+      const emailValidation = await this.emailSecurityService.verifyEmail(dto.email);
+
+      if (emailValidation.isBlocked) {
+        await this.EmailSecurityModel.create({
+          ...emailValidation,
+          waitlistId,
+          email: dto.email,
+        });
+
+        throw new HttpException(
+          `Email not allowed. ${emailValidation.reasons.join(", ")}`,
+          HttpStatus.BAD_REQUEST,
         );
       }
 
