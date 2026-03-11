@@ -13,6 +13,24 @@ import { UserQuote } from "./schemas/user-quote.schema";
 export class UserQuoteService {
   constructor(@InjectModel(UserQuote.name) private userQuoteModel: Model<UserQuote>) {}
 
+  private readonly freeQuote = {
+    userSignUp: 15000,
+    waitlist: 3,
+    landingPage: 3,
+    emailsSent: 100,
+    emailsTemplates: 10,
+    domains: 0,
+  };
+
+  private readonly premiumQuote = {
+    userSignUp: 150000,
+    waitlist: 30,
+    landingPage: 30,
+    emailsSent: 10000,
+    emailsTemplates: 200,
+    domains: 10,
+  };
+
   private readonly services: Array<keyof UserQuote> = [
     "userSignUp",
     "waitlist",
@@ -26,13 +44,22 @@ export class UserQuoteService {
     const id = toObjectId(ownerId);
     return this.userQuoteModel.create({
       owner: id,
-      userSignUp: 15000,
-      waitlist: 3,
-      landingPage: 3,
-      emailsSent: 100,
-      emailsTemplates: 10,
-      domains: 0,
+      ...this.freeQuote,
     });
+  }
+
+  async syncQuoteByPlan(ownerId: Types.ObjectId | string, plan: "FREE" | "PREMIUM" | "SCALE") {
+    const id = toObjectId(ownerId);
+
+    const quoteTemplate = plan === "PREMIUM" ? this.premiumQuote : this.freeQuote;
+
+    return this.userQuoteModel.findOneAndUpdate(
+      { owner: id },
+      {
+        $set: quoteTemplate,
+      },
+      { upsert: true, new: true },
+    );
   }
 
   async findUserQuote(userId: Types.ObjectId): Promise<UserQuote> {

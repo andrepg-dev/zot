@@ -31,6 +31,35 @@ export class User {
   @Prop({ default: "FREE", enum: ["FREE", "PREMIUM", "SCALE"] })
   suscriptionPlan: "FREE" | "PREMIUM" | "SCALE";
 
+  @Prop({ required: false, index: true })
+  stripeCustomerId?: string;
+
+  @Prop({ required: false, index: true })
+  stripeSubscriptionId?: string;
+
+  @Prop({
+    required: false,
+    enum: [
+      "incomplete",
+      "incomplete_expired",
+      "trialing",
+      "active",
+      "past_due",
+      "canceled",
+      "unpaid",
+      "paused",
+    ],
+  })
+  stripeSubscriptionStatus?:
+    | "incomplete"
+    | "incomplete_expired"
+    | "trialing"
+    | "active"
+    | "past_due"
+    | "canceled"
+    | "unpaid"
+    | "paused";
+
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: UserQuote.name, required: true })
   quote: Types.ObjectId;
 }

@@ -21,5 +21,10 @@ export default () => ({
 
     // DYMO_API_KEY
     DYMO_API_KEY: joi.string().required(),
+
+    // STRIPE
+    STRIPE_SECRET_KEY: joi.string().required(),
+    STRIPE_WEBHOOK_SECRET: joi.string().required(),
+    STRIPE_PREMIUM_PRICE_ID: joi.string().required(),
   }),
 });
