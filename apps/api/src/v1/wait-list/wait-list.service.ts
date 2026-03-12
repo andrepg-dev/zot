@@ -1,6 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, Types } from "mongoose";
+import { UsersService } from "../users/users.service";
 import { CreateWaitListDto } from "./dto/create-wait-list.dto";
 import { UpdateWaitListDto } from "./dto/update-wait-list.dto";
 import { WaitListUser } from "./schemas/wait-list-user.schema";
@@ -11,14 +12,27 @@ export class WaitListService {
   constructor(
     @InjectModel(WaitList.name) private WaitListModel: Model<WaitList>,
     @InjectModel(WaitListUser.name) private WaitListUserModel: Model<WaitListUser>,
+    private readonly usersService: UsersService,
   ) {}
 
   async create(createWaitListDto: CreateWaitListDto, owner: Types.ObjectId) {
     try {
-      return await this.WaitListModel.create({
+      // Verify user suscription plan
+      const isPayingUser = await this.usersService.isPayingUser(owner);
+
+      if (!isPayingUser && createWaitListDto.isSecurityActive) {
+        throw new HttpException(
+          "You need to upgrade to a paying plan to use this feature or disable the security feature in your waitlist settings.",
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
+      const document = await this.WaitListModel.create({
         ...createWaitListDto,
         owner,
       });
+
+      return document;
     } catch (error) {
       if (error instanceof HttpException) throw error;
       throw new HttpException("Error creating waitlist.", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -131,6 +145,16 @@ export class WaitListService {
 
   async update(id: Types.ObjectId, updateWaitListDto: UpdateWaitListDto, owner: Types.ObjectId) {
     try {
+      // Verify user suscription plan
+      const isPayingUser = await this.usersService.isPayingUser(owner);
+
+      if (!isPayingUser && updateWaitListDto.isSecurityActive) {
+        throw new HttpException(
+          "You need to upgrade to a paying plan to use this feature or disable the security feature in your waitlist settings.",
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
       const waitlist = await this.WaitListModel.findOneAndUpdate(
         { _id: id, owner },
         updateWaitListDto,

@@ -177,4 +177,9 @@ export class UsersService {
       );
     }
   }
+
+  async isPayingUser(userId: Types.ObjectId) {
+    const user = await this.findById(userId);
+    return user?.suscriptionPlan !== "FREE";
+  }
 }
