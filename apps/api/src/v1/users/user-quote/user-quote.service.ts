@@ -51,6 +51,12 @@ export class UserQuoteService {
     domains: { email: 10, general: 10000 },
   };
 
+  private getDomainField(service: QuoteServiceKey): keyof DomainsQuote | null {
+    if (service === "domains.email") return "email";
+    if (service === "domains.general") return "general";
+    return null;
+  }
+
   /** Normalize domains from DB (supports legacy number or object). */
   private normalizeDomains(domains: DomainsQuote | number | undefined): DomainsQuote {
     if (domains == null) return { email: 0, general: 0 };
@@ -121,15 +127,12 @@ export class UserQuoteService {
         quote = (await this.createFreeUserQuote(ownerId)) as typeof quote & object;
       }
 
-      const isNested = update.service === "domains.email" || update.service === "domains.general";
-      let currentValue: number;
+      const domainField = this.getDomainField(update.service);
+      const normalizedDomains = domainField ? this.normalizeDomains(quote.domains) : null;
 
-      if (isNested) {
-        const domains = this.normalizeDomains(quote.domains);
-        currentValue = update.service === "domains.email" ? domains.email : domains.general;
-      } else {
-        currentValue = quote[update.service] as number;
-      }
+      const currentValue = normalizedDomains
+        ? normalizedDomains[domainField!]
+        : (quote[update.service] as number);
 
       if (currentValue < update.decrease) {
         throw new BadRequestException("Insufficient credits for this service");
@@ -137,12 +140,8 @@ export class UserQuoteService {
 
       const newValue = currentValue - update.decrease;
 
-      if (isNested) {
-        const domains = this.normalizeDomains(quote.domains);
-        quote.domains = {
-          ...domains,
-          [update.service === "domains.email" ? "email" : "general"]: newValue,
-        };
+      if (normalizedDomains && domainField) {
+        quote.domains = { ...normalizedDomains, [domainField]: newValue };
       } else {
         (quote as unknown as Record<string, number>)[update.service] = newValue;
       }
