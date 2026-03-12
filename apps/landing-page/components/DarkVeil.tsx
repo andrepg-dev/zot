@@ -136,8 +136,12 @@ export default function DarkVeil({
 
     const start = performance.now();
     let frame = 0;
+    let paused = false;
+
+    const isMobile = () => window.innerWidth < 768;
 
     const loop = () => {
+      if (paused) return;
       program.uniforms.uTime.value = ((performance.now() - start) / 1000) * speed;
       program.uniforms.uHueShift.value = hueShift;
       program.uniforms.uNoise.value = noiseIntensity;
@@ -148,12 +152,38 @@ export default function DarkVeil({
       frame = requestAnimationFrame(loop);
     };
 
+    const onScroll = () => {
+      if (!isMobile()) {
+        if (paused) {
+          paused = false;
+          canvas.style.opacity = '1';
+          frame = requestAnimationFrame(loop);
+        }
+        return;
+      }
+
+      const threshold = window.innerHeight * 0.6;
+      const scrolledPast = window.scrollY > threshold;
+
+      if (scrolledPast && !paused) {
+        paused = true;
+        cancelAnimationFrame(frame);
+        canvas.style.opacity = '0';
+      } else if (!scrolledPast && paused) {
+        paused = false;
+        canvas.style.opacity = '1';
+        frame = requestAnimationFrame(loop);
+      }
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
     loop();
 
     return () => {
       cancelAnimationFrame(frame);
       window.removeEventListener('resize', resize);
+      window.removeEventListener('scroll', onScroll);
     };
   }, [hueShift, noiseIntensity, scanlineIntensity, speed, scanlineFrequency, warpAmount, resolutionScale]);
-  return <canvas ref={ref} className="darkveil-canvas" />;
+  return <canvas ref={ref} className="darkveil-canvas" style={{ transition: 'opacity 0.3s ease' }} />;
 }

@@ -6,7 +6,7 @@ import cookieParser from "cookie-parser";
 import { AppModule } from "./app.module";
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { cors: true });
+  const app = await NestFactory.create(AppModule, { cors: true, rawBody: true });
 
   // Class validator activation
   app.useGlobalPipes(
@@ -37,7 +37,7 @@ API requests are subject to rate limiting. Please handle 429 responses appropria
     `.trim(),
     )
     .setVersion("1.0.0")
-    .setContact("Zot Team", "https://zot.dev", "support@zot.dev")
+    .setContact("Zot Team", "https://zot.so", "support@zot.so")
     .addServer(process.env.API_URL ?? "http://localhost:3010", "Current Environment")
     .addBearerAuth(
       {
@@ -52,6 +52,7 @@ API requests are subject to rate limiting. Please handle 429 responses appropria
     )
     .addTag("Health", "API health check endpoints")
     .addTag("Auth", "Authentication and authorization endpoints")
+    .addTag("Subscriptions", "Stripe subscription and billing endpoints")
     .addTag("WaitList", "Waitlist management endpoints")
     .addTag("WaitList Users", "Waitlist user registration and management")
     .addTag("React to HTML", "React component to HTML conversion")
@@ -80,7 +81,7 @@ API requests are subject to rate limiting. Please handle 429 responses appropria
   });
 
   app.enableCors({
-    origin: "https://zot.dev",
+    origin: "https://zot.so",
   });
 
   await app.listen(process.env.PORT ?? 3010);

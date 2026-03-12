@@ -5,6 +5,8 @@ import {
   EmailSecurity,
   EmailSecuritySchema,
 } from "../core/email-security/schemas/email-security.schema";
+import { UserQuoteModule } from "../users/user-quote/user-quote.module";
+import { UsersModule } from "../users/users.module";
 import { WaitListUser, WaitListUserSchema } from "./schemas/wait-list-user.schema";
 import { WaitList, WaitListSchema } from "./schemas/wait-list.schema";
 import {
@@ -26,6 +28,8 @@ import { WaitListService } from "./wait-list.service";
       { name: WaitlistWebhookEvent.name, schema: WaitlistWebhookEventSchema },
     ]),
     StatsModule,
+    UserQuoteModule,
+    UsersModule,
   ],
   controllers: [WaitListController, WaitListUserController],
   providers: [WaitListService, WaitListUserService, EmailSecurityService],

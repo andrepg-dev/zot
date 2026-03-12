@@ -1,6 +1,8 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, Types } from "mongoose";
+import { UserQuoteService } from "../users/user-quote/user-quote.service";
+import { UsersService } from "../users/users.service";
 import { CreateWaitListDto } from "./dto/create-wait-list.dto";
 import { UpdateWaitListDto } from "./dto/update-wait-list.dto";
 import { WaitListUser } from "./schemas/wait-list-user.schema";
@@ -11,14 +13,33 @@ export class WaitListService {
   constructor(
     @InjectModel(WaitList.name) private WaitListModel: Model<WaitList>,
     @InjectModel(WaitListUser.name) private WaitListUserModel: Model<WaitListUser>,
+    private readonly usersService: UsersService,
+    private readonly userQuoteService: UserQuoteService,
   ) {}
 
   async create(createWaitListDto: CreateWaitListDto, owner: Types.ObjectId) {
     try {
-      return await this.WaitListModel.create({
+      const hasFreePlan = await this.usersService.hasFreePlan(owner);
+
+      if (hasFreePlan && createWaitListDto.isSecurityActive) {
+        throw new HttpException(
+          "You need to upgrade to a paying plan to use this feature or disable the security feature in your waitlist settings.",
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
+      await this.userQuoteService.editUserQuote({
+        ownerId: owner,
+        service: "waitlist",
+        decrease: 1,
+      });
+
+      const document = await this.WaitListModel.create({
         ...createWaitListDto,
         owner,
       });
+
+      return document;
     } catch (error) {
       if (error instanceof HttpException) throw error;
       throw new HttpException("Error creating waitlist.", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -49,6 +70,25 @@ export class WaitListService {
           },
         },
         {
+          $lookup: {
+            from: "emailsecurities",
+            localField: "_id",
+            foreignField: "waitlistId",
+            as: "emailSecurity",
+            pipeline: [
+              {
+                $project: {
+                  waitlistId: 0,
+                  _id: 0,
+                  createdAt: 0,
+                  isBlocked: 0,
+                  reasons: 0,
+                },
+              },
+            ],
+          },
+        },
+        {
           $addFields: {
             users: {
               organic: {
@@ -74,6 +114,9 @@ export class WaitListService {
             emailsSent: {
               $sum: "$emailsSentPopulate.quantitySent",
             },
+            usersBlocked: {
+              $size: "$emailSecurity",
+            },
           },
         },
         {
@@ -81,6 +124,7 @@ export class WaitListService {
             usersPopulate: 0,
             owner: 0,
             emailsSentPopulate: 0,
+            emailSecurity: 0,
           },
         },
       ]);
@@ -108,6 +152,15 @@ export class WaitListService {
 
   async update(id: Types.ObjectId, updateWaitListDto: UpdateWaitListDto, owner: Types.ObjectId) {
     try {
+      const hasFreePlan = await this.usersService.hasFreePlan(owner);
+
+      if (hasFreePlan && updateWaitListDto.isSecurityActive) {
+        throw new HttpException(
+          "You need to upgrade to a paying plan to use this feature or disable the security feature in your waitlist settings.",
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
       const waitlist = await this.WaitListModel.findOneAndUpdate(
         { _id: id, owner },
         updateWaitListDto,

@@ -1,5 +1,18 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNumber, Min } from "class-validator";
+import { Type } from "class-transformer";
+import { IsNumber, Min, ValidateNested } from "class-validator";
+
+export class DomainsQuoteDto {
+  @ApiProperty({ description: "Quota for email domains", example: 10, minimum: 0 })
+  @IsNumber()
+  @Min(0)
+  email: number;
+
+  @ApiProperty({ description: "Quota for general domains", example: 10000, minimum: 0 })
+  @IsNumber()
+  @Min(0)
+  general: number;
+}
 
 export class CreateUserQuoteDto {
   @ApiProperty({
@@ -48,11 +61,10 @@ export class CreateUserQuoteDto {
   emailsTemplates: number;
 
   @ApiProperty({
-    description: "Available quota for domains",
-    example: 10,
-    minimum: 0,
+    description: "Available quota for domains (email vs general)",
+    example: { email: 10, general: 10000 },
   })
-  @IsNumber()
-  @Min(0)
-  domains: number;
+  @ValidateNested()
+  @Type(() => DomainsQuoteDto)
+  domains: DomainsQuoteDto;
 }

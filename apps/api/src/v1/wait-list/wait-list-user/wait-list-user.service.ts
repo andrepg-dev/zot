@@ -3,7 +3,8 @@ import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import mongoose, { Model, Types } from "mongoose";
 import { EmailSecurityService } from "../../core/email-security/email-security.service";
-import { EmailSecurity } from "../../core/email-security/schemas/email-security.schema";
+import { UserQuoteService } from "../../users/user-quote/user-quote.service";
+import { UsersService } from "../../users/users.service";
 import { WaitListUser } from "../schemas/wait-list-user.schema";
 import { WaitList } from "../schemas/wait-list.schema";
 import { WaitlistWebhookEvent } from "../schemas/waitlist-webhooks-events.schema";
@@ -16,10 +17,11 @@ export class WaitListUserService {
     private WaitListUserModel: Model<WaitListUser>,
     @InjectModel(WaitList.name) private WaitListModel: Model<WaitList>,
     private readonly emailSecurityService: EmailSecurityService,
-    @InjectModel(EmailSecurity.name) private EmailSecurityModel: Model<EmailSecurity>,
     @InjectModel(WaitlistWebhookEvent.name)
     private WaitlistWebhookEventModel: Model<WaitlistWebhookEvent>,
     private readonly httpService: HttpService,
+    private readonly userQuoteService: UserQuoteService,
+    private readonly usersService: UsersService,
   ) {}
 
   private async validateOwnership(
@@ -45,22 +47,11 @@ export class WaitListUserService {
 
   async register(waitlistId: Types.ObjectId, dto: RegisterWaitListUserDto) {
     try {
-      // const emailValidation = await this.emailSecurityService.verifyEmail(dto.email);
-      // if (emailValidation.isBlocked) {
-      //   throw new HttpException("Email not allowed.", HttpStatus.BAD_REQUEST);
-      // }
-
-      // await this.EmailSecurityModel.create({
-      //   ...emailValidation,
-      //   waitlistId,
-      //   email: dto.email,
-      // });
-
-      // Validate that the waitlist exists and is available
+      // <================== VALIDATE WAITLIST IF EXISTS AND IS AVAILABLE ==================>
       const waitlist = await this.WaitListModel.findOne({
         _id: waitlistId,
         isAvailable: true,
-      });
+      }).select("+owner");
 
       if (!waitlist) {
         throw new HttpException(
@@ -69,6 +60,7 @@ export class WaitListUserService {
         );
       }
 
+      // <================== VALIDATE IF USER IS ALREADY REGISTERED IN THE WAITLIST ==================>
       const existingUser = await this.WaitListUserModel.findOne({
         waitlistId: waitlistId,
         email: dto.email,
@@ -76,9 +68,28 @@ export class WaitListUserService {
 
       if (existingUser) {
         throw new HttpException(
-          `User with email "${dto.email}" is already registered in this waitlist.`,
+          `User with email ${dto.email} is already registered in this waitlist.`,
           HttpStatus.CONFLICT,
         );
+      }
+
+      if (waitlist.isSecurityActive) {
+        await this.emailSecurityService.blockEmailForPayingUsers({
+          email: dto.email,
+          waitlistId,
+          userId: waitlist.owner,
+        });
+      }
+
+      // <================== USER QUOTE ===================>
+      const hasFreePlan = await this.usersService.hasFreePlan(waitlist.owner);
+
+      if (hasFreePlan) {
+        await this.userQuoteService.editUserQuote({
+          ownerId: waitlist.owner,
+          service: "userSignUp",
+          decrease: 1,
+        });
       }
 
       const position: number =
@@ -91,7 +102,7 @@ export class WaitListUserService {
         referredBy: dto.referredBy,
       });
 
-      // Send the webhook to the webhook URL
+      // <================== SEND WEBHOOK TO THE WEBHOOK URL ==================>
       /**
        * I need to count the amount of users registered in the waitlist, and if that number is divisible by the range, send the webhook to the webhook url
        */
@@ -139,8 +150,6 @@ export class WaitListUserService {
               errorMessage,
               sentAt: new Date(),
             }).catch(() => undefined);
-
-            console.log("Webhook failed");
           }
         }
       }

@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  InternalServerErrorException,
+} from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import * as bcrypt from "bcrypt";
 import { randomUUID } from "crypto";
@@ -7,6 +12,16 @@ import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { User } from "./schemas/users.schema";
 import { UserQuoteService } from "./user-quote/user-quote.service";
+
+type StripeSubscriptionStatus =
+  | "incomplete"
+  | "incomplete_expired"
+  | "trialing"
+  | "active"
+  | "past_due"
+  | "canceled"
+  | "unpaid"
+  | "paused";
 
 @Injectable()
 export class UsersService {
@@ -101,6 +116,92 @@ export class UsersService {
     } catch (error) {
       if (error instanceof HttpException) throw error;
       throw new HttpException("Error deleting user.", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async findByStripeCustomerId(customerId: string) {
+    try {
+      return await this.userModel.findOne({ stripeCustomerId: customerId });
+    } catch (error) {
+      if (error instanceof HttpException) throw error;
+      throw new HttpException(
+        "Error fetching user by Stripe customer.",
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  async setStripeCustomerId(userId: Types.ObjectId, stripeCustomerId: string) {
+    try {
+      return await this.userModel.findByIdAndUpdate(
+        userId,
+        { stripeCustomerId },
+        {
+          new: true,
+        },
+      );
+    } catch (error) {
+      if (error instanceof HttpException) throw error;
+      throw new HttpException("Error saving Stripe customer id.", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async syncStripeSubscription(
+    userId: Types.ObjectId,
+    data: {
+      stripeCustomerId?: string;
+      stripeSubscriptionId?: string;
+      stripeSubscriptionStatus: StripeSubscriptionStatus;
+    },
+  ) {
+    try {
+      const suscriptionPlan =
+        data.stripeSubscriptionStatus === "active" ||
+        data.stripeSubscriptionStatus === "trialing" ||
+        data.stripeSubscriptionStatus === "past_due"
+          ? "PREMIUM"
+          : "FREE";
+
+      const updatedUser = await this.userModel.findByIdAndUpdate(
+        userId,
+        {
+          ...data,
+          suscriptionPlan,
+        },
+        { new: true },
+      );
+
+      await this.userQuoteService.syncQuoteByPlan(userId, suscriptionPlan);
+
+      return updatedUser;
+    } catch (error) {
+      if (error instanceof HttpException) throw error;
+      throw new HttpException(
+        "Error syncing user Stripe subscription.",
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  async hasFreePlan(userId: Types.ObjectId) {
+    try {
+      if (!userId) {
+        throw new InternalServerErrorException("User ID is not provided.");
+      }
+
+      const user = await this.userModel.findById(userId).select("+suscriptionPlan");
+
+      if (!user) {
+        throw new InternalServerErrorException("User not found.");
+      }
+
+      return user?.suscriptionPlan === "FREE";
+    } catch (error) {
+      if (error instanceof HttpException) throw error;
+      throw new HttpException(
+        "Error checking if user is paying.",
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 }
