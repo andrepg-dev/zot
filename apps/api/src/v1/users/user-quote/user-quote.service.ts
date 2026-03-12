@@ -7,31 +7,18 @@ import {
 } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, Types } from "mongoose";
+import { QuoteUsageHistory } from "./schemas/quote-usage-history.schema";
 import { DomainsQuote, UserQuote } from "./schemas/user-quote.schema";
+import { QUOTE_SERVICE_KEYS, QuoteServiceKey } from "./types/quote-service-key";
 
-/** Keys that can be decreased: flat counters + nested domains.email and domains.general */
-export type QuoteServiceKey =
-  | "userSignUp"
-  | "waitlist"
-  | "landingPage"
-  | "emailsSent"
-  | "emailsTemplates"
-  | "domains.email"
-  | "domains.general";
-
-const QUOTE_SERVICE_KEYS: QuoteServiceKey[] = [
-  "userSignUp",
-  "waitlist",
-  "landingPage",
-  "emailsSent",
-  "emailsTemplates",
-  "domains.email",
-  "domains.general",
-];
+export type { QuoteServiceKey };
 
 @Injectable()
 export class UserQuoteService {
-  constructor(@InjectModel(UserQuote.name) private userQuoteModel: Model<UserQuote>) {}
+  constructor(
+    @InjectModel(UserQuote.name) private userQuoteModel: Model<UserQuote>,
+    @InjectModel(QuoteUsageHistory.name) private quoteUsageHistoryModel: Model<QuoteUsageHistory>,
+  ) {}
 
   private readonly freeQuote = {
     userSignUp: 15000,
@@ -153,6 +140,13 @@ export class UserQuoteService {
 
       await quote.save();
 
+      void this.quoteUsageHistoryModel.create({
+        owner: ownerId,
+        service,
+        amount: decrease,
+        remainingAfter: newValue,
+      });
+
       return quote.toJSON();
     } catch (error) {
       if (error instanceof NotFoundException || error instanceof BadRequestException) {
@@ -163,6 +157,64 @@ export class UserQuoteService {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         error?.response ?? "Cannot update the <quote> of the user in database",
       );
+    }
+  }
+
+  async getUsageHistory(
+    ownerId: Types.ObjectId,
+    filters?: {
+      service?: QuoteServiceKey;
+      from?: Date;
+      to?: Date;
+      limit?: number;
+    },
+  ) {
+    try {
+      const matchStage: Record<string, unknown> = { owner: ownerId };
+
+      if (filters?.service) {
+        matchStage.service = filters.service;
+      }
+
+      if (filters?.from || filters?.to) {
+        const dateFilter: Record<string, Date> = {};
+        if (filters.from) dateFilter.$gte = filters.from;
+        if (filters.to) dateFilter.$lte = filters.to;
+        matchStage.createdAt = dateFilter;
+      }
+
+      const limit = filters?.limit ?? 50;
+
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+      return await this.quoteUsageHistoryModel.aggregate([
+        { $match: matchStage },
+        { $sort: { createdAt: -1 } },
+        { $limit: limit },
+        {
+          $group: {
+            _id: "$service",
+            totalUsed: { $sum: "$amount" },
+            entries: {
+              $push: {
+                amount: "$amount",
+                remainingAfter: "$remainingAfter",
+                createdAt: "$createdAt",
+              },
+            },
+          },
+        },
+        {
+          $project: {
+            _id: 0,
+            service: "$_id",
+            totalUsed: 1,
+            entries: 1,
+          },
+        },
+        { $sort: { service: 1 } },
+      ]);
+    } catch {
+      throw new InternalServerErrorException("Cannot retrieve usage history");
     }
   }
 }
