@@ -75,4 +75,13 @@ export class CreateWaitListDto {
   @IsBoolean()
   @IsOptional()
   isAvailable?: boolean;
+
+  @ApiPropertyOptional({
+    description: "Whether the waitlist has security active",
+    example: true,
+    default: false,
+  })
+  @IsBoolean()
+  @IsOptional()
+  isSecurityActive?: boolean;
 }
