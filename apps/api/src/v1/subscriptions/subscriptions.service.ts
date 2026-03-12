@@ -26,11 +26,17 @@ export class SubscriptionsService {
 
   async createPremiumCheckoutSession(userId: Types.ObjectId, couponCode?: string) {
     const premiumPriceId = this.configService.get<string>("STRIPE_PREMIUM_PRICE_ID");
+    const checkoutSuccessUrl = this.configService.get<string>("STRIPE_CHECKOUT_SUCCESS_URL");
+    const checkoutCancelUrl = this.configService.get<string>("STRIPE_CHECKOUT_CANCEL_URL");
     const frontendUrl = this.configService.get<string>("FRONTEND_URL");
 
-    if (!premiumPriceId || !frontendUrl) {
+    const successUrl =
+      checkoutSuccessUrl ?? `${frontendUrl}/billing/success?session_id={CHECKOUT_SESSION_ID}`;
+    const cancelUrl = checkoutCancelUrl ?? `${frontendUrl}/billing/cancel`;
+
+    if (!premiumPriceId || !successUrl || !cancelUrl) {
       throw new InternalServerErrorException(
-        "Missing STRIPE_PREMIUM_PRICE_ID or FRONTEND_URL in environment",
+        "Missing STRIPE_PREMIUM_PRICE_ID and checkout URLs in environment",
       );
     }
 
@@ -63,32 +69,34 @@ export class SubscriptionsService {
       discounts = [{ promotion_code: promotionCode.id }];
     }
 
-    let session: Stripe.Checkout.Session;
-    try {
-      session = await this.stripe.checkout.sessions.create({
-        mode: "subscription",
-        customer: stripeCustomerId,
-        allow_promotion_codes: true,
-        line_items: [
-          {
-            price: premiumPriceId,
-            quantity: 1,
-          },
-        ],
-        success_url: `${frontendUrl}/billing/success?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${frontendUrl}/billing/cancel`,
+    const sessionParams: Stripe.Checkout.SessionCreateParams = {
+      mode: "subscription",
+      customer: stripeCustomerId,
+      allow_promotion_codes: true,
+      line_items: [
+        {
+          price: premiumPriceId,
+          quantity: 1,
+        },
+      ],
+      success_url: successUrl,
+      cancel_url: cancelUrl,
+      metadata: {
+        userId: String(user._id),
+        requestedPlan: "PREMIUM",
+      },
+      subscription_data: {
         metadata: {
           userId: String(user._id),
-          requestedPlan: "PREMIUM",
+          plan: "PREMIUM",
         },
-        subscription_data: {
-          metadata: {
-            userId: String(user._id),
-            plan: "PREMIUM",
-          },
-        },
-        discounts,
-      });
+      },
+      discounts,
+    };
+
+    let session: Stripe.Checkout.Session;
+    try {
+      session = await this.stripe.checkout.sessions.create(sessionParams);
     } catch (error) {
       // Recover from stale customer IDs (usually when mixing live/test keys).
       if (!this.isMissingStripeCustomerError(error)) {
@@ -97,28 +105,8 @@ export class SubscriptionsService {
 
       stripeCustomerId = await this.createAndPersistCustomer(user);
       session = await this.stripe.checkout.sessions.create({
-        mode: "subscription",
+        ...sessionParams,
         customer: stripeCustomerId,
-        allow_promotion_codes: true,
-        line_items: [
-          {
-            price: premiumPriceId,
-            quantity: 1,
-          },
-        ],
-        success_url: `${frontendUrl}/billing/success?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${frontendUrl}/billing/cancel`,
-        metadata: {
-          userId: String(user._id),
-          requestedPlan: "PREMIUM",
-        },
-        subscription_data: {
-          metadata: {
-            userId: String(user._id),
-            plan: "PREMIUM",
-          },
-        },
-        discounts,
       });
     }
 
@@ -154,12 +142,29 @@ export class SubscriptionsService {
           typeof session.subscription === "string" ? session.subscription : undefined;
         const customerId = typeof session.customer === "string" ? session.customer : undefined;
 
-        if (metadataUserId && subscriptionId && Types.ObjectId.isValid(metadataUserId)) {
+        if (!subscriptionId) break;
+
+        const subscriptionStatus = await this.getSubscriptionStatus(subscriptionId);
+
+        if (metadataUserId && Types.ObjectId.isValid(metadataUserId)) {
           await this.usersService.syncStripeSubscription(new Types.ObjectId(metadataUserId), {
             stripeCustomerId: customerId,
             stripeSubscriptionId: subscriptionId,
-            stripeSubscriptionStatus: "active",
+            stripeSubscriptionStatus: subscriptionStatus,
           });
+          break;
+        }
+
+        if (customerId) {
+          const user = await this.usersService.findByStripeCustomerId(customerId);
+
+          if (user) {
+            await this.usersService.syncStripeSubscription(user._id, {
+              stripeCustomerId: customerId,
+              stripeSubscriptionId: subscriptionId,
+              stripeSubscriptionStatus: subscriptionStatus,
+            });
+          }
         }
         break;
       }
@@ -215,5 +220,14 @@ export class SubscriptionsService {
       error.code === "resource_missing" &&
       error.param === "customer"
     );
+  }
+
+  private async getSubscriptionStatus(subscriptionId: string) {
+    try {
+      const subscription = await this.stripe.subscriptions.retrieve(subscriptionId);
+      return subscription.status;
+    } catch {
+      return "active" as Stripe.Subscription.Status;
+    }
   }
 }

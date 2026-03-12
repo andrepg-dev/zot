@@ -67,11 +67,6 @@ export class SubscriptionsController {
     @Headers("stripe-signature") signature: string | undefined,
     @Req() request: Request,
   ) {
-    console.log("request", request);
-
-    console.log("signature", signature);
-    console.log("Entro en el webhook");
-
     if (!signature) {
       throw new UnauthorizedException("Missing stripe-signature header");
     }

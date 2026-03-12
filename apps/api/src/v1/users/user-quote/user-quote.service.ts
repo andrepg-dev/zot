@@ -7,7 +7,27 @@ import {
 } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, Types } from "mongoose";
-import { UserQuote } from "./schemas/user-quote.schema";
+import { DomainsQuote, UserQuote } from "./schemas/user-quote.schema";
+
+/** Keys that can be decreased: flat counters + nested domains.email and domains.general */
+export type QuoteServiceKey =
+  | "userSignUp"
+  | "waitlist"
+  | "landingPage"
+  | "emailsSent"
+  | "emailsTemplates"
+  | "domains.email"
+  | "domains.general";
+
+const QUOTE_SERVICE_KEYS: QuoteServiceKey[] = [
+  "userSignUp",
+  "waitlist",
+  "landingPage",
+  "emailsSent",
+  "emailsTemplates",
+  "domains.email",
+  "domains.general",
+];
 
 @Injectable()
 export class UserQuoteService {
@@ -19,26 +39,27 @@ export class UserQuoteService {
     landingPage: 3,
     emailsSent: 100,
     emailsTemplates: 10,
-    domains: 0,
+    domains: { email: 0, general: 0 },
   };
 
   private readonly premiumQuote = {
-    userSignUp: 150000,
+    userSignUp: 1500000,
     waitlist: 30,
     landingPage: 30,
     emailsSent: 10000,
     emailsTemplates: 200,
-    domains: 10,
+    domains: { email: 10, general: 10000 },
   };
 
-  private readonly services: Array<keyof UserQuote> = [
-    "userSignUp",
-    "waitlist",
-    "landingPage",
-    "emailsSent",
-    "emailsTemplates",
-    "domains",
-  ];
+  /** Normalize domains from DB (supports legacy number or object). */
+  private normalizeDomains(domains: DomainsQuote | number | undefined): DomainsQuote {
+    if (domains == null) return { email: 0, general: 0 };
+    if (typeof domains === "number") return { email: 0, general: domains };
+    return {
+      email: typeof domains.email === "number" ? domains.email : 0,
+      general: typeof domains.general === "number" ? domains.general : 0,
+    };
+  }
 
   async createFreeUserQuote(ownerId: Types.ObjectId | string) {
     const id = toObjectId(ownerId);
@@ -80,12 +101,12 @@ export class UserQuoteService {
   async editUserQuote(
     userId: Types.ObjectId,
     update: {
-      service: keyof UserQuote;
+      service: QuoteServiceKey;
       decrease: number;
     },
   ) {
     try {
-      if (!this.services.includes(update.service)) {
+      if (!QUOTE_SERVICE_KEYS.includes(update.service)) {
         throw new BadRequestException("Invalid service provided to update user quote");
       }
 
@@ -97,16 +118,34 @@ export class UserQuoteService {
       let quote = await this.userQuoteModel.findOne({ owner: ownerId }).select("+owner");
 
       if (!quote) {
-        quote = await this.createFreeUserQuote(ownerId);
+        quote = (await this.createFreeUserQuote(ownerId)) as typeof quote & object;
       }
 
-      const currentValue = quote[update.service] as number;
+      const isNested = update.service === "domains.email" || update.service === "domains.general";
+      let currentValue: number;
+
+      if (isNested) {
+        const domains = this.normalizeDomains(quote.domains);
+        currentValue = update.service === "domains.email" ? domains.email : domains.general;
+      } else {
+        currentValue = quote[update.service] as number;
+      }
 
       if (currentValue < update.decrease) {
         throw new BadRequestException("Insufficient credits for this service");
       }
 
-      quote[update.service] = (currentValue - update.decrease) as never;
+      const newValue = currentValue - update.decrease;
+
+      if (isNested) {
+        const domains = this.normalizeDomains(quote.domains);
+        quote.domains = {
+          ...domains,
+          [update.service === "domains.email" ? "email" : "general"]: newValue,
+        };
+      } else {
+        (quote as unknown as Record<string, number>)[update.service] = newValue;
+      }
 
       await quote.save();
 
