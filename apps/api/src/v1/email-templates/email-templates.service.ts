@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, Types } from "mongoose";
 import { ReactToHtmlService } from "../core/react-to-html/react-to-html.service";
+import { UserQuoteService } from "../users/user-quote/user-quote.service";
 import { CreateEmailTemplateDto } from "./dto/create-email-template.dto";
 import { UpdateEmailTemplateDto } from "./dto/update-email-template.dto";
 import { EmailTemplate } from "./schemas/email-template.schema";
@@ -11,10 +12,17 @@ export class EmailTemplatesService {
   constructor(
     @InjectModel(EmailTemplate.name) private EmailTemplateModel: Model<EmailTemplate>,
     private readonly reactToHtmlService: ReactToHtmlService,
+    private readonly userQuoteService: UserQuoteService,
   ) {}
 
   async create(createEmailTemplateDto: CreateEmailTemplateDto, owner: Types.ObjectId) {
     try {
+      await this.userQuoteService.editUserQuote({
+        ownerId: owner,
+        service: "emailsTemplates",
+        decrease: 1,
+      });
+
       return await this.EmailTemplateModel.create({
         ...createEmailTemplateDto,
         html: await this.reactToHtmlService.compile(createEmailTemplateDto.code),
