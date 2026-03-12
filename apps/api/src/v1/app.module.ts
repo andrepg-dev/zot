@@ -3,7 +3,6 @@ import { Module } from "@nestjs/common";
 import { APP_GUARD } from "@nestjs/core";
 import { AuthModule } from "./auth/auth.module";
 import { JwtAuthGuard } from "./auth/guards/jwt.guard";
-import { EmailSecurityService } from "./core/email-security/email-security.service";
 import { EmailSendingService } from "./core/email-sending/email-sending.service";
 import { EmailTemplatesModule } from "./email-templates/email-templates.module";
 import { EmailsModule } from "./emails/emails.module";
@@ -29,7 +28,6 @@ import { WaitListModule } from "./wait-list/wait-list.module";
     },
     ReactToHtmlService,
     EmailSendingService,
-    EmailSecurityService,
   ],
 })
 export class V1Module {}

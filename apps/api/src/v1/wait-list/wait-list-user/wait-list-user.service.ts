@@ -70,31 +70,12 @@ export class WaitListUserService {
         );
       }
 
-      const emailSecurity = await this.EmailSecurityModel.findOne({
-        waitlistId,
-        email: dto.email,
-      });
-
-      if (emailSecurity?.isBlocked) {
-        throw new HttpException(
-          `Email not allowed. ${emailSecurity.reasons.join(", ")}`,
-          HttpStatus.BAD_REQUEST,
-        );
-      }
-
-      const emailValidation = await this.emailSecurityService.verifyEmail(dto.email);
-
-      if (emailValidation.isBlocked) {
-        await this.EmailSecurityModel.create({
-          ...emailValidation,
-          waitlistId,
+      if (waitlist.isSecurityActive) {
+        await this.emailSecurityService.blockEmailForPayingUsers({
           email: dto.email,
+          waitlistId,
+          userId: waitlist.owner,
         });
-
-        throw new HttpException(
-          `Email not allowed. ${emailValidation.reasons.join(", ")}`,
-          HttpStatus.BAD_REQUEST,
-        );
       }
 
       const position: number =
@@ -155,8 +136,6 @@ export class WaitListUserService {
               errorMessage,
               sentAt: new Date(),
             }).catch(() => undefined);
-
-            console.log("Webhook failed");
           }
         }
       }
