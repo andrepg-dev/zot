@@ -46,6 +46,21 @@ export class SubscriptionsService {
       throw new NotFoundException("User not found");
     }
 
+    const alreadyPremiumStatuses: Array<Stripe.Subscription.Status> = [
+      "active",
+      "trialing",
+      "past_due",
+    ];
+    if (
+      user.suscriptionPlan === "PREMIUM" ||
+      (user.stripeSubscriptionStatus &&
+        alreadyPremiumStatuses.includes(
+          user.stripeSubscriptionStatus as Stripe.Subscription.Status,
+        ))
+    ) {
+      throw new BadRequestException("User already has a premium subscription");
+    }
+
     let stripeCustomerId = user.stripeCustomerId;
 
     if (!stripeCustomerId) {
