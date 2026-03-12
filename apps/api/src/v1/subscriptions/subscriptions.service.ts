@@ -53,17 +53,23 @@ export class SubscriptionsService {
     }
 
     let discounts: Stripe.Checkout.SessionCreateParams.Discount[] | undefined;
+    const effectiveCouponCode = couponCode?.trim() || "EARLY-USER";
 
-    if (couponCode) {
+    if (effectiveCouponCode) {
       const promotionCodes = await this.stripe.promotionCodes.list({
-        code: couponCode,
+        code: effectiveCouponCode,
         active: true,
         limit: 1,
       });
 
       const promotionCode = promotionCodes.data[0];
       if (!promotionCode) {
-        throw new BadRequestException("Invalid or inactive coupon code");
+        if (couponCode) {
+          throw new BadRequestException("Invalid or inactive coupon code");
+        }
+        throw new InternalServerErrorException(
+          "Default promotion code EARLY-USER is invalid or inactive",
+        );
       }
 
       discounts = [{ promotion_code: promotionCode.id }];
@@ -72,7 +78,6 @@ export class SubscriptionsService {
     const sessionParams: Stripe.Checkout.SessionCreateParams = {
       mode: "subscription",
       customer: stripeCustomerId,
-      allow_promotion_codes: true,
       line_items: [
         {
           price: premiumPriceId,
@@ -91,7 +96,7 @@ export class SubscriptionsService {
           plan: "PREMIUM",
         },
       },
-      discounts,
+      ...(discounts ? { discounts } : { allow_promotion_codes: true }),
     };
 
     let session: Stripe.Checkout.Session;
