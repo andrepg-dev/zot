@@ -1,10 +1,11 @@
-@plugin './hero.ts';
 @import "tailwindcss";
-@config "../tailwind.config.js";
-@source '../../../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}';
-@source '../../../packages/design-system/src/**/*.{ts,tsx}';
+@plugin './hero.ts';
+@config "../../tailwind.config.js";
+@source '../../../../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}';
 
 :root {
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-mono: "Fira Code", monospace;
   --background: oklch(0.985 0 0);
   --foreground: oklch(0.205 0 0);
   --card: oklch(0.97 0.01 250);
@@ -58,67 +59,13 @@
   --radius-default: 0.5rem;
 }
 
+html,
+body {
+  font-family: var(--font-sans);
+  color: var(--foreground);
+  background-color: var(--background);
+}
+
 * {
   border-color: var(--border);
-}
-
-.jsx-expression-braces {
-  color: #c678dd !important;
-}
-
-.jsx-tag-angle-bracket {
-  color: #d2d4d8 !important;
-
-  &.jsx-tag-order-1 {
-    color: #d2d4d8 !important;
-  }
-
-  &.jsx-tag-order-2 {
-    color: #d2d4d8 !important;
-  }
-
-  &.jsx-tag-order-3 {
-    color: #d2d4d8 !important;
-  }
-}
-
-.jsx-tag-name {
-  color: #77b6fb !important;
-}
-
-.jsx-tag-name-html {
-  color: #e06c75 !important;
-}
-
-.jsx-tag-name-custom {
-  color: #61afef !important;
-}
-
-.jsx-tag-attribute-key {
-  color: #d19a66 !important;
-}
-
-.jsx-tag-attribute-value {
-  color: #98c379 !important;
-}
-
-.jsx-text {
-  color: #abb2bf !important;
-}
-
-.monaco-editor .jsx-expression-braces,
-.monaco-editor .jsx-tag-angle-bracket,
-.monaco-editor .jsx-tag-name,
-.monaco-editor .jsx-tag-attribute-key,
-.monaco-editor .jsx-tag-attribute-value,
-.monaco-editor .jsx-text {
-  font-weight: inherit;
-}
-
-.monaco-editor .react-hook {
-  color: #c678dd !important;
-}
-
-.monaco-editor .react-hook-custom {
-  color: #c678dd !important;
 }

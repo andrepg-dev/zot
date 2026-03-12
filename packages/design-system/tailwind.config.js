@@ -1,12 +1,8 @@
-const { heroui } = require("@heroui/react");
-
 /** @type {import('tailwindcss').Config} */
 const config = {
   content: [
-    "./components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./app/**/*.{js,ts,jsx,tsx,mdx}",
-    "../../packages/design-system/src/**/*.{js,ts,jsx,tsx}",
-    "../../../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}"
+    "./src/**/*.{js,ts,jsx,tsx,mdx}",
+    "../../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}"
   ],
   theme: {
     extend: {
@@ -20,8 +16,8 @@ const config = {
         "fade-in": "fade-in 2.5s ease-out forwards"
       },
       fontFamily: {
-        sans: ["var(--font-sans)"],
-        mono: ["var(--font-mono)"]
+        sans: ["var(--font-sans)", "Inter", "system-ui", "sans-serif"],
+        mono: ["var(--font-mono)", "Fira Code", "monospace"]
       },
       borderRadius: {
         default: "var(--radius-default)"
@@ -68,26 +64,7 @@ const config = {
       }
     }
   },
-  darkMode: "class",
-  plugins: [
-    heroui({
-      prefix: "heroui",
-      addCommonColors: false,
-      defaultTheme: "dark",
-      defaultExtendTheme: "dark",
-      layout: {
-        disabledOpacity: "0.5",
-        radius: {
-          small: "7px",
-          medium: ".45rem"
-        },
-
-        borderWidth: {
-          medium: "thin"
-        }
-      }
-    })
-  ]
+  darkMode: "class"
 };
 
 module.exports = config;
