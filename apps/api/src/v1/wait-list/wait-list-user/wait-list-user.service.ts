@@ -1,5 +1,10 @@
 import { HttpService } from "@api/src/common/http-service/http.service";
-import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  InternalServerErrorException,
+} from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import mongoose, { Model, Types } from "mongoose";
 import { EmailSecurityService } from "../../core/email-security/email-security.service";
@@ -51,7 +56,7 @@ export class WaitListUserService {
       const waitlist = await this.WaitListModel.findOne({
         _id: waitlistId,
         isAvailable: true,
-      });
+      }).select("+owner");
 
       if (!waitlist) {
         throw new HttpException(
@@ -84,10 +89,14 @@ export class WaitListUserService {
       // <================== USER QUOTE ===================>
       const userPlan = await this.usersService.findById(waitlist.owner);
 
+      if (!userPlan) {
+        throw new InternalServerErrorException("User plan not found.");
+      }
+
       // Only in the free plan waitlist quote will be decreased
       if (userPlan?.suscriptionPlan === "FREE") {
         await this.userQuoteService.editUserQuote(waitlist.owner, {
-          service: "waitlist",
+          service: "userSignUp",
           decrease: 1,
         });
       }
