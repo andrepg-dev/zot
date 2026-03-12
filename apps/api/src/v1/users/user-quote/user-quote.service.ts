@@ -140,12 +140,18 @@ export class UserQuoteService {
 
       await quote.save();
 
-      void this.quoteUsageHistoryModel.create({
-        owner: ownerId,
-        service,
-        amount: decrease,
-        remainingAfter: newValue,
-      });
+      // <================== SAVE IN USER QUOTE HISTORY ==================>
+      const dontSaveInHistoryUsage = ["userSignUp", "waitlist"];
+
+      // Allow only services available
+      if (!dontSaveInHistoryUsage.includes(service)) {
+        void this.quoteUsageHistoryModel.create({
+          owner: ownerId,
+          service,
+          amount: decrease,
+          remainingAfter: newValue,
+        });
+      }
 
       return quote.toJSON();
     } catch (error) {
