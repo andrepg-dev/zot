@@ -43,7 +43,7 @@ export default function Sidebar() {
 
         {!children && (
           <div className="w-full">
-            {!hidden ? <hr /> : null}
+            <hr />
 
             <div className="my-4">
               <Link
