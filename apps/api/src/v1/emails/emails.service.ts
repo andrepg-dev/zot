@@ -113,7 +113,8 @@ export class EmailsService {
         failedEmails: [],
       });
 
-      const usage = await this.userquoteService.editUserQuote(userId, {
+      const usage = await this.userquoteService.editUserQuote({
+        ownerId: userId,
         service: "emailsSent",
         decrease: emailUsageSending,
       });
@@ -128,7 +129,8 @@ export class EmailsService {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       if (err?.status != 500) {
         // If the problem is from the server, should not be in the user quote
-        await this.userquoteService.editUserQuote(userId, {
+        await this.userquoteService.editUserQuote({
+          ownerId: userId,
           service: "emailsSent",
           decrease: emailUsageSending,
         });

@@ -1,6 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, Types } from "mongoose";
+import { UserQuoteService } from "../users/user-quote/user-quote.service";
 import { UsersService } from "../users/users.service";
 import { CreateWaitListDto } from "./dto/create-wait-list.dto";
 import { UpdateWaitListDto } from "./dto/update-wait-list.dto";
@@ -13,19 +14,25 @@ export class WaitListService {
     @InjectModel(WaitList.name) private WaitListModel: Model<WaitList>,
     @InjectModel(WaitListUser.name) private WaitListUserModel: Model<WaitListUser>,
     private readonly usersService: UsersService,
+    private readonly userQuoteService: UserQuoteService,
   ) {}
 
   async create(createWaitListDto: CreateWaitListDto, owner: Types.ObjectId) {
     try {
-      // Verify user suscription plan
-      const isFreeUser = await this.usersService.hasFreePlan(owner);
+      const hasFreePlan = await this.usersService.hasFreePlan(owner);
 
-      if (isFreeUser && createWaitListDto.isSecurityActive) {
+      if (hasFreePlan && createWaitListDto.isSecurityActive) {
         throw new HttpException(
           "You need to upgrade to a paying plan to use this feature or disable the security feature in your waitlist settings.",
           HttpStatus.BAD_REQUEST,
         );
       }
+
+      await this.userQuoteService.editUserQuote({
+        ownerId: owner,
+        service: "waitlist",
+        decrease: 1,
+      });
 
       const document = await this.WaitListModel.create({
         ...createWaitListDto,
@@ -145,10 +152,9 @@ export class WaitListService {
 
   async update(id: Types.ObjectId, updateWaitListDto: UpdateWaitListDto, owner: Types.ObjectId) {
     try {
-      // Verify user suscription plan
-      const isFreeUser = await this.usersService.hasFreePlan(owner);
+      const hasFreePlan = await this.usersService.hasFreePlan(owner);
 
-      if (isFreeUser && updateWaitListDto.isSecurityActive) {
+      if (hasFreePlan && updateWaitListDto.isSecurityActive) {
         throw new HttpException(
           "You need to upgrade to a paying plan to use this feature or disable the security feature in your waitlist settings.",
           HttpStatus.BAD_REQUEST,

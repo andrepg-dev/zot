@@ -98,53 +98,57 @@ export class UserQuoteService {
     }
   }
 
-  async editUserQuote(
-    userId: Types.ObjectId,
-    update: {
-      service: QuoteServiceKey;
-      decrease: number;
-    },
-  ) {
+  /**
+   * Manage user's quote
+   */
+  async editUserQuote({
+    ownerId,
+    service,
+    decrease,
+  }: {
+    ownerId: Types.ObjectId;
+    service: QuoteServiceKey;
+    decrease: number;
+  }) {
     try {
-      if (!QUOTE_SERVICE_KEYS.includes(update.service)) {
+      if (!QUOTE_SERVICE_KEYS.includes(service)) {
         throw new BadRequestException("Invalid service provided to update user quote");
       }
 
-      if (update.decrease <= 0) {
+      if (decrease <= 0) {
         throw new InternalServerErrorException("Amount must be greater than 0");
       }
 
-      const ownerId = toObjectId(userId);
       let quote = await this.userQuoteModel.findOne({ owner: ownerId }).select("+owner");
 
       if (!quote) {
         quote = (await this.createFreeUserQuote(ownerId)) as typeof quote & object;
       }
 
-      const isNested = update.service === "domains.email" || update.service === "domains.general";
+      const isNested = service === "domains.email" || service === "domains.general";
       let currentValue: number;
 
       if (isNested) {
         const domains = this.normalizeDomains(quote.domains);
-        currentValue = update.service === "domains.email" ? domains.email : domains.general;
+        currentValue = service === "domains.email" ? domains.email : domains.general;
       } else {
-        currentValue = quote[update.service] as number;
+        currentValue = quote[service];
       }
 
-      if (currentValue < update.decrease) {
-        throw new BadRequestException("Insufficient credits for this service");
+      if (currentValue < decrease) {
+        throw new BadRequestException(`Insufficient credits for ${service} service`);
       }
 
-      const newValue = currentValue - update.decrease;
+      const newValue = currentValue - decrease;
 
       if (isNested) {
         const domains = this.normalizeDomains(quote.domains);
         quote.domains = {
           ...domains,
-          [update.service === "domains.email" ? "email" : "general"]: newValue,
+          [service === "domains.email" ? "email" : "general"]: newValue,
         };
       } else {
-        (quote as unknown as Record<string, number>)[update.service] = newValue;
+        (quote as unknown as Record<string, number>)[service] = newValue;
       }
 
       await quote.save();

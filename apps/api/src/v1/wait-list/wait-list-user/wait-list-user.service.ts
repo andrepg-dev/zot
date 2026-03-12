@@ -85,7 +85,8 @@ export class WaitListUserService {
       const hasFreePlan = await this.usersService.hasFreePlan(waitlist.owner);
 
       if (hasFreePlan) {
-        await this.userQuoteService.editUserQuote(waitlist.owner, {
+        await this.userQuoteService.editUserQuote({
+          ownerId: waitlist.owner,
           service: "userSignUp",
           decrease: 1,
         });
