@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  InternalServerErrorException,
+} from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import * as bcrypt from "bcrypt";
 import { randomUUID } from "crypto";
@@ -178,8 +183,25 @@ export class UsersService {
     }
   }
 
-  async isPayingUser(userId: Types.ObjectId) {
-    const user = await this.findById(userId);
-    return user?.suscriptionPlan !== "FREE";
+  async hasFreePlan(userId: Types.ObjectId) {
+    try {
+      if (!userId) {
+        throw new InternalServerErrorException("User ID is not provided.");
+      }
+
+      const user = await this.userModel.findById(userId).select("+suscriptionPlan");
+
+      if (!user) {
+        throw new InternalServerErrorException("User not found.");
+      }
+
+      return user?.suscriptionPlan === "FREE";
+    } catch (error) {
+      if (error instanceof HttpException) throw error;
+      throw new HttpException(
+        "Error checking if user is paying.",
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 }

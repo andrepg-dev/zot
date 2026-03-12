@@ -18,9 +18,9 @@ export class WaitListService {
   async create(createWaitListDto: CreateWaitListDto, owner: Types.ObjectId) {
     try {
       // Verify user suscription plan
-      const isPayingUser = await this.usersService.isPayingUser(owner);
+      const isFreeUser = await this.usersService.hasFreePlan(owner);
 
-      if (!isPayingUser && createWaitListDto.isSecurityActive) {
+      if (isFreeUser && createWaitListDto.isSecurityActive) {
         throw new HttpException(
           "You need to upgrade to a paying plan to use this feature or disable the security feature in your waitlist settings.",
           HttpStatus.BAD_REQUEST,
@@ -146,9 +146,9 @@ export class WaitListService {
   async update(id: Types.ObjectId, updateWaitListDto: UpdateWaitListDto, owner: Types.ObjectId) {
     try {
       // Verify user suscription plan
-      const isPayingUser = await this.usersService.isPayingUser(owner);
+      const isFreeUser = await this.usersService.hasFreePlan(owner);
 
-      if (!isPayingUser && updateWaitListDto.isSecurityActive) {
+      if (isFreeUser && updateWaitListDto.isSecurityActive) {
         throw new HttpException(
           "You need to upgrade to a paying plan to use this feature or disable the security feature in your waitlist settings.",
           HttpStatus.BAD_REQUEST,

@@ -1,10 +1,5 @@
 import { HttpService } from "@api/src/common/http-service/http.service";
-import {
-  HttpException,
-  HttpStatus,
-  Injectable,
-  InternalServerErrorException,
-} from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import mongoose, { Model, Types } from "mongoose";
 import { EmailSecurityService } from "../../core/email-security/email-security.service";
@@ -87,14 +82,9 @@ export class WaitListUserService {
       }
 
       // <================== USER QUOTE ===================>
-      const userPlan = await this.usersService.findById(waitlist.owner);
+      const hasFreePlan = await this.usersService.hasFreePlan(waitlist.owner);
 
-      if (!userPlan) {
-        throw new InternalServerErrorException("User plan not found.");
-      }
-
-      // Only in the free plan waitlist quote will be decreased
-      if (userPlan?.suscriptionPlan === "FREE") {
+      if (hasFreePlan) {
         await this.userQuoteService.editUserQuote(waitlist.owner, {
           service: "userSignUp",
           decrease: 1,
