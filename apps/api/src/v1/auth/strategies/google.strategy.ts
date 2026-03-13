@@ -46,8 +46,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, "google") {
             },
           });
         }
-        done(null, { userId: user._id }); // { userId: new ObjecId("userId") };
-        return;
+        return done(null, { userId: user._id });
       }
 
       const dto = {
@@ -66,8 +65,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, "google") {
         username: `${dto.name}${dto.lastName}${randomObjectId}`,
       });
 
-      done(null, { userId: document._id }); // -> envia a google strategy
-      return;
+      return done(null, { userId: document._id }); // -> envia a google strategy;
     } catch (error) {
       done(error as Error);
     }

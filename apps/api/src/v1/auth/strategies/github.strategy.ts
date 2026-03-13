@@ -72,7 +72,7 @@ export class GitHubStrategy extends PassportStrategy(Strategy, "github") {
         username: `${dto.name}${dto.lastName}${randomObjectId}`,
       });
 
-      done(null, { userId: document._id }); // { userId: new ObjecId("userId") }
+      return done(null, { userId: document._id }); // { userId: new ObjecId("userId") }
     } catch (error) {
       done(error as Error);
     }

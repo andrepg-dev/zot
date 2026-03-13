@@ -10,7 +10,6 @@ import {
   Body,
   Controller,
   Get,
-  InternalServerErrorException,
   Post,
   Request,
   Response,
@@ -122,15 +121,13 @@ export class AuthController {
     description: "Handles Google OAuth2 callback. Sets cookie and redirects to frontend.",
   })
   @ApiInternalServerErrorResponse({ description: "User not found after OAuth" })
-  googleAuthRedirect(@Request() req: express.Request, @Response() res: express.Response) {
-    if (!req.user) throw new InternalServerErrorException("User not found.");
+  async googleAuthRedirect(@UserId() userId: Types.ObjectId, @Response() res: express.Response) {
+    const access_token = this.jwtService.signUser({ userId });
+    const refresh_token = await this.authService.createRefreshToken(res, userId);
 
-    const access_token = this.jwtService.signUser(req.user);
     const frontendUrl = this.configService.get<string>("FRONTEND_URL");
-    // Redirigir al frontend con el token para que lo guarde en cookies de su dominio.
-    // La cookie seteada aquí sería del dominio del API y no es visible en el frontend.
     return res.redirect(
-      `${frontendUrl}/api/auth/callback?access_token=${encodeURIComponent(access_token)}`,
+      `${frontendUrl}/api/auth/callback?access_token=${encodeURIComponent(access_token)}&refresh_token=${encodeURIComponent(refresh_token)}`,
     );
   }
 
@@ -142,11 +139,13 @@ export class AuthController {
     description: "Handles GitHub OAuth2 callback. Sets cookie and redirects to frontend.",
   })
   @ApiInternalServerErrorResponse({ description: "User not found after OAuth" })
-  githubAuthRedirect(@UserId() userId: Types.ObjectId, @Response() res: express.Response) {
+  async githubAuthRedirect(@UserId() userId: Types.ObjectId, @Response() res: express.Response) {
     const access_token = this.jwtService.signUser({ userId });
+    const refresh_token = await this.authService.createRefreshToken(res, userId);
     const frontendUrl = this.configService.get<string>("FRONTEND_URL");
+
     return res.redirect(
-      `${frontendUrl}/api/auth/callback?access_token=${encodeURIComponent(access_token)}`,
+      `${frontendUrl}/api/auth/callback?access_token=${encodeURIComponent(access_token)}&refresh_token=${encodeURIComponent(refresh_token)}`,
     );
   }
 
