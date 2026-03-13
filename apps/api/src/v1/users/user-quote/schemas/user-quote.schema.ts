@@ -6,7 +6,7 @@ export interface DomainsQuote {
   general: number;
 }
 
-@Schema({ versionKey: false, timestamps: true })
+@Schema({ versionKey: false, timestamps: { updatedAt: true, createdAt: false } })
 export class UserQuote {
   @Prop({ type: Types.ObjectId, ref: "user", required: true, index: true, select: false })
   owner: Types.ObjectId;

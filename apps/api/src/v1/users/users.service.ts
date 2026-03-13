@@ -38,7 +38,7 @@ export class UsersService {
         return null;
       }
 
-      const { password, ...rest } = user;
+      const { ...rest } = user;
 
       // generate username
       const randomUuid = randomUUID();
@@ -46,10 +46,13 @@ export class UsersService {
 
       const userDocument = new this.userModel({
         ...rest,
-        password: bcrypt.hashSync(password, 10),
         username,
         providers,
       });
+
+      if (user?.password) {
+        userDocument.password = bcrypt.hashSync(user.password, 10);
+      }
 
       const userQuote = await this.userQuoteService.createFreeUserQuote(userDocument._id);
 
