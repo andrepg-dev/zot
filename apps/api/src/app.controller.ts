@@ -1,13 +1,14 @@
 import { Controller, Get, Req, UseGuards } from "@nestjs/common";
 import { ApiOkResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
 import express from "express";
+import { Public } from "./v1/auth/decorators/skip-auth.decorator";
 import { ApiKeyGuard } from "./v1/auth/guards/api-key.guard";
 
 @ApiTags("Health")
 @Controller("/")
 export class AppController {
+  @Public()
   @UseGuards(ApiKeyGuard)
-  // @Public()
   @Get()
   @ApiOperation({
     summary: "Health check",
