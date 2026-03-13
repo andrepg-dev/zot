@@ -8,6 +8,7 @@ import { UsersModule } from "../users/users.module";
 import { AuthController } from "./auth.controller";
 import { AuthService } from "./auth.service";
 import { RefreshToken, RefreshTokenSchema } from "./schemas/refresh_token.schema";
+import { ApiKeyStrategy } from "./strategies/api-key.strategy";
 import { GitHubStrategy } from "./strategies/github.strategy";
 import { GoogleStrategy } from "./strategies/google.strategy";
 import { JwtStrategy } from "./strategies/jwt.strategy";
@@ -28,6 +29,7 @@ import { LocalStrategy } from "./strategies/local.strategy";
     JwtStrategy,
     GoogleStrategy,
     GitHubStrategy,
+    ApiKeyStrategy,
   ],
 })
 export class AuthModule {}

@@ -1,11 +1,13 @@
-import { Controller, Get } from "@nestjs/common";
+import { Controller, Get, Req, UseGuards } from "@nestjs/common";
 import { ApiOkResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
-import { Public } from "./v1/auth/decorators/skip-auth.decorator";
+import express from "express";
+import { ApiKeyGuard } from "./v1/auth/guards/api-key.guard";
 
 @ApiTags("Health")
 @Controller("/")
 export class AppController {
-  @Public()
+  @UseGuards(ApiKeyGuard)
+  // @Public()
   @Get()
   @ApiOperation({
     summary: "Health check",
@@ -18,7 +20,7 @@ export class AppController {
       example: "Welcome to zot API",
     },
   })
-  main() {
-    return "Welcome to zot API";
+  main(@Req() req: express.Request) {
+    return req.user;
   }
 }

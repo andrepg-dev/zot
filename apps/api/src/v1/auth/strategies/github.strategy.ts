@@ -42,14 +42,14 @@ export class GitHubStrategy extends PassportStrategy(Strategy, "github") {
         const providers = existingUser.providers;
 
         if (!providers.includes("github")) {
-          providers.push("github");
           await this.userModel.findByIdAndUpdate(existingUser._id, {
-            provider: providers,
+            $push: {
+              providers: "github",
+            },
           });
         }
 
-        done(null, { userId: String(existingUser._id) });
-        return;
+        return done(null, { userId: String(existingUser._id) });
       }
 
       const nameParts = displayName?.split(" ") ?? [username];
