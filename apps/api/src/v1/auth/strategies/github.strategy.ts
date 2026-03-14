@@ -3,14 +3,17 @@ import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { InjectModel } from "@nestjs/mongoose";
 import { PassportStrategy } from "@nestjs/passport";
-import mongoose, { Model } from "mongoose";
+import { Model } from "mongoose";
 import { Profile, Strategy } from "passport-github2";
+import { CreateUserDto } from "../../users/dto/create-user.dto";
+import { UsersService } from "../../users/users.service";
 
 @Injectable()
 export class GitHubStrategy extends PassportStrategy(Strategy, "github") {
   constructor(
     configService: ConfigService,
     @InjectModel(User.name) private userModel: Model<User>,
+    private readonly usersService: UsersService,
   ) {
     super({
       clientID: configService.get<string>("GITHUB_CLIENT_ID") ?? "",
@@ -34,45 +37,36 @@ export class GitHubStrategy extends PassportStrategy(Strategy, "github") {
 
       const email = emails[0].value;
 
-      // Check if user already exists
-      const existingUser = await this.userModel.findOne({ email });
+      const existingUser = await this.usersService.findByEmail(email);
 
       if (existingUser) {
-        // User already exists, update provider if not already included
         const providers = existingUser.providers;
 
         if (!providers.includes("github")) {
-          providers.push("github");
           await this.userModel.findByIdAndUpdate(existingUser._id, {
-            provider: providers,
+            $push: {
+              providers: "github",
+            },
           });
         }
 
-        done(null, { userId: String(existingUser._id) });
-        return;
+        return done(null, { userId: String(existingUser._id) });
       }
 
       const nameParts = displayName?.split(" ") ?? [username];
       const firstName = nameParts[0] ?? username;
-      const lastName = nameParts.slice(1).join(" ") || undefined;
+      const lastName = nameParts.slice(1).join(" ") || "";
 
       const dto = {
         email,
         name: firstName,
-        lastName: lastName,
+        lastName,
         avatar: photos?.[0]?.value ?? undefined,
-      };
+      } as CreateUserDto;
 
-      const randomObjectId = String(new mongoose.Types.ObjectId());
+      const document = await this.usersService.create(dto, ["github"]);
 
-      // Save in database
-      const document = await this.userModel.create({
-        ...dto,
-        providers: ["github"],
-        username: `${dto.name}${dto.lastName}${randomObjectId}`,
-      });
-
-      done(null, { userId: document._id }); // { userId: new ObjecId("userId") }
+      return done(null, { userId: document!._id });
     } catch (error) {
       done(error as Error);
     }

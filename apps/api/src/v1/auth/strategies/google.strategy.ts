@@ -3,14 +3,17 @@ import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { InjectModel } from "@nestjs/mongoose";
 import { PassportStrategy } from "@nestjs/passport";
-import mongoose, { Model } from "mongoose";
+import { Model } from "mongoose";
 import { Profile, Strategy, VerifyCallback } from "passport-google-oauth20";
+import { CreateUserDto } from "../../users/dto/create-user.dto";
+import { UsersService } from "../../users/users.service";
 
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, "google") {
   constructor(
     configService: ConfigService,
     @InjectModel(User.name) private userModel: Model<User>,
+    private readonly usersService: UsersService,
   ) {
     super({
       clientID: configService.get<string>("GOOGLE_CLIENT_ID") ?? "",
@@ -30,22 +33,19 @@ export class GoogleStrategy extends PassportStrategy(Strategy, "google") {
 
       const email = emails[0].value;
 
-      // Check if user already exists
-      const existingUser = await this.userModel.findOne({ email });
+      const existingUser = await this.usersService.findByEmail(email);
 
       if (existingUser) {
-        // User already exists, update provider if not already included
         const providers = existingUser.providers;
 
         if (!providers.includes("google")) {
-          providers.push("google");
           await this.userModel.findByIdAndUpdate(existingUser._id, {
-            provider: providers,
+            $push: {
+              providers: "google",
+            },
           });
         }
-
-        done(null, { userId: existingUser._id }); // { userId: new ObjecId("userId") }
-        return;
+        return done(null, { userId: existingUser._id });
       }
 
       const dto = {
@@ -53,18 +53,11 @@ export class GoogleStrategy extends PassportStrategy(Strategy, "google") {
         name: name.givenName,
         lastName: name.familyName,
         avatar: photos?.[0].value ?? undefined,
-      };
+      } as CreateUserDto;
 
-      const randomObjectId = String(new mongoose.Types.ObjectId());
+      const document = await this.usersService.create(dto, ["google"]);
 
-      // Save in database
-      const document = await this.userModel.create({
-        ...dto,
-        providers: ["google"],
-        username: `${dto.name}${dto.lastName}${randomObjectId}`,
-      });
-
-      done(null, { userId: document._id }); // -> envia a google straty
+      return done(null, { userId: document!._id });
     } catch (error) {
       done(error as Error);
     }

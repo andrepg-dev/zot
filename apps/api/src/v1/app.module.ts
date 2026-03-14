@@ -1,6 +1,7 @@
 import { ReactToHtmlService } from "@api/src/v1/core/react-to-html/react-to-html.service";
 import { Module } from "@nestjs/common";
 import { APP_GUARD } from "@nestjs/core";
+import { ApiKeyModule } from "./api-key/api-key.module";
 import { AuthModule } from "./auth/auth.module";
 import { JwtAuthGuard } from "./auth/guards/jwt.guard";
 import { EmailSendingService } from "./core/email-sending/email-sending.service";
@@ -20,6 +21,7 @@ import { WaitListModule } from "./wait-list/wait-list.module";
     WaitListModule,
     EmailTemplatesModule,
     EmailsModule,
+    ApiKeyModule,
   ],
   providers: [
     {

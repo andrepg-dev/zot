@@ -19,7 +19,7 @@ import { Response } from "express";
 import { CreateUserDto } from "../users/dto/create-user.dto";
 import { LoginUserDto } from "../users/dto/login-user.dto";
 import { UsersService } from "../users/users.service";
-import { RefreshToken } from "./schemas/refresh_token.schema";
+import { RefreshToken } from "./schemas/refresh-token.schema";
 
 @Injectable()
 export class AuthService {

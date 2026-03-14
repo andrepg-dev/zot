@@ -6,3 +6,12 @@ export class BasedOwnerSchema {
   @Prop({ type: Types.ObjectId, ref: "user", required: true, index: true })
   owner: Types.ObjectId;
 }
+
+/**
+ * Owner hidden by default
+ */
+@Schema()
+export class BasedOwnerHiddenSchema {
+  @Prop({ type: Types.ObjectId, ref: "user", required: true, index: true, select: false })
+  owner: Types.ObjectId;
+}
