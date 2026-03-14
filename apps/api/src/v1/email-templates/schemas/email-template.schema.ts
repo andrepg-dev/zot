@@ -1,9 +1,9 @@
-import { BasedOwnerSchema } from "@api/src/common/schemas/based-owner.schema";
+import { BasedHiddenOwnerSchema } from "@api/src/common/schemas/based-owner.schema";
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { EmailTemplateStatus } from "../types/email-template";
 
 @Schema({ timestamps: true, versionKey: false })
-export class EmailTemplate extends BasedOwnerSchema {
+export class EmailTemplate extends BasedHiddenOwnerSchema {
   @Prop({ required: true, default: "Untitled template" })
   alias: string;
 

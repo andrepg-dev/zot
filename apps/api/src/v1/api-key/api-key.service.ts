@@ -89,8 +89,6 @@ export class ApiKeyService {
   async findUserByApiKey(apiKey: string) {
     const key = await this.apiKeyModel.findOne({ apiKey }).select("+owner");
 
-    console.log({ key });
-
     if (!key) {
       throw new UnauthorizedException(`${apiKey} API Key doesn't exists.`);
     }
