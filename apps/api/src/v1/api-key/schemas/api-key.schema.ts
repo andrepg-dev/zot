@@ -1,8 +1,8 @@
-import { BasedOwnerHiddenSchema } from "@api/src/common/schemas/based-owner.schema";
+import { BasedHiddenOwnerSchema } from "@api/src/common/schemas/based-owner.schema";
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 
 @Schema({ timestamps: { createdAt: true, updatedAt: false }, versionKey: false })
-export class ApiKey extends BasedOwnerHiddenSchema {
+export class ApiKey extends BasedHiddenOwnerSchema {
   @Prop({ type: String, required: true })
   name: string;
 

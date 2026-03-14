@@ -17,6 +17,6 @@ export class ApiKeyStrategy extends PassportStrategy(HeaderAPIKeyStrategy, "api-
 
   async validate(apiKey: string, done: (err: Error | null, user?: object, info?: object) => void) {
     const user = await this.apiKeyService.findUserByApiKey(apiKey.trim());
-    return done(null, user);
+    return done(null, { userId: user?._id.toString() });
   }
 }

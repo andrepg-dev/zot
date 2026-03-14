@@ -3,6 +3,8 @@ import { Module } from "@nestjs/common";
 import { APP_GUARD } from "@nestjs/core";
 import { ApiKeyModule } from "./api-key/api-key.module";
 import { AuthModule } from "./auth/auth.module";
+import { ApiKeyGuard } from "./auth/guards/api-key.guard";
+import { CompositeAuthGuard } from "./auth/guards/composite-auth.guard";
 import { JwtAuthGuard } from "./auth/guards/jwt.guard";
 import { EmailSendingService } from "./core/email-sending/email-sending.service";
 import { EmailTemplatesModule } from "./email-templates/email-templates.module";
@@ -24,9 +26,11 @@ import { WaitListModule } from "./wait-list/wait-list.module";
     ApiKeyModule,
   ],
   providers: [
+    JwtAuthGuard,
+    ApiKeyGuard,
     {
       provide: APP_GUARD,
-      useClass: JwtAuthGuard,
+      useClass: CompositeAuthGuard,
     },
     ReactToHtmlService,
     EmailSendingService,
