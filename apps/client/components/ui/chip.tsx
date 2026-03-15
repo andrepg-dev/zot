@@ -5,9 +5,10 @@ type ChipStatus = "active" | "warning" | "neutral" | "danger" | "primary";
 interface ChipProps {
   status: ChipStatus;
   children?: React.ReactNode;
+  className?: string
 }
 
-export default function Chip({ status, children }: ChipProps) {
+export default function Chip({ status, children, className }: ChipProps) {
   return (
     <span
       className={cn(
@@ -16,7 +17,8 @@ export default function Chip({ status, children }: ChipProps) {
         status === "warning" && "bg-warning/20 text-warning",
         status === "neutral" && "bg-default/20 text-default-600",
         status === "danger" && "bg-destructive/20 text-destructive",
-        status === "primary" && "bg-primary/20 text-primary"
+        status === "primary" && "bg-primary/20 text-primary",
+        className
       )}
     >
       {children || status}
