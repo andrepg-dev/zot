@@ -76,6 +76,7 @@ export default function LaunchedWaitList({ params }: { params: Promise<{ id: str
 
   return (
     <>
+
       <PageComponent>
         <div className="flex items-start gap-2">
           <Title description={`ID: ${id}`} classNames={{ description: "mt-1" }}>
@@ -86,14 +87,14 @@ export default function LaunchedWaitList({ params }: { params: Promise<{ id: str
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mt-4 rounded-default">
           {stats.map((stat) => (
-            <div key={stat.id} className="border border-dashed rounded-sm bg-default-50">
-              <div className="p-6 py-5">
+            <div key={stat.id} className="border rounded bg-background">
+              <div className="px-5 py-4.5">
                 <div className="flex flex-col gap-2">
                   <NumberFlow value={parseInt(stat.value ?? 0)} className="text-2xl font-semibold" />
 
                   <div className="flex gap-2 items-center">
                     <stat.icon className={cn("size-4", stat.iconColor)} />
-                    <p className="text-sm text-muted-foreground">{stat.title}</p>
+                    <p className="text-xs text-muted-foreground font-mono">{stat.title}</p>
                   </div>
                 </div>
               </div>

@@ -48,7 +48,7 @@ export default function DailyRegistrationsChart({
   data = defaultData
 }: DailyRegistrationsChartProps) {
   return (
-    <div className="flex flex-col rounded-lg border border-dashed p-6 bg-default-50">
+    <div className="flex flex-col rounded-sm border px-5 py-4.5 bg-background">
       <div className="flex flex-col gap-2 mb-4">
         <h3 className="text-base font-medium">Daily Registrations & Referrals</h3>
         <p className="text-sm text-muted-foreground">

@@ -36,7 +36,7 @@ const chartColor = "#a855f7";
 
 export default function FakeUsersBlockedChart({ data = defaultData }: FakeUsersBlockedChartProps) {
   return (
-    <div className="flex flex-col rounded-lg border border-dashed p-6 bg-background">
+    <div className="flex flex-col rounded-sm border px-5 py-4.5 bg-background">
       <div className="flex flex-col gap-2 mb-4">
         <h3 className="text-base font-medium">Fake Users Blocked</h3>
         <p className="text-sm text-muted-foreground">Suspicious users blocked over time</p>
@@ -57,7 +57,7 @@ export default function FakeUsersBlockedChart({ data = defaultData }: FakeUsersB
               axisLine={false}
               stroke={axisColor}
               fontSize={12}
-              tick={{ fill: axisColor }}
+              tick={{ fill: axisColor, fontFamily: "var(--font-mono)" }}
             />
             <YAxis
               tickLine={false}
@@ -65,7 +65,7 @@ export default function FakeUsersBlockedChart({ data = defaultData }: FakeUsersB
               tickMargin={8}
               stroke={axisColor}
               fontSize={12}
-              tick={{ fill: axisColor }}
+              tick={{ fill: axisColor, fontFamily: "var(--font-mono)" }}
             />
             <Tooltip
               cursor={false}
@@ -75,7 +75,8 @@ export default function FakeUsersBlockedChart({ data = defaultData }: FakeUsersB
                 border: `1px solid ${tooltipBorder}`,
                 borderRadius: "4px",
                 color: tooltipText,
-                padding: "8px 12px"
+                padding: "8px 12px",
+                fontFamily: "var(--font-mono)"
               }}
             />
             <Bar shape={<CustomGradientBar />} dataKey="blocked" fill={chartColor} />

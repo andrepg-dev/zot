@@ -62,7 +62,7 @@ export default function DailyReferralsChart({ data = defaultData }: DailyReferra
               tickMargin={8}
               stroke={axisColor}
               fontSize={12}
-              tick={{ fill: axisColor }}
+              tick={{ fill: axisColor, fontFamily: "var(--font-mono)" }}
             />
             <YAxis
               tickLine={false}
@@ -70,7 +70,7 @@ export default function DailyReferralsChart({ data = defaultData }: DailyReferra
               tickMargin={8}
               stroke={axisColor}
               fontSize={12}
-              tick={{ fill: axisColor }}
+              tick={{ fill: axisColor, fontFamily: "var(--font-mono)" }}
             />
             <Tooltip
               cursor={false}
@@ -80,7 +80,8 @@ export default function DailyReferralsChart({ data = defaultData }: DailyReferra
                 border: `1px solid ${tooltipBorder}`,
                 borderRadius: "4px",
                 color: tooltipText,
-                padding: "8px 12px"
+                padding: "8px 12px",
+                fontFamily: "var(--font-mono)"
               }}
             />
             <Area
@@ -90,6 +91,8 @@ export default function DailyReferralsChart({ data = defaultData }: DailyReferra
               stroke={chartColor}
               strokeWidth={0.8}
               strokeDasharray="3 3"
+              dot={{ fill: chartColor, r: 4, strokeWidth: 2, stroke: chartColor }}
+              activeDot={{ r: 6, strokeWidth: 2 }}
             />
           </AreaChart>
         </ResponsiveContainer>

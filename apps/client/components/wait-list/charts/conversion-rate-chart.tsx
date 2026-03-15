@@ -1,6 +1,6 @@
 "use client";
 
-import { Line, LineChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
 interface ConversionRateChartProps {
   data?: Array<{
@@ -35,7 +35,7 @@ const chartColor = "#06b6d4";
 
 export default function ConversionRateChart({ data = defaultData }: ConversionRateChartProps) {
   return (
-    <div className="flex flex-col rounded-lg border border-dashed p-6 bg-background">
+    <div className="flex flex-col rounded-sm border px-5 py-4.5 bg-background">
       <div className="flex flex-col gap-2 mb-4">
         <h3 className="text-base font-medium">Conversion Rate Over Time</h3>
         <p className="text-sm text-muted-foreground">Conversion rate of visitors to sign ups</p>
@@ -56,7 +56,7 @@ export default function ConversionRateChart({ data = defaultData }: ConversionRa
               tickMargin={8}
               stroke={axisColor}
               fontSize={12}
-              tick={{ fill: axisColor }}
+              tick={{ fill: axisColor, fontFamily: "var(--font-mono)" }}
             />
             <YAxis
               tickLine={false}
@@ -64,7 +64,7 @@ export default function ConversionRateChart({ data = defaultData }: ConversionRa
               tickMargin={8}
               stroke={axisColor}
               fontSize={12}
-              tick={{ fill: axisColor }}
+              tick={{ fill: axisColor, fontFamily: "var(--font-mono)" }}
               tickFormatter={(value) => `${value}%`}
             />
             <Tooltip
@@ -75,7 +75,8 @@ export default function ConversionRateChart({ data = defaultData }: ConversionRa
                 border: `1px solid ${tooltipBorder}`,
                 borderRadius: "4px",
                 color: tooltipText,
-                padding: "8px 12px"
+                padding: "8px 12px",
+                fontFamily: "var(--font-mono)"
               }}
               formatter={(value: number) => [`${value}%`, "Conversion Rate"]}
             />

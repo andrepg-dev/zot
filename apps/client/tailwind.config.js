@@ -75,6 +75,7 @@ const config = {
       addCommonColors: false,
       defaultTheme: "dark",
       defaultExtendTheme: "dark",
+
       layout: {
         disabledOpacity: "0.5",
         radius: {

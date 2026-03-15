@@ -327,7 +327,8 @@ export default function WaitListPage() {
                   as={Link}
                   href={`/app/launch/waitlist/${item._id}`}
                   isPressable
-                  className="border border-dashed"
+                  disableRipple
+                  className="border"
                   radius="sm"
                 >
                   <CardBody className="p-5">

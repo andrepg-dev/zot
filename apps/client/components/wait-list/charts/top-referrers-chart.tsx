@@ -32,14 +32,14 @@ const chartColor = "#f59e0b";
 
 export default function TopReferrersChart({ data = defaultData }: TopReferrersChartProps) {
   return (
-    <div className="flex flex-col rounded-lg border border-dashed p-6 bg-background">
+    <div className="flex flex-col rounded-sm border px-5 py-4.5 bg-background">
       <div className="flex flex-col gap-2 mb-4">
         <h3 className="text-base font-medium">Top Referrers</h3>
         <p className="text-sm text-muted-foreground">Users with the most referrals</p>
       </div>
       <div className="h-96 w-full">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={data} layout="vertical" margin={{ top: 10, right: 10, left: 10, bottom: 0 }}>
+          <BarChart data={data} layout="vertical" margin={{ top: 0, right: 10, left: 10, bottom: 0 }}>
             <CartesianGrid
               horizontal={false}
               strokeDasharray="3 3"
@@ -52,7 +52,7 @@ export default function TopReferrersChart({ data = defaultData }: TopReferrersCh
               axisLine={false}
               stroke={axisColor}
               fontSize={12}
-              tick={{ fill: axisColor }}
+              tick={{ fill: axisColor, fontFamily: "var(--font-mono)" }}
             />
             <YAxis
               type="category"
@@ -61,7 +61,7 @@ export default function TopReferrersChart({ data = defaultData }: TopReferrersCh
               axisLine={false}
               stroke={axisColor}
               fontSize={12}
-              tick={{ fill: axisColor }}
+              tick={{ fill: axisColor, fontFamily: "var(--font-mono)" }}
               width={150}
             />
             <Tooltip
@@ -72,7 +72,8 @@ export default function TopReferrersChart({ data = defaultData }: TopReferrersCh
                 border: `1px solid ${tooltipBorder}`,
                 borderRadius: "4px",
                 color: tooltipText,
-                padding: "8px 12px"
+                padding: "8px 12px",
+                fontFamily: "var(--font-mono)"
               }}
             />
             <Bar shape={<CustomGradientBar />} dataKey="referrals" fill={chartColor} />
