@@ -22,7 +22,7 @@ export async function FetchWrapper<T>(
     ...options.headers
   };
 
-  if (options.method === "POST") {
+  if (options.method === "POST" || options.method === "PATCH" || options.method === "PUT") {
     headers["Content-Type"] = "application/json";
   }
 

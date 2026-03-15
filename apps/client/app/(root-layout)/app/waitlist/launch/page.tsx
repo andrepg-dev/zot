@@ -1,6 +1,6 @@
 "use client";
 
-import { submitWaitListAction } from "@/actions/submit-waitlist";
+import { createWaitList } from "@/actions/wait-list/wait-list.actions";
 import Form from "@/components/form";
 import FormField from "@/components/form-field";
 import Stepper from "@/components/global/stepper";
@@ -33,7 +33,12 @@ export default function LaunchWaitList() {
   });
 
   const { isPending, error, mutate } = useMutation({
-    mutationFn: submitWaitListAction,
+    mutationFn: (data: SubmitWaitListValues) =>
+      createWaitList({
+        name: data.name,
+        sendEmailToNewSignup: data.sendEmail,
+        isSecurityActive: data.addSecurity,
+      }),
     onSuccess: () => {
       addToast({
         title: "Wait-List created",

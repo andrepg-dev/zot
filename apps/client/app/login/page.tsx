@@ -1,6 +1,6 @@
 "use client";
 
-import { loginAction } from "@/actions/login";
+import { login } from "@/actions/auth/login";
 import InputComponent from "@/components/ui/input";
 import { siteConfig } from "@/config/site";
 import { cn } from "@/lib/utils";
@@ -33,7 +33,7 @@ export default function LoginPage() {
   });
 
   const { isPending, mutate } = useMutation({
-    mutationFn: async (data: LoginFormValues) => await loginAction(data),
+    mutationFn: async (data: LoginFormValues) => await login(data),
     onSuccess: () => {
       addToast({
         title: "Success",

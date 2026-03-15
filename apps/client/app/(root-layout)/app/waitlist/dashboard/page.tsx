@@ -23,7 +23,7 @@ import {
   getKeyValue
 } from "@heroui/react";
 
-import { getWaitList } from "@/actions/wait-list";
+import { getWaitLists } from "@/actions/wait-list/wait-list.actions";
 import Title from "@/components/global/title";
 import Chip from "@/components/ui/chip";
 import { useQuery } from "@tanstack/react-query";
@@ -38,7 +38,7 @@ export default function WaitListPage() {
 
   const { status, data, error, isPending } = useQuery({
     queryKey: ["todos"],
-    queryFn: getWaitList
+    queryFn: getWaitLists
   });
 
   const rows = [
