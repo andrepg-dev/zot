@@ -1,6 +1,7 @@
 "use client";
 
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { AnimatedBarCursor } from "./animated-cursor";
 import CustomGradientBar from "./custom-gradient-bar";
 
 interface FakeUsersBlockedChartProps {
@@ -29,9 +30,9 @@ const defaultData = [
 
 const gridColor = "rgba(255, 255, 255, 0.1)";
 const axisColor = "#b4b4b4";
-const tooltipBg = "rgb(37, 37, 37)";
-const tooltipBorder = "rgba(255, 255, 255, 0.1)";
-const tooltipText = "#EDEEF0";
+const tooltipBg = "rgb(24, 24, 24)";
+const tooltipBorder = "rgba(255, 255, 255, 0.06)";
+const tooltipText = "#a1a1aa";
 const chartColor = "#a855f7";
 
 export default function FakeUsersBlockedChart({ data = defaultData }: FakeUsersBlockedChartProps) {
@@ -68,15 +69,17 @@ export default function FakeUsersBlockedChart({ data = defaultData }: FakeUsersB
               tick={{ fill: axisColor, fontFamily: "var(--font-mono)" }}
             />
             <Tooltip
-              cursor={false}
+              cursor={<AnimatedBarCursor />}
               animationDuration={0}
               contentStyle={{
                 backgroundColor: tooltipBg,
                 border: `1px solid ${tooltipBorder}`,
                 borderRadius: "4px",
                 color: tooltipText,
-                padding: "8px 12px",
-                fontFamily: "var(--font-mono)"
+                padding: "4px 8px",
+                fontSize: "11px",
+                fontFamily: "var(--font-mono)",
+                lineHeight: "1.4"
               }}
             />
             <Bar shape={<CustomGradientBar />} dataKey="blocked" fill={chartColor} />

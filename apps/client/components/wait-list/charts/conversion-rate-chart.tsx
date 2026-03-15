@@ -1,6 +1,7 @@
 "use client";
 
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import AnimatedCursor from "./animated-cursor";
 
 interface ConversionRateChartProps {
   data?: Array<{
@@ -28,9 +29,9 @@ const defaultData = [
 
 const gridColor = "rgba(255, 255, 255, 0.1)";
 const axisColor = "#b4b4b4";
-const tooltipBg = "rgb(37, 37, 37)";
-const tooltipBorder = "rgba(255, 255, 255, 0.1)";
-const tooltipText = "#EDEEF0";
+const tooltipBg = "rgb(24, 24, 24)";
+const tooltipBorder = "rgba(255, 255, 255, 0.06)";
+const tooltipText = "#a1a1aa";
 const chartColor = "#06b6d4";
 
 export default function ConversionRateChart({ data = defaultData }: ConversionRateChartProps) {
@@ -68,15 +69,17 @@ export default function ConversionRateChart({ data = defaultData }: ConversionRa
               tickFormatter={(value) => `${value}%`}
             />
             <Tooltip
-              cursor={false}
+              cursor={<AnimatedCursor />}
               animationDuration={0}
               contentStyle={{
                 backgroundColor: tooltipBg,
                 border: `1px solid ${tooltipBorder}`,
                 borderRadius: "4px",
                 color: tooltipText,
-                padding: "8px 12px",
-                fontFamily: "var(--font-mono)"
+                padding: "4px 8px",
+                fontSize: "11px",
+                fontFamily: "var(--font-mono)",
+                lineHeight: "1.4"
               }}
               formatter={(value: number) => [`${value}%`, "Conversion Rate"]}
             />
@@ -86,7 +89,7 @@ export default function ConversionRateChart({ data = defaultData }: ConversionRa
               strokeWidth={0.8}
               strokeDasharray="3 3"
               dot={{ fill: chartColor, r: 4, strokeWidth: 2, stroke: chartColor }}
-              activeDot={{ r: 6, strokeWidth: 2 }}
+              activeDot={false}
             />
           </LineChart>
         </ResponsiveContainer>

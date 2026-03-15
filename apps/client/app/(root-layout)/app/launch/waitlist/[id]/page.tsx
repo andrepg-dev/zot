@@ -20,6 +20,11 @@ import React from "react";
 
 export default function LaunchedWaitList({ params }: { params: Promise<{ id: string }> }) {
   const { id } = React.use(params);
+  const [animated, setAnimated] = React.useState(false);
+
+  React.useEffect(() => {
+    setAnimated(true);
+  }, []);
 
   const stats = [
     {
@@ -90,7 +95,7 @@ export default function LaunchedWaitList({ params }: { params: Promise<{ id: str
             <div key={stat.id} className="border rounded bg-background">
               <div className="px-5 py-4.5">
                 <div className="flex flex-col gap-2">
-                  <NumberFlow value={parseInt(stat.value ?? 0)} className="text-2xl font-semibold" />
+                  <NumberFlow value={animated ? parseInt(stat.value ?? 0) : 0} className="text-2xl font-semibold" />
 
                   <div className="flex gap-2 items-center">
                     <stat.icon className={cn("size-4", stat.iconColor)} />

@@ -10,6 +10,7 @@ import {
   XAxis,
   YAxis
 } from "recharts";
+import AnimatedCursor from "./animated-cursor";
 
 interface DailyRegistrationsChartProps {
   data?: Array<{
@@ -38,9 +39,9 @@ const defaultData = [
 
 const gridColor = "rgba(255, 255, 255, 0.1)";
 const axisColor = "#b4b4b4";
-const tooltipBg = "rgb(37, 37, 37)";
-const tooltipBorder = "rgba(255, 255, 255, 0.1)";
-const tooltipText = "#EDEEF0";
+const tooltipBg = "rgb(24, 24, 24)";
+const tooltipBorder = "rgba(255, 255, 255, 0.06)";
+const tooltipText = "#a1a1aa";
 const registrationsColor = "#3b82f6";
 const referralsColor = "#10b981";
 
@@ -93,15 +94,17 @@ export default function DailyRegistrationsChart({
               tick={{ fill: axisColor, fontFamily: "var(--font-mono)" }}
             />
             <Tooltip
-              cursor={false}
+              cursor={<AnimatedCursor />}
               animationDuration={0}
               contentStyle={{
                 backgroundColor: tooltipBg,
                 border: `1px solid ${tooltipBorder}`,
                 borderRadius: "4px",
                 color: tooltipText,
-                padding: "8px 12px",
-                fontFamily: "var(--font-mono)"
+                padding: "4px 8px",
+                fontSize: "11px",
+                fontFamily: "var(--font-mono)",
+                lineHeight: "1.4"
               }}
             />
             <Legend
@@ -119,7 +122,7 @@ export default function DailyRegistrationsChart({
               strokeWidth={0.8}
               strokeDasharray="3 3"
               dot={{ fill: referralsColor, r: 4, strokeWidth: 2, stroke: referralsColor }}
-              activeDot={{ r: 6, strokeWidth: 2 }}
+              activeDot={false}
               name="Referrals"
 
             />
@@ -132,7 +135,7 @@ export default function DailyRegistrationsChart({
               strokeWidth={0.8}
               strokeDasharray="3 3"
               dot={{ fill: registrationsColor, r: 4, strokeWidth: 2, stroke: registrationsColor }}
-              activeDot={{ r: 6, strokeWidth: 2 }}
+              activeDot={false}
               name="Registrations"
             />
           </AreaChart>
