@@ -78,7 +78,7 @@ const config = {
       layout: {
         disabledOpacity: "0.5",
         radius: {
-          small: "7px",
+          small: "5px",
           medium: ".45rem"
         },
 

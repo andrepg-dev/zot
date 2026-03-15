@@ -15,7 +15,11 @@ export default function GlobalButton({
 }: GlobalButtonProps) {
   return (
     <Button
-      className={cn(props.color === "primary" && "border", className)}
+      className={cn(
+        props.color === "primary" && "border",
+        props.variant === "light" && "border border-transparent!",
+        className
+      )}
       disableRipple={disableRipple}
       {...props}
       size="sm"
