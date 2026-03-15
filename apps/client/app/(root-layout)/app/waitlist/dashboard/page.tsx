@@ -29,6 +29,7 @@ import {
 import { deleteWaitList, getWaitLists, updateWaitList } from "@/actions/wait-list/wait-list.actions";
 import GlobalButton from "@/components/global/button";
 import Title from "@/components/global/title";
+import WaitListCardSkeleton from "@/components/skeletons/wait-list/card";
 import Type from "@/components/type";
 import Chip from "@/components/ui/chip";
 import { ChevronDownIcon, ClipboardDocumentIcon, NoSymbolIcon, TrashIcon } from "@heroicons/react/24/outline";
@@ -46,7 +47,7 @@ export default function WaitListPage() {
 
   const queryClient = useQueryClient();
 
-  const { data } = useQuery({
+  const { data, isPending } = useQuery({
     queryKey: ["waitlists"],
     queryFn: getWaitLists
   });
@@ -313,7 +314,9 @@ export default function WaitListPage() {
           </Table>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4">
-            {rows.length === 0 ? (
+            {isPending ? (
+              <WaitListCardSkeleton />
+            ) : rows.length === 0 ? (
               <div className="col-span-full text-center text-default-400 py-8">
                 No waitlists to display.
               </div>
