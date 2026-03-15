@@ -1,0 +1,1692 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/v1": {
+      "get": {
+        "description": "Returns a welcome message. Use this endpoint to verify the API is running.",
+        "operationId": "main",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "API is healthy and running",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "example": "Welcome to zot API"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Health check",
+        "tags": [
+          "Health"
+        ]
+      }
+    },
+    "/v1/auth/login": {
+      "post": {
+        "description": "Authenticate user with email and password. Returns JWT access token.",
+        "operationId": "login",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccessTokenResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid credentials"
+          }
+        },
+        "summary": "User login",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/v1/auth/register": {
+      "post": {
+        "description": "Create a new user account. Returns JWT access token upon successful registration.",
+        "operationId": "authRegister",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUserDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User successfully registered",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccessTokenResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "User already exists or validation failed"
+          }
+        },
+        "summary": "User registration",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/v1/auth/google": {
+      "get": {
+        "description": "Initiates Google OAuth2 authentication flow. Redirects to Google login page.",
+        "operationId": "google",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Google OAuth login",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/v1/auth/google/callback": {
+      "get": {
+        "description": "Handles Google OAuth2 callback. Sets cookie and redirects to frontend.",
+        "operationId": "googleAuthRedirect",
+        "parameters": [],
+        "responses": {
+          "500": {
+            "description": "User not found after OAuth"
+          }
+        },
+        "summary": "Google OAuth callback",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/v1/auth/github/callback": {
+      "get": {
+        "description": "Handles GitHub OAuth2 callback. Sets cookie and redirects to frontend.",
+        "operationId": "githubAuthRedirect",
+        "parameters": [],
+        "responses": {
+          "500": {
+            "description": "User not found after OAuth"
+          }
+        },
+        "summary": "GitHub OAuth callback",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/v1/auth/github": {
+      "get": {
+        "description": "Initiates GitHub OAuth2 authentication flow. Redirects to GitHub login page.",
+        "operationId": "github",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "GitHub OAuth login",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/v1/auth/profile": {
+      "get": {
+        "description": "Returns the authenticated user profile information.",
+        "operationId": "getProfile",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "User profile retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserProfileResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated"
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "Get current user profile",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/v1/auth/refresh-token": {
+      "get": {
+        "operationId": "profile",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/v1/auth/logout": {
+      "get": {
+        "description": "Clears authentication cookies and logs out the user.",
+        "operationId": "logout",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successfully logged out",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LogoutResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "User logout",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/v1/user-quote": {
+      "get": {
+        "operationId": "findUserQuote",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "UserQuote"
+        ]
+      }
+    },
+    "/v1/user-quote/history": {
+      "get": {
+        "operationId": "getUsageHistory",
+        "parameters": [
+          {
+            "name": "service",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "from",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "UserQuote"
+        ]
+      }
+    },
+    "/v1/api-key": {
+      "post": {
+        "description": "Creates a new API key for the authenticated user.",
+        "operationId": "aPIKeysCreate",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateApiKeyDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "API key created successfully"
+          },
+          "401": {
+            "description": "Not authenticated"
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "Create a new API key",
+        "tags": [
+          "API Keys"
+        ]
+      },
+      "get": {
+        "description": "Retrieves all API keys owned by the authenticated user.",
+        "operationId": "aPIKeysFindAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "List of API keys retrieved successfully"
+          },
+          "401": {
+            "description": "Not authenticated"
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "Get all API keys",
+        "tags": [
+          "API Keys"
+        ]
+      }
+    },
+    "/v1/api-key/{id}": {
+      "get": {
+        "description": "Retrieves a specific API key by ID.",
+        "operationId": "aPIKeysFindOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "API key MongoDB ObjectId",
+            "schema": {
+              "$ref": "#/components/schemas/ObjectId"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "API key retrieved successfully"
+          },
+          "401": {
+            "description": "Not authenticated"
+          },
+          "404": {
+            "description": "API key not found"
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "Get a specific API key",
+        "tags": [
+          "API Keys"
+        ]
+      },
+      "patch": {
+        "description": "Updates an existing API key. Only the owner can update.",
+        "operationId": "aPIKeysUpdate",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "API key MongoDB ObjectId",
+            "schema": {
+              "$ref": "#/components/schemas/ObjectId"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateApiKeyDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "API key updated successfully"
+          },
+          "401": {
+            "description": "Not authenticated"
+          },
+          "404": {
+            "description": "API key not found"
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "Update an API key",
+        "tags": [
+          "API Keys"
+        ]
+      },
+      "delete": {
+        "description": "Permanently deletes an API key. This action cannot be undone.",
+        "operationId": "aPIKeysRemove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "API key MongoDB ObjectId",
+            "schema": {
+              "$ref": "#/components/schemas/ObjectId"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "API key deleted successfully"
+          },
+          "401": {
+            "description": "Not authenticated"
+          },
+          "404": {
+            "description": "API key not found"
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "Delete an API key",
+        "tags": [
+          "API Keys"
+        ]
+      }
+    },
+    "/v1/react2html": {
+      "post": {
+        "description": "Compiles React email components to static HTML. \n    \nThis endpoint is useful for generating email templates using React Email components.\nThe input should be valid React/JSX code that exports a default component.\n\n**Supported packages:**\n- @react-email/components (Html, Head, Body, Container, Text, Button, etc.)",
+        "operationId": "compile",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReactToHtmlDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "React component successfully compiled to HTML",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReactToHtmlResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid React code or compilation error"
+          }
+        },
+        "summary": "Compile React to HTML",
+        "tags": [
+          "React to HTML"
+        ]
+      }
+    },
+    "/v1/subscriptions/checkout-session": {
+      "post": {
+        "description": "Creates a Stripe-hosted checkout session for the current user subscription.",
+        "operationId": "createCheckoutSession",
+        "parameters": [],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCheckoutSessionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Checkout session created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CheckoutSessionResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated"
+          },
+          "500": {
+            "description": "Stripe error while creating session"
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "Create Stripe checkout session for Zot Premium",
+        "tags": [
+          "Subscriptions"
+        ]
+      }
+    },
+    "/v1/subscriptions/webhook": {
+      "post": {
+        "description": "Receives Stripe events and keeps user plan and quotes synchronized.",
+        "operationId": "stripeWebhook",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Webhook accepted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebhookAcceptedResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Stripe webhook receiver",
+        "tags": [
+          "Subscriptions"
+        ]
+      }
+    },
+    "/v1/wait-list": {
+      "post": {
+        "description": "Creates a new waitlist for the authenticated user.",
+        "operationId": "waitListCreate",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateWaitListDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Waitlist created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WaitListResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated"
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "Create a new waitlist",
+        "tags": [
+          "WaitList"
+        ]
+      },
+      "get": {
+        "description": "Retrieves all waitlists owned by the authenticated user.",
+        "operationId": "waitListFindAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "List of waitlists retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WaitListResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated"
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "Get all waitlists",
+        "tags": [
+          "WaitList"
+        ]
+      }
+    },
+    "/v1/wait-list/{id}": {
+      "get": {
+        "description": "Retrieves a specific waitlist by ID.",
+        "operationId": "waitListFindOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Waitlist MongoDB ObjectId",
+            "schema": {
+              "$ref": "#/components/schemas/ObjectId"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Waitlist retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WaitListResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated"
+          },
+          "404": {
+            "description": "Waitlist not found"
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "Get a specific waitlist",
+        "tags": [
+          "WaitList"
+        ]
+      },
+      "patch": {
+        "description": "Updates an existing waitlist. Only the owner can update.",
+        "operationId": "waitListUpdate",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Waitlist MongoDB ObjectId",
+            "schema": {
+              "$ref": "#/components/schemas/ObjectId"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateWaitListDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Waitlist updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WaitListResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated"
+          },
+          "404": {
+            "description": "Waitlist not found"
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "Update a waitlist",
+        "tags": [
+          "WaitList"
+        ]
+      },
+      "delete": {
+        "description": "Permanently deletes a waitlist. This action cannot be undone.",
+        "operationId": "waitListRemove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Waitlist MongoDB ObjectId",
+            "schema": {
+              "$ref": "#/components/schemas/ObjectId"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Waitlist deleted successfully"
+          },
+          "401": {
+            "description": "Not authenticated"
+          },
+          "404": {
+            "description": "Waitlist not found"
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "Delete a waitlist",
+        "tags": [
+          "WaitList"
+        ]
+      }
+    },
+    "/v1/wait-list/{waitlistId}/user": {
+      "post": {
+        "description": "Allows a user to register for a waitlist. This is a public endpoint that does not require authentication.",
+        "operationId": "waitListUsersRegister",
+        "parameters": [
+          {
+            "name": "waitlistId",
+            "required": true,
+            "in": "path",
+            "description": "Waitlist MongoDB ObjectId",
+            "schema": {
+              "$ref": "#/components/schemas/ObjectId"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterWaitListUserDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User successfully registered to waitlist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WaitListUserResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Waitlist not found or not available"
+          }
+        },
+        "summary": "Register for a waitlist",
+        "tags": [
+          "WaitList Users"
+        ]
+      },
+      "get": {
+        "description": "Retrieves all users registered in a specific waitlist. Requires owner authentication.",
+        "operationId": "waitListUsersFindAll",
+        "parameters": [
+          {
+            "name": "waitlistId",
+            "required": true,
+            "in": "path",
+            "description": "Waitlist MongoDB ObjectId",
+            "schema": {
+              "$ref": "#/components/schemas/ObjectId"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of waitlist users retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WaitListUserResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated or not the waitlist owner"
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "Get all waitlist users",
+        "tags": [
+          "WaitList Users"
+        ]
+      }
+    },
+    "/v1/wait-list/{waitlistId}/user/count": {
+      "get": {
+        "description": "Returns total user count and referred user count for a waitlist.",
+        "operationId": "count",
+        "parameters": [
+          {
+            "name": "waitlistId",
+            "required": true,
+            "in": "path",
+            "description": "Waitlist MongoDB ObjectId",
+            "schema": {
+              "$ref": "#/components/schemas/ObjectId"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Waitlist counts retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WaitListUserCountResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated or not the waitlist owner"
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "Get waitlist user counts",
+        "tags": [
+          "WaitList Users"
+        ]
+      }
+    },
+    "/v1/wait-list/{waitlistId}/user/search": {
+      "get": {
+        "description": "Finds a specific user in the waitlist by their email address.",
+        "operationId": "findByEmail",
+        "parameters": [
+          {
+            "name": "waitlistId",
+            "required": true,
+            "in": "path",
+            "description": "Waitlist MongoDB ObjectId",
+            "schema": {
+              "$ref": "#/components/schemas/ObjectId"
+            }
+          },
+          {
+            "name": "email",
+            "required": true,
+            "in": "query",
+            "description": "Email address to search for",
+            "schema": {
+              "example": "user@example.com",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WaitListUserResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated or not the waitlist owner"
+          },
+          "404": {
+            "description": "User not found in waitlist"
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "Search user by email",
+        "tags": [
+          "WaitList Users"
+        ]
+      }
+    },
+    "/v1/wait-list/{waitlistId}/user/{email}": {
+      "delete": {
+        "description": "Removes a user from the waitlist by their email address.",
+        "operationId": "waitListUsersRemove",
+        "parameters": [
+          {
+            "name": "waitlistId",
+            "required": true,
+            "in": "path",
+            "description": "Waitlist MongoDB ObjectId",
+            "schema": {
+              "$ref": "#/components/schemas/ObjectId"
+            }
+          },
+          {
+            "name": "email",
+            "required": true,
+            "in": "path",
+            "description": "Email address of the user to remove",
+            "schema": {
+              "example": "user@example.com",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User removed from waitlist successfully"
+          },
+          "401": {
+            "description": "Not authenticated or not the waitlist owner"
+          },
+          "404": {
+            "description": "User not found in waitlist"
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "Remove user from waitlist",
+        "tags": [
+          "WaitList Users"
+        ]
+      }
+    },
+    "/v1/wait-list/{waitlistId}/stats": {
+      "get": {
+        "description": "Retrieves aggregated statistics for a specific waitlist owned by the authenticated user.",
+        "operationId": "waitlistStats",
+        "parameters": [
+          {
+            "name": "waitlistId",
+            "required": true,
+            "in": "path",
+            "description": "Waitlist MongoDB ObjectId",
+            "schema": {
+              "$ref": "#/components/schemas/ObjectId"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Waitlist statistics retrieved successfully"
+          },
+          "401": {
+            "description": "Not authenticated"
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "Get waitlist statistics",
+        "tags": [
+          "WaitList"
+        ]
+      }
+    },
+    "/v1/email-templates": {
+      "post": {
+        "operationId": "emailTemplatesCreate",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateEmailTemplateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "EmailTemplates"
+        ]
+      },
+      "get": {
+        "operationId": "emailTemplatesFindAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "EmailTemplates"
+        ]
+      }
+    },
+    "/v1/email-templates/{id}": {
+      "get": {
+        "operationId": "emailTemplatesFindOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "$ref": "#/components/schemas/ObjectId"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "EmailTemplates"
+        ]
+      },
+      "patch": {
+        "operationId": "emailTemplatesUpdate",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "$ref": "#/components/schemas/ObjectId"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateEmailTemplateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "EmailTemplates"
+        ]
+      },
+      "delete": {
+        "operationId": "emailTemplatesRemove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "$ref": "#/components/schemas/ObjectId"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "EmailTemplates"
+        ]
+      }
+    },
+    "/v1/emails": {
+      "post": {
+        "operationId": "sendEmail",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SendEmailDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Emails"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "Zot API",
+    "description": "#### Overview\nZot API provides a comprehensive solution for managing waitlists and user authentication\n\n#### Rate Limiting\nAPI requests are subject to rate limiting. Please handle 429 responses appropriately.",
+    "version": "1.0.0",
+    "contact": {
+      "name": "Zot Team",
+      "url": "https://zot.so",
+      "email": "support@zot.so"
+    }
+  },
+  "tags": [
+    {
+      "name": "Health",
+      "description": "API health check endpoints"
+    },
+    {
+      "name": "Auth",
+      "description": "Authentication and authorization endpoints"
+    },
+    {
+      "name": "Subscriptions",
+      "description": "Stripe subscription and billing endpoints"
+    },
+    {
+      "name": "WaitList",
+      "description": "Waitlist management endpoints"
+    },
+    {
+      "name": "WaitList Users",
+      "description": "Waitlist user registration and management"
+    },
+    {
+      "name": "React to HTML",
+      "description": "React component to HTML conversion"
+    }
+  ],
+  "servers": [
+    {
+      "url": "http://localhost:3010",
+      "description": "Current Environment"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "JWT-auth": {
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "type": "http",
+        "name": "Authorization",
+        "description": "Enter your JWT token",
+        "in": "header"
+      }
+    },
+    "schemas": {
+      "LoginDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "User email address",
+            "example": "john.doe@example.com",
+            "format": "email"
+          },
+          "password": {
+            "type": "string",
+            "description": "User password",
+            "example": "SecureP@ssw0rd!",
+            "format": "password"
+          }
+        },
+        "required": [
+          "email",
+          "password"
+        ]
+      },
+      "AccessTokenResponseDto": {
+        "type": "object",
+        "properties": {
+          "access_token": {
+            "type": "string",
+            "description": "JWT access token for authenticated requests",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+          }
+        },
+        "required": [
+          "access_token"
+        ]
+      },
+      "CreateUserDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "User first name",
+            "example": "John",
+            "minLength": 2
+          },
+          "lastName": {
+            "type": "string",
+            "description": "User last name",
+            "example": "Doe",
+            "minLength": 2
+          },
+          "email": {
+            "type": "string",
+            "description": "User email address (must be unique)",
+            "example": "john.doe@example.com",
+            "maxLength": 100,
+            "format": "email"
+          },
+          "password": {
+            "type": "string",
+            "description": "User password",
+            "example": "SecureP@ssw0rd!",
+            "maxLength": 100,
+            "format": "password"
+          },
+          "avatar": {
+            "type": "string",
+            "description": "URL to user avatar image",
+            "example": "https://example.com/avatars/john-doe.jpg",
+            "format": "uri"
+          }
+        },
+        "required": [
+          "name",
+          "lastName",
+          "email",
+          "password"
+        ]
+      },
+      "UserProfileResponseDto": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string",
+            "description": "User unique identifier",
+            "example": "507f1f77bcf86cd799439011"
+          }
+        },
+        "required": [
+          "userId"
+        ]
+      },
+      "LogoutResponseDto": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Logout confirmation message",
+            "example": "Logged out successfully"
+          }
+        },
+        "required": [
+          "message"
+        ]
+      },
+      "CreateApiKeyDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name to identify the API key",
+            "example": "Production API Key",
+            "minLength": 2,
+            "maxLength": 100
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "ObjectId": {
+        "type": "object",
+        "properties": {}
+      },
+      "UpdateApiKeyDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name to identify the API key",
+            "example": "Production API Key",
+            "minLength": 2,
+            "maxLength": 100
+          }
+        }
+      },
+      "ReactToHtmlDto": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "React component code to be compiled to HTML",
+            "example": "import { Html, Head, Body, Container, Text } from \"@react-email/components\";\n\nexport default function Email() {\n  return (\n    <Html>\n      <Head />\n      <Body>\n        <Container>\n          <Text>Hello World!</Text>\n        </Container>\n      </Body>\n    </Html>\n  );\n}"
+          }
+        },
+        "required": [
+          "code"
+        ]
+      },
+      "ReactToHtmlResponseDto": {
+        "type": "object",
+        "properties": {
+          "html": {
+            "type": "string",
+            "description": "Compiled HTML output from React component",
+            "example": "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n<html>\n  <head></head>\n  <body>\n    <div style=\"max-width:600px;margin:0 auto\">\n      <p>Hello World!</p>\n    </div>\n  </body>\n</html>"
+          }
+        },
+        "required": [
+          "html"
+        ]
+      },
+      "CreateCheckoutSessionDto": {
+        "type": "object",
+        "properties": {
+          "couponCode": {
+            "type": "string",
+            "description": "Optional promotion code to apply immediately. If omitted, Stripe Checkout still allows entering a code manually.",
+            "example": "WELCOME10"
+          }
+        }
+      },
+      "CheckoutSessionResponseDto": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "Checkout session id generated by Stripe",
+            "example": "cs_test_a1B2c3D4e5"
+          },
+          "url": {
+            "type": "string",
+            "description": "Stripe-hosted URL where the user completes the subscription purchase",
+            "example": "https://checkout.stripe.com/c/pay/cs_test_123"
+          }
+        },
+        "required": [
+          "sessionId",
+          "url"
+        ]
+      },
+      "WebhookAcceptedResponseDto": {
+        "type": "object",
+        "properties": {
+          "received": {
+            "type": "boolean",
+            "description": "Indicates that webhook event was accepted",
+            "example": true
+          }
+        },
+        "required": [
+          "received"
+        ]
+      },
+      "WebhookConfigDto": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "Webhook URL to notify when a new user signs up",
+            "example": "https://your-server.com/webhooks/waitlist",
+            "format": "uri"
+          },
+          "range": {
+            "type": "number",
+            "description": "Notify webhook every N users registered",
+            "example": 10,
+            "default": 10
+          }
+        }
+      },
+      "CreateWaitListDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the waitlist",
+            "example": "Product Launch Waitlist"
+          },
+          "sendEmailToNewSignup": {
+            "type": "boolean",
+            "description": "Whether to send confirmation email to new signups",
+            "example": true
+          },
+          "webhook": {
+            "description": "Webhook configuration for new signup notifications",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/WebhookConfigDto"
+              }
+            ]
+          },
+          "widget_id": {
+            "type": "string",
+            "description": "Associated widget ID for embedding",
+            "example": "507f1f77bcf86cd799439011"
+          },
+          "isAvailable": {
+            "type": "boolean",
+            "description": "Whether the waitlist is accepting new signups",
+            "example": true,
+            "default": true
+          },
+          "isSecurityActive": {
+            "type": "boolean",
+            "description": "Whether the waitlist has security active",
+            "example": true,
+            "default": false
+          }
+        },
+        "required": [
+          "name",
+          "sendEmailToNewSignup"
+        ]
+      },
+      "WaitListResponseDto": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "Unique identifier of the waitlist",
+            "example": "507f1f77bcf86cd799439011"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the waitlist",
+            "example": "Product Launch Waitlist"
+          },
+          "sendEmailToNewSignup": {
+            "type": "boolean",
+            "description": "Whether confirmation emails are sent to new signups",
+            "example": true
+          },
+          "webhook": {
+            "type": "object",
+            "description": "Webhook URL for new signup notifications",
+            "example": "https://your-server.com/webhooks/waitlist",
+            "format": "uri"
+          },
+          "widget_id": {
+            "type": "string",
+            "description": "Associated widget ID",
+            "example": "507f1f77bcf86cd799439011"
+          },
+          "isAvailable": {
+            "type": "boolean",
+            "description": "Whether the waitlist is accepting signups",
+            "example": true
+          },
+          "user_id": {
+            "type": "string",
+            "description": "Owner user ID",
+            "example": "507f1f77bcf86cd799439011"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Creation timestamp",
+            "example": "2024-01-15T10:30:00.000Z"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Last update timestamp",
+            "example": "2024-01-15T10:30:00.000Z"
+          }
+        },
+        "required": [
+          "_id",
+          "name",
+          "sendEmailToNewSignup",
+          "isAvailable",
+          "user_id",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "UpdateWaitListDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the waitlist",
+            "example": "Product Launch Waitlist"
+          },
+          "sendEmailToNewSignup": {
+            "type": "boolean",
+            "description": "Whether to send confirmation email to new signups",
+            "example": true
+          },
+          "webhook": {
+            "description": "Webhook configuration for new signup notifications",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/WebhookConfigDto"
+              }
+            ]
+          },
+          "widget_id": {
+            "type": "string",
+            "description": "Associated widget ID for embedding",
+            "example": "507f1f77bcf86cd799439011"
+          },
+          "isAvailable": {
+            "type": "boolean",
+            "description": "Whether the waitlist is accepting new signups",
+            "example": true,
+            "default": true
+          },
+          "isSecurityActive": {
+            "type": "boolean",
+            "description": "Whether the waitlist has security active",
+            "example": true,
+            "default": false
+          }
+        }
+      },
+      "RegisterWaitListUserDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "Email address of the user joining the waitlist",
+            "example": "user@example.com",
+            "format": "email"
+          },
+          "referredBy": {
+            "type": "string",
+            "description": "Referral code from another user who referred this signup",
+            "example": "ref_abc123xyz"
+          }
+        },
+        "required": [
+          "email"
+        ]
+      },
+      "WaitListUserResponseDto": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "Unique identifier of the waitlist user entry",
+            "example": "507f1f77bcf86cd799439011"
+          },
+          "email": {
+            "type": "string",
+            "description": "Email address of the registered user",
+            "example": "user@example.com"
+          },
+          "waitlistId": {
+            "type": "string",
+            "description": "Waitlist ID this user belongs to",
+            "example": "507f1f77bcf86cd799439011"
+          },
+          "referredBy": {
+            "type": "string",
+            "description": "Referral code of the user who referred this signup",
+            "example": "ref_abc123xyz"
+          },
+          "referral_code": {
+            "type": "string",
+            "description": "Unique referral code for this user to share",
+            "example": "ref_xyz789abc"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Registration timestamp",
+            "example": "2024-01-15T10:30:00.000Z"
+          }
+        },
+        "required": [
+          "_id",
+          "email",
+          "waitlistId",
+          "referral_code",
+          "createdAt"
+        ]
+      },
+      "WaitListUserCountResponseDto": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "number",
+            "description": "Total number of users in the waitlist",
+            "example": 1250
+          },
+          "referred": {
+            "type": "number",
+            "description": "Number of users who signed up via referral",
+            "example": 320
+          }
+        },
+        "required": [
+          "total",
+          "referred"
+        ]
+      },
+      "CreateEmailTemplateDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "UpdateEmailTemplateDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "SendEmailDto": {
+        "type": "object",
+        "properties": {}
+      }
+    }
+  }
+}
