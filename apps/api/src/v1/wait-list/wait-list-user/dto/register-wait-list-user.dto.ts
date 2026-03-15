@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { IsEmail, IsOptional, IsString } from "class-validator";
+import { IsEmail, IsObject, IsOptional, IsString } from "class-validator";
 
 export class RegisterWaitListUserDto {
   @ApiProperty({
@@ -17,4 +17,12 @@ export class RegisterWaitListUserDto {
   @IsOptional()
   @IsString()
   referredBy?: string;
+
+  @ApiPropertyOptional({
+    description: "Arbitrary key-value metadata to attach to the waitlist user",
+    example: { source: "landing-page", plan: "pro" },
+  })
+  @IsOptional()
+  @IsObject()
+  metadata?: Record<string, any>;
 }

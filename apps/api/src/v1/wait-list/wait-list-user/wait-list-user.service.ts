@@ -96,10 +96,9 @@ export class WaitListUserService {
         (await this.WaitListUserModel.countDocuments({ waitlistId: waitlistId })) + 1;
 
       const user = await this.WaitListUserModel.create({
-        email: dto.email,
         waitlistId: waitlistId,
         position,
-        referredBy: dto.referredBy,
+        ...dto,
       });
 
       // <================== SEND WEBHOOK TO THE WEBHOOK URL ==================>
