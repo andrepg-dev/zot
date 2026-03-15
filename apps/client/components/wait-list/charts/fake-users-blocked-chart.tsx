@@ -1,6 +1,6 @@
 "use client";
 
-import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, CartesianGrid, LabelList, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { AnimatedBarCursor } from "./animated-cursor";
 import CustomGradientBar from "./custom-gradient-bar";
 
@@ -28,7 +28,7 @@ const defaultData = [
   { date: "Jan 14", blocked: 21 }
 ];
 
-const gridColor = "rgba(255, 255, 255, 0.1)";
+const gridColor = "rgba(255, 255, 255, 0.06)";
 const axisColor = "#b4b4b4";
 const tooltipBg = "rgb(24, 24, 24)";
 const tooltipBorder = "rgba(255, 255, 255, 0.06)";
@@ -82,7 +82,14 @@ export default function FakeUsersBlockedChart({ data = defaultData }: FakeUsersB
                 lineHeight: "1.4"
               }}
             />
-            <Bar shape={<CustomGradientBar />} dataKey="blocked" fill={chartColor} />
+            <Bar shape={<CustomGradientBar />} dataKey="blocked" fill={chartColor} barSize={20}>
+              <LabelList
+                dataKey="blocked"
+                position="inside"
+                angle={-90}
+                style={{ fill: "#a1a1aa", fontSize: "10px", fontFamily: "var(--font-mono)" }}
+              />
+            </Bar>
           </BarChart>
         </ResponsiveContainer>
       </div>

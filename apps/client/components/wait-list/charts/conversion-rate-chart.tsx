@@ -27,7 +27,7 @@ const defaultData = [
   { date: "Jan 14", rate: 22.3 }
 ];
 
-const gridColor = "rgba(255, 255, 255, 0.1)";
+const gridColor = "rgba(255, 255, 255, 0.06)";
 const axisColor = "#b4b4b4";
 const tooltipBg = "rgb(24, 24, 24)";
 const tooltipBorder = "rgba(255, 255, 255, 0.06)";
@@ -84,11 +84,12 @@ export default function ConversionRateChart({ data = defaultData }: ConversionRa
               formatter={(value: number) => [`${value}%`, "Conversion Rate"]}
             />
             <Line
+              type="linear"
               dataKey="rate"
               stroke={chartColor}
-              strokeWidth={0.8}
+              strokeWidth={1.5}
               strokeDasharray="3 3"
-              dot={{ fill: chartColor, r: 4, strokeWidth: 2, stroke: chartColor }}
+              dot={false}
               activeDot={false}
             />
           </LineChart>

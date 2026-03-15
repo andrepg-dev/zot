@@ -9,6 +9,8 @@ import FakeUsersBlockedChart from "@/components/wait-list/charts/fake-users-bloc
 import TopReferrersChart from "@/components/wait-list/charts/top-referrers-chart";
 import { cn } from "@/lib/utils";
 import {
+  ArrowTrendingDownIcon,
+  ArrowTrendingUpIcon,
   EnvelopeIcon,
   HandRaisedIcon,
   ShareIcon,
@@ -61,8 +63,8 @@ export default function LaunchedWaitList({ params }: { params: Promise<{ id: str
       id: 4,
       title: "Emails sent",
       value: "3439",
-      change: null,
-      trend: null,
+      change: "-3.2%",
+      trend: "down",
       icon: EnvelopeIcon,
       iconColor: "text-muted-foreground",
       iconBg: "bg-default-500/10"
@@ -71,8 +73,8 @@ export default function LaunchedWaitList({ params }: { params: Promise<{ id: str
       id: 5,
       title: "Fake users blocked",
       value: "3439",
-      change: null,
-      trend: null,
+      change: "+24.8%",
+      trend: "up",
       icon: HandRaisedIcon,
       iconColor: "text-purple-500",
       iconBg: "bg-purple-500/10"
@@ -92,10 +94,27 @@ export default function LaunchedWaitList({ params }: { params: Promise<{ id: str
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mt-4 rounded-default">
           {stats.map((stat) => (
-            <div key={stat.id} className="border rounded bg-background">
+            <div
+              key={stat.id}
+              className="border rounded bg-background"
+            >
               <div className="px-5 py-4.5">
                 <div className="flex flex-col gap-2">
-                  <NumberFlow value={animated ? parseInt(stat.value ?? 0) : 0} className="text-2xl font-semibold" />
+                  <div className="flex items-baseline gap-2">
+                    <NumberFlow value={animated ? parseInt(stat.value ?? 0) : 0} className="text-2xl font-semibold" />
+                    {stat.change && (
+                      <span className={cn(
+                        "flex items-center gap-0.5 text-[10px] font-mono",
+                        stat.trend === "up" ? "text-green-500" : "text-red-500"
+                      )}>
+                        {stat.trend === "up"
+                          ? <ArrowTrendingUpIcon className="size-3" />
+                          : <ArrowTrendingDownIcon className="size-3" />
+                        }
+                        {stat.change}
+                      </span>
+                    )}
+                  </div>
 
                   <div className="flex gap-2 items-center">
                     <stat.icon className={cn("size-4", stat.iconColor)} />

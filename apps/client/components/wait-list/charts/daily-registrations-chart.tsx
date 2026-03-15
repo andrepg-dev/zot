@@ -37,7 +37,7 @@ const defaultData = [
   { date: "Jan 14", registrations: 450, referrals: 200 }
 ];
 
-const gridColor = "rgba(255, 255, 255, 0.1)";
+const gridColor = "rgba(255, 255, 255, 0.06)";
 const axisColor = "#b4b4b4";
 const tooltipBg = "rgb(24, 24, 24)";
 const tooltipBorder = "rgba(255, 255, 255, 0.06)";
@@ -109,32 +109,37 @@ export default function DailyRegistrationsChart({
             />
             <Legend
               wrapperStyle={{
-                fontFamily: "var(--font-mono)"
+                fontFamily: "var(--font-mono)",
+                fontSize: "11px",
+                color: "#a1a1aa",
+                paddingTop: "8px"
               }}
-              iconType="wye"
+              iconSize={8}
+              iconType="circle"
             />
             <Area
+              type="linear"
               dataKey="referrals"
               fill="url(#gradient-referrals-combined)"
               fillOpacity={0.4}
               stroke={referralsColor}
               stackId="a"
-              strokeWidth={0.8}
+              strokeWidth={1.5}
               strokeDasharray="3 3"
-              dot={{ fill: referralsColor, r: 4, strokeWidth: 2, stroke: referralsColor }}
+              dot={{ fill: referralsColor, r: 5, strokeWidth: 0 }}
               activeDot={false}
               name="Referrals"
-
             />
             <Area
+              type="linear"
               dataKey="registrations"
               fill="url(#gradient-registrations)"
               fillOpacity={0.4}
               stroke={registrationsColor}
               stackId="a"
-              strokeWidth={0.8}
+              strokeWidth={1.5}
               strokeDasharray="3 3"
-              dot={{ fill: registrationsColor, r: 4, strokeWidth: 2, stroke: registrationsColor }}
+              dot={{ fill: registrationsColor, r: 5, strokeWidth: 0 }}
               activeDot={false}
               name="Registrations"
             />
