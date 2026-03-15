@@ -48,7 +48,7 @@ export default function DailyRegistrationsChart({
   data = defaultData
 }: DailyRegistrationsChartProps) {
   return (
-    <div className="flex flex-col rounded-lg border border-dashed p-6  bg-background">
+    <div className="flex flex-col rounded-lg border border-dashed p-6 bg-default-50">
       <div className="flex flex-col gap-2 mb-4">
         <h3 className="text-base font-medium">Daily Registrations & Referrals</h3>
         <p className="text-sm text-muted-foreground">
@@ -82,7 +82,7 @@ export default function DailyRegistrationsChart({
               tickMargin={8}
               stroke={axisColor}
               fontSize={12}
-              tick={{ fill: axisColor }}
+              tick={{ fill: axisColor, fontFamily: "var(--font-mono)" }}
             />
             <YAxis
               tickLine={false}
@@ -90,7 +90,7 @@ export default function DailyRegistrationsChart({
               tickMargin={8}
               stroke={axisColor}
               fontSize={12}
-              tick={{ fill: axisColor }}
+              tick={{ fill: axisColor, fontFamily: "var(--font-mono)" }}
             />
             <Tooltip
               cursor={false}
@@ -100,14 +100,15 @@ export default function DailyRegistrationsChart({
                 border: `1px solid ${tooltipBorder}`,
                 borderRadius: "4px",
                 color: tooltipText,
-                padding: "8px 12px"
+                padding: "8px 12px",
+                fontFamily: "var(--font-mono)"
               }}
             />
             <Legend
               wrapperStyle={{
-                paddingTop: "20px"
+                fontFamily: "var(--font-mono)"
               }}
-              iconType="circle"
+              iconType="wye"
             />
             <Area
               dataKey="referrals"
@@ -120,6 +121,7 @@ export default function DailyRegistrationsChart({
               dot={{ fill: referralsColor, r: 4, strokeWidth: 2, stroke: referralsColor }}
               activeDot={{ r: 6, strokeWidth: 2 }}
               name="Referrals"
+
             />
             <Area
               dataKey="registrations"

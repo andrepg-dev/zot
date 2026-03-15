@@ -24,7 +24,7 @@ const config = {
         mono: ["var(--font-mono)"]
       },
       borderRadius: {
-        default: "var(--radius-default)"
+        default: "5px"
       },
       colors: {
         background: "var(--background)",
