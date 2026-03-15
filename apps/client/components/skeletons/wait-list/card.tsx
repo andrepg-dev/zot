@@ -1,6 +1,6 @@
-import { Card, CardBody } from "@heroui/react";
 import ChipSkeleton from "@/components/skeletons/chip";
 import TypeSkeleton from "@/components/skeletons/type";
+import { Card, CardBody } from "@heroui/react";
 
 export default function WaitListCardSkeleton({ count = 3 }: { count?: number }) {
   return (
