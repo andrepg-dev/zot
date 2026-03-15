@@ -1,6 +1,7 @@
 "use client";
 
-import { Bar, BarChart, CartesianGrid, LabelList, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { useChartHoverStore } from "@/store/chart-hover";
+import { Bar, BarChart, CartesianGrid, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { AnimatedBarCursor } from "./animated-cursor";
 import CustomGradientBar from "./custom-gradient-bar";
 
@@ -35,16 +36,33 @@ const tooltipBorder = "rgba(255, 255, 255, 0.06)";
 const tooltipText = "#a1a1aa";
 const chartColor = "#a855f7";
 
+const CHART_ID = "fake-users-blocked";
+
 export default function FakeUsersBlockedChart({ data = defaultData }: FakeUsersBlockedChartProps) {
+  const { hoveredChartId, activeLabel, setHover, clearHover } = useChartHoverStore();
+  const isSource = hoveredChartId === CHART_ID;
+  const isSynced = hoveredChartId != null && hoveredChartId !== CHART_ID && activeLabel != null;
+
   return (
-    <div className="flex flex-col rounded-sm border px-5 py-4.5 bg-background">
+    <div
+      className="flex flex-col rounded-sm border px-5 py-4.5 bg-background"
+      onMouseLeave={() => clearHover()}
+    >
       <div className="flex flex-col gap-2 mb-4">
         <h3 className="text-base font-medium">Fake Users Blocked</h3>
         <p className="text-sm text-muted-foreground">Suspicious users blocked over time</p>
       </div>
       <div className="h-64 w-full">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={data} margin={{ top: 10, right: 10, left: -15, bottom: 0 }}>
+          <BarChart
+            data={data}
+            margin={{ top: 10, right: 10, left: -15, bottom: 0 }}
+            onMouseMove={(state) => {
+              if (state?.activeLabel) {
+                setHover(CHART_ID, String(state.activeLabel));
+              }
+            }}
+          >
             <CartesianGrid
               vertical={false}
               strokeDasharray="3 3"
@@ -69,7 +87,7 @@ export default function FakeUsersBlockedChart({ data = defaultData }: FakeUsersB
               tick={{ fill: axisColor, fontFamily: "var(--font-mono)" }}
             />
             <Tooltip
-              cursor={<AnimatedBarCursor />}
+              cursor={<AnimatedBarCursor chartId={CHART_ID} />}
               animationDuration={0}
               contentStyle={{
                 backgroundColor: tooltipBg,
@@ -82,14 +100,15 @@ export default function FakeUsersBlockedChart({ data = defaultData }: FakeUsersB
                 lineHeight: "1.4"
               }}
             />
-            <Bar shape={<CustomGradientBar />} dataKey="blocked" fill={chartColor} barSize={20}>
-              <LabelList
-                dataKey="blocked"
-                position="inside"
-                angle={-90}
-                style={{ fill: "#a1a1aa", fontSize: "10px", fontFamily: "var(--font-mono)" }}
+            {isSynced && activeLabel && (
+              <ReferenceLine
+                x={activeLabel}
+                stroke="rgba(255, 255, 255, 0.3)"
+                strokeDasharray="4 4"
+                strokeWidth={1}
               />
-            </Bar>
+            )}
+            <Bar shape={<CustomGradientBar showLabel />} dataKey="blocked" fill={chartColor} barSize={20} activeBar={false} />
           </BarChart>
         </ResponsiveContainer>
       </div>

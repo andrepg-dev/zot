@@ -1,6 +1,7 @@
 "use client";
 
-import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { useChartHoverStore } from "@/store/chart-hover";
+import { CartesianGrid, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import AnimatedCursor from "./animated-cursor";
 
 interface ConversionRateChartProps {
@@ -34,16 +35,33 @@ const tooltipBorder = "rgba(255, 255, 255, 0.06)";
 const tooltipText = "#a1a1aa";
 const chartColor = "#06b6d4";
 
+const CHART_ID = "conversion-rate";
+
 export default function ConversionRateChart({ data = defaultData }: ConversionRateChartProps) {
+  const { hoveredChartId, activeLabel, setHover, clearHover } = useChartHoverStore();
+  const isSource = hoveredChartId === CHART_ID;
+  const isSynced = hoveredChartId != null && hoveredChartId !== CHART_ID && activeLabel != null;
+
   return (
-    <div className="flex flex-col rounded-sm border px-5 py-4.5 bg-background">
+    <div
+      className="flex flex-col rounded-sm border px-5 py-4.5 bg-background"
+      onMouseLeave={() => clearHover()}
+    >
       <div className="flex flex-col gap-2 mb-4">
         <h3 className="text-base font-medium">Conversion Rate Over Time</h3>
         <p className="text-sm text-muted-foreground">Conversion rate of visitors to sign ups</p>
       </div>
       <div className="h-64 w-full">
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={data} margin={{ top: 15, right: 10, left: -15, bottom: 0 }}>
+          <LineChart
+            data={data}
+            margin={{ top: 15, right: 10, left: -15, bottom: 0 }}
+            onMouseMove={(state) => {
+              if (state?.activeLabel) {
+                setHover(CHART_ID, String(state.activeLabel));
+              }
+            }}
+          >
             <CartesianGrid
               vertical={false}
               strokeDasharray="3 3"
@@ -69,7 +87,7 @@ export default function ConversionRateChart({ data = defaultData }: ConversionRa
               tickFormatter={(value) => `${value}%`}
             />
             <Tooltip
-              cursor={<AnimatedCursor />}
+              cursor={<AnimatedCursor chartId={CHART_ID} />}
               animationDuration={0}
               contentStyle={{
                 backgroundColor: tooltipBg,
@@ -83,6 +101,14 @@ export default function ConversionRateChart({ data = defaultData }: ConversionRa
               }}
               formatter={(value: number) => [`${value}%`, "Conversion Rate"]}
             />
+            {isSynced && (
+              <ReferenceLine
+                x={activeLabel}
+                stroke="rgba(255, 255, 255, 0.3)"
+                strokeDasharray="4 4"
+                strokeWidth={1}
+              />
+            )}
             <Line
               type="linear"
               dataKey="rate"

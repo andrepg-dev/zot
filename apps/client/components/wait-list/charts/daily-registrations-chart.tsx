@@ -1,10 +1,12 @@
 "use client";
 
+import { useChartHoverStore } from "@/store/chart-hover";
 import {
   Area,
   AreaChart,
   CartesianGrid,
   Legend,
+  ReferenceLine,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -45,11 +47,20 @@ const tooltipText = "#a1a1aa";
 const registrationsColor = "#3b82f6";
 const referralsColor = "#10b981";
 
+const CHART_ID = "daily-registrations";
+
 export default function DailyRegistrationsChart({
   data = defaultData
 }: DailyRegistrationsChartProps) {
+  const { hoveredChartId, activeLabel, setHover, clearHover } = useChartHoverStore();
+  const isSource = hoveredChartId === CHART_ID;
+  const isSynced = hoveredChartId != null && hoveredChartId !== CHART_ID && activeLabel != null;
+
   return (
-    <div className="flex flex-col rounded-sm border px-5 py-4.5 bg-background">
+    <div
+      className="flex flex-col rounded-sm border px-5 py-4.5 bg-background"
+      onMouseLeave={() => clearHover()}
+    >
       <div className="flex flex-col gap-2 mb-4">
         <h3 className="text-base font-medium">Daily Registrations & Referrals</h3>
         <p className="text-sm text-muted-foreground">
@@ -59,7 +70,15 @@ export default function DailyRegistrationsChart({
 
       <div className="h-64 w-full">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={data} margin={{ top: 15, right: 10, left: -15, bottom: 0 }}>
+          <AreaChart
+            data={data}
+            margin={{ top: 15, right: 10, left: -15, bottom: 0 }}
+            onMouseMove={(state) => {
+              if (state?.activeLabel) {
+                setHover(CHART_ID, String(state.activeLabel));
+              }
+            }}
+          >
             <defs>
               <linearGradient id="gradient-registrations" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor={registrationsColor} stopOpacity={0.5} />
@@ -94,7 +113,7 @@ export default function DailyRegistrationsChart({
               tick={{ fill: axisColor, fontFamily: "var(--font-mono)" }}
             />
             <Tooltip
-              cursor={<AnimatedCursor />}
+              cursor={<AnimatedCursor chartId={CHART_ID} />}
               animationDuration={0}
               contentStyle={{
                 backgroundColor: tooltipBg,
@@ -107,6 +126,14 @@ export default function DailyRegistrationsChart({
                 lineHeight: "1.4"
               }}
             />
+            {isSynced && (
+              <ReferenceLine
+                x={activeLabel}
+                stroke="rgba(255, 255, 255, 0.3)"
+                strokeDasharray="4 4"
+                strokeWidth={1}
+              />
+            )}
             <Legend
               wrapperStyle={{
                 fontFamily: "var(--font-mono)",
