@@ -4,7 +4,7 @@ import { Types } from "mongoose";
 export type DocumentOfSchema = WaitListUser & Document;
 
 @Schema({
-  timestamps: true,
+  timestamps: { createdAt: true, updatedAt: false },
   versionKey: false,
   toJSON: {
     virtuals: true,
@@ -27,6 +27,9 @@ export class WaitListUser {
 
   @Prop()
   position?: number;
+
+  @Prop({ type: Object })
+  metadata?: Record<string, any>;
 
   @Virtual({
     get: function (this: DocumentOfSchema): boolean {

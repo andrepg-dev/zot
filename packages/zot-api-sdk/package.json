@@ -1,5 +1,5 @@
 {
-  "name": "@repo/zot-api-sdk",
+  "name": "@zot/sdk",
   "version": "1.0.0",
   "description": "Zot API SDK",
   "main": "./dist/index.js",
