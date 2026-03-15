@@ -75,58 +75,59 @@ export default function LaunchedWaitList({ params }: { params: Promise<{ id: str
   ];
 
   return (
-    <PageComponent>
-      <div className="flex items-start gap-2">
-        <Title description="Wait-List launched" className="flex">
-          <span>Launch {id}</span>
-        </Title>
+    <>
+      <PageComponent>
+        <div className="flex items-start gap-2">
+          <Title description={`ID: ${id}`} classNames={{ description: "mt-1" }}>
+            <span>Brocoli Launch</span>
+            <Chip status="primary" className="ml-2 relative">Bernay Landing page</Chip>
+          </Title>
+        </div>
 
-        {/* <button className="text-primary flex items-center gap-1 text-sm font-medium hover:underline cursor-pointer  decoration-2"></button> */}
-        <Chip status="primary">Bernay Landing page</Chip>
-      </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mt-4 rounded-default">
+          {stats.map((stat) => (
+            <div key={stat.id} className="border border-dashed rounded bg-background">
+              <div className="p-6 py-5">
+                <div className="flex flex-col gap-2">
+                  <NumberFlow value={parseInt(stat.value ?? 0)} className="text-2xl font-semibold" />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mt-4 rounded-default">
-        {stats.map((stat) => (
-          <div key={stat.id} className="border border-dashed rounded bg-background">
-            <div className="p-6 py-5">
-              <div className="flex flex-col gap-2">
-                <NumberFlow value={parseInt(stat.value ?? 0)} className="text-2xl font-semibold" />
-
-                <div className="flex gap-2 items-center">
-                  <stat.icon className={cn("size-4", stat.iconColor)} />
-                  <p className="text-sm text-muted-foreground">{stat.title}</p>
+                  <div className="flex gap-2 items-center">
+                    <stat.icon className={cn("size-4", stat.iconColor)} />
+                    <p className="text-sm text-muted-foreground">{stat.title}</p>
+                  </div>
                 </div>
               </div>
             </div>
+          ))}
+        </div>
+
+        {/* Analytics Section */}
+        <div className="mt-8">
+          <Title description="Detailed analytics and insights">
+            <span className="text-lg">Analytics</span>
+          </Title>
+        </div>
+
+        {/* Masonry Grid */}
+        <div className="columns-1 lg:columns-2 gap-6 mt-6 space-y-6">
+          <div className="break-inside-avoid">
+            <DailyRegistrationsChart />
           </div>
-        ))}
-      </div>
-
-      {/* Analytics Section */}
-      <div className="mt-8">
-        <Title description="Detailed analytics and insights">
-          <span className="text-lg">Analytics</span>
-        </Title>
-      </div>
-
-      {/* Masonry Grid */}
-      <div className="columns-1 lg:columns-2 gap-6 mt-6 space-y-6">
-        <div className="break-inside-avoid">
-          <DailyRegistrationsChart />
-        </div>
-        <div className="break-inside-avoid">
-          <FakeUsersBlockedChart />
-        </div>
-        <div className="break-inside-avoid">
-          <TopReferrersChart />
-        </div>
-        {/* <div className="break-inside-avoid">
+          <div className="break-inside-avoid">
+            <FakeUsersBlockedChart />
+          </div>
+          <div className="break-inside-avoid">
+            <TopReferrersChart />
+          </div>
+          {/* <div className="break-inside-avoid">
           <TrafficSourcesChart />
         </div> */}
-        <div className="break-inside-avoid">
-          <ConversionRateChart />
+          <div className="break-inside-avoid">
+            <ConversionRateChart />
+          </div>
         </div>
-      </div>
-    </PageComponent>
+      </PageComponent>
+    </>
+
   );
 }

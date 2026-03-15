@@ -1,0 +1,16 @@
+import { z } from "zod";
+
+export const emailTemplateStatusEnum = z.enum(["draft", "published"]);
+
+export const createEmailTemplateSchema = z.object({
+  alias: z.string().min(1),
+  subject: z.string().optional(),
+  code: z.string().min(1),
+  status: emailTemplateStatusEnum,
+});
+
+export const updateEmailTemplateSchema = createEmailTemplateSchema.partial();
+
+export type EmailTemplateStatus = z.infer<typeof emailTemplateStatusEnum>;
+export type CreateEmailTemplateValues = z.infer<typeof createEmailTemplateSchema>;
+export type UpdateEmailTemplateValues = z.infer<typeof updateEmailTemplateSchema>;

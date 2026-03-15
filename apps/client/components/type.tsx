@@ -3,12 +3,12 @@ import React from "react";
 
 type VariantKey = keyof typeof variants;
 
-interface TypeProps {
+type TypeProps<C extends React.ElementType = "span"> = {
   variant?: VariantKey;
   children: React.ReactNode;
   className?: string;
-  as?: React.ElementType;
-}
+  as?: C;
+} & Omit<React.ComponentPropsWithoutRef<C>, "as" | "children" | "className">;
 
 const variants = {
   h1: "text-xl font-normal",
@@ -34,7 +34,7 @@ const elementMap: Record<VariantKey, React.ElementType> = {
   link: "span"
 };
 
-export default function Type({ variant = "base", children, className, as, ...props }: TypeProps) {
+export default function Type<C extends React.ElementType = "span">({ variant = "base", children, className, as, ...props }: TypeProps<C>) {
   const Component = as || elementMap[variant];
 
   return (

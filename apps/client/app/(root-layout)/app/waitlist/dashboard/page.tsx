@@ -13,6 +13,10 @@ import {
   Button,
   Card,
   CardBody,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
   Input,
   Table,
   TableBody,
@@ -20,13 +24,17 @@ import {
   TableColumn,
   TableHeader,
   TableRow,
-  getKeyValue
 } from "@heroui/react";
 
-import { getWaitList } from "@/actions/wait-list";
+import { deleteWaitList, getWaitLists, updateWaitList } from "@/actions/wait-list/wait-list.actions";
+import GlobalButton from "@/components/global/button";
 import Title from "@/components/global/title";
+import WaitListCardSkeleton from "@/components/skeletons/wait-list/card";
+import Type from "@/components/type";
 import Chip from "@/components/ui/chip";
-import { useQuery } from "@tanstack/react-query";
+import { ChevronDownIcon, ClipboardDocumentIcon, NoSymbolIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { addToast } from "@heroui/toast";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -35,55 +43,93 @@ type ViewMode = "table" | "cards";
 
 export default function WaitListPage() {
   const [viewMode, setViewMode] = useState<ViewMode>("cards");
+  const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set());
 
-  const { status, data, error, isPending } = useQuery({
-    queryKey: ["todos"],
-    queryFn: getWaitList
+  const queryClient = useQueryClient();
+
+  const { data, isPending } = useQuery({
+    queryKey: ["waitlists"],
+    queryFn: getWaitLists
   });
 
-  const rows = [
-    {
-      id: "a898324j-23487-123",
-      name: "Brocoli Launch",
-      "email-sending-quantity": 300,
-      status: "Active",
-      users: `403 registration`,
-      "referal-emails": `343 referal emails`
+  const deleteMutation = useMutation({
+    mutationFn: async (ids: string[]) => {
+      await Promise.all(ids.map((id) => deleteWaitList(id)));
+    },
+    onSuccess: (_data, ids) => {
+      queryClient.invalidateQueries({ queryKey: ["waitlists"] });
+      setSelectedKeys(new Set());
+      addToast({
+        title: "Deleted",
+        description: `${ids.length} waitlist${ids.length > 1 ? "s" : ""} deleted successfully.`,
+        color: "danger"
+      });
+    },
+    onError: (err) => {
+      addToast({
+        title: "Error",
+        description: err.message,
+        color: "danger"
+      });
     }
-  ];
+  });
+
+  const disableMutation = useMutation({
+    mutationFn: async (ids: string[]) => {
+      await Promise.all(ids.map((id) => updateWaitList(id, { isAvailable: false })));
+    },
+    onSuccess: (_data, ids) => {
+      queryClient.invalidateQueries({ queryKey: ["waitlists"] });
+      setSelectedKeys(new Set());
+      addToast({
+        title: "Disabled",
+        description: `${ids.length} waitlist${ids.length > 1 ? "s" : ""} disabled successfully.`,
+        color: "warning"
+      });
+    },
+    onError: (err) => {
+      addToast({
+        title: "Error",
+        description: err.message,
+        color: "danger"
+      });
+    }
+  });
+
+  const rows = data ?? [];
 
   const columns = [
     {
-      key: "id",
-      label: "ID"
+      key: "_id",
+      label: "Waitlist ID"
     },
     {
       key: "name",
       label: "Name"
     },
     {
-      key: "email-sending-quantity",
-      label: "Email Sending Quantity"
+      key: "emailsSent",
+      label: "Emails Sent"
     },
     {
-      key: "status",
+      key: "isAvailable",
       label: "Status"
     },
     {
-      key: "users",
-      label: "User registered"
+      key: "usersTotal",
+      label: "Users registered"
     },
     {
-      key: "referal-emails",
-      label: "Referal emails"
+      key: "usersReferred",
+      label: "Referred users"
+    },
+    {
+      key: "usersBlocked",
+      label: "Users blocked"
     }
   ];
 
   const router = useRouter();
-
-  const handleCardClick = (key: string) => {
-    router.push(`/app/launch/waitlist/${key}`);
-  };
 
   return (
     <PageComponent>
@@ -111,22 +157,54 @@ export default function WaitListPage() {
           </div>
 
           <div className="flex gap-2">
-            <Button
-              size="sm"
+            <GlobalButton
               variant={viewMode === "cards" ? "faded" : "light"}
               className="min-w-max"
               onPress={() => setViewMode("cards")}
             >
               <ViewColumnsIcon className="size-4" />
-            </Button>
-            <Button
-              size="sm"
+            </GlobalButton>
+            <GlobalButton
               variant={viewMode === "table" ? "faded" : "light"}
               className="min-w-max"
               onPress={() => setViewMode("table")}
             >
               <ListBulletIcon className="size-4" />
-            </Button>
+            </GlobalButton>
+
+            {selectedKeys.size > 0 && (
+              <Dropdown>
+                <DropdownTrigger>
+                  <GlobalButton
+                    size="sm"
+                    variant="faded"
+                    endContent={<ChevronDownIcon className="size-4" />}
+                  >
+                    Actions ({selectedKeys.size})
+                  </GlobalButton>
+                </DropdownTrigger>
+                <DropdownMenu aria-label="Actions">
+                  <DropdownItem
+                    key="disable"
+                    startContent={<NoSymbolIcon className="size-4" />}
+                    onPress={() => disableMutation.mutate(Array.from(selectedKeys))}
+                    showDivider
+                  >
+                    Disable
+                  </DropdownItem>
+
+                  <DropdownItem
+                    key="delete"
+                    className="text-danger"
+                    color="danger"
+                    startContent={<TrashIcon className="size-4" />}
+                    onPress={() => deleteMutation.mutate(Array.from(selectedKeys))}
+                  >
+                    Delete
+                  </DropdownItem>
+                </DropdownMenu>
+              </Dropdown>
+            )}
 
             <Button
               as={Link}
@@ -160,10 +238,25 @@ export default function WaitListPage() {
           <Table
             aria-label="Waitlist Table"
             radius="sm"
+            selectionMode="multiple"
+            selectedKeys={selectedKeys}
+            onSelectionChange={(keys) => {
+              if (keys === "all") {
+                setSelectedKeys(new Set(rows.map((r: any) => r._id)));
+              } else {
+                setSelectedKeys(new Set(keys as Set<string>));
+              }
+            }}
+            checkboxesProps={{
+              size: "sm",
+              classNames: {
+                wrapper: "before:border-1"
+              }
+            }}
             classNames={{
               th: "!rounded-b-none bg-",
               wrapper: "p-0 border",
-              td: "first:before:rounded-none last:before:rounded-e-none cursor-pointer"
+              td: "first:before:rounded-none last:before:rounded-e-none cursor-pointer py-3",
             }}
             onRowAction={(e) => {
               router.push(`/app/launch/waitlist/${e}`);
@@ -179,24 +272,61 @@ export default function WaitListPage() {
 
             <TableBody items={rows} emptyContent={"No rows to display."}>
               {(item: any) => (
-                <TableRow key={item.id} className="hover:bg-default-200">
-                  {(columnKey: any) => <TableCell>{getKeyValue(item, columnKey)}</TableCell>}
+                <TableRow key={item._id} className="hover:bg-default-200">
+                  {(columnKey: any) => {
+                    const valueMap: Record<string, any> = {
+                      _id: (
+                        <div className="flex items-center gap-1.5">
+                          <span>{item._id?.slice(0, 8) + "..."}</span>
+                          <GlobalButton
+                            isIconOnly
+                            variant="flat"
+                            className="min-w-5 h-5 cursor-pointer"
+                            onPress={() => {
+                              navigator.clipboard.writeText(item._id);
+                              addToast({ title: "Copied", description: "Waitlist ID copied to clipboard." });
+                            }}
+                          >
+                            <ClipboardDocumentIcon className="size-3.5" />
+                          </GlobalButton>
+                        </div>
+                      ),
+                      name: (
+                        <Type variant="link" as={Link} href={`/app/launch/waitlist/${item._id}`}>
+                          {item.name}
+                        </Type>
+                      ),
+                      emailsSent: item.emailsSent,
+                      isAvailable: (
+                        <Chip status={item.isAvailable ? "active" : "warning"}>
+                          {item.isAvailable ? "Active" : "Disabled"}
+                        </Chip>
+                      ),
+                      usersTotal: item.users?.total,
+                      usersReferred: item.users?.referred,
+                      usersBlocked: item.usersBlocked
+                    };
+                    return <TableCell>{valueMap[columnKey]}</TableCell>;
+                  }}
                 </TableRow>
               )}
             </TableBody>
           </Table>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4">
-            {rows.length === 0 ? (
+            {isPending ? (
+              <WaitListCardSkeleton />
+            ) : rows.length === 0 ? (
               <div className="col-span-full text-center text-default-400 py-8">
                 No waitlists to display.
               </div>
             ) : (
-              rows.map((item) => (
+              rows.map((item: any) => (
                 <Card
-                  key={item.id}
+                  key={item._id}
+                  as={Link}
+                  href={`/app/launch/waitlist/${item._id}`}
                   isPressable
-                  onPress={() => handleCardClick(item.id)}
                   className="hover:bg-default-100 transition cursor-pointer border"
                   radius="sm"
                 >
@@ -204,25 +334,39 @@ export default function WaitListPage() {
                     <div className="flex flex-col gap-3">
                       <div className="flex items-start justify-between">
                         <div className="flex flex-col gap-1 flex-1">
-                          <h3 className="font-medium text-sm">{item.name}</h3>
-                          <p className="text-xs text-muted-foreground">ID: {item.id}</p>
+                          <Type variant="link">{item.name}</Type>
+                          <div className="flex items-center gap-1.5">
+                            <p className="text-xs text-muted-foreground">ID: {item._id}</p>
+                            <GlobalButton
+                              isIconOnly
+                              variant="light"
+                              className="min-w-5 h-5 cursor-pointer relative z-10"
+                              onClick={(e) => {
+                                e.stopPropagation(); e.preventDefault();
+                                navigator.clipboard.writeText(item._id);
+                                addToast({ title: "Copied", description: "Waitlist ID copied to clipboard." });
+                              }}
+                            >
+                              <ClipboardDocumentIcon className="size-3.5" />
+                            </GlobalButton>
+                          </div>
                         </div>
-                        <Chip status={"active"}>{item.status}</Chip>
+                        <Chip status={item.isAvailable ? "active" : "warning"}>
+                          {item.isAvailable ? "Active" : "Disabled"}
+                        </Chip>
                       </div>
-                      <div className="flex flex-col gap-2 pt-2 border-t border-default-200">
+                      <div className="flex flex-col gap-2 border-default-200">
                         <div className="flex justify-between items-center">
-                          <span className="text-xs text-muted-foreground">
-                            Email Sending Quantity:
-                          </span>
-                          <span className="text-xs ">{item["email-sending-quantity"]}</span>
+                          <span className="text-xs text-muted-foreground">Emails sent:</span>
+                          <span className="text-xs ">{item.emailsSent}</span>
                         </div>
                         <div className="flex justify-between items-center">
-                          <span className="text-xs text-muted-foreground">Users registered:</span>
-                          <span className="text-xs ">{item.users}</span>
+                          <span className="text-xs text-muted-foreground">Total users:</span>
+                          <span className="text-xs ">{item.users?.total}</span>
                         </div>
                         <div className="flex justify-between items-center">
-                          <span className="text-xs text-muted-foreground">Referal emails:</span>
-                          <span className="text-xs ">{item["referal-emails"]}</span>
+                          <span className="text-xs text-muted-foreground">Users blocked:</span>
+                          <span className="text-xs ">{item.usersBlocked}</span>
                         </div>
                       </div>
                     </div>

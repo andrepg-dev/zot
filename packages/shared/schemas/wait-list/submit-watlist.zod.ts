@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { emailTransform } from "../libs/utils";
+import { emailTransform } from "../../libs/utils";
 
 export const submitWaitlistSchema = z.object({
   name: z

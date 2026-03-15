@@ -87,8 +87,8 @@ export default function ItemList({ navItems }: { navItems: NavItemOrDivider[] | 
               {hasSubItems ? (
                 <div
                   className={clsx(
-                    "flex items-center gap-2 py-1.5 px-2 h-[35px] text-muted-foreground rounded cursor-pointer",
-                    !isActive && "hover:bg-default-50",
+                    "flex items-center gap-2 py-1.5 px-2 h-[35px] text-muted-foreground rounded-sm cursor-pointer",
+                    !isActive && "hover:bg-default-100/70 hover:text-white",
                     isActive && "text-white"
                   )}
                   onClick={() => toggleExpand(itemId)}
@@ -107,7 +107,7 @@ export default function ItemList({ navItems }: { navItems: NavItemOrDivider[] | 
                   href={href}
                   className={clsx(
                     "flex items-center gap-2 py-1.5 px-2 h-[35px] text-muted-foreground rounded",
-                    !isActive && "hover:bg-default-50",
+                    !isActive && "hover:bg-default-100/70 hover:text-white",
                     isActive && "text-white bg-default-100"
                   )}
                 >
