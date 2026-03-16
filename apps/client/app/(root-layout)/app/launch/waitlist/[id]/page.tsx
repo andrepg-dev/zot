@@ -1,5 +1,6 @@
 "use client";
 
+import { getWaitListStats } from "@/actions/wait-list/stats.actions";
 import Title from "@/components/global/title";
 import PageComponent from "@/components/layouts/page-component";
 import Chip from "@/components/ui/chip";
@@ -18,11 +19,17 @@ import {
   UserPlusIcon
 } from "@heroicons/react/24/outline";
 import NumberFlow from "@number-flow/react";
+import { useQuery } from "@tanstack/react-query";
 import React from "react";
 
 export default function LaunchedWaitList({ params }: { params: Promise<{ id: string }> }) {
   const { id } = React.use(params);
   const [animated, setAnimated] = React.useState(false);
+
+  const { data } = useQuery({
+    queryKey: [id],
+    queryFn: async () => getWaitListStats(id)
+  })
 
   React.useEffect(() => {
     setAnimated(true);
@@ -82,77 +89,77 @@ export default function LaunchedWaitList({ params }: { params: Promise<{ id: str
   ];
 
   return (
-    <>
+    <PageComponent>
+      <div className="flex items-start gap-2">
+        <Title description={`ID: ${id}`} classNames={{ description: "mt-1" }}>
+          <span>Brocoli Launch</span>
+          <Chip status="primary" className="ml-2 relative">Bernay Landing page</Chip>
+        </Title>
+      </div>
 
-      <PageComponent>
-        <div className="flex items-start gap-2">
-          <Title description={`ID: ${id}`} classNames={{ description: "mt-1" }}>
-            <span>Brocoli Launch</span>
-            <Chip status="primary" className="ml-2 relative">Bernay Landing page</Chip>
-          </Title>
-        </div>
+      <pre>{JSON.stringify(data, null, 2)}</pre>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mt-4 rounded-default">
-          {stats.map((stat) => (
-            <div
-              key={stat.id}
-              className="border rounded bg-background"
-            >
-              <div className="px-5 py-4.5">
-                <div className="flex flex-col gap-2">
-                  <div className="flex items-baseline gap-2">
-                    <NumberFlow value={animated ? parseInt(stat.value ?? 0) : 0} className="text-2xl font-semibold" />
-                    {stat.change && (
-                      <span className={cn(
-                        "flex items-center gap-0.5 text-[10px] font-mono",
-                        stat.trend === "up" ? "text-green-500" : "text-red-500"
-                      )}>
-                        {stat.trend === "up"
-                          ? <ArrowTrendingUpIcon className="size-3" />
-                          : <ArrowTrendingDownIcon className="size-3" />
-                        }
-                        {stat.change}
-                      </span>
-                    )}
-                  </div>
 
-                  <div className="flex gap-2 items-center">
-                    <stat.icon className={cn("size-4", stat.iconColor)} />
-                    <p className="text-xs text-muted-foreground font-mono">{stat.title}</p>
-                  </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mt-4 rounded-default">
+        {stats.map((stat) => (
+          <div
+            key={stat.id}
+            className="border rounded bg-background"
+          >
+            <div className="px-5 py-4.5">
+              <div className="flex flex-col gap-2">
+                <div className="flex items-baseline gap-2">
+                  <NumberFlow value={animated ? parseInt(stat.value ?? 0) : 0} className="text-2xl font-semibold" />
+                  {stat.change && (
+                    <span className={cn(
+                      "flex items-center gap-0.5 text-[10px] font-mono",
+                      stat.trend === "up" ? "text-green-500" : "text-red-500"
+                    )}>
+                      {stat.trend === "up"
+                        ? <ArrowTrendingUpIcon className="size-3" />
+                        : <ArrowTrendingDownIcon className="size-3" />
+                      }
+                      {stat.change}
+                    </span>
+                  )}
+                </div>
+
+                <div className="flex gap-2 items-center">
+                  <stat.icon className={cn("size-4", stat.iconColor)} />
+                  <p className="text-xs text-muted-foreground font-mono">{stat.title}</p>
                 </div>
               </div>
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
+      </div>
 
-        {/* Analytics Section */}
-        <div className="mt-8">
-          <Title description="Detailed analytics and insights">
-            <span className="text-lg">Analytics</span>
-          </Title>
-        </div>
+      {/* Analytics Section */}
+      <div className="mt-8">
+        <Title description="Detailed analytics and insights">
+          <span className="text-lg">Analytics</span>
+        </Title>
+      </div>
 
-        {/* Masonry Grid */}
-        <div className="columns-1 lg:columns-2 gap-6 mt-6 space-y-6">
-          <div className="break-inside-avoid">
-            <DailyRegistrationsChart />
-          </div>
-          <div className="break-inside-avoid">
-            <FakeUsersBlockedChart />
-          </div>
-          <div className="break-inside-avoid">
-            <TopReferrersChart />
-          </div>
-          {/* <div className="break-inside-avoid">
+      {/* Masonry Grid */}
+      <div className="columns-1 lg:columns-2 gap-6 mt-6 space-y-6">
+        <div className="break-inside-avoid">
+          <DailyRegistrationsChart />
+        </div>
+        <div className="break-inside-avoid">
+          <FakeUsersBlockedChart />
+        </div>
+        <div className="break-inside-avoid">
+          <TopReferrersChart />
+        </div>
+        {/* <div className="break-inside-avoid">
           <TrafficSourcesChart />
         </div> */}
-          <div className="break-inside-avoid">
-            <ConversionRateChart />
-          </div>
+        <div className="break-inside-avoid">
+          <ConversionRateChart />
         </div>
-      </PageComponent>
-    </>
+      </div>
 
+    </PageComponent>
   );
 }

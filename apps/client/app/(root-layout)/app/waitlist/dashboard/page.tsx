@@ -327,7 +327,7 @@ export default function WaitListPage() {
                   as={Link}
                   href={`/app/launch/waitlist/${item._id}`}
                   isPressable
-                  disableRipple
+                  // disableRipple
                   className="border"
                   radius="sm"
                 >

@@ -29,6 +29,9 @@ export class SubscriptionsService {
     const checkoutSuccessUrl = this.configService.get<string>("STRIPE_CHECKOUT_SUCCESS_URL");
     const checkoutCancelUrl = this.configService.get<string>("STRIPE_CHECKOUT_CANCEL_URL");
     const frontendUrl = this.configService.get<string>("FRONTEND_URL");
+    const webhookSecret = this.configService.get<string>("STRIPE_WEBHOOK_SECRET");
+
+    if (!webhookSecret) throw new InternalServerErrorException("Cannot procces the payment.");
 
     const successUrl =
       checkoutSuccessUrl ?? `${frontendUrl}/billing/success?session_id={CHECKOUT_SESSION_ID}`;
