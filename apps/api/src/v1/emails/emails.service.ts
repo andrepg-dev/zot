@@ -13,6 +13,11 @@ interface SendEmailParams {
   quantity: number;
 }
 
+interface GetEmailsRecord {
+  waitlistId: Types.ObjectId;
+  userId: Types.ObjectId;
+}
+
 @Injectable()
 export class EmailsService {
   constructor(
@@ -148,5 +153,10 @@ export class EmailsService {
 
       throw err;
     }
+  }
+
+  // TODO: Get the user email record
+  getEmailsRecord({ userId, waitlistId }: GetEmailsRecord) {
+    console.log({ userId, waitlistId });
   }
 }
