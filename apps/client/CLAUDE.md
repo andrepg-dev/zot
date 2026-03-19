@@ -80,10 +80,26 @@ Maintain these patterns for consistency across all pages and components:
 - Content grids: `grid grid-cols-1 md:grid-cols-2 lg:grid-cols-X gap-4`
 - Masonry: `columns-1 lg:columns-2 gap-6 space-y-6`
 
+**HeroUI components**: always use `radius="sm"` on every HeroUI component that accepts it (Table, Modal, Drawer, Card, Button, Input, etc.).
+
 **Cards and containers**:
 - `rounded-sm` (5px) everywhere — not `rounded-md` or `rounded-lg`
 - Chart cards: `flex flex-col rounded-sm border px-5 py-4.5 bg-background`
 - HeroUI cards: `<Card className="border" radius="sm">` with `<CardBody className="p-5">`
+
+**Tables** (standard style for all tables):
+```tsx
+<Table
+  radius="sm"
+  selectionMode="multiple"
+  checkboxesProps={{ size: "sm", classNames: { wrapper: "before:border-1" } }}
+  classNames={{
+    th: "!rounded-b-none",
+    wrapper: "p-0 border",
+    td: "first:before:rounded-none last:before:rounded-e-none cursor-pointer py-3"
+  }}
+>
+```
 
 **Buttons**: default `size="sm"`, `radius="sm"`, ripple disabled via `GlobalButton`.
 

@@ -3,7 +3,7 @@
 import { useChartHoverStore } from "@/store/chart-hover";
 import { ArrowTopRightOnSquareIcon } from "@heroicons/react/24/outline";
 import { Button } from "@heroui/button";
-import Link from "next/link";
+import { useDisclosure } from "@heroui/react";
 import { useParams } from "next/navigation";
 import {
   Area,
@@ -16,6 +16,7 @@ import {
   XAxis,
   YAxis
 } from "recharts";
+import UsersTableDrawer from "../users-table-drawer";
 import AnimatedCursor from "./animated-cursor";
 
 interface DailyRegistrationsChartProps {
@@ -59,6 +60,7 @@ export default function DailyRegistrationsChart({
   const { id } = useParams<{ id: string }>();
   const { hoveredChartId, activeLabel, setHover, clearHover } = useChartHoverStore();
   const isSynced = hoveredChartId != null && hoveredChartId !== CHART_ID && activeLabel != null;
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   return (
     <div
@@ -73,7 +75,7 @@ export default function DailyRegistrationsChart({
           </p>
         </div>
 
-        <Button as={Link} href={`/app/launch/waitlist/${id}/table`} size="sm" variant="light" endContent={<ArrowTopRightOnSquareIcon className="size-3" />} className="text-muted-foreground">
+        <Button size="sm" variant="light" endContent={<ArrowTopRightOnSquareIcon className="size-3" />} className="text-muted-foreground" onPress={onOpen}>
           Show user's table
         </Button>
       </div>
@@ -183,6 +185,8 @@ export default function DailyRegistrationsChart({
           </AreaChart>
         </ResponsiveContainer>
       </div>
+
+      <UsersTableDrawer waitlistId={id} isOpen={isOpen} onOpenChange={onOpenChange} />
     </div>
   );
 }
