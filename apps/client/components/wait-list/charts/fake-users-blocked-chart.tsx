@@ -1,7 +1,12 @@
 "use client";
 
 import { useChartHoverStore } from "@/store/chart-hover";
+import { ArrowTopRightOnSquareIcon } from "@heroicons/react/24/outline";
+import { Button } from "@heroui/button";
+import { useDisclosure } from "@heroui/react";
+import { useParams } from "next/navigation";
 import { Bar, BarChart, CartesianGrid, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import BlockedUsersTableDrawer from "../blocked-users-table-drawer";
 import { AnimatedBarCursor } from "./animated-cursor";
 import CustomGradientBar from "./custom-gradient-bar";
 
@@ -39,18 +44,26 @@ const chartColor = "#a855f7";
 const CHART_ID = "fake-users-blocked";
 
 export default function FakeUsersBlockedChart({ data = defaultData }: FakeUsersBlockedChartProps) {
+  const { id } = useParams<{ id: string }>();
   const { hoveredChartId, activeLabel, setHover, clearHover } = useChartHoverStore();
   const isSource = hoveredChartId === CHART_ID;
   const isSynced = hoveredChartId != null && hoveredChartId !== CHART_ID && activeLabel != null;
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   return (
     <div
       className="flex flex-col rounded-sm border px-5 py-4.5 bg-background"
       onMouseLeave={() => clearHover()}
     >
-      <div className="flex flex-col gap-2 mb-4">
-        <h3 className="text-base font-medium">Fake Users Blocked</h3>
-        <p className="text-sm text-muted-foreground">Suspicious users blocked over time</p>
+      <div className="flex justify-between">
+        <div className="flex flex-col gap-2 mb-4">
+          <h3 className="text-base font-medium">Fake Users Blocked</h3>
+          <p className="text-sm text-muted-foreground">Suspicious users blocked over time</p>
+        </div>
+
+        <Button size="sm" variant="light" endContent={<ArrowTopRightOnSquareIcon className="size-3" />} className="text-muted-foreground" onPress={onOpen}>
+          Show blocked users
+        </Button>
       </div>
       <div className="h-64 w-full">
         <ResponsiveContainer width="100%" height="100%">
@@ -112,6 +125,8 @@ export default function FakeUsersBlockedChart({ data = defaultData }: FakeUsersB
           </BarChart>
         </ResponsiveContainer>
       </div>
+
+      <BlockedUsersTableDrawer waitlistId={id} isOpen={isOpen} onOpenChange={onOpenChange} />
     </div>
   );
 }

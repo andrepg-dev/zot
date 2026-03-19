@@ -28,6 +28,22 @@ export async function searchWaitListUser(waitlistId: string, email: string) {
   );
 }
 
+export async function getBlockedUsers(waitlistId: string) {
+  return await FetchWrapper<
+    Array<{
+      _id: string;
+      email: string;
+      isBlocked: boolean;
+      reasons: string[];
+      createdAt: Date;
+    }>
+  >(`/wait-list/${waitlistId}/user/blocked`);
+}
+
+export async function getBlockedUserCount(waitlistId: string) {
+  return await FetchWrapper<{ total: number }>(`/wait-list/${waitlistId}/user/blocked/count`);
+}
+
 export async function deleteWaitListUser(waitlistId: string, email: string) {
   return await FetchWrapper(`/wait-list/${waitlistId}/user/${encodeURIComponent(email)}`, {
     method: "DELETE"

@@ -14,6 +14,7 @@ import {
 } from "@nestjs/swagger";
 import { Types } from "mongoose";
 import { Public } from "../../auth/decorators/skip-auth.decorator";
+import { EmailSecurityService } from "../../core/email-security/email-security.service";
 import { RegisterWaitListUserDto } from "./dto/register-wait-list-user.dto";
 import {
   WaitListUserCountResponseDto,
@@ -29,7 +30,10 @@ import { WaitListUserService } from "./wait-list-user.service";
 })
 @Controller({ path: "wait-list/:waitlistId/user", version: "1" })
 export class WaitListUserController {
-  constructor(private readonly waitListUserService: WaitListUserService) {}
+  constructor(
+    private readonly waitListUserService: WaitListUserService,
+    private readonly emailSecurityService: EmailSecurityService,
+  ) {}
 
   @Public()
   @Post()
@@ -89,6 +93,39 @@ export class WaitListUserController {
     const referred = await this.waitListUserService.countReferred(waitlistId, userId);
 
     return { total, referred };
+  }
+
+  @Get("blocked")
+  @ApiBearerAuth("JWT-auth")
+  @ApiOperation({
+    summary: "Get blocked users",
+    description: "Retrieves all blocked (fake) users for a specific waitlist.",
+  })
+  @ApiOkResponse({ description: "List of blocked users retrieved successfully" })
+  @ApiUnauthorizedResponse({ description: "Not authenticated or not the waitlist owner" })
+  async findAllBlocked(
+    @Param("waitlistId", ParseObjectIdPipe) waitlistId: Types.ObjectId,
+    @UserId() userId: Types.ObjectId,
+  ) {
+    await this.waitListUserService.validateOwnership(waitlistId, userId);
+    return await this.emailSecurityService.findAllByWaitlist(waitlistId);
+  }
+
+  @Get("blocked/count")
+  @ApiBearerAuth("JWT-auth")
+  @ApiOperation({
+    summary: "Get blocked users count",
+    description: "Returns the total count of blocked users for a waitlist.",
+  })
+  @ApiOkResponse({ description: "Blocked users count retrieved successfully" })
+  @ApiUnauthorizedResponse({ description: "Not authenticated or not the waitlist owner" })
+  async countBlocked(
+    @Param("waitlistId", ParseObjectIdPipe) waitlistId: Types.ObjectId,
+    @UserId() userId: Types.ObjectId,
+  ) {
+    await this.waitListUserService.validateOwnership(waitlistId, userId);
+    const total = await this.emailSecurityService.countByWaitlist(waitlistId);
+    return { total };
   }
 
   @Get("search")

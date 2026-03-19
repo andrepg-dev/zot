@@ -201,7 +201,6 @@ export default function LaunchedWaitList({ params }: { params: Promise<{ id: str
             <ConversionRateChart data={conversionRateData} />
           </div>
         </div>
-
       </PageComponent>
     </>
   );

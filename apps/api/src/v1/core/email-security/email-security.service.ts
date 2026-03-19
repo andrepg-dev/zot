@@ -27,6 +27,14 @@ export class EmailSecurityService {
     });
   }
 
+  async findAllByWaitlist(waitlistId: Types.ObjectId) {
+    return this.EmailSecurityModel.find({ waitlistId }).sort({ createdAt: -1 }).exec();
+  }
+
+  async countByWaitlist(waitlistId: Types.ObjectId) {
+    return this.EmailSecurityModel.countDocuments({ waitlistId }).exec();
+  }
+
   async verifyEmail(email: string): Promise<{ isBlocked: boolean; reasons: string[] }> {
     if (!email) {
       throw new HttpException("Email is required.", HttpStatus.BAD_REQUEST);
