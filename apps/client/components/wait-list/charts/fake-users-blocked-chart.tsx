@@ -17,22 +17,10 @@ interface FakeUsersBlockedChartProps {
   }>;
 }
 
-const defaultData = [
-  { date: "Jan 1", blocked: 12 },
-  { date: "Jan 2", blocked: 15 },
-  { date: "Jan 3", blocked: 8 },
-  { date: "Jan 4", blocked: 20 },
-  { date: "Jan 5", blocked: 18 },
-  { date: "Jan 6", blocked: 25 },
-  { date: "Jan 7", blocked: 22 },
-  { date: "Jan 8", blocked: 16 },
-  { date: "Jan 9", blocked: 19 },
-  { date: "Jan 10", blocked: 14 },
-  { date: "Jan 11", blocked: 28 },
-  { date: "Jan 12", blocked: 23 },
-  { date: "Jan 13", blocked: 17 },
-  { date: "Jan 14", blocked: 21 }
-];
+const defaultData = Array.from({ length: 14 }, (_, i) => ({
+  date: `Jan ${i + 1}`,
+  blocked: 0
+}));
 
 const gridColor = "rgba(255, 255, 255, 0.06)";
 const axisColor = "#b4b4b4";

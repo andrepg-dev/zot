@@ -27,22 +27,11 @@ interface DailyRegistrationsChartProps {
   }>;
 }
 
-const defaultData = [
-  { date: "Jan 1", registrations: 120, referrals: 45 },
-  { date: "Jan 2", registrations: 150, referrals: 60 },
-  { date: "Jan 3", registrations: 180, referrals: 75 },
-  { date: "Jan 4", registrations: 140, referrals: 55 },
-  { date: "Jan 5", registrations: 200, referrals: 90 },
-  { date: "Jan 6", registrations: 250, referrals: 110 },
-  { date: "Jan 7", registrations: 300, referrals: 130 },
-  { date: "Jan 8", registrations: 280, referrals: 120 },
-  { date: "Jan 9", registrations: 320, referrals: 140 },
-  { date: "Jan 10", registrations: 350, referrals: 160 },
-  { date: "Jan 11", registrations: 380, referrals: 175 },
-  { date: "Jan 12", registrations: 420, referrals: 190 },
-  { date: "Jan 13", registrations: 400, referrals: 180 },
-  { date: "Jan 14", registrations: 450, referrals: 200 }
-];
+const defaultData = Array.from({ length: 14 }, (_, i) => ({
+  date: `Jan ${i + 1}`,
+  registrations: 0,
+  referrals: 0
+}));
 
 const gridColor = "rgba(255, 255, 255, 0.06)";
 const axisColor = "#b4b4b4";
