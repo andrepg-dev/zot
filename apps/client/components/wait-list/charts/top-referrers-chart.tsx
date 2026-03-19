@@ -12,16 +12,16 @@ interface TopReferrersChartProps {
 }
 
 const defaultData = [
-  { name: "john.doe@email.com", referrals: 45 },
-  { name: "jane.smith@email.com", referrals: 38 },
-  { name: "mike.wilson@email.com", referrals: 32 },
-  { name: "sarah.jones@email.com", referrals: 28 },
-  { name: "alex.brown@email.com", referrals: 25 },
-  { name: "emily.davis@email.com", referrals: 22 },
-  { name: "chris.taylor@email.com", referrals: 19 },
-  { name: "lisa.anderson@email.com", referrals: 17 },
-  { name: "david.martin@email.com", referrals: 15 },
-  { name: "rachel.garcia@email.com", referrals: 12 }
+  { name: "Empty", referrals: 0 },
+  { name: "Empty", referrals: 0 },
+  { name: "Empty", referrals: 0 },
+  { name: "Empty", referrals: 0 },
+  { name: "Empty", referrals: 0 },
+  { name: "Empty", referrals: 0 },
+  { name: "Empty", referrals: 0 },
+  { name: "Empty", referrals: 0 },
+  { name: "Empty", referrals: 0 },
+  { name: "Empty", referrals: 0 },
 ];
 
 const gridColor = "rgba(255, 255, 255, 0.06)";
@@ -30,6 +30,25 @@ const tooltipBg = "rgb(24, 24, 24)";
 const tooltipBorder = "rgba(255, 255, 255, 0.06)";
 const tooltipText = "#a1a1aa";
 const chartColor = "#f59e0b";
+const emptyColor = "#525252";
+
+function YAxisTick({ x, y, payload }: { x: number; y: number; payload: { value: string } }) {
+  const isEmpty = payload.value.startsWith("Empty");
+  return (
+    <text
+      x={x}
+      y={y}
+      textAnchor="end"
+      fill={isEmpty ? emptyColor : axisColor}
+      fontSize={12}
+      fontFamily="var(--font-mono)"
+      fontStyle={isEmpty ? "italic" : "normal"}
+      dy={4}
+    >
+      {isEmpty ? "Empty" : payload.value}
+    </text>
+  );
+}
 
 export default function TopReferrersChart({ data = defaultData }: TopReferrersChartProps) {
   return (
@@ -62,7 +81,7 @@ export default function TopReferrersChart({ data = defaultData }: TopReferrersCh
               axisLine={false}
               stroke={axisColor}
               fontSize={12}
-              tick={{ fill: axisColor, fontFamily: "var(--font-mono)" }}
+              tick={<YAxisTick x={0} y={0} payload={{ value: "" }} />}
               width={150}
             />
             <Tooltip

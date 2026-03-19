@@ -58,16 +58,7 @@ export default function WaitListLayout({ children }: { children: React.ReactNode
         ]}
       />
 
-      <HeaderNavigation
-        navigationItems={[
-          { label: "Wait-List", pathname: "/app/waitlist/dashboard" },
-          {
-            label: `Launch ${String(id)}`,
-            pathname: ""
-          }
-        ]}
-        children={<Chip status="active">Active</Chip>}
-      />
+
       {children}
     </>
   );

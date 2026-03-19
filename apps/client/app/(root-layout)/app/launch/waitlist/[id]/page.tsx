@@ -3,6 +3,7 @@
 import { getWaitListStats } from "@/actions/wait-list/stats.actions";
 import Title from "@/components/global/title";
 import PageComponent from "@/components/layouts/page-component";
+import HeaderNavigation from "@/components/navigation/header.navigation";
 import Chip from "@/components/ui/chip";
 import ConversionRateChart from "@/components/wait-list/charts/conversion-rate-chart";
 import DailyRegistrationsChart from "@/components/wait-list/charts/daily-registrations-chart";
@@ -10,8 +11,6 @@ import FakeUsersBlockedChart from "@/components/wait-list/charts/fake-users-bloc
 import TopReferrersChart from "@/components/wait-list/charts/top-referrers-chart";
 import { cn } from "@/lib/utils";
 import {
-  ArrowTrendingDownIcon,
-  ArrowTrendingUpIcon,
   EnvelopeIcon,
   HandRaisedIcon,
   ShareIcon,
@@ -22,11 +21,37 @@ import NumberFlow from "@number-flow/react";
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
 
+function formatDate(dateStr: string) {
+  const d = new Date(dateStr);
+  return d.toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" });
+}
+
+function generateLast20Days() {
+  const days: string[] = [];
+  const now = new Date();
+  const today = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+  for (let i = 19; i >= 0; i--) {
+    const date = new Date(today - i * 86400000);
+    days.push(formatDate(date.toISOString()));
+  }
+  return days;
+}
+
+function fillDailyData<T extends { date: string }>(
+  apiData: T[] | undefined,
+  days: string[],
+  defaults: Omit<T, "date">
+): T[] | undefined {
+  if (!apiData) return undefined;
+  const map = new Map(apiData.map((d) => [d.date, d]));
+  return days.map((date) => (map.get(date) ?? { date, ...defaults }) as T);
+}
+
 export default function LaunchedWaitList({ params }: { params: Promise<{ id: string }> }) {
   const { id } = React.use(params);
   const [animated, setAnimated] = React.useState(false);
 
-  const { data } = useQuery({
+  const { data, isPending } = useQuery({
     queryKey: [id],
     queryFn: async () => getWaitListStats(id)
   })
@@ -35,131 +60,149 @@ export default function LaunchedWaitList({ params }: { params: Promise<{ id: str
     setAnimated(true);
   }, []);
 
+  const last20Days = React.useMemo(() => generateLast20Days(), []);
+
   const stats = [
     {
       id: 1,
       title: "Total Sign Ups",
-      value: "39294",
-      change: "+12.5%",
-      trend: "up",
+      value: data?.users?.total ?? 0,
       icon: UserPlusIcon,
       iconColor: "text-blue-500",
-      iconBg: "bg-blue-500/10"
     },
     {
       id: 2,
       title: "Total Referrals",
-      value: "8432",
-      change: "+8.2%",
-      trend: "up",
+      value: data?.users?.referred ?? 0,
       icon: ShareIcon,
       iconColor: "text-green-500",
-      iconBg: "bg-green-500/10"
     },
     {
       id: 3,
       title: "Sign Ups Today",
-      value: "234",
-      change: "+5.1%",
-      trend: "up",
+      value: data?.users?.signUpsToday ?? 0,
       icon: UserGroupIcon,
       iconColor: "text-yellow-500",
-      iconBg: "bg-yellow-500/10"
     },
     {
       id: 4,
       title: "Emails sent",
-      value: "3439",
-      change: "-3.2%",
-      trend: "down",
+      value: data?.emailsSent ?? 0,
       icon: EnvelopeIcon,
       iconColor: "text-muted-foreground",
-      iconBg: "bg-default-500/10"
     },
     {
       id: 5,
       title: "Fake users blocked",
-      value: "3439",
-      change: "+24.8%",
-      trend: "up",
+      value: data?.usersBlocked ?? 0,
       icon: HandRaisedIcon,
       iconColor: "text-purple-500",
-      iconBg: "bg-purple-500/10"
     }
   ];
 
+  const rawRegistrations = data?.dailyRegistration?.map((d) => ({
+    date: formatDate(d.createdAt),
+    registrations: d.registrations,
+    referrals: 0,
+  }));
+
+  const dailyRegistrationsData = fillDailyData(rawRegistrations, last20Days, { registrations: 0, referrals: 0 });
+
+  const rawBlocked = data?.dailyUsersBlocked?.map((d) => ({
+    date: formatDate(d.createdAt),
+    blocked: d.blocked,
+  }));
+  const fakeUsersBlockedData = fillDailyData(rawBlocked, last20Days, { blocked: 0 });
+
+  const TOP_REFERRERS_SLOTS = 10;
+  const topReferrersData = data ? (() => {
+    const real = data.topReferrers.map((d) => ({
+      name: d.email,
+      referrals: d.referrals,
+    }));
+    const empty = Array.from({ length: TOP_REFERRERS_SLOTS - real.length }, (_, i) => ({
+      name: `Empty ${i + real.length + 1}`,
+      referrals: 0,
+    }));
+    return [...real, ...empty];
+  })() : undefined;
+
+  const rawConversion = data?.conversionRateOverTime?.map((d) => ({
+    date: formatDate(d.createdAt),
+    rate: Math.round(d.conversionRate * 100) / 100,
+  }));
+
+  const conversionRateData = fillDailyData(rawConversion, last20Days, { rate: 0 });
+
+  const statusLabel = data?.isAvailable ? "Active" : "Disabled"
+
   return (
-    <PageComponent>
-      <div className="flex items-start gap-2">
-        <Title description={`ID: ${id}`} classNames={{ description: "mt-1" }}>
-          <span>Brocoli Launch</span>
-          <Chip status="primary" className="ml-2 relative">Bernay Landing page</Chip>
-        </Title>
-      </div>
+    <>
+      <HeaderNavigation
+        navigationItems={[
+          { label: "Wait-List", pathname: "/app/waitlist/dashboard" },
+          {
+            label: isPending ? "Loading..." : (data?.name ?? ""),
+            pathname: ""
+          }
+        ]}
+        children={<Chip status={isPending ? "skeleton" : (data?.isAvailable ? "active" : "warning")}>{isPending ? "Loading" : statusLabel}</Chip>}
+      />
 
-      <pre>{JSON.stringify(data, null, 2)}</pre>
+      <PageComponent>
+        <div className="flex items-start gap-2">
+          <Title description={`ID: ${id}`} classNames={{ description: "mt-1" }}>
+            <span>{isPending ? "Loading..." : data?.name}</span>
+            {/* <Chip status="primary" className="ml-2 relative">Bernay Landing page</Chip> */}
+          </Title>
+        </div>
 
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mt-4 rounded-default">
+          {stats.map((stat) => (
+            <div
+              key={stat.id}
+              className="border rounded bg-background"
+            >
+              <div className="px-5 py-4.5">
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-baseline gap-2">
+                    <NumberFlow value={isPending ? 0 : (animated ? stat.value : 0)} className="text-2xl font-semibold" />
+                  </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mt-4 rounded-default">
-        {stats.map((stat) => (
-          <div
-            key={stat.id}
-            className="border rounded bg-background"
-          >
-            <div className="px-5 py-4.5">
-              <div className="flex flex-col gap-2">
-                <div className="flex items-baseline gap-2">
-                  <NumberFlow value={animated ? parseInt(stat.value ?? 0) : 0} className="text-2xl font-semibold" />
-                  {stat.change && (
-                    <span className={cn(
-                      "flex items-center gap-0.5 text-[10px] font-mono",
-                      stat.trend === "up" ? "text-green-500" : "text-red-500"
-                    )}>
-                      {stat.trend === "up"
-                        ? <ArrowTrendingUpIcon className="size-3" />
-                        : <ArrowTrendingDownIcon className="size-3" />
-                      }
-                      {stat.change}
-                    </span>
-                  )}
-                </div>
-
-                <div className="flex gap-2 items-center">
-                  <stat.icon className={cn("size-4", stat.iconColor)} />
-                  <p className="text-xs text-muted-foreground font-mono">{stat.title}</p>
+                  <div className="flex gap-2 items-center">
+                    <stat.icon className={cn("size-4", stat.iconColor)} />
+                    <p className="text-xs text-muted-foreground font-mono">{stat.title}</p>
+                  </div>
                 </div>
               </div>
             </div>
+          ))}
+        </div>
+
+        {/* Analytics Section */}
+        <div className="mt-8">
+          <Title description="Detailed analytics and insights">
+            <span className="text-lg">Analytics</span>
+          </Title>
+        </div>
+
+        {/* Masonry Grid */}
+        <div className="columns-1 lg:columns-2 gap-6 mt-6 space-y-6">
+          <div className="break-inside-avoid">
+            <DailyRegistrationsChart data={dailyRegistrationsData} />
           </div>
-        ))}
-      </div>
+          <div className="break-inside-avoid">
+            <FakeUsersBlockedChart data={fakeUsersBlockedData} />
+          </div>
+          <div className="break-inside-avoid">
+            <TopReferrersChart data={topReferrersData} />
+          </div>
+          <div className="break-inside-avoid">
+            <ConversionRateChart data={conversionRateData} />
+          </div>
+        </div>
 
-      {/* Analytics Section */}
-      <div className="mt-8">
-        <Title description="Detailed analytics and insights">
-          <span className="text-lg">Analytics</span>
-        </Title>
-      </div>
-
-      {/* Masonry Grid */}
-      <div className="columns-1 lg:columns-2 gap-6 mt-6 space-y-6">
-        <div className="break-inside-avoid">
-          <DailyRegistrationsChart />
-        </div>
-        <div className="break-inside-avoid">
-          <FakeUsersBlockedChart />
-        </div>
-        <div className="break-inside-avoid">
-          <TopReferrersChart />
-        </div>
-        {/* <div className="break-inside-avoid">
-          <TrafficSourcesChart />
-        </div> */}
-        <div className="break-inside-avoid">
-          <ConversionRateChart />
-        </div>
-      </div>
-
-    </PageComponent>
+      </PageComponent>
+    </>
   );
 }
