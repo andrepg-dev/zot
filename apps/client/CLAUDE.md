@@ -93,6 +93,8 @@ Maintain these patterns for consistency across all pages and components:
 
 **Skeletons** (`components/skeletons/`): existing skeletons for type, chip, button, input, textarea, switch, checkbox, and wait-list/card. Use them selectively where loading states are needed — not on every page. Only create a custom skeleton if none of the existing ones fit.
 
+**Destructive actions**: All delete operations must show a confirmation dialog before executing. Never delete directly on button press.
+
 ### Code Style
 
 - Prettier: double quotes, semicolons, 100 char width, trailing commas off.

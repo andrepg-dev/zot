@@ -1,13 +1,14 @@
 "use client";
 
-import { deleteWaitListUser, getWaitListUsers, getWaitListUserCount } from "@/actions/wait-list/wait-list-user.actions";
+import { getWaitListStats } from "@/actions/wait-list/stats.actions";
+import { deleteWaitListUser, getWaitListUserCount, getWaitListUsers } from "@/actions/wait-list/wait-list-user.actions";
 import GlobalButton from "@/components/global/button";
 import Title from "@/components/global/title";
 import PageComponent from "@/components/layouts/page-component";
 import HeaderNavigation from "@/components/navigation/header.navigation";
 import Chip from "@/components/ui/chip";
 import {
-  ClipboardDocumentIcon,
+  ChevronDownIcon,
   MagnifyingGlassIcon,
   ShareIcon,
   TrashIcon,
@@ -15,27 +16,34 @@ import {
   UserPlusIcon
 } from "@heroicons/react/24/outline";
 import {
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
   Input,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
   Spinner,
   Table,
   TableBody,
   TableCell,
   TableColumn,
   TableHeader,
-  TableRow
+  TableRow,
+  useDisclosure
 } from "@heroui/react";
 import { addToast } from "@heroui/toast";
-import NumberFlow from "@number-flow/react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useState } from "react";
 
 const columns = [
   { key: "position", label: "#" },
   { key: "email", label: "Email" },
-  { key: "referral_code", label: "Referral Code" },
   { key: "referredBy", label: "Referred By" },
-  { key: "createdAt", label: "Joined" },
-  { key: "actions", label: "" }
+  { key: "createdAt", label: "Joined" }
 ];
 
 function formatDate(date: Date) {
@@ -49,7 +57,15 @@ function formatDate(date: Date) {
 export default function WaitListUsersTable({ params }: { params: Promise<{ id: string }> }) {
   const { id } = React.use(params);
   const [search, setSearch] = useState("");
+  const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set());
+  const [emailsToDelete, setEmailsToDelete] = useState<string[]>([]);
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const queryClient = useQueryClient();
+
+  const { data: waitlistStats } = useQuery({
+    queryKey: [id],
+    queryFn: () => getWaitListStats(id)
+  });
 
   const { data: users, isPending } = useQuery({
     queryKey: ["waitlist-users", id],
@@ -62,13 +78,17 @@ export default function WaitListUsersTable({ params }: { params: Promise<{ id: s
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (email: string) => deleteWaitListUser(id, email),
-    onSuccess: () => {
+    mutationFn: async (emails: string[]) => {
+      await Promise.all(emails.map((email) => deleteWaitListUser(id, email)));
+    },
+    onSuccess: (_data, emails) => {
       queryClient.invalidateQueries({ queryKey: ["waitlist-users", id] });
       queryClient.invalidateQueries({ queryKey: ["waitlist-user-count", id] });
+      setSelectedKeys(new Set());
+      setEmailsToDelete([]);
       addToast({
-        title: "User removed",
-        description: "The user has been removed from the waitlist.",
+        title: "Removed",
+        description: `${emails.length} user${emails.length > 1 ? "s" : ""} removed from the waitlist.`,
         color: "danger"
       });
     },
@@ -85,12 +105,25 @@ export default function WaitListUsersTable({ params }: { params: Promise<{ id: s
     if (!users) return [];
     if (!search.trim()) return users;
     const query = search.toLowerCase();
-    return users.filter(
-      (user) =>
-        user.email.toLowerCase().includes(query) ||
-        user.referral_code.toLowerCase().includes(query)
-    );
+    return users.filter((user) => user.email.toLowerCase().includes(query));
   }, [users, search]);
+
+  function handleDeleteSelected() {
+    const emails = filteredUsers
+      .filter((user) => selectedKeys.has(user._id))
+      .map((user) => user.email);
+
+    if (emails.length === 0) return;
+
+    setEmailsToDelete(emails);
+    onOpen();
+  }
+
+  function handleConfirmDelete(onClose: () => void) {
+    deleteMutation.mutate(emailsToDelete, {
+      onSettled: () => onClose()
+    });
+  }
 
   const stats = [
     {
@@ -121,58 +154,84 @@ export default function WaitListUsersTable({ params }: { params: Promise<{ id: s
       <HeaderNavigation
         navigationItems={[
           { label: "Wait-List", pathname: "/app/waitlist/dashboard" },
-          { label: "Overview", pathname: `/app/launch/waitlist/${id}` },
-          { label: "Users", pathname: "" }
+          { label: waitlistStats?.name ?? "Loading...", pathname: `/app/launch/waitlist/${id}` },
+          { label: "Users table", pathname: "" }
         ]}
       />
 
       <PageComponent>
         <Title description="View and manage all users registered in this waitlist">
-          Users
+          Users Table
         </Title>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-          {stats.map((stat) => (
-            <div key={stat.id} className="border rounded bg-background">
-              <div className="px-5 py-4.5">
-                <div className="flex flex-col gap-2">
-                  <div className="flex items-baseline gap-2">
-                    <NumberFlow value={stat.value} className="text-2xl font-semibold" />
-                  </div>
-                  <div className="flex gap-2 items-center">
-                    <stat.icon className={`size-4 ${stat.iconColor}`} />
-                    <p className="text-xs text-muted-foreground font-mono">{stat.title}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="flex flex-col gap-4 mt-8">
+        <div className="flex flex-col gap-4 mt-6">
           <div className="flex justify-between items-center">
-            <Input
-              placeholder="Search by email or referral code..."
-              variant="bordered"
-              startContent={<MagnifyingGlassIcon className="text-default-300 size-5" />}
-              size="sm"
-              isClearable
-              value={search}
-              onValueChange={setSearch}
-              classNames={{
-                base: "max-w-sm",
-                inputWrapper: "border-1"
-              }}
-            />
+            <div className="flex gap-2">
+              <Input
+                placeholder="Search by email..."
+                variant="bordered"
+                startContent={<MagnifyingGlassIcon className="text-default-300 size-5" />}
+                size="sm"
+                isClearable
+                value={search}
+                onValueChange={setSearch}
+                classNames={{
+                  base: "max-w-sm",
+                  inputWrapper: "border-1"
+                }}
+              />
+            </div>
 
-            <span className="text-default-400 text-small">
-              {filteredUsers.length} user{filteredUsers.length !== 1 ? "s" : ""}
-            </span>
+            <div className="flex gap-2 items-center">
+              {selectedKeys.size > 0 && (
+                <Dropdown>
+                  <DropdownTrigger>
+                    <GlobalButton
+                      size="sm"
+                      variant="faded"
+                      endContent={<ChevronDownIcon className="size-4" />}
+                    >
+                      Actions ({selectedKeys.size})
+                    </GlobalButton>
+                  </DropdownTrigger>
+                  <DropdownMenu aria-label="Actions">
+                    <DropdownItem
+                      key="delete"
+                      className="text-danger"
+                      color="danger"
+                      startContent={<TrashIcon className="size-4" />}
+                      onPress={handleDeleteSelected}
+                    >
+                      Delete
+                    </DropdownItem>
+                  </DropdownMenu>
+                </Dropdown>
+              )}
+
+              <span className="text-default-400 text-small">
+                {filteredUsers.length} user{filteredUsers.length !== 1 ? "s" : ""}
+              </span>
+            </div>
           </div>
 
           <Table
             aria-label="Waitlist Users Table"
             radius="sm"
+            selectionMode="multiple"
+            selectedKeys={selectedKeys}
+            onSelectionChange={(keys) => {
+              if (keys === "all") {
+                setSelectedKeys(new Set(filteredUsers.map((u) => u._id)));
+              } else {
+                setSelectedKeys(new Set(keys as Set<string>));
+              }
+            }}
+            checkboxesProps={{
+              size: "sm",
+              classNames: {
+                wrapper: "before:border-1"
+              }
+            }}
             classNames={{
               th: "!rounded-b-none",
               wrapper: "p-0 border",
@@ -181,7 +240,7 @@ export default function WaitListUsersTable({ params }: { params: Promise<{ id: s
           >
             <TableHeader columns={columns}>
               {(column) => (
-                <TableColumn key={column.key} allowsSorting={column.key !== "actions"}>
+                <TableColumn key={column.key} allowsSorting>
                   {column.label}
                 </TableColumn>
               )}
@@ -201,25 +260,6 @@ export default function WaitListUsersTable({ params }: { params: Promise<{ id: s
                         <span className="text-muted-foreground font-mono">{item.position}</span>
                       ),
                       email: <span className="font-mono">{item.email}</span>,
-                      referral_code: (
-                        <div className="flex items-center gap-1.5">
-                          <span className="font-mono text-xs">{item.referral_code}</span>
-                          <GlobalButton
-                            isIconOnly
-                            variant="flat"
-                            className="min-w-5 h-5 cursor-pointer"
-                            onPress={() => {
-                              navigator.clipboard.writeText(item.referral_code);
-                              addToast({
-                                title: "Copied",
-                                description: "Referral code copied to clipboard."
-                              });
-                            }}
-                          >
-                            <ClipboardDocumentIcon className="size-3.5" />
-                          </GlobalButton>
-                        </div>
-                      ),
                       referredBy: item.referredBy ? (
                         <Chip status="active">Referred</Chip>
                       ) : (
@@ -229,17 +269,6 @@ export default function WaitListUsersTable({ params }: { params: Promise<{ id: s
                         <span className="text-muted-foreground font-mono text-xs">
                           {formatDate(item.createdAt)}
                         </span>
-                      ),
-                      actions: (
-                        <GlobalButton
-                          isIconOnly
-                          variant="light"
-                          className="min-w-5 h-5 cursor-pointer text-danger"
-                          onPress={() => deleteMutation.mutate(item.email)}
-                          isLoading={deleteMutation.isPending}
-                        >
-                          <TrashIcon className="size-3.5" />
-                        </GlobalButton>
                       )
                     };
                     return <TableCell>{valueMap[String(columnKey)]}</TableCell>;
@@ -250,6 +279,33 @@ export default function WaitListUsersTable({ params }: { params: Promise<{ id: s
           </Table>
         </div>
       </PageComponent>
+
+      <Modal isOpen={isOpen} onOpenChange={onOpenChange} radius="sm">
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader>Confirm Deletion</ModalHeader>
+              <ModalBody>
+                <p className="text-sm text-muted-foreground">
+                  Are you sure you want to remove {emailsToDelete.length} user{emailsToDelete.length > 1 ? "s" : ""} from this waitlist? This action cannot be undone.
+                </p>
+              </ModalBody>
+              <ModalFooter>
+                <GlobalButton variant="light" onPress={onClose}>
+                  Cancel
+                </GlobalButton>
+                <GlobalButton
+                  color="danger"
+                  onPress={() => handleConfirmDelete(onClose)}
+                  isLoading={deleteMutation.isPending}
+                >
+                  Delete
+                </GlobalButton>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
     </>
   );
 }

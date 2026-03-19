@@ -3,6 +3,8 @@
 import { useChartHoverStore } from "@/store/chart-hover";
 import { ArrowTopRightOnSquareIcon } from "@heroicons/react/24/outline";
 import { Button } from "@heroui/button";
+import Link from "next/link";
+import { useParams } from "next/navigation";
 import {
   Area,
   AreaChart,
@@ -54,6 +56,7 @@ const CHART_ID = "daily-registrations";
 export default function DailyRegistrationsChart({
   data = defaultData
 }: DailyRegistrationsChartProps) {
+  const { id } = useParams<{ id: string }>();
   const { hoveredChartId, activeLabel, setHover, clearHover } = useChartHoverStore();
   const isSynced = hoveredChartId != null && hoveredChartId !== CHART_ID && activeLabel != null;
 
@@ -70,7 +73,7 @@ export default function DailyRegistrationsChart({
           </p>
         </div>
 
-        <Button size="sm" variant="light" endContent={<ArrowTopRightOnSquareIcon className="size-3" />} className="text-muted-foreground">
+        <Button as={Link} href={`/app/launch/waitlist/${id}/table`} size="sm" variant="light" endContent={<ArrowTopRightOnSquareIcon className="size-3" />} className="text-muted-foreground">
           Show user's table
         </Button>
       </div>
