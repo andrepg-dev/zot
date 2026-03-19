@@ -101,6 +101,8 @@ Maintain these patterns for consistency across all pages and components:
 >
 ```
 
+**Table empty content**: Always wrap `emptyContent` in the `<Type>` component: `emptyContent={<Type>No items yet.</Type>}`. Never use plain strings.
+
 **Buttons**: default `size="sm"`, `radius="sm"`, ripple disabled via `GlobalButton`.
 
 **Chips** (`components/ui/chip.tsx`): `rounded-full text-[10px]` with status variants — `active` (success), `warning`, `danger`, `primary`, `neutral`.
@@ -108,6 +110,8 @@ Maintain these patterns for consistency across all pages and components:
 **Spacing scale**: `gap-2` (8px), `gap-3` (12px), `gap-4` (16px), `gap-6` (24px). Icons: `size-4`/`size-5` for UI, `size-3` inline.
 
 **Skeletons** (`components/skeletons/`): existing skeletons for type, chip, button, input, textarea, switch, checkbox, and wait-list/card. Use them selectively where loading states are needed — not on every page. Only create a custom skeleton if none of the existing ones fit.
+
+**Drawer headers**: Description text inside `DrawerHeader` must always use `font-normal` — e.g. `<p className="text-sm text-muted-foreground font-normal">`.
 
 **Destructive actions**: All delete operations must show a confirmation dialog before executing. Never delete directly on button press.
 

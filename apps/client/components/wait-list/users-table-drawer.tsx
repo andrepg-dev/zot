@@ -34,6 +34,7 @@ import {
 import { addToast } from "@heroui/toast";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useState } from "react";
+import Type from "../type";
 
 const columns = [
   { key: "position", label: "#" },
@@ -128,7 +129,7 @@ export default function UsersTableDrawer({ waitlistId, isOpen, onOpenChange }: U
       <GlobalDrawer isOpen={isOpen} onOpenChange={onOpenChange} size="2xl" expandedSize="4xl">
         <DrawerHeader className="flex flex-col gap-1">
           <h2 className="text-base font-medium">Users Table</h2>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-muted-foreground font-normal">
             {counts?.total ?? 0} total users · {counts?.referred ?? 0} referred
           </p>
         </DrawerHeader>
@@ -218,7 +219,7 @@ export default function UsersTableDrawer({ waitlistId, isOpen, onOpenChange }: U
                 items={filteredUsers.map((user, index) => ({ ...user, position: index + 1 }))}
                 isLoading={isPending}
                 loadingContent={<Spinner size="sm" />}
-                emptyContent="No users registered yet."
+                emptyContent={<Type>No users registered yet.</Type>}
               >
                 {(item) => (
                   <TableRow key={item._id}>

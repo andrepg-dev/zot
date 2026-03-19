@@ -18,6 +18,7 @@ import {
 } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
 import React, { useState } from "react";
+import Type from "../type";
 
 const columns = [
   { key: "email", label: "Email" },
@@ -69,7 +70,7 @@ export default function BlockedUsersTableDrawer({
     <GlobalDrawer isOpen={isOpen} onOpenChange={onOpenChange} size="2xl" expandedSize="4xl">
       <DrawerHeader className="flex flex-col gap-1">
         <h2 className="text-base font-medium">Blocked Users</h2>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-sm text-muted-foreground font-normal">
           {counts?.total ?? 0} users blocked
         </p>
       </DrawerHeader>
@@ -117,7 +118,7 @@ export default function BlockedUsersTableDrawer({
               items={filteredUsers}
               isLoading={isPending}
               loadingContent={<Spinner size="sm" />}
-              emptyContent="No blocked users yet."
+              emptyContent={<Type>No blocked users yet.</Type>}
             >
               {(item) => (
                 <TableRow key={item._id}>

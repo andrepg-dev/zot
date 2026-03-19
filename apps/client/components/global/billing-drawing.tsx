@@ -17,7 +17,7 @@ export default function BillingDrawing({ children }: { children: React.ReactNode
           <DrawerHeader className="flex flex-col gap-1">
             <p className="text-xs tracking-[0.25em] uppercase text-blue-300/80">Billing</p>
             <h1 className="text-2xl font-semibold">Choose the plan that fits</h1>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-muted-foreground font-normal">
               Transparent pricing with zero surprises. Upgrade when you need more room to scale
               launches, emails, and domains.
             </p>
