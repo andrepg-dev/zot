@@ -5,7 +5,8 @@ export default function Title({
   children,
   description,
   className,
-  classNames
+  classNames,
+  rightChildren
 }: {
   children: React.ReactNode;
   description?: string;
@@ -14,15 +15,20 @@ export default function Title({
     title?: string;
     description?: string;
   };
+  rightChildren?: React.ReactNode
 }) {
   return (
-    <div className={cn("flex flex-col", className)}>
-      <Type variant="h4" className={cn("font-medium", classNames?.title)}>
-        {children}
-      </Type>
-      <h6 className={cn("text-muted-foreground", classNames?.description)}>
-        {description}
-      </h6>
+    <div className="flex justify-between items-center">
+      <div className={cn("flex flex-col", className)}>
+        <Type variant="h4" className={cn("font-medium", classNames?.title)}>
+          {children}
+        </Type>
+        <h6 className={cn("text-muted-foreground", classNames?.description)}>
+          {description}
+        </h6>
+      </div>
+
+      {rightChildren}
     </div>
   );
 }

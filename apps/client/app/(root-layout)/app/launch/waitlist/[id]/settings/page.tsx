@@ -151,13 +151,21 @@ export default function SettingsPage({ params }: { params: Promise<{ id: string 
                   control={generalControl}
                   name="isAvailable"
                   render={({ field }) => (
-                    <Switch
-                      size="sm"
-                      isSelected={field.value}
-                      onValueChange={field.onChange}
-                    >
-                      <Type variant="sm">{field.value ? "Active" : "Paused"}</Type>
-                    </Switch>
+                    <div className="flex flex-col gap-2">
+                      <Switch
+                        size="sm"
+                        isSelected={field.value}
+                        onValueChange={field.onChange}
+                      >
+                        <Type variant="sm">{field.value ? "Active" : "Paused"}</Type>
+                      </Switch>
+                      {!field.value && (
+                        <Type variant="sm" className="text-warning">
+                          Your waitlist is paused. No new registrations will be accepted until you
+                          re-enable it.
+                        </Type>
+                      )}
+                    </div>
                   )}
                 />
               </FormField>

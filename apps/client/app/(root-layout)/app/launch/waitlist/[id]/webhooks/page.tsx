@@ -3,11 +3,12 @@
 import { getWaitListStats } from "@/actions/wait-list/stats.actions";
 import { updateWaitList } from "@/actions/wait-list/wait-list.actions";
 import FormField from "@/components/form-field";
+import PrimaryActionButton from "@/components/global/primary-action-button";
 import Title from "@/components/global/title";
 import PageComponent from "@/components/layouts/page-component";
 import Type from "@/components/type";
 import InputComponent from "@/components/ui/input";
-import { ArrowPathIcon, LinkIcon } from "@heroicons/react/24/outline";
+import { ArrowPathIcon, LinkIcon, WrenchIcon } from "@heroicons/react/24/outline";
 import { Button } from "@heroui/button";
 import { Card, CardFooter } from "@heroui/card";
 import { addToast } from "@heroui/toast";
@@ -82,10 +83,15 @@ export default function Webhooks({ params }: { params: Promise<{ id: string }> }
   }
 
   return (
-    <PageComponent className="flex flex-col gap-6 w-5xl">
-      <Title description="Receive notification when a user has been registered">Webhooks</Title>
+    <PageComponent className="flex flex-col gap-6 ">
+      <Title
+        description="Receive notification when a user has been registered"
+        rightChildren={<PrimaryActionButton startContent={<WrenchIcon className="size-4" />}>Configure Webhook</PrimaryActionButton>}
+      >
+        Webhooks
+      </Title>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 w-5xl">
         <Card radius="sm">
           <FormField
             icon={<LinkIcon className="size-4" />}
