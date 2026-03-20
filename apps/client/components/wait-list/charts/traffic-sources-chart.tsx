@@ -18,8 +18,6 @@ const defaultData = [
 ];
 
 const COLORS = ["#0ea5e9", "#10b981", "#f59e0b", "#ec4899", "#a855f7"];
-const tooltipBg = "rgb(37, 37, 37)";
-const tooltipBorder = "rgba(255, 255, 255, 0.1)";
 
 export default function TrafficSourcesChart({ data = defaultData }: TrafficSourcesChartProps) {
   return (
@@ -55,7 +53,8 @@ export default function TrafficSourcesChart({ data = defaultData }: TrafficSourc
           </Pie>
           <Legend
             wrapperStyle={{
-              paddingTop: "20px"
+              paddingTop: "20px",
+              fontFamily: "var(--font-mono)"
             }}
             iconType="circle"
           />

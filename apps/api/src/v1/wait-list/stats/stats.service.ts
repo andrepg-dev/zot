@@ -10,9 +10,11 @@ export type WaitListStats = Omit<WaitList, "owner"> & {
     total: number;
   };
   emailsSent: number;
+  usersBlocked: number;
   dailyRegistration: Array<{ createdAt: Date; registrations: number }>;
   topReferrers: Array<{ email: string; referrals: number }>;
   conversionRateOverTime: Array<{ createdAt: Date; conversionRate: number }>;
+  dailyUsersBlocked: Array<{ createdAt: Date; blocked: number }>;
 };
 
 @Injectable()
@@ -108,6 +110,33 @@ export class StatsService {
         },
       },
       {
+        $lookup: {
+          from: "emailsecurities",
+          localField: "_id",
+          foreignField: "waitlistId",
+          as: "emailSecurityPopulate",
+        },
+      },
+      {
+        $lookup: {
+          from: "emailsecurities",
+          let: { waitlistId: "$_id" },
+          pipeline: [
+            { $match: { $expr: { $eq: ["$waitlistId", "$$waitlistId"] } } },
+            {
+              $group: {
+                _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+                blocked: { $sum: 1 },
+                createdAt: { $first: "$createdAt" },
+              },
+            },
+            { $sort: { createdAt: 1 } },
+            { $project: { _id: 0, createdAt: 1, blocked: 1 } },
+          ],
+          as: "dailyUsersBlocked",
+        },
+      },
+      {
         $addFields: {
           users: {
             total: { $size: "$usersRegistered" },
@@ -147,6 +176,9 @@ export class StatsService {
           emailsSent: {
             $sum: "$emailsSentPopulate.quantitySent",
           },
+          usersBlocked: {
+            $size: "$emailSecurityPopulate",
+          },
         },
       },
       {
@@ -154,6 +186,7 @@ export class StatsService {
           owner: 0,
           emailsSentPopulate: 0,
           usersRegistered: 0,
+          emailSecurityPopulate: 0,
         },
       },
     ]);

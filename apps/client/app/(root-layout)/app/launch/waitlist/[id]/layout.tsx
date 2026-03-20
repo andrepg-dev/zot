@@ -1,8 +1,6 @@
 "use client";
 
-import HeaderNavigation from "@/components/navigation/header.navigation";
 import SidebarNavigation from "@/components/navigation/sidebar.navigation";
-import Chip from "@/components/ui/chip";
 import { ArrowUturnLeftIcon, BoltIcon, Cog6ToothIcon, EnvelopeIcon, HomeIcon, KeyIcon } from "@heroicons/react/24/outline";
 import { useParams } from "next/navigation";
 
@@ -56,17 +54,6 @@ export default function WaitListLayout({ children }: { children: React.ReactNode
           //   label: "Widget List"
           // }
         ]}
-      />
-
-      <HeaderNavigation
-        navigationItems={[
-          { label: "Wait-List", pathname: "/app/waitlist/dashboard" },
-          {
-            label: `Launch ${String(id)}`,
-            pathname: ""
-          }
-        ]}
-        children={<Chip status="active">Active</Chip>}
       />
       {children}
     </>

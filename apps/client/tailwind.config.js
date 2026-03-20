@@ -24,7 +24,7 @@ const config = {
         mono: ["var(--font-mono)"]
       },
       borderRadius: {
-        default: "var(--radius-default)"
+        default: "5px"
       },
       colors: {
         background: "var(--background)",
@@ -75,6 +75,7 @@ const config = {
       addCommonColors: false,
       defaultTheme: "dark",
       defaultExtendTheme: "dark",
+
       layout: {
         disabledOpacity: "0.5",
         radius: {

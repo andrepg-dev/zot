@@ -327,7 +327,8 @@ export default function WaitListPage() {
                   as={Link}
                   href={`/app/launch/waitlist/${item._id}`}
                   isPressable
-                  className="hover:bg-default-100 transition cursor-pointer border"
+                  // disableRipple
+                  className="border"
                   radius="sm"
                 >
                   <CardBody className="p-5">

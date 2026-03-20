@@ -56,7 +56,7 @@ export default function DailySignUpsChart({ data = defaultData }: DailySignUpsCh
               tickMargin={8}
               stroke={axisColor}
               fontSize={12}
-              tick={{ fill: axisColor }}
+              tick={{ fill: axisColor, fontFamily: "var(--font-mono)" }}
             />
             <YAxis
               tickLine={false}
@@ -64,7 +64,7 @@ export default function DailySignUpsChart({ data = defaultData }: DailySignUpsCh
               tickMargin={8}
               stroke={axisColor}
               fontSize={12}
-              tick={{ fill: axisColor }}
+              tick={{ fill: axisColor, fontFamily: "var(--font-mono)" }}
             />
             <Tooltip
               cursor={false}
@@ -74,7 +74,8 @@ export default function DailySignUpsChart({ data = defaultData }: DailySignUpsCh
                 border: `1px solid ${tooltipBorder}`,
                 borderRadius: "4px",
                 color: tooltipText,
-                padding: "8px 12px"
+                padding: "8px 12px",
+                fontFamily: "var(--font-mono)"
               }}
             />
             <Line

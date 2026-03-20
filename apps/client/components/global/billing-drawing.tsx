@@ -2,7 +2,8 @@
 
 import { plans } from "@/constants/billing-constant";
 import { CheckIcon } from "@heroicons/react/24/solid";
-import { Drawer, DrawerBody, DrawerContent, DrawerHeader, useDisclosure } from "@heroui/react";
+import GlobalDrawer from "@/components/global/drawer";
+import { DrawerBody, DrawerHeader, useDisclosure } from "@heroui/react";
 import Link from "next/link";
 
 export default function BillingDrawing({ children }: { children: React.ReactNode }) {
@@ -12,12 +13,11 @@ export default function BillingDrawing({ children }: { children: React.ReactNode
     <>
       <div onClick={onOpen}>{children}</div>
 
-      <Drawer isOpen={isOpen} onOpenChange={onOpenChange} size="4xl">
-        <DrawerContent>
+      <GlobalDrawer isOpen={isOpen} onOpenChange={onOpenChange} size="4xl" expandedSize="5xl">
           <DrawerHeader className="flex flex-col gap-1">
             <p className="text-xs tracking-[0.25em] uppercase text-blue-300/80">Billing</p>
             <h1 className="text-2xl font-semibold">Choose the plan that fits</h1>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-muted-foreground font-normal">
               Transparent pricing with zero surprises. Upgrade when you need more room to scale
               launches, emails, and domains.
             </p>
@@ -74,8 +74,7 @@ export default function BillingDrawing({ children }: { children: React.ReactNode
               ))}
             </div>
           </DrawerBody>
-        </DrawerContent>
-      </Drawer>
+      </GlobalDrawer>
     </>
   );
 }

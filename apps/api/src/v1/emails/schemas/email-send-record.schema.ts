@@ -1,4 +1,4 @@
-import { BasedOwnerSchema } from "@api/src/common/schemas/based-owner.schema";
+import { BasedHiddenOwnerSchema } from "@api/src/common/schemas/based-owner.schema";
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Types } from "mongoose";
 
@@ -8,8 +8,8 @@ import { Types } from "mongoose";
  * successfully sent count and failed ones.
  */
 @Schema({ timestamps: true, versionKey: false })
-export class EmailSendRecord extends BasedOwnerSchema {
-  @Prop({ type: Types.ObjectId, ref: "WaitList", required: true, index: true })
+export class EmailSendRecord extends BasedHiddenOwnerSchema {
+  @Prop({ type: Types.ObjectId, ref: "WaitList", required: true, index: true, select: false })
   waitlistId: Types.ObjectId;
 
   @Prop({ type: Number, required: true })

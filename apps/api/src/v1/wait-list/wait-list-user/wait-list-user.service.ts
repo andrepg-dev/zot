@@ -24,10 +24,7 @@ export class WaitListUserService {
     private readonly usersService: UsersService,
   ) {}
 
-  private async validateOwnership(
-    waitlistId: Types.ObjectId,
-    owner: Types.ObjectId,
-  ): Promise<void> {
+  async validateOwnership(waitlistId: Types.ObjectId, owner: Types.ObjectId): Promise<void> {
     if (!owner) {
       throw new HttpException(
         "You must be authenticated to perform this action.",
