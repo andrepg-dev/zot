@@ -48,11 +48,22 @@ export default function SettingsPage({ params }: { params: Promise<{ id: string 
     queryFn: () => getWaitListStats(id)
   });
 
-  const updateMutation = useMutation({
+  const generalMutation = useMutation({
     mutationFn: (values: UpdateWaitListValues) => updateWaitList(id, values),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [id] });
-      addToast({ description: "Settings updated", color: "success" });
+      addToast({ description: "Settings updated", color: "primary" });
+    },
+    onError: (err) => {
+      addToast({ title: "Error", description: err.message, color: "danger" });
+    }
+  });
+
+  const emailMutation = useMutation({
+    mutationFn: (values: UpdateWaitListValues) => updateWaitList(id, values),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [id] });
+      addToast({ description: "Email settings updated", color: "primary" });
     },
     onError: (err) => {
       addToast({ title: "Error", description: err.message, color: "danger" });
@@ -86,7 +97,7 @@ export default function SettingsPage({ params }: { params: Promise<{ id: string 
   });
 
   const onSubmitGeneral = (formData: GeneralFormValues) => {
-    updateMutation.mutate(formData);
+    generalMutation.mutate(formData);
   };
 
   // Email form — auto-save on change
@@ -103,7 +114,7 @@ export default function SettingsPage({ params }: { params: Promise<{ id: string 
     if (data === undefined) return;
     if (sendEmailValue === data.sendEmailToNewSignup) return;
 
-    updateMutation.mutate({ sendEmailToNewSignup: sendEmailValue });
+    emailMutation.mutate({ sendEmailToNewSignup: sendEmailValue });
   }, [sendEmailValue]);
 
   const deletePhrase = `delete ${data?.name}`;
@@ -188,9 +199,9 @@ export default function SettingsPage({ params }: { params: Promise<{ id: string 
                   color="primary"
                   className="border"
                   type="submit"
-                  isLoading={updateMutation.isPending}
+                  isLoading={generalMutation.isPending}
                 >
-                  {updateMutation.isPending ? "Saving" : "Save changes"}
+                  {generalMutation.isPending ? "Saving" : "Save changes"}
                 </Button>
               </CardFooter>
             </CardBody>

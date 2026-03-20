@@ -65,7 +65,7 @@ export default function Webhooks({ params }: { params: Promise<{ id: string }> }
     resolver: zodResolver(webhookFormSchema),
     values: {
       webhook: {
-        range: data?.webhook?.range ?? 0,
+        range: data?.webhook?.range ?? 10,
         url: data?.webhook?.url.replace("https://", "") ?? ""
       }
     }

@@ -1,3 +1,5 @@
+"use client"
+
 import Title from "@/components/global/title";
 import PageComponent from "@/components/layouts/page-component";
 
