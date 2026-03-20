@@ -32,7 +32,16 @@ const InputComponent = forwardRef<HTMLInputElement, InputProps>((props, ref) => 
   }, [valueProp]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(e.target.value);
+    let val = e.target.value;
+
+    if (type === "url") {
+      val = val.replace(/^https?:\/\//, "");
+
+      const nativeSet = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")!.set!;
+      nativeSet.call(e.target, val);
+    }
+
+    setInputValue(val);
     onChange?.(e);
   };
 
