@@ -161,7 +161,7 @@ export default function SettingsPage({ params }: { params: Promise<{ id: string 
                       </Switch>
                       {!field.value && (
                         <Type variant="sm" className="text-warning">
-                          Your waitlist is paused. No new registrations will be accepted until you
+                          Your wait-list will be paused. No new registrations will be accepted until you
                           re-enable it.
                         </Type>
                       )}
@@ -189,7 +189,7 @@ export default function SettingsPage({ params }: { params: Promise<{ id: string 
                   render={({ field }) => (
                     <Switch
                       size="sm"
-                      isDisabled
+                      isDisabled={field.value ? false : true}
                       isSelected={field.value}
                       onValueChange={field.onChange}
                     >

@@ -9,6 +9,7 @@ import FakeUsersBlockedChart from "@/components/wait-list/charts/fake-users-bloc
 import TopReferrersChart from "@/components/wait-list/charts/top-referrers-chart";
 import { cn } from "@/lib/utils";
 import {
+  ArrowTopRightOnSquareIcon,
   EnvelopeIcon,
   HandRaisedIcon,
   ShareIcon,
@@ -17,6 +18,7 @@ import {
 } from "@heroicons/react/24/outline";
 import NumberFlow from "@number-flow/react";
 import { useQuery } from "@tanstack/react-query";
+import Link from "next/link";
 import React from "react";
 
 function formatDate(dateStr: string) {
@@ -88,6 +90,7 @@ export default function LaunchedWaitList({ params }: { params: Promise<{ id: str
       value: data?.emailsSent ?? 0,
       icon: EnvelopeIcon,
       iconColor: "text-muted-foreground",
+      href: `/app/launch/waitlist/${id}/email`,
     },
     {
       id: 5,
@@ -145,8 +148,17 @@ export default function LaunchedWaitList({ params }: { params: Promise<{ id: str
         {stats.map((stat) => (
           <div
             key={stat.id}
-            className="border rounded bg-background"
+            className="relative border rounded bg-background"
           >
+            {"href" in stat && stat.href && (
+              <Link
+                href={stat.href}
+                className="absolute top-4 right-5 flex items-center gap-1 text-xs font-mono text-muted-foreground hover:underline decoration-2"
+              >
+                Activity
+                <ArrowTopRightOnSquareIcon className="size-3" />
+              </Link>
+            )}
             <div className="px-5 py-4.5">
               <div className="flex flex-col gap-2">
                 <div className="flex items-baseline gap-2">

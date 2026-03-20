@@ -7,12 +7,15 @@ import { CreateWaitListDto } from "./dto/create-wait-list.dto";
 import { UpdateWaitListDto } from "./dto/update-wait-list.dto";
 import { WaitListUser } from "./schemas/wait-list-user.schema";
 import { WaitList } from "./schemas/wait-list.schema";
+import { WaitlistWebhookEvent } from "./schemas/waitlist-webhooks-events.schema";
 
 @Injectable()
 export class WaitListService {
   constructor(
     @InjectModel(WaitList.name) private WaitListModel: Model<WaitList>,
     @InjectModel(WaitListUser.name) private WaitListUserModel: Model<WaitListUser>,
+    @InjectModel(WaitlistWebhookEvent.name)
+    private WaitlistWebhookEventModel: Model<WaitlistWebhookEvent>,
     private readonly usersService: UsersService,
     private readonly userQuoteService: UserQuoteService,
   ) {}
@@ -203,6 +206,30 @@ export class WaitListService {
     } catch (error) {
       if (error instanceof HttpException) throw error;
       throw new HttpException("Error deleting waitlist.", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async findWebhookEvents(waitlistId: Types.ObjectId, owner: Types.ObjectId) {
+    try {
+      const waitlist = await this.WaitListModel.findOne({
+        _id: waitlistId,
+        owner,
+      });
+
+      if (!waitlist) {
+        throw new HttpException(
+          `WaitList "${String(waitlistId)}" not found or you don't have permission to access it.`,
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
+      return await this.WaitlistWebhookEventModel.find({ waitlistId })
+        .select("+waitlistId")
+        .sort({ sentAt: -1 })
+        .lean();
+    } catch (error) {
+      if (error instanceof HttpException) throw error;
+      throw new HttpException("Error fetching webhook events.", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }
