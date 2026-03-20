@@ -19,7 +19,8 @@ const variants = {
   h6: "text-sm font-medium",
   base: "text-sm",
   sm: "text-xs",
-  link: "text-primary-400 hover:underline decoration-2 cursor-pointer"
+  link: "text-primary-400 hover:underline decoration-2 cursor-pointer",
+  code: "font-mono text-xs bg-default-100 px-1.5 py-0.5 rounded-sm border"
 } as const;
 
 const elementMap: Record<VariantKey, React.ElementType> = {
@@ -31,7 +32,8 @@ const elementMap: Record<VariantKey, React.ElementType> = {
   h6: "h6",
   base: "p",
   sm: "p",
-  link: "span"
+  link: "span",
+  code: "code"
 };
 
 export default function Type<C extends React.ElementType = "span">({ variant = "base", children, className, as, ...props }: TypeProps<C>) {

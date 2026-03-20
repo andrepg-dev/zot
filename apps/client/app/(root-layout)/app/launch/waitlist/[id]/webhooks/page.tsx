@@ -39,7 +39,7 @@ export default function Webhooks({ params }: { params: Promise<{ id: string }> }
 
   const { mutate, isPending } = useMutation({
     mutationFn: async (data: UpdateWaitListValues) => {
-      return await updateWaitList(id, { ...data })
+      return await updateWaitList(id, data)
     },
     onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: [id] });
