@@ -11,10 +11,20 @@ import { Button } from "@heroui/button";
 import { Card, CardFooter } from "@heroui/card";
 import { addToast } from "@heroui/toast";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { updateWaitListSchema, UpdateWaitListValues } from "@repo/packages/shared/schemas";
+import { type UpdateWaitListValues } from "@repo/packages/shared/schemas";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { use } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+
+const webhookFormSchema = z.object({
+  webhook: z.object({
+    url: z.string().min(1).transform((v) => (v.startsWith("https://") ? v : `https://${v}`)),
+    range: z.number().int().min(1)
+  }).optional()
+});
+
+type WebhookFormValues = z.input<typeof webhookFormSchema>;
 
 export default function Webhooks({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
@@ -31,7 +41,7 @@ export default function Webhooks({ params }: { params: Promise<{ id: string }> }
     onSuccess: (response) => {
       addToast({
         title: "Updated",
-        description: `${response.webhook?.url} configured!`,
+        description: `${response.webhook?.url} configured`,
         color: "success"
       });
     },
@@ -48,21 +58,30 @@ export default function Webhooks({ params }: { params: Promise<{ id: string }> }
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<UpdateWaitListValues>({
-    resolver: zodResolver(updateWaitListSchema),
-    defaultValues: {
-      webhook: data?.webhook
+  } = useForm<WebhookFormValues>({
+    resolver: zodResolver(webhookFormSchema),
+    mode: "onChange",
+    values: {
+      webhook: {
+        range: data?.webhook.range ?? 0,
+        url: data?.webhook.url.replace("https://", "") ?? ""
+      }
     }
   })
 
-  const onSubmit: SubmitHandler<UpdateWaitListValues> = (data) => {
-    mutate(data)
+  const onSubmit = (formData: WebhookFormValues) => {
+    const url = formData.webhook?.url;
+    mutate({
+      webhook: {
+        url: url ? (url.startsWith("https://") ? url : `https://${url}`) : "",
+        range: formData.webhook?.range ?? 10
+      }
+    })
   }
 
   return (
     <PageComponent className="flex flex-col gap-6 w-5xl">
       <Title description="Receive notification when a user has been registered">Webhooks</Title>
-      {JSON.stringify(data)}
 
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
         <Card radius="sm">
@@ -76,10 +95,7 @@ export default function Webhooks({ params }: { params: Promise<{ id: string }> }
           >
             <InputComponent
               type="url"
-              {...register("webhook.url", {
-                setValueAs: (v: string) =>
-                  v ? `https://${v.replace(/^https?:\/\//, "")}` : v,
-              })}
+              {...register("webhook.url")}
             />
           </FormField>
 

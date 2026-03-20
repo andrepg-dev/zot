@@ -2,17 +2,34 @@
 
 import { cn } from "@/lib/utils";
 import { Input, InputProps } from "@heroui/input";
-import { forwardRef, useEffect, useState } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 
 const InputComponent = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
-  const { value, maxLength, onChange, type, startContent, ...rest } = props;
-  const [inputValue, setInputValue] = useState(value || "");
+  const { value: valueProp, maxLength, onChange, type, startContent, ...rest } = props;
+  const [inputValue, setInputValue] = useState(valueProp ?? "");
+  const innerRef = useRef<HTMLInputElement>(null);
+
+  useImperativeHandle(ref, () => {
+    const el = innerRef.current!;
+    const descriptor = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")!;
+
+    Object.defineProperty(el, "value", {
+      get: () => descriptor.get!.call(el),
+      set: (v: string) => {
+        descriptor.set!.call(el, v);
+        setInputValue(v);
+      },
+      configurable: true
+    });
+
+    return el;
+  });
 
   useEffect(() => {
-    if (value !== undefined) {
-      setInputValue(value);
+    if (valueProp !== undefined) {
+      setInputValue(valueProp);
     }
-  }, [value]);
+  }, [valueProp]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
@@ -29,7 +46,7 @@ const InputComponent = forwardRef<HTMLInputElement, InputProps>((props, ref) => 
   return (
     <div className="relative">
       <Input
-        ref={ref}
+        ref={innerRef}
         value={inputValue}
         onChange={handleChange}
         maxLength={maxLength}
