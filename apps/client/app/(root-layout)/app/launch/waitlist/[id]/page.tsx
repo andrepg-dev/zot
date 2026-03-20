@@ -3,8 +3,6 @@
 import { getWaitListStats } from "@/actions/wait-list/stats.actions";
 import Title from "@/components/global/title";
 import PageComponent from "@/components/layouts/page-component";
-import HeaderNavigation from "@/components/navigation/header.navigation";
-import Chip from "@/components/ui/chip";
 import ConversionRateChart from "@/components/wait-list/charts/conversion-rate-chart";
 import DailyRegistrationsChart from "@/components/wait-list/charts/daily-registrations-chart";
 import FakeUsersBlockedChart from "@/components/wait-list/charts/fake-users-blocked-chart";
@@ -134,74 +132,59 @@ export default function LaunchedWaitList({ params }: { params: Promise<{ id: str
 
   const conversionRateData = fillDailyData(rawConversion, last20Days, { rate: 0 });
 
-  const statusLabel = data?.isAvailable ? "Active" : "Disabled"
-
   return (
-    <>
-      <HeaderNavigation
-        navigationItems={[
-          { label: "Wait-List", pathname: "/app/waitlist/dashboard" },
-          {
-            label: isPending ? "Loading..." : (data?.name ?? ""),
-            pathname: ""
-          }
-        ]}
-        children={<Chip status={isPending ? "skeleton" : (data?.isAvailable ? "active" : "warning")}>{isPending ? "Loading" : statusLabel}</Chip>}
-      />
+    <PageComponent>
+      <div className="flex items-start gap-2">
+        <Title description={`ID: ${id}`} classNames={{ description: "mt-1" }}>
+          <span>{isPending ? "Loading..." : data?.name}</span>
+          {/* <Chip status="primary" className="ml-2 relative">Bernay Landing page</Chip> */}
+        </Title>
+      </div>
 
-      <PageComponent>
-        <div className="flex items-start gap-2">
-          <Title description={`ID: ${id}`} classNames={{ description: "mt-1" }}>
-            <span>{isPending ? "Loading..." : data?.name}</span>
-            {/* <Chip status="primary" className="ml-2 relative">Bernay Landing page</Chip> */}
-          </Title>
-        </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mt-4 rounded-default">
+        {stats.map((stat) => (
+          <div
+            key={stat.id}
+            className="border rounded bg-background"
+          >
+            <div className="px-5 py-4.5">
+              <div className="flex flex-col gap-2">
+                <div className="flex items-baseline gap-2">
+                  <NumberFlow value={isPending ? 0 : (animated ? stat.value : 0)} className="text-2xl font-semibold" />
+                </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mt-4 rounded-default">
-          {stats.map((stat) => (
-            <div
-              key={stat.id}
-              className="border rounded bg-background"
-            >
-              <div className="px-5 py-4.5">
-                <div className="flex flex-col gap-2">
-                  <div className="flex items-baseline gap-2">
-                    <NumberFlow value={isPending ? 0 : (animated ? stat.value : 0)} className="text-2xl font-semibold" />
-                  </div>
-
-                  <div className="flex gap-2 items-center">
-                    <stat.icon className={cn("size-4", stat.iconColor)} />
-                    <p className="text-xs text-muted-foreground font-mono">{stat.title}</p>
-                  </div>
+                <div className="flex gap-2 items-center">
+                  <stat.icon className={cn("size-4", stat.iconColor)} />
+                  <p className="text-xs text-muted-foreground font-mono">{stat.title}</p>
                 </div>
               </div>
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
+      </div>
 
-        {/* Analytics Section */}
-        <div className="mt-8">
-          <Title description="Detailed analytics and insights">
-            <span className="text-lg">Analytics</span>
-          </Title>
-        </div>
+      {/* Analytics Section */}
+      <div className="mt-8">
+        <Title description="Detailed analytics and insights">
+          <span className="text-lg">Analytics</span>
+        </Title>
+      </div>
 
-        {/* Masonry Grid */}
-        <div className="columns-1 lg:columns-2 gap-6 mt-6 space-y-6">
-          <div className="break-inside-avoid">
-            <DailyRegistrationsChart data={dailyRegistrationsData} />
-          </div>
-          <div className="break-inside-avoid">
-            <FakeUsersBlockedChart data={fakeUsersBlockedData} />
-          </div>
-          <div className="break-inside-avoid">
-            <TopReferrersChart data={topReferrersData} />
-          </div>
-          <div className="break-inside-avoid">
-            <ConversionRateChart data={conversionRateData} />
-          </div>
+      {/* Masonry Grid */}
+      <div className="columns-1 lg:columns-2 gap-6 mt-6 space-y-6">
+        <div className="break-inside-avoid">
+          <DailyRegistrationsChart data={dailyRegistrationsData} />
         </div>
-      </PageComponent>
-    </>
+        <div className="break-inside-avoid">
+          <FakeUsersBlockedChart data={fakeUsersBlockedData} />
+        </div>
+        <div className="break-inside-avoid">
+          <TopReferrersChart data={topReferrersData} />
+        </div>
+        <div className="break-inside-avoid">
+          <ConversionRateChart data={conversionRateData} />
+        </div>
+      </div>
+    </PageComponent>
   );
 }
