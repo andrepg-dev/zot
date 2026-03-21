@@ -16,6 +16,18 @@ export const emailSendRecordSchema = z.object({
 
 export type EmailSendRecord = z.infer<typeof emailSendRecordSchema>;
 
+export const emailPayloadSchema = z.object({
+  from: z.string(),
+  subject: z.string(),
+  options: z.object({
+    html: z.string(),
+    replyTo: z.string().optional(),
+    text: z.string().optional(),
+  }),
+});
+
+export type EmailPayload = z.infer<typeof emailPayloadSchema>;
+
 export const emailSendRecordItemSchema = z.object({
   _id: z.string(),
   quantitySent: z.number(),
@@ -23,6 +35,7 @@ export const emailSendRecordItemSchema = z.object({
   sentSuccessfully: z.number(),
   failedCount: z.number(),
   failedEmails: z.array(z.string()),
+  payload: emailPayloadSchema,
   createdAt: z.string(),
   updatedAt: z.string(),
 });

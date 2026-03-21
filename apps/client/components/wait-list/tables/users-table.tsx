@@ -24,6 +24,9 @@ import React, { useState } from "react";
 
 const columns = [
   { key: "position", label: "#" },
+  { key: "subject", label: "Subject" },
+  { key: "from", label: "From" },
+  { key: "replyTo", label: "Reply To" },
   { key: "quantitySent", label: "Sent" },
   { key: "status", label: "Status" },
   { key: "sentSuccessfully", label: "Successful" },
@@ -57,6 +60,8 @@ export default function UsersTable({ id }: { id: string }) {
     const query = search.toLowerCase();
     return records.filter(
       (record) =>
+        record.payload.subject.toLowerCase().includes(query) ||
+        record.payload.from.toLowerCase().includes(query) ||
         record.recipientEmails.some((email) => email.toLowerCase().includes(query)) ||
         formatDate(record.createdAt).toLowerCase().includes(query)
     );
@@ -72,7 +77,7 @@ export default function UsersTable({ id }: { id: string }) {
       <div className="flex flex-col gap-4">
         <div className="flex justify-between items-center">
           <Input
-            placeholder="Search by email or date..."
+            placeholder="Search by subject, email or date..."
             variant="bordered"
             startContent={<MagnifyingGlassIcon className="text-default-300 size-5" />}
             size="sm"
@@ -102,7 +107,6 @@ export default function UsersTable({ id }: { id: string }) {
             wrapper: "p-0 border",
             td: "first:before:rounded-none last:before:rounded-e-none cursor-pointer py-3"
           }}
-
         >
           <TableHeader columns={columns}>
             {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
@@ -123,6 +127,23 @@ export default function UsersTable({ id }: { id: string }) {
                   const valueMap: Record<string, React.ReactNode> = {
                     position: (
                       <span className="text-muted-foreground font-mono">{item.position}</span>
+                    ),
+                    subject: (
+                      <span className="font-mono text-xs truncate max-w-[200px] block">
+                        {item.payload.subject}
+                      </span>
+                    ),
+                    from: (
+                      <span className="font-mono text-xs truncate max-w-[180px] block text-muted-foreground">
+                        {item.payload.from}
+                      </span>
+                    ),
+                    replyTo: item.payload.options.replyTo ? (
+                      <span className="font-mono text-xs truncate max-w-[180px] block text-muted-foreground">
+                        {item.payload.options.replyTo}
+                      </span>
+                    ) : (
+                      <span className="text-muted-foreground text-xs">—</span>
                     ),
                     quantitySent: <span className="font-mono">{item.quantitySent}</span>,
                     status: allSucceeded ? (
@@ -159,12 +180,12 @@ export default function UsersTable({ id }: { id: string }) {
       <GlobalDrawer
         isOpen={detailDrawer.isOpen}
         onOpenChange={detailDrawer.onOpenChange}
-        size="xl"
-        expandedSize="3xl"
+        size="3xl"
+        expandedSize="4xl"
       >
         <DrawerHeader className="flex flex-col gap-1">
           <div className="flex items-center gap-2">
-            <h2 className="text-base font-medium">Send Record Details</h2>
+            <h2 className="text-base font-medium">Email record details</h2>
             {selectedRecord && (
               selectedRecord.failedCount === 0 ? (
                 <Chip status="active">Success</Chip>
@@ -180,9 +201,56 @@ export default function UsersTable({ id }: { id: string }) {
           </p>
         </DrawerHeader>
 
-        <DrawerBody>
+        <DrawerBody className="pb-20">
           {selectedRecord && (
             <div className="flex flex-col gap-4">
+              <div className="flex items-center gap-6">
+                <div className="flex items-center gap-2">
+                  <Type variant="base">Emails Sent</Type>
+                  <Type>{String(selectedRecord.quantitySent)}</Type>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <Type variant="base">Successful</Type>
+                  <span className="font-mono text-sm">
+                    {selectedRecord.sentSuccessfully}
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <Type variant="base" className="text-muted-foreground">Failed</Type>
+                  <span
+                    className={`font-mono text-sm ${selectedRecord.failedCount > 0 ? "" : "text-muted-foreground"}`}
+                  >
+                    {selectedRecord.failedCount}
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <Type variant="h6">Subject</Type>
+                <Type variant="code">{selectedRecord.payload.subject}</Type>
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <Type variant="h6">From</Type>
+                <Type variant="code">{selectedRecord.payload.from}</Type>
+              </div>
+
+              {selectedRecord.payload.options.replyTo && (
+                <div className="flex flex-col gap-1">
+                  <Type variant="h6">Reply To</Type>
+                  <Type variant="code">{selectedRecord.payload.options.replyTo}</Type>
+                </div>
+              )}
+
+              <div className="flex flex-col gap-1">
+                <Type variant="h6">HTML</Type>
+                <pre className="text-xs font-mono bg-default-100 p-3 rounded-sm border overflow-auto max-h-60">
+                  {selectedRecord.payload.options.html}
+                </pre>
+              </div>
+
               <div className="flex flex-col gap-1">
                 <Type variant="h6">Recipients · {selectedRecord.recipientEmails.length}</Type>
                 <div className="flex flex-col bg-default-100 rounded-sm border overflow-auto max-h-60 mt-2">
@@ -214,10 +282,19 @@ export default function UsersTable({ id }: { id: string }) {
                   </div>
                 </div>
               )}
+              <div className="flex flex-col gap-1 border-t pt-4">
+                <Type variant="h6">Support</Type>
+                <Type variant="sm" className="text-muted-foreground">
+                  Having trouble? Contact us at{" "}
+                  <a href="mailto:support@zot.so" className="text-primary-400 hover:underline">
+                    support@zot.so
+                  </a>
+                </Type>
+              </div>
             </div>
           )}
         </DrawerBody>
       </GlobalDrawer>
     </>
-  )
+  );
 }

@@ -1,14 +1,17 @@
 "use client";
 
 import { getEmailSendRecords } from "@/actions/emails/emails.actions";
+import PrimaryActionButton from "@/components/global/primary-action-button";
 import Title from "@/components/global/title";
 import PageComponent from "@/components/layouts/page-component";
 import EmailsSentChart from "@/components/wait-list/charts/emails-sent-chart";
 import UsersTable from "@/components/wait-list/tables/users-table";
+import { useHotkey } from "@/hooks/use-hotkey";
+import { RocketLaunchIcon } from "@heroicons/react/24/outline";
 import { Kbd } from "@heroui/kbd";
 import { Tab, Tabs } from "@heroui/tabs";
 import { useQuery } from "@tanstack/react-query";
-import React from "react";
+import React, { useState } from "react";
 
 function formatDate(dateStr: string) {
   const d = new Date(dateStr);
@@ -38,6 +41,10 @@ function fillDailyData<T extends { date: string }>(
 
 export default function MetricPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = React.use(params);
+  const [selectedTab, setSelectedTab] = useState("analytics");
+
+  useHotkey({ key: "1", onPress: () => setSelectedTab("analytics"), modifiers: ["meta"] });
+  useHotkey({ key: "2", onPress: () => setSelectedTab("table"), modifiers: ["meta"] });
 
   const { data } = useQuery({
     queryKey: [id, "email-records"],
@@ -58,34 +65,41 @@ export default function MetricPage({ params }: { params: Promise<{ id: string }>
     <PageComponent className="flex flex-col gap-6">
       <Title description="Email sending activity over time">Metrics</Title>
 
-      <Tabs aria-label="Tabs sizes" size={"sm"} >
-        <Tab
-          key="table"
-          title={
-            <>
-              <Kbd className="text-xs bg-background mr-2">A</Kbd>
-              Analytics
-            </>
-          }
+      <div className="flex items-center justify-between">
+        <Tabs
+          aria-label="Tabs sizes"
+          size={"sm"}
+          selectedKey={selectedTab}
+          onSelectionChange={(key) => setSelectedTab(String(key))}
         >
-          <EmailsSentChart data={emailsSentData} />
-        </Tab>
+          <Tab
+            key="analytics"
+            title={
+              <>
+                <Kbd className="text-xs bg-background mr-2" keys={["command"]}>1</Kbd>
+                Analytics
+              </>
+            }
+          />
+          <Tab
+            key="table"
+            title={
+              <>
+                <Kbd className="text-xs bg-background mr-2" keys={["command"]}>2</Kbd>
+                History
+              </>
+            }
+          />
+        </Tabs>
 
-        <Tab key="music" title={
-          <>
-            <Kbd className="text-xs bg-background mr-2">T</Kbd>
-            Table
-          </>
-        }
-        >
-          <UsersTable id={id} />
-        </Tab>
-      </Tabs>
-
-      {/* <PrimaryActionButton startContent={<RocketLaunchIcon className="size-4" />}>
+        <PrimaryActionButton startContent={<RocketLaunchIcon className="size-4" />}>
           Send email campaign
           <Kbd keys={["command"]} className="text-xs">K</Kbd>
-        </PrimaryActionButton> */}
+        </PrimaryActionButton>
+      </div>
+
+      {selectedTab === "analytics" && <EmailsSentChart data={emailsSentData} />}
+      {selectedTab === "table" && <UsersTable id={id} />}
 
     </PageComponent>
   );

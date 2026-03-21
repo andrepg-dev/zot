@@ -1,6 +1,7 @@
+import PageComponent from "@/components/layouts/page-component";
 
 export default function CampaignPage() {
   return (
-    <div>CampaignPage</div>
-  )
+    <PageComponent>CampaignPage</PageComponent>
+  );
 }

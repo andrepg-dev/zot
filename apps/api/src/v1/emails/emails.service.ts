@@ -71,8 +71,6 @@ export class EmailsService {
 
     const usersList = users[0]?.emails ?? null;
 
-    console.log({ usersList });
-
     if (!usersList) {
       return { message: "WaitList users empty" };
     }
@@ -95,18 +93,23 @@ export class EmailsService {
      * WaitList id, timestamp, quantity email has sent, list of users who emails has been sent, correctly emails sent and the fails ones.
      */
 
-    const sendPayload: EmailParams = {
+    const payload: EmailParams = {
       from: "Zot WaitList <mail@zot.so>",
       to: usersList,
       provider: "resend",
       subject: "Testing if this works or not.",
       options: {
         html: "<bold>First email sending with zot.</bold>",
+        replyTo: "reply@zot.so",
+        text: "<bold>First email sending with zot.</bold>",
       },
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { to: _, provider, ...rest } = payload;
+
     try {
-      const result = await this.emailService.send(sendPayload);
+      const result = await this.emailService.send(payload);
 
       await this.emailSendRecordModel.create({
         owner: userId,
@@ -116,6 +119,7 @@ export class EmailsService {
         sentSuccessfully: usersList.length,
         failedCount: 0,
         failedEmails: [],
+        payload: rest,
       });
 
       const usage = await this.userquoteService.editUserQuote({
@@ -149,6 +153,7 @@ export class EmailsService {
         sentSuccessfully: 0,
         failedCount: usersList.length,
         failedEmails: usersList,
+        payload: rest,
       });
 
       throw err;
