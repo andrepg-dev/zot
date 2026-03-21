@@ -1,3 +1,5 @@
+"use client"
+
 import { cn } from "@/lib/utils";
 import { CheckIcon, ClipboardDocumentIcon } from "@heroicons/react/24/outline";
 import React, { useState } from "react";

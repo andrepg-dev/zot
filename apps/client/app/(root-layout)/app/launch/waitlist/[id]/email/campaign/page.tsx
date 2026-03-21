@@ -1,22 +1,33 @@
 "use client";
 
 import { getWaitListUsers } from "@/actions/wait-list/wait-list-user.actions";
+import GlobalButton from "@/components/global/button";
+import PrimaryActionButton from "@/components/global/primary-action-button";
 import Title from "@/components/global/title";
 import PageComponent from "@/components/layouts/page-component";
 import Type from "@/components/type";
-import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import InputComponent from "@/components/ui/input";
+import { useHotkey } from "@/hooks/use-hotkey";
+import { MagnifyingGlassIcon, RocketLaunchIcon } from "@heroicons/react/24/outline";
+import { Kbd } from "@heroui/kbd";
 import {
   Input,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
   Spinner,
   Table,
   TableBody,
   TableCell,
   TableColumn,
   TableHeader,
-  TableRow
+  TableRow,
+  useDisclosure
 } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 function formatDate(date: Date | string) {
   return new Date(date).toLocaleDateString("en-US", {
@@ -29,11 +40,20 @@ function formatDate(date: Date | string) {
 export default function CampaignPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = React.use(params);
   const [search, setSearch] = useState("");
+  const sendModal = useDisclosure();
+
+  useHotkey({ key: "k", modifiers: ["meta"], onPress: sendModal.onOpen });
 
   const { data: users, isPending } = useQuery({
     queryKey: [id, "waitlist-users"],
     queryFn: async () => await getWaitListUsers(id)
   });
+
+  const [quantity, setQuantity] = useState("0");
+
+  useEffect(() => {
+    if (users?.length) setQuantity(String(users.length));
+  }, [users?.length]);
 
   const metadataKeys = React.useMemo(() => {
     if (!users) return [];
@@ -77,9 +97,20 @@ export default function CampaignPage({ params }: { params: Promise<{ id: string 
     );
   }, [users, search]);
 
+
   return (
     <PageComponent className="flex flex-col gap-6">
-      <Title description="Manage and view all users in this waitlist">Campaign</Title>
+      <div className="flex items-center justify-between">
+        <Title description="Manage and view all users in this waitlist">Campaign</Title>
+
+        <PrimaryActionButton
+          startContent={<RocketLaunchIcon className="size-4" />}
+          onPress={sendModal.onOpen}
+        >
+          Send campaign
+          <Kbd keys={["command"]} className="text-xs">K</Kbd>
+        </PrimaryActionButton>
+      </div>
 
       <div className="flex flex-col gap-4">
         <div className="flex justify-between items-center">
@@ -190,6 +221,43 @@ export default function CampaignPage({ params }: { params: Promise<{ id: string 
           </TableBody>
         </Table>
       </div>
+
+      <Modal isOpen={sendModal.isOpen} onOpenChange={sendModal.onOpenChange} radius="sm">
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader>Send Email Campaign</ModalHeader>
+              <ModalBody>
+                <p className="text-sm text-muted-foreground">
+                  How many users do you want to send the email campaign to?
+                  There are currently <strong>{users?.length ?? 0}</strong> users in this waitlist.
+                </p>
+
+
+                <InputComponent
+                  type="number"
+                  placeholder={`Max ${users?.length ?? 0}`}
+                  variant="bordered"
+                  value={quantity}
+                  onValueChange={setQuantity}
+                  classNames={{ inputWrapper: "border-1" }}
+                />
+              </ModalBody>
+              <ModalFooter>
+                <GlobalButton variant="light" onPress={onClose}>
+                  Cancel
+                </GlobalButton>
+                <PrimaryActionButton
+                  startContent={<RocketLaunchIcon className="size-4" />}
+                  isDisabled={!quantity || Number(quantity) < 1 || Number(quantity) > (users?.length ?? 0)}
+                >
+                  Send to {quantity || 0} users
+                </PrimaryActionButton>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
     </PageComponent>
   );
 }
