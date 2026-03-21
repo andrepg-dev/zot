@@ -25,7 +25,13 @@ const HEADER_HEIGHT = 40;
 const FOOTER_HEIGHT = 40;
 const PX = 16;
 
-export const FRAMES_PER_ROW = 4;
+const MAX_DISPLAY_EMAILS = 50;
+
+export function getFramesPerRow(emailCount: number) {
+  if (emailCount <= 10) return 3;
+  if (emailCount <= 20) return 2;
+  return 1;
+}
 
 export function getAnimationHeight(emailCount: number) {
   const rows = Math.min(emailCount, VISIBLE_ROWS);
@@ -33,23 +39,32 @@ export function getAnimationHeight(emailCount: number) {
 }
 
 export default function CampaignSentAnimation({
-  emails
+  emails: allEmails
 }: {
   emails: string[];
 }) {
   const frame = useCurrentFrame();
   const { fps, durationInFrames } = useVideoConfig();
-  const total = emails.length;
+
+  const emails = allEmails.slice(0, MAX_DISPLAY_EMAILS);
+  const total = allEmails.length;
+  const displayTotal = emails.length;
+  const framesPerRow = getFramesPerRow(displayTotal);
 
   const sentCount = Math.min(
-    total,
+    displayTotal,
     Math.floor(
-      interpolate(frame, [10, 10 + total * FRAMES_PER_ROW], [0, total], {
+      interpolate(frame, [10, 10 + displayTotal * framesPerRow], [0, displayTotal], {
         extrapolateLeft: "clamp",
         extrapolateRight: "clamp"
       })
     )
   );
+
+  // Map sentCount to actual total for the counter
+  const counterValue = displayTotal < total
+    ? Math.min(total, Math.round((sentCount / displayTotal) * total))
+    : sentCount;
 
   const scrollOffset = Math.max(0, sentCount - VISIBLE_ROWS + 1) * ROW_HEIGHT;
 
@@ -58,8 +73,8 @@ export default function CampaignSentAnimation({
     extrapolateRight: "clamp"
   });
 
-  const allDone = sentCount >= total;
-  const doneDelay = 10 + total * FRAMES_PER_ROW + 10;
+  const allDone = sentCount >= displayTotal;
+  const doneDelay = 10 + displayTotal * framesPerRow + 10;
   const doneOpacity = interpolate(frame, [doneDelay, doneDelay + 10], [0, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp"
@@ -70,7 +85,7 @@ export default function CampaignSentAnimation({
     [0.8, 1]
   );
 
-  const listHeight = Math.min(total, VISIBLE_ROWS) * ROW_HEIGHT;
+  const listHeight = Math.min(displayTotal, VISIBLE_ROWS) * ROW_HEIGHT;
 
   return (
     <AbsoluteFill
@@ -98,7 +113,7 @@ export default function CampaignSentAnimation({
           Sending campaign
         </span>
         <span style={{ fontSize: 12, color: "#71717a" }}>
-          {sentCount}/{total}
+          {counterValue}/{total}
         </span>
       </div>
 
@@ -118,12 +133,12 @@ export default function CampaignSentAnimation({
           }}
         >
           {emails.map((email, i) => {
-            const rowFrame = 10 + i * FRAMES_PER_ROW;
+            const rowFrame = 10 + i * framesPerRow;
             const isChecked = frame >= rowFrame;
 
             const rowOpacity = interpolate(
               frame,
-              [Math.max(0, rowFrame - FRAMES_PER_ROW), rowFrame],
+              [Math.max(0, rowFrame - framesPerRow), rowFrame],
               [0.3, 1],
               { extrapolateLeft: "clamp", extrapolateRight: "clamp" }
             );

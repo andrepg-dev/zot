@@ -10,8 +10,8 @@ import Type from "@/components/type";
 import InputComponent from "@/components/ui/input";
 import CampaignResultAnimation from "@/components/wait-list/campaign-result-animation";
 import CampaignSentAnimation, {
-  FRAMES_PER_ROW,
-  getAnimationHeight
+  getAnimationHeight,
+  getFramesPerRow
 } from "@/components/wait-list/campaign-sent-animation";
 import { useHotkey } from "@/hooks/use-hotkey";
 import { MagnifyingGlassIcon, RocketLaunchIcon } from "@heroicons/react/24/outline";
@@ -68,7 +68,9 @@ export default function CampaignPage({ params }: { params: Promise<{ id: string 
     if (users?.length) setQuantity(String(users.length));
   }, [users?.length]);
 
-  const animationFrames = 10 + sentEmails.length * FRAMES_PER_ROW + 40;
+  const displayCount = Math.min(sentEmails.length, 50);
+  const framesPerRow = getFramesPerRow(displayCount);
+  const animationFrames = 10 + displayCount * framesPerRow + 40;
   const animationDurationMs = (animationFrames / 30) * 1000;
 
   // After list animation finishes, transition to result phase
@@ -330,7 +332,7 @@ export default function CampaignPage({ params }: { params: Promise<{ id: string 
                     />
                   </ModalBody>
                   {sendResult !== "pending" && (
-                    <ModalFooter>
+                    <ModalFooter className="justify-center">
                       <GlobalButton variant="light" onPress={handleCloseModal}>
                         Close
                       </GlobalButton>
