@@ -13,10 +13,7 @@ import { Tab, Tabs } from "@heroui/tabs";
 import { useQuery } from "@tanstack/react-query";
 import React, { useState } from "react";
 
-function formatDate(dateStr: string) {
-  const d = new Date(dateStr);
-  return d.toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" });
-}
+import { formatShortDate } from "@/lib/format-date";
 
 function generateLast20Days() {
   const days: string[] = [];
@@ -24,7 +21,7 @@ function generateLast20Days() {
   const today = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
   for (let i = 19; i >= 0; i--) {
     const date = new Date(today - i * 86400000);
-    days.push(formatDate(date.toISOString()));
+    days.push(formatShortDate(date.toISOString()));
   }
   return days;
 }
@@ -54,7 +51,7 @@ export default function MetricPage({ params }: { params: Promise<{ id: string }>
   const last20Days = React.useMemo(() => generateLast20Days(), []);
 
   const rawEmailsSent = data?.map((d) => ({
-    date: formatDate(d.createdAt),
+    date: formatShortDate(d.createdAt),
     sent: d.sent,
     failed: d.failed
   }));

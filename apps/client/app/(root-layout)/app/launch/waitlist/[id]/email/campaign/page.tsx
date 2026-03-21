@@ -36,13 +36,7 @@ import { Player } from "@remotion/player";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
 
-function formatDate(date: Date | string) {
-  return new Date(date).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric"
-  });
-}
+import { formatDate } from "@/lib/format-date";
 
 export default function CampaignPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = React.use(params);

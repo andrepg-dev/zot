@@ -305,7 +305,7 @@ export default function ApiKeys() {
             <TableColumn key={column.key}>{column.label}</TableColumn>
           )}
         </TableHeader>
-
+ 
         <TableBody items={rows} isLoading={isPending} emptyContent={<Type>No API keys yet.</Type>}>
           {(item) => (
             <TableRow key={item._id}>
