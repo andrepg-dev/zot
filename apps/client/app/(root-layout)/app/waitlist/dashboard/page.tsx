@@ -18,6 +18,7 @@ import {
   DropdownMenu,
   DropdownTrigger,
   Input,
+  Kbd,
   Table,
   TableBody,
   TableCell,
@@ -32,6 +33,7 @@ import Title from "@/components/global/title";
 import WaitListCardSkeleton from "@/components/skeletons/wait-list/card";
 import Type from "@/components/type";
 import Chip from "@/components/ui/chip";
+import { useHotkey } from "@/hooks/use-hotkey";
 import { ChevronDownIcon, ClipboardDocumentIcon, NoSymbolIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { addToast } from "@heroui/toast";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -50,6 +52,12 @@ export default function WaitListPage() {
   const { data, isPending } = useQuery({
     queryKey: ["waitlists"],
     queryFn: getWaitLists
+  });
+
+  useHotkey({
+    key: "k", modifiers: ["meta"], onPress: () => {
+      router.push("/app/waitlist/launch")
+    }
   });
 
   const deleteMutation = useMutation({
@@ -214,6 +222,7 @@ export default function WaitListPage() {
               size="sm"
               variant="shadow"
               type="button"
+              endContent={<Kbd className="text-xs" keys={["command"]}>K</Kbd>}
             >
               New Launch
             </Button>

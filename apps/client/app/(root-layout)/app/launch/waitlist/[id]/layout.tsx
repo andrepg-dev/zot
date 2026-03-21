@@ -56,11 +56,11 @@ export default function WaitListLayout({ children }: { children: React.ReactNode
             icon: EnvelopeIcon,
             label: "Email",
           },
-          {
-            href: `/app/launch/waitlist/${id}/api-keys`,
-            icon: KeyIcon,
-            label: "Api Keys"
-          },
+          // {
+          //   href: `/app/launch/waitlist/${id}/api-keys`,
+          //   icon: KeyIcon,
+          //   label: "Api Keys"
+          // },
           { type: "divider" },
           {
             href: `/app/launch/waitlist/${id}/settings`,

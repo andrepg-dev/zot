@@ -11,12 +11,14 @@ import PageComponent from "@/components/layouts/page-component";
 import Type from "@/components/type";
 import Chip from "@/components/ui/chip";
 import InputComponent from "@/components/ui/input";
+import { useHotkey } from "@/hooks/use-hotkey";
 import { ArrowPathIcon, LinkIcon, WrenchIcon } from "@heroicons/react/24/outline";
 import { Button } from "@heroui/button";
 import { Card, CardFooter } from "@heroui/card";
 import {
   DrawerBody,
   DrawerHeader,
+  Kbd,
   Spinner,
   Table,
   TableBody,
@@ -30,7 +32,7 @@ import { addToast } from "@heroui/toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type UpdateWaitListValues } from "@repo/packages/shared/schemas";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { use, useState } from "react";
+import { use, useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -68,6 +70,13 @@ export default function Webhooks({ params }: { params: Promise<{ id: string }> }
   const configureDrawer = useDisclosure();
   const [selectedEvent, setSelectedEvent] = useState<WebhookEvent | null>(null);
   const detailDrawer = useDisclosure();
+
+  const toggleConfigureDrawer = useCallback(() => {
+    if (configureDrawer.isOpen) configureDrawer.onClose();
+    else configureDrawer.onOpen();
+  }, [configureDrawer]);
+
+  useHotkey({ key: "p", modifiers: ["meta"], onPress: toggleConfigureDrawer });
 
   const { data } = useQuery({
     queryKey: [id],
@@ -136,11 +145,11 @@ export default function Webhooks({ params }: { params: Promise<{ id: string }> }
         description="Receive notification when a user has been registered"
         rightChildren={
           <PrimaryActionButton
-            className={data?.webhook.url ? "bg-primary/30 !text-white" : ""}
+            className={data?.webhook?.url ? "bg-primary/30 !text-white" : ""}
             startContent={<WrenchIcon className="size-4" />}
             onPress={configureDrawer.onOpen}
           >
-            Configure Webhook
+            Configure Webhook <Kbd classNames={{ base: "text-xs" }} keys={["command"]}>P</Kbd>
           </PrimaryActionButton>
         }
       >
