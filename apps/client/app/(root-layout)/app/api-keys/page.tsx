@@ -153,12 +153,9 @@ export default function ApiKeys() {
               <Type>
                 Make sure to copy your API key now. You won{"'"}t be able to see it again.
               </Type>
-              <div className="flex items-center gap-2 rounded-sm border p-3">
-                <Type className="break-all font-mono">{createdKey}</Type>
-                <CopyButton text={createdKey} className="min-w-7 h-7 shrink-0">
-                  Copy
-                </CopyButton>
-              </div>
+              <InputComponent value={createdKey} isReadOnly className="w-full mt-2" endContent={<CopyButton text={createdKey} className="min-w-7 h-7 shrink-0">
+                Copy
+              </CopyButton>} />
             </div>
           </ModalBody>
           <ModalFooter>
@@ -264,8 +261,7 @@ export default function ApiKeys() {
             <br />
             <br />
             Do not share your API key with others or expose it in the browser or other client-side
-            code. To protect your account{"'"}s security, Zot may automatically disable any API key
-            that has leaked publicly.
+            code.
           </>
         }
         className="mb-6"
