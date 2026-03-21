@@ -8,6 +8,10 @@ import Title from "@/components/global/title";
 import PageComponent from "@/components/layouts/page-component";
 import Type from "@/components/type";
 import InputComponent from "@/components/ui/input";
+import CampaignSentAnimation, {
+  FRAMES_PER_ROW,
+  getAnimationHeight
+} from "@/components/wait-list/campaign-sent-animation";
 import { useHotkey } from "@/hooks/use-hotkey";
 import { MagnifyingGlassIcon, RocketLaunchIcon } from "@heroicons/react/24/outline";
 import { Kbd } from "@heroui/kbd";
@@ -28,6 +32,7 @@ import {
   useDisclosure
 } from "@heroui/react";
 import { addToast } from "@heroui/toast";
+import { Player } from "@remotion/player";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
 
@@ -54,23 +59,44 @@ export default function CampaignPage({ params }: { params: Promise<{ id: string 
   });
 
   const [quantity, setQuantity] = useState("0");
+  const [showAnimation, setShowAnimation] = useState(false);
+  const [sentEmails, setSentEmails] = useState<string[]>([]);
 
   useEffect(() => {
     if (users?.length) setQuantity(String(users.length));
   }, [users?.length]);
+
+  const animationFrames = 10 + sentEmails.length * FRAMES_PER_ROW + 40 + 15;
+  const animationDurationMs = (animationFrames / 30) * 1000;
+
+  useEffect(() => {
+    if (!showAnimation) return;
+    const timer = setTimeout(() => {
+      setShowAnimation(false);
+      sendModal.onClose();
+    }, animationDurationMs);
+    return () => clearTimeout(timer);
+  }, [showAnimation, animationDurationMs]);
 
   const { mutate: sendCampaign, isPending: isSending } = useMutation({
     mutationFn: (qty: number) => sendEmail({ waitlistId: id, quantity: qty }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [id, "email-records"] });
       queryClient.invalidateQueries({ queryKey: [id, "email-records-list"] });
-      sendModal.onClose();
       addToast({ description: `Campaign sent to ${quantity} users`, color: "success" });
     },
     onError: (err) => {
       addToast({ title: "Error", description: err.message, color: "danger" });
     }
   });
+
+  function handleSend() {
+    const qty = Number(quantity);
+    const emails = (users ?? []).slice(0, qty).map((u) => u.email);
+    setSentEmails(emails);
+    setShowAnimation(true);
+    sendCampaign(qty);
+  }
 
   const metadataKeys = React.useMemo(() => {
     if (!users) return [];
@@ -239,42 +265,62 @@ export default function CampaignPage({ params }: { params: Promise<{ id: string 
         </Table>
       </div>
 
-      <Modal isOpen={sendModal.isOpen} onOpenChange={sendModal.onOpenChange} radius="sm">
+      <Modal
+        isOpen={sendModal.isOpen}
+        onOpenChange={sendModal.onOpenChange}
+        radius="sm"
+        isDismissable={!showAnimation}
+        hideCloseButton={showAnimation}
+      >
         <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalHeader>Send Email Campaign</ModalHeader>
-              <ModalBody>
-                <p className="text-sm text-muted-foreground">
-                  How many users do you want to send the email campaign to?
-                  There are currently <strong>{users?.length ?? 0}</strong> users in this waitlist.
-                </p>
-
-
-                <InputComponent
-                  type="number"
-                  placeholder={`Max ${users?.length ?? 0}`}
-                  variant="bordered"
-                  value={quantity}
-                  onValueChange={setQuantity}
-                  classNames={{ inputWrapper: "border-1" }}
+          {(onClose) =>
+            showAnimation ? (
+              <ModalBody className="p-0 overflow-hidden">
+                <Player
+                  component={CampaignSentAnimation}
+                  inputProps={{ emails: sentEmails }}
+                  durationInFrames={animationFrames}
+                  fps={30}
+                  compositionWidth={460}
+                  compositionHeight={getAnimationHeight(sentEmails.length)}
+                  autoPlay
+                  style={{ width: "100%", height: getAnimationHeight(sentEmails.length) }}
                 />
               </ModalBody>
-              <ModalFooter>
-                <GlobalButton variant="light" onPress={onClose}>
-                  Cancel
-                </GlobalButton>
-                <PrimaryActionButton
-                  startContent={<RocketLaunchIcon className="size-4" />}
-                  isDisabled={!quantity || Number(quantity) < 1 || Number(quantity) > (users?.length ?? 0)}
-                  isLoading={isSending}
-                  onPress={() => sendCampaign(Number(quantity))}
-                >
-                  Send to {quantity || 0} users
-                </PrimaryActionButton>
-              </ModalFooter>
-            </>
-          )}
+            ) : (
+              <>
+                <ModalHeader>Send Email Campaign</ModalHeader>
+                <ModalBody>
+                  <p className="text-sm text-muted-foreground">
+                    How many users do you want to send the email campaign to?
+                    There are currently <strong>{users?.length ?? 0}</strong> users in this waitlist.
+                  </p>
+
+                  <InputComponent
+                    type="number"
+                    placeholder={`Max ${users?.length ?? 0}`}
+                    variant="bordered"
+                    value={quantity}
+                    onValueChange={setQuantity}
+                    classNames={{ inputWrapper: "border-1" }}
+                  />
+                </ModalBody>
+                <ModalFooter>
+                  <GlobalButton variant="light" onPress={onClose}>
+                    Cancel
+                  </GlobalButton>
+                  <PrimaryActionButton
+                    startContent={<RocketLaunchIcon className="size-4" />}
+                    isDisabled={!quantity || Number(quantity) < 1 || Number(quantity) > (users?.length ?? 0)}
+                    isLoading={isSending}
+                    onPress={handleSend}
+                  >
+                    Send to {quantity || 0} users
+                  </PrimaryActionButton>
+                </ModalFooter>
+              </>
+            )
+          }
         </ModalContent>
       </Modal>
     </PageComponent>
