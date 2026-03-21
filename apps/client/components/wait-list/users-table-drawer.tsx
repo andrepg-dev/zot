@@ -36,7 +36,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useState } from "react";
 import Type from "../type";
 
-const columns = [
+const baseColumns = [
   { key: "position", label: "#" },
   { key: "email", label: "Email" },
   { key: "referredBy", label: "Referred By" },
@@ -100,11 +100,39 @@ export default function UsersTableDrawer({ waitlistId, isOpen, onOpenChange }: U
     }
   });
 
+  const metadataKeys = React.useMemo(() => {
+    if (!users) return [];
+    const keys = new Set<string>();
+    users.forEach((user) => {
+      if (user.metadata) {
+        Object.keys(user.metadata).forEach((k) => keys.add(k));
+      }
+    });
+    return Array.from(keys);
+  }, [users]);
+
+  const columns = React.useMemo(() => {
+    const metaCols = metadataKeys.map((k) => ({ key: `meta_${k}`, label: k }));
+    return [...baseColumns, ...metaCols];
+  }, [metadataKeys]);
+
+  const referralCodeToEmail = React.useMemo(() => {
+    if (!users) return new Map<string, string>();
+    return new Map(users.map((u) => [u.referral_code, u.email]));
+  }, [users]);
+
   const filteredUsers = React.useMemo(() => {
     if (!users) return [];
     if (!search.trim()) return users;
     const query = search.toLowerCase();
-    return users.filter((user) => user.email.toLowerCase().includes(query));
+    return users.filter(
+      (user) =>
+        user.email.toLowerCase().includes(query) ||
+        (user.metadata &&
+          Object.values(user.metadata).some((v) =>
+            String(v).toLowerCase().includes(query)
+          ))
+    );
   }, [users, search]);
 
   function handleDeleteSelected() {
@@ -126,7 +154,7 @@ export default function UsersTableDrawer({ waitlistId, isOpen, onOpenChange }: U
 
   return (
     <>
-      <GlobalDrawer isOpen={isOpen} onOpenChange={onOpenChange} size="2xl" expandedSize="4xl">
+      <GlobalDrawer isOpen={isOpen} onOpenChange={onOpenChange} size="4xl" expandedSize="5xl">
         <DrawerHeader className="flex flex-col gap-1">
           <h2 className="text-base font-medium">Users Table</h2>
           <p className="text-sm text-muted-foreground font-normal">
@@ -224,23 +252,43 @@ export default function UsersTableDrawer({ waitlistId, isOpen, onOpenChange }: U
                 {(item) => (
                   <TableRow key={item._id}>
                     {(columnKey) => {
+                      const key = String(columnKey);
+
+                      if (key.startsWith("meta_")) {
+                        const metaKey = key.replace("meta_", "");
+                        const value = item.metadata?.[metaKey];
+                        return (
+                          <TableCell>
+                            <span className="font-mono text-xs text-muted-foreground truncate block max-w-[200px]">
+                              {value != null ? String(value) : "—"}
+                            </span>
+                          </TableCell>
+                        );
+                      }
+
                       const valueMap: Record<string, React.ReactNode> = {
                         position: (
-                          <span className="text-muted-foreground font-mono">{item.position}</span>
+                          <span className="text-muted-foreground font-mono truncate block max-w-[200px]">{item.position}</span>
                         ),
-                        email: <span className="font-mono">{item.email}</span>,
+                        email: (
+                          <span className="font-mono truncate block max-w-[200px]">
+                            {item.email}
+                          </span>
+                        ),
                         referredBy: item.referredBy ? (
-                          <Chip status="active">Referred</Chip>
+                          <span className="font-mono text-xs truncate block max-w-[200px]">
+                            {referralCodeToEmail.get(item.referredBy) ?? item.referredBy}
+                          </span>
                         ) : (
-                          <Chip status="neutral">Organic</Chip>
+                          <span className="text-muted-foreground text-xs truncate block max-w-[200px]">—</span>
                         ),
                         createdAt: (
-                          <span className="text-muted-foreground font-mono text-xs">
+                          <span className="text-muted-foreground font-mono text-xs truncate block max-w-[200px]">
                             {formatDate(item.createdAt)}
                           </span>
                         )
                       };
-                      return <TableCell>{valueMap[String(columnKey)]}</TableCell>;
+                      return <TableCell>{valueMap[key]}</TableCell>;
                     }}
                   </TableRow>
                 )}

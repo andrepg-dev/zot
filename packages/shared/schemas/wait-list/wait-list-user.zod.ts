@@ -12,6 +12,9 @@ export const waitListUserResponseSchema = z.object({
   waitlistId: z.string(),
   referredBy: z.string().optional(),
   referral_code: z.string(),
+  position: z.number().optional(),
+  metadata: z.record(z.string(), z.any()).optional(),
+  isReferred: z.boolean().optional(),
   createdAt: z.coerce.date(),
 });
 

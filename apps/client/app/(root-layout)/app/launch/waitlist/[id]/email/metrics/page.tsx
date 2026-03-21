@@ -41,10 +41,10 @@ function fillDailyData<T extends { date: string }>(
 
 export default function MetricPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = React.use(params);
-  const [selectedTab, setSelectedTab] = useState("analytics");
+  const [selectedTab, setSelectedTab] = useState("table");
 
-  useHotkey({ key: "1", onPress: () => setSelectedTab("analytics"), modifiers: ["meta"] });
-  useHotkey({ key: "2", onPress: () => setSelectedTab("table"), modifiers: ["meta"] });
+  useHotkey({ key: "1", onPress: () => setSelectedTab("table"), modifiers: ["meta"] });
+  useHotkey({ key: "2", onPress: () => setSelectedTab("analytics"), modifiers: ["meta"] });
 
   const { data } = useQuery({
     queryKey: [id, "email-records"],
@@ -73,20 +73,20 @@ export default function MetricPage({ params }: { params: Promise<{ id: string }>
           onSelectionChange={(key) => setSelectedTab(String(key))}
         >
           <Tab
-            key="analytics"
+            key="table"
             title={
               <>
                 <Kbd className="text-xs bg-background mr-2" keys={["command"]}>1</Kbd>
-                Analytics
+                History
               </>
             }
           />
           <Tab
-            key="table"
+            key="analytics"
             title={
               <>
                 <Kbd className="text-xs bg-background mr-2" keys={["command"]}>2</Kbd>
-                History
+                Analytics
               </>
             }
           />
