@@ -8,6 +8,7 @@ import Title from "@/components/global/title";
 import PageComponent from "@/components/layouts/page-component";
 import Type from "@/components/type";
 import InputComponent from "@/components/ui/input";
+import CampaignResultAnimation from "@/components/wait-list/campaign-result-animation";
 import CampaignSentAnimation, {
   FRAMES_PER_ROW,
   getAnimationHeight
@@ -31,7 +32,6 @@ import {
   TableRow,
   useDisclosure
 } from "@heroui/react";
-import { addToast } from "@heroui/toast";
 import { Player } from "@remotion/player";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
@@ -59,34 +59,43 @@ export default function CampaignPage({ params }: { params: Promise<{ id: string 
   });
 
   const [quantity, setQuantity] = useState("0");
-  const [showAnimation, setShowAnimation] = useState(false);
+  const [animationPhase, setAnimationPhase] = useState<"idle" | "list" | "result">("idle");
   const [sentEmails, setSentEmails] = useState<string[]>([]);
+  const [sendResult, setSendResult] = useState<"pending" | "success" | "error">("pending");
+  const [sendError, setSendError] = useState("");
 
   useEffect(() => {
     if (users?.length) setQuantity(String(users.length));
   }, [users?.length]);
 
-  const animationFrames = 10 + sentEmails.length * FRAMES_PER_ROW + 40 + 15;
+  const animationFrames = 10 + sentEmails.length * FRAMES_PER_ROW + 40;
   const animationDurationMs = (animationFrames / 30) * 1000;
 
+  // After list animation finishes, transition to result phase
   useEffect(() => {
-    if (!showAnimation) return;
+    if (animationPhase !== "list") return;
     const timer = setTimeout(() => {
-      setShowAnimation(false);
-      sendModal.onClose();
+      setAnimationPhase("result");
     }, animationDurationMs);
     return () => clearTimeout(timer);
-  }, [showAnimation, animationDurationMs]);
+  }, [animationPhase, animationDurationMs]);
+
+  function handleCloseModal() {
+    setAnimationPhase("idle");
+    setSendResult("pending");
+    sendModal.onClose();
+  }
 
   const { mutate: sendCampaign, isPending: isSending } = useMutation({
     mutationFn: (qty: number) => sendEmail({ waitlistId: id, quantity: qty }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [id, "email-records"] });
       queryClient.invalidateQueries({ queryKey: [id, "email-records-list"] });
-      addToast({ description: `Campaign sent to ${quantity} users`, color: "success" });
+      setSendResult("success");
     },
     onError: (err) => {
-      addToast({ title: "Error", description: err.message, color: "danger" });
+      setSendResult("error");
+      setSendError(err.message);
     }
   });
 
@@ -94,7 +103,9 @@ export default function CampaignPage({ params }: { params: Promise<{ id: string 
     const qty = Number(quantity);
     const emails = (users ?? []).slice(0, qty).map((u) => u.email);
     setSentEmails(emails);
-    setShowAnimation(true);
+    setSendResult("pending");
+    setSendError("");
+    setAnimationPhase("list");
     sendCampaign(qty);
   }
 
@@ -269,25 +280,68 @@ export default function CampaignPage({ params }: { params: Promise<{ id: string 
         isOpen={sendModal.isOpen}
         onOpenChange={sendModal.onOpenChange}
         radius="sm"
-        isDismissable={!showAnimation}
-        hideCloseButton={showAnimation}
+        isDismissable={animationPhase === "idle"}
+        hideCloseButton={animationPhase !== "idle"}
       >
         <ModalContent>
-          {(onClose) =>
-            showAnimation ? (
-              <ModalBody className="p-0 overflow-hidden">
-                <Player
-                  component={CampaignSentAnimation}
-                  inputProps={{ emails: sentEmails }}
-                  durationInFrames={animationFrames}
-                  fps={30}
-                  compositionWidth={460}
-                  compositionHeight={getAnimationHeight(sentEmails.length)}
-                  autoPlay
-                  style={{ width: "100%", height: getAnimationHeight(sentEmails.length) }}
-                />
-              </ModalBody>
-            ) : (
+          {() => {
+            // Phase 1: List scrolling animation
+            if (animationPhase === "list") {
+              return (
+                <ModalBody className="p-0 overflow-hidden">
+                  <Player
+                    component={CampaignSentAnimation}
+                    inputProps={{ emails: sentEmails }}
+                    durationInFrames={animationFrames}
+                    fps={30}
+                    compositionWidth={460}
+                    compositionHeight={getAnimationHeight(sentEmails.length)}
+                    autoPlay
+                    style={{ width: "100%", height: getAnimationHeight(sentEmails.length) }}
+                  />
+                </ModalBody>
+              );
+            }
+
+            // Phase 2: Result (pending spinner, success, or error)
+            if (animationPhase === "result") {
+              return (
+                <>
+                  <ModalBody className="p-0 overflow-hidden">
+                    <Player
+                      key={sendResult}
+                      component={CampaignResultAnimation}
+                      inputProps={{
+                        status: sendResult,
+                        message:
+                          sendResult === "success"
+                            ? `${sentEmails.length} emails dispatched`
+                            : sendResult === "error"
+                              ? sendError
+                              : "Waiting for server response..."
+                      }}
+                      durationInFrames={9000}
+                      fps={30}
+                      compositionWidth={460}
+                      compositionHeight={160}
+                      autoPlay
+                      loop={sendResult === "pending"}
+                      style={{ width: "100%", height: 160 }}
+                    />
+                  </ModalBody>
+                  {sendResult !== "pending" && (
+                    <ModalFooter>
+                      <GlobalButton variant="light" onPress={handleCloseModal}>
+                        Close
+                      </GlobalButton>
+                    </ModalFooter>
+                  )}
+                </>
+              );
+            }
+
+            // Default: form
+            return (
               <>
                 <ModalHeader>Send Email Campaign</ModalHeader>
                 <ModalBody>
@@ -306,7 +360,7 @@ export default function CampaignPage({ params }: { params: Promise<{ id: string 
                   />
                 </ModalBody>
                 <ModalFooter>
-                  <GlobalButton variant="light" onPress={onClose}>
+                  <GlobalButton variant="light" onPress={handleCloseModal}>
                     Cancel
                   </GlobalButton>
                   <PrimaryActionButton
@@ -319,8 +373,8 @@ export default function CampaignPage({ params }: { params: Promise<{ id: string 
                   </PrimaryActionButton>
                 </ModalFooter>
               </>
-            )
-          }
+            );
+          }}
         </ModalContent>
       </Modal>
     </PageComponent>

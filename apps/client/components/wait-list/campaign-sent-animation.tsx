@@ -53,11 +53,6 @@ export default function CampaignSentAnimation({
 
   const scrollOffset = Math.max(0, sentCount - VISIBLE_ROWS + 1) * ROW_HEIGHT;
 
-  const fadeOut = interpolate(frame, [durationInFrames - 15, durationInFrames], [1, 0], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp"
-  });
-
   const headerOpacity = interpolate(frame, [0, 10], [0, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp"
@@ -81,7 +76,6 @@ export default function CampaignSentAnimation({
     <AbsoluteFill
       style={{
         backgroundColor: "transparent",
-        opacity: fadeOut,
         fontFamily: "ui-monospace, monospace",
         overflow: "hidden",
         flexDirection: "column"
