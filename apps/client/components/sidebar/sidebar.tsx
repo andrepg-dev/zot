@@ -61,9 +61,10 @@ export default function Sidebar() {
                 classNames={{
                   base: "before:bg-default-200", // change arrow background
                   content:
-                    "py-1 px-1 border bg-linear-to-br from-white to-default-200 dark:from-default-50 dark:to-black"
+                    "py-1 px-1 border bg-default-50"
                 }}
                 radius="sm"
+                disableAnimation
               >
                 <DropdownTrigger>
                   <div className="flex items-center justify-between px-4 h-[45px] hover:bg-default/60">
@@ -90,7 +91,7 @@ export default function Sidebar() {
                   </div>
                 </DropdownTrigger>
                 <DropdownMenu aria-label="Dropdown menu with description">
-                  <DropdownSection title="Config" showDivider>
+                  <DropdownSection title={"asponceg@gmail.com"} showDivider>
                     <DropdownItem
                       className="!transition-none"
                       key="theme"
@@ -107,22 +108,6 @@ export default function Sidebar() {
                       startContent={<GlobeAltIcon className="size-4" />}
                     >
                       Language
-                    </DropdownItem>
-
-                    <DropdownItem
-                      className="!transition-none"
-                      key="billing"
-                      startContent={<CreditCardIcon className="size-4" />}
-                    >
-                      Billing
-                    </DropdownItem>
-
-                    <DropdownItem
-                      className="!transition-none"
-                      key="settings"
-                      startContent={<Cog6ToothIcon className="size-4" />}
-                    >
-                      Settings
                     </DropdownItem>
                   </DropdownSection>
 
