@@ -1,5 +1,6 @@
 "use client";
 
+import { sendEmail } from "@/actions/emails/emails.actions";
 import { getWaitListUsers } from "@/actions/wait-list/wait-list-user.actions";
 import GlobalButton from "@/components/global/button";
 import PrimaryActionButton from "@/components/global/primary-action-button";
@@ -26,7 +27,8 @@ import {
   TableRow,
   useDisclosure
 } from "@heroui/react";
-import { useQuery } from "@tanstack/react-query";
+import { addToast } from "@heroui/toast";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
 
 function formatDate(date: Date | string) {
@@ -44,6 +46,8 @@ export default function CampaignPage({ params }: { params: Promise<{ id: string 
 
   useHotkey({ key: "k", modifiers: ["meta"], onPress: sendModal.onOpen });
 
+  const queryClient = useQueryClient();
+
   const { data: users, isPending } = useQuery({
     queryKey: [id, "waitlist-users"],
     queryFn: async () => await getWaitListUsers(id)
@@ -54,6 +58,19 @@ export default function CampaignPage({ params }: { params: Promise<{ id: string 
   useEffect(() => {
     if (users?.length) setQuantity(String(users.length));
   }, [users?.length]);
+
+  const { mutate: sendCampaign, isPending: isSending } = useMutation({
+    mutationFn: (qty: number) => sendEmail({ waitlistId: id, quantity: qty }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [id, "email-records"] });
+      queryClient.invalidateQueries({ queryKey: [id, "email-records-list"] });
+      sendModal.onClose();
+      addToast({ description: `Campaign sent to ${quantity} users`, color: "success" });
+    },
+    onError: (err) => {
+      addToast({ title: "Error", description: err.message, color: "danger" });
+    }
+  });
 
   const metadataKeys = React.useMemo(() => {
     if (!users) return [];
@@ -250,6 +267,8 @@ export default function CampaignPage({ params }: { params: Promise<{ id: string 
                 <PrimaryActionButton
                   startContent={<RocketLaunchIcon className="size-4" />}
                   isDisabled={!quantity || Number(quantity) < 1 || Number(quantity) > (users?.length ?? 0)}
+                  isLoading={isSending}
+                  onPress={() => sendCampaign(Number(quantity))}
                 >
                   Send to {quantity || 0} users
                 </PrimaryActionButton>
