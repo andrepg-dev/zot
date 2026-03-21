@@ -1,0 +1,228 @@
+"use client";
+
+import { getEmailSendRecordsList } from "@/actions/emails/emails.actions";
+import GlobalDrawer from "@/components/global/drawer";
+import Title from "@/components/global/title";
+import PageComponent from "@/components/layouts/page-component";
+import Type from "@/components/type";
+import Chip from "@/components/ui/chip";
+import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import {
+  DrawerBody,
+  DrawerHeader,
+  Input,
+  Spinner,
+  Table,
+  TableBody,
+  TableCell,
+  TableColumn,
+  TableHeader,
+  TableRow,
+  useDisclosure
+} from "@heroui/react";
+import type { EmailSendRecordItem } from "@repo/packages/shared/schemas";
+import { useQuery } from "@tanstack/react-query";
+import React, { useState } from "react";
+
+const columns = [
+  { key: "position", label: "#" },
+  { key: "quantitySent", label: "Sent" },
+  { key: "status", label: "Status" },
+  { key: "sentSuccessfully", label: "Successful" },
+  { key: "failedCount", label: "Failed" },
+  { key: "createdAt", label: "Date" }
+];
+
+function formatDate(date: string) {
+  return new Date(date).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit"
+  });
+}
+
+export default function UserTablePage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = React.use(params);
+  const [search, setSearch] = useState("");
+  const [selectedRecord, setSelectedRecord] = useState<EmailSendRecordItem | null>(null);
+  const detailDrawer = useDisclosure();
+
+  const { data: records, isPending } = useQuery({
+    queryKey: [id, "email-records-list"],
+    queryFn: async () => await getEmailSendRecordsList(id)
+  });
+
+  const filteredRecords = React.useMemo(() => {
+    if (!records) return [];
+    if (!search.trim()) return records;
+    const query = search.toLowerCase();
+    return records.filter(
+      (record) =>
+        record.recipientEmails.some((email) => email.toLowerCase().includes(query)) ||
+        formatDate(record.createdAt).toLowerCase().includes(query)
+    );
+  }, [records, search]);
+
+  function handleRowClick(record: EmailSendRecordItem) {
+    setSelectedRecord(record);
+    detailDrawer.onOpen();
+  }
+
+  return (
+    <PageComponent>
+      <Title description="History of all email batches sent from this waitlist">Emails Sent</Title>
+
+      <div className="flex flex-col gap-4 mt-6">
+        <div className="flex justify-between items-center">
+          <Input
+            placeholder="Search by email or date..."
+            variant="bordered"
+            startContent={<MagnifyingGlassIcon className="text-default-300 size-5" />}
+            size="sm"
+            isClearable
+            value={search}
+            onValueChange={setSearch}
+            classNames={{
+              base: "max-w-sm",
+              inputWrapper: "border-1"
+            }}
+          />
+
+          <span className="text-default-400 text-small">
+            {filteredRecords.length} record{filteredRecords.length !== 1 ? "s" : ""}
+          </span>
+        </div>
+
+        <Table
+          aria-label="Email Send Records Table"
+          radius="sm"
+          checkboxesProps={{
+            size: "sm",
+            classNames: { wrapper: "before:border-1" }
+          }}
+          classNames={{
+            th: "!rounded-b-none",
+            wrapper: "p-0 border",
+            td: "first:before:rounded-none last:before:rounded-e-none cursor-pointer py-3"
+          }}
+
+        >
+          <TableHeader columns={columns}>
+            {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
+          </TableHeader>
+
+          <TableBody
+            items={filteredRecords.map((record, index) => ({ ...record, position: index + 1 }))}
+            isLoading={isPending}
+            loadingContent={<Spinner size="sm" />}
+            emptyContent={<Type>No emails sent yet.</Type>}
+          >
+            {(item) => (
+              <TableRow key={item._id} onClick={() => handleRowClick(item)}>
+                {(columnKey) => {
+                  const allSucceeded = item.failedCount === 0;
+                  const allFailed = item.sentSuccessfully === 0;
+
+                  const valueMap: Record<string, React.ReactNode> = {
+                    position: (
+                      <span className="text-muted-foreground font-mono">{item.position}</span>
+                    ),
+                    quantitySent: <span className="font-mono">{item.quantitySent}</span>,
+                    status: allSucceeded ? (
+                      <Chip status="active">Success</Chip>
+                    ) : allFailed ? (
+                      <Chip status="danger">Failed</Chip>
+                    ) : (
+                      <Chip status="warning">Partial</Chip>
+                    ),
+                    sentSuccessfully: (
+                      <span className="font-mono text-green-500">{item.sentSuccessfully}</span>
+                    ),
+                    failedCount: (
+                      <span
+                        className={`font-mono ${item.failedCount > 0 ? "text-red-500" : "text-muted-foreground"}`}
+                      >
+                        {item.failedCount}
+                      </span>
+                    ),
+                    createdAt: (
+                      <span className="text-muted-foreground font-mono text-xs">
+                        {formatDate(item.createdAt)}
+                      </span>
+                    )
+                  };
+                  return <TableCell>{valueMap[String(columnKey)]}</TableCell>;
+                }}
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </div>
+
+      <GlobalDrawer
+        isOpen={detailDrawer.isOpen}
+        onOpenChange={detailDrawer.onOpenChange}
+        size="xl"
+        expandedSize="3xl"
+      >
+        <DrawerHeader className="flex flex-col gap-1">
+          <div className="flex items-center gap-2">
+            <h2 className="text-base font-medium">Send Record Details</h2>
+            {selectedRecord && (
+              selectedRecord.failedCount === 0 ? (
+                <Chip status="active">Success</Chip>
+              ) : selectedRecord.sentSuccessfully === 0 ? (
+                <Chip status="danger">Failed</Chip>
+              ) : (
+                <Chip status="warning">Partial</Chip>
+              )
+            )}
+          </div>
+          <p className="text-sm text-muted-foreground font-normal">
+            {selectedRecord ? formatDate(selectedRecord.createdAt) : "—"}
+          </p>
+        </DrawerHeader>
+
+        <DrawerBody>
+          {selectedRecord && (
+            <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-1">
+                <Type variant="h6">Recipients · {selectedRecord.recipientEmails.length}</Type>
+                <div className="flex flex-col bg-default-100 rounded-sm border overflow-auto max-h-60 mt-2">
+                  {selectedRecord.recipientEmails.map((email) => (
+                    <span
+                      key={email}
+                      className="text-xs font-mono px-3 py-2 border-b last:border-b-0"
+                    >
+                      {email}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              {selectedRecord.failedEmails.length > 0 && (
+                <div className="flex flex-col gap-1">
+                  <Type variant="h6">
+                    Failed · {selectedRecord.failedEmails.length}
+                  </Type>
+                  <div className="flex flex-col bg-default-100 rounded-sm border overflow-auto max-h-60 mt-2">
+                    {selectedRecord.failedEmails.map((email) => (
+                      <span
+                        key={email}
+                        className="text-xs font-mono px-3 py-2 border-b last:border-b-0"
+                      >
+                        {email}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </DrawerBody>
+      </GlobalDrawer>
+    </PageComponent>
+  );
+}

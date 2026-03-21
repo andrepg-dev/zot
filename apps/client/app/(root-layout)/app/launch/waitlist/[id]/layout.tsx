@@ -4,7 +4,7 @@ import { getWaitListStats } from "@/actions/wait-list/stats.actions";
 import HeaderNavigation from "@/components/navigation/header.navigation";
 import SidebarNavigation from "@/components/navigation/sidebar.navigation";
 import Chip from "@/components/ui/chip";
-import { ArrowUturnLeftIcon, BoltIcon, Cog6ToothIcon, EnvelopeIcon, HomeIcon, KeyIcon } from "@heroicons/react/24/outline";
+import { ArrowUturnLeftIcon, BoltIcon, Cog6ToothIcon, EnvelopeIcon, HomeIcon } from "@heroicons/react/24/outline";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 
@@ -54,8 +54,19 @@ export default function WaitListLayout({ children }: { children: React.ReactNode
           {
             href: `/app/launch/waitlist/${id}/email`,
             icon: EnvelopeIcon,
-            label: "Email",
+            label: "Emails",
+            subItem: [
+              {
+                label: "Metrics",
+                href: `/app/launch/waitlist/${id}/email/metrics`
+              },
+              {
+                label: "Emails Sent",
+                href: `/app/launch/waitlist/${id}/email/users-table`
+              }
+            ]
           },
+
           // {
           //   href: `/app/launch/waitlist/${id}/api-keys`,
           //   icon: KeyIcon,

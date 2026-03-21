@@ -155,8 +155,28 @@ export class EmailsService {
     }
   }
 
-  // TODO: Get the user email record
-  getEmailsRecord({ userId, waitlistId }: GetEmailsRecord) {
-    console.log({ userId, waitlistId });
+  async getEmailsRecord({ userId, waitlistId }: GetEmailsRecord) {
+    return this.emailSendRecordModel.aggregate([
+      {
+        $match: { owner: userId, waitlistId },
+      },
+      {
+        $group: {
+          _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+          sent: { $sum: "$sentSuccessfully" },
+          failed: { $sum: "$failedCount" },
+          createdAt: { $first: "$createdAt" },
+        },
+      },
+      { $sort: { createdAt: 1 } },
+      { $project: { _id: 0, createdAt: 1, sent: 1, failed: 1 } },
+    ]);
+  }
+
+  async getEmailSendRecordsList({ userId, waitlistId }: GetEmailsRecord) {
+    return this.emailSendRecordModel
+      .find({ owner: userId, waitlistId })
+      .select("-owner -waitlistId")
+      .sort({ createdAt: -1 });
   }
 }
