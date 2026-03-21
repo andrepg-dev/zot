@@ -55,10 +55,12 @@ type ModalPhase = "form" | "created" | "edit";
 
 export default function ApiKeys() {
   const modal = useDisclosure();
+  const deleteModal = useDisclosure();
   const queryClient = useQueryClient();
   const [modalPhase, setModalPhase] = useState<ModalPhase>("form");
   const [createdKey, setCreatedKey] = useState<string>("");
   const [editingItem, setEditingItem] = useState<{ _id: string; name: string } | null>(null);
+  const [deletingItem, setDeletingItem] = useState<{ _id: string; name: string } | null>(null);
 
   const { control, handleSubmit, reset, formState: { errors } } = useForm<CreateApiKeyValues>({
     resolver: zodResolver(createApiKeySchema)
@@ -110,11 +112,18 @@ export default function ApiKeys() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["api-keys"] });
       addToast({ description: "API key deleted", color: "danger" });
+      setDeletingItem(null);
+      deleteModal.onClose();
     },
     onError: (err) => {
       addToast({ title: "Error", description: err.message, color: "danger" });
     }
   });
+
+  const handleOpenDelete = (item: { _id: string; name: string }) => {
+    setDeletingItem(item);
+    deleteModal.onOpen();
+  };
 
   const rows = data ?? [];
 
@@ -327,7 +336,7 @@ export default function ApiKeys() {
                         isIconOnly
                         variant="light"
                         color="danger"
-                        onPress={() => deleteMutation.mutate(item._id)}
+                        onPress={() => handleOpenDelete(item)}
                       >
                         <TrashIcon className="size-3.5" />
                       </GlobalButton>
@@ -355,6 +364,46 @@ export default function ApiKeys() {
       >
         <ModalContent>
           {(onClose) => renderModalContent(onClose)}
+        </ModalContent>
+      </Modal>
+
+      <Modal
+        isOpen={deleteModal.isOpen}
+        onOpenChange={(open) => {
+          if (!open) {
+            setDeletingItem(null);
+            deleteModal.onClose();
+          }
+        }}
+        radius="sm"
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader>Delete API Key</ModalHeader>
+              <ModalBody>
+                <Type className="text-muted-foreground">
+                  Are you sure you want to delete the API key{" "}
+                  <Type variant="code">{deletingItem?.name}</Type>? This action
+                  cannot be undone and any applications using this key will lose access.
+                </Type>
+              </ModalBody>
+              <ModalFooter>
+                <GlobalButton variant="light" onPress={onClose}>
+                  Cancel
+                </GlobalButton>
+                <GlobalButton
+                  color="danger"
+                  isLoading={deleteMutation.isPending}
+                  onPress={() => {
+                    if (deletingItem) deleteMutation.mutate(deletingItem._id);
+                  }}
+                >
+                  Delete
+                </GlobalButton>
+              </ModalFooter>
+            </>
+          )}
         </ModalContent>
       </Modal>
     </PageComponent>

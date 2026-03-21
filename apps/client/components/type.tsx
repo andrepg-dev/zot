@@ -11,6 +11,7 @@ type TypeProps<C extends React.ElementType = "span"> = {
   children: React.ReactNode;
   className?: string;
   as?: C;
+  showCopyButton?: boolean;
 } & Omit<React.ComponentPropsWithoutRef<C>, "as" | "children" | "className">;
 
 const variants = {
@@ -59,7 +60,7 @@ function CopyButton({ text }: { text: string }) {
   );
 }
 
-export default function Type<C extends React.ElementType = "span">({ variant = "base", children, className, as, ...props }: TypeProps<C>) {
+export default function Type<C extends React.ElementType = "span">({ variant = "base", children, className, as, showCopyButton = false, ...props }: TypeProps<C>) {
   const Component = as || elementMap[variant];
 
   if (variant === "code") {
@@ -70,7 +71,7 @@ export default function Type<C extends React.ElementType = "span">({ variant = "
         <Component className={cn(variants[variant], className)} {...props}>
           {children}
         </Component>
-        {textContent && <CopyButton text={textContent} />}
+        {showCopyButton && textContent && <CopyButton text={textContent} />}
       </span>
     );
   }
