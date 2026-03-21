@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { ClipboardDocumentIcon, CheckIcon } from "@heroicons/react/24/outline";
+import { CheckIcon, ClipboardDocumentIcon } from "@heroicons/react/24/outline";
 import React, { useState } from "react";
 
 type VariantKey = keyof typeof variants;

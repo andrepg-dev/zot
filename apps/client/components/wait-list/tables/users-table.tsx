@@ -2,8 +2,6 @@
 
 import { getEmailSendRecordsList } from "@/actions/emails/emails.actions";
 import GlobalDrawer from "@/components/global/drawer";
-import Title from "@/components/global/title";
-import PageComponent from "@/components/layouts/page-component";
 import Type from "@/components/type";
 import Chip from "@/components/ui/chip";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
@@ -43,8 +41,7 @@ function formatDate(date: string) {
   });
 }
 
-export default function UserTablePage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = React.use(params);
+export default function UsersTable({ id }: { id: string }) {
   const [search, setSearch] = useState("");
   const [selectedRecord, setSelectedRecord] = useState<EmailSendRecordItem | null>(null);
   const detailDrawer = useDisclosure();
@@ -71,10 +68,8 @@ export default function UserTablePage({ params }: { params: Promise<{ id: string
   }
 
   return (
-    <PageComponent>
-      <Title description="History of all email batches sent from this waitlist">Emails Sent</Title>
-
-      <div className="flex flex-col gap-4 mt-6">
+    <>
+      <div className="flex flex-col gap-4">
         <div className="flex justify-between items-center">
           <Input
             placeholder="Search by email or date..."
@@ -223,6 +218,6 @@ export default function UserTablePage({ params }: { params: Promise<{ id: string
           )}
         </DrawerBody>
       </GlobalDrawer>
-    </PageComponent>
-  );
+    </>
+  )
 }

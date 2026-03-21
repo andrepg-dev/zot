@@ -4,6 +4,9 @@ import { getEmailSendRecords } from "@/actions/emails/emails.actions";
 import Title from "@/components/global/title";
 import PageComponent from "@/components/layouts/page-component";
 import EmailsSentChart from "@/components/wait-list/charts/emails-sent-chart";
+import UsersTable from "@/components/wait-list/tables/users-table";
+import { Kbd } from "@heroui/kbd";
+import { Tab, Tabs } from "@heroui/tabs";
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
 
@@ -52,10 +55,38 @@ export default function MetricPage({ params }: { params: Promise<{ id: string }>
   const emailsSentData = fillDailyData(rawEmailsSent, last20Days, { sent: 0, failed: 0 });
 
   return (
-    <PageComponent>
+    <PageComponent className="flex flex-col gap-6">
       <Title description="Email sending activity over time">Metrics</Title>
 
-      <EmailsSentChart data={emailsSentData} className="my-6" />
+      <Tabs aria-label="Tabs sizes" size={"sm"} >
+        <Tab
+          key="table"
+          title={
+            <>
+              <Kbd className="text-xs bg-background mr-2">A</Kbd>
+              Analytics
+            </>
+          }
+        >
+          <EmailsSentChart data={emailsSentData} />
+        </Tab>
+
+        <Tab key="music" title={
+          <>
+            <Kbd className="text-xs bg-background mr-2">T</Kbd>
+            Table
+          </>
+        }
+        >
+          <UsersTable id={id} />
+        </Tab>
+      </Tabs>
+
+      {/* <PrimaryActionButton startContent={<RocketLaunchIcon className="size-4" />}>
+          Send email campaign
+          <Kbd keys={["command"]} className="text-xs">K</Kbd>
+        </PrimaryActionButton> */}
+
     </PageComponent>
   );
 }
