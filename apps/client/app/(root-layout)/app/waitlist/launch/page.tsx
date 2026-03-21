@@ -10,6 +10,7 @@ import HeaderNavigation from "@/components/navigation/header.navigation";
 import SidebarNavigation from "@/components/navigation/sidebar.navigation";
 import Type from "@/components/type";
 import InputComponent from "@/components/ui/input";
+import { useHotkey } from "@/hooks/use-hotkey";
 import { addToast, Button, Card, CardBody, CardFooter, Checkbox } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -18,6 +19,7 @@ import {
 } from "@repo/packages/shared/schemas/index";
 import { useMutation } from "@tanstack/react-query";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 
 export default function LaunchWaitList() {
@@ -31,6 +33,10 @@ export default function LaunchWaitList() {
       sendEmail: true
     }
   });
+
+  const router = useRouter()
+
+  useHotkey({ key: "escape", onPress: () => { router.push("/app/waitlist/dashboard") } })
 
   const { isPending, error, mutate } = useMutation({
     mutationFn: (data: SubmitWaitListValues) =>

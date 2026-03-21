@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "turbo dev",
+    "dev": "turbo dev --filter=!@zot/design-system",
     "build": "turbo build"
   },
   "keywords": [],

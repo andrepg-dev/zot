@@ -1,0 +1,166 @@
+"use client";
+
+import { cn } from "@/lib/utils";
+import { useChartHoverStore } from "@/store/chart-hover";
+import {
+  Area,
+  AreaChart,
+  CartesianGrid,
+  Legend,
+  ReferenceLine,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis
+} from "recharts";
+import AnimatedCursor from "./animated-cursor";
+
+interface EmailsSentChartProps {
+  data?: Array<{
+    date: string;
+    sent: number;
+    failed: number;
+  }>;
+  className?: string
+}
+
+const defaultData = Array.from({ length: 14 }, (_, i) => ({
+  date: `Jan ${i + 1}`,
+  sent: 0,
+  failed: 0
+}));
+
+const gridColor = "rgba(255, 255, 255, 0.06)";
+const axisColor = "#b4b4b4";
+const tooltipBg = "rgb(24, 24, 24)";
+const tooltipBorder = "rgba(255, 255, 255, 0.06)";
+const tooltipText = "#a1a1aa";
+const sentColor = "#8b5cf6";
+const failedColor = "#ef4444";
+
+const CHART_ID = "emails-sent";
+
+export default function EmailsSentChart({ data = defaultData, className }: EmailsSentChartProps) {
+  const { hoveredChartId, activeLabel, setHover, clearHover } = useChartHoverStore();
+  const isSynced = hoveredChartId != null && hoveredChartId !== CHART_ID && activeLabel != null;
+
+  return (
+    <div
+      className={cn("flex flex-col rounded-sm border px-5 py-4.5 bg-background", className)}
+      onMouseLeave={() => clearHover()}
+    >
+      <div className="flex flex-col gap-2 mb-4">
+        <h3 className="text-base font-medium">Emails Sent</h3>
+        <p className="text-sm text-muted-foreground">
+          Daily emails sent and failed over time
+        </p>
+      </div>
+
+      <div className="h-64 w-full">
+        <ResponsiveContainer width="100%" height="100%">
+          <AreaChart
+            data={data}
+            margin={{ top: 15, right: 10, left: -15, bottom: 0 }}
+            onMouseMove={(state) => {
+              if (state?.activeLabel) {
+                setHover(CHART_ID, String(state.activeLabel));
+              }
+            }}
+          >
+            <defs>
+              <linearGradient id="gradient-sent" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor={sentColor} stopOpacity={0.5} />
+                <stop offset="95%" stopColor={sentColor} stopOpacity={0.1} />
+              </linearGradient>
+              <linearGradient id="gradient-failed" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor={failedColor} stopOpacity={0.5} />
+                <stop offset="95%" stopColor={failedColor} stopOpacity={0.1} />
+              </linearGradient>
+            </defs>
+            <CartesianGrid
+              vertical={false}
+              strokeDasharray="3 3"
+              stroke={gridColor}
+              opacity={0.5}
+            />
+            <XAxis
+              dataKey="date"
+              tickLine={false}
+              axisLine={false}
+              tickMargin={8}
+              stroke={axisColor}
+              fontSize={12}
+              tick={{ fill: axisColor, fontFamily: "var(--font-mono)" }}
+            />
+            <YAxis
+              tickLine={false}
+              axisLine={false}
+              tickMargin={8}
+              stroke={axisColor}
+              fontSize={12}
+              tick={{ fill: axisColor, fontFamily: "var(--font-mono)" }}
+            />
+            <Tooltip
+              cursor={<AnimatedCursor chartId={CHART_ID} />}
+              animationDuration={0}
+              contentStyle={{
+                backgroundColor: tooltipBg,
+                border: `1px solid ${tooltipBorder}`,
+                borderRadius: "4px",
+                color: tooltipText,
+                padding: "4px 8px",
+                fontSize: "11px",
+                fontFamily: "var(--font-mono)",
+                lineHeight: "1.4"
+              }}
+            />
+            {isSynced && (
+              <ReferenceLine
+                x={activeLabel}
+                stroke="rgba(255, 255, 255, 0.3)"
+                strokeDasharray="4 4"
+                strokeWidth={1}
+              />
+            )}
+            <Legend
+              wrapperStyle={{
+                fontFamily: "var(--font-mono)",
+                fontSize: "11px",
+                color: "#a1a1aa",
+                paddingTop: "8px"
+              }}
+              iconSize={8}
+              iconType="circle"
+            />
+            <Area
+              type="linear"
+              dataKey="failed"
+              fill="url(#gradient-failed)"
+              fillOpacity={0.4}
+              stroke={failedColor}
+              stackId="a"
+              strokeWidth={1.5}
+              strokeDasharray="3 3"
+              dot={{ fill: failedColor, r: 5, strokeWidth: 0 }}
+              activeDot={false}
+              name="Failed"
+            />
+            <Area
+              type="linear"
+              dataKey="sent"
+              fill="url(#gradient-sent)"
+              fillOpacity={0.4}
+              stroke={sentColor}
+              stackId="a"
+              strokeWidth={1.5}
+              strokeDasharray="3 3"
+              dot={{ fill: sentColor, r: 5, strokeWidth: 0 }}
+              activeDot={false}
+              name="Sent"
+            />
+          </AreaChart>
+        </ResponsiveContainer>
+      </div>
+    </div>
+  );
+}

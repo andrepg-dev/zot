@@ -71,8 +71,6 @@ export class EmailsService {
 
     const usersList = users[0]?.emails ?? null;
 
-    console.log({ usersList });
-
     if (!usersList) {
       return { message: "WaitList users empty" };
     }
@@ -95,18 +93,23 @@ export class EmailsService {
      * WaitList id, timestamp, quantity email has sent, list of users who emails has been sent, correctly emails sent and the fails ones.
      */
 
-    const sendPayload: EmailParams = {
+    const payload: EmailParams = {
       from: "Zot WaitList <mail@zot.so>",
       to: usersList,
       provider: "resend",
       subject: "Testing if this works or not.",
       options: {
         html: "<bold>First email sending with zot.</bold>",
+        replyTo: "reply@zot.so",
+        text: "<bold>First email sending with zot.</bold>",
       },
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { to: _, provider, ...rest } = payload;
+
     try {
-      const result = await this.emailService.send(sendPayload);
+      const result = await this.emailService.send(payload);
 
       await this.emailSendRecordModel.create({
         owner: userId,
@@ -116,6 +119,7 @@ export class EmailsService {
         sentSuccessfully: usersList.length,
         failedCount: 0,
         failedEmails: [],
+        payload: rest,
       });
 
       const usage = await this.userquoteService.editUserQuote({
@@ -149,14 +153,35 @@ export class EmailsService {
         sentSuccessfully: 0,
         failedCount: usersList.length,
         failedEmails: usersList,
+        payload: rest,
       });
 
       throw err;
     }
   }
 
-  // TODO: Get the user email record
-  getEmailsRecord({ userId, waitlistId }: GetEmailsRecord) {
-    console.log({ userId, waitlistId });
+  async getEmailsRecord({ userId, waitlistId }: GetEmailsRecord) {
+    return this.emailSendRecordModel.aggregate([
+      {
+        $match: { owner: userId, waitlistId },
+      },
+      {
+        $group: {
+          _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+          sent: { $sum: "$sentSuccessfully" },
+          failed: { $sum: "$failedCount" },
+          createdAt: { $first: "$createdAt" },
+        },
+      },
+      { $sort: { createdAt: 1 } },
+      { $project: { _id: 0, createdAt: 1, sent: 1, failed: 1 } },
+    ]);
+  }
+
+  async getEmailSendRecordsList({ userId, waitlistId }: GetEmailsRecord) {
+    return this.emailSendRecordModel
+      .find({ owner: userId, waitlistId })
+      .select("-owner -waitlistId")
+      .sort({ createdAt: -1 });
   }
 }

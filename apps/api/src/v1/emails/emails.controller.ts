@@ -1,5 +1,5 @@
 import { UserId } from "@api/src/common/decorators/user-id.decorator";
-import { Body, Controller, HttpCode, Post } from "@nestjs/common";
+import { Body, Controller, Get, HttpCode, Param, Post } from "@nestjs/common";
 import { ParseObjectIdPipe } from "@nestjs/mongoose";
 import { Types } from "mongoose";
 import { SendEmailDto } from "./dto/send-email.dto";
@@ -20,6 +20,29 @@ export class EmailsController {
       userId,
       waitlistId: waitlistId,
       quantity: quantity,
+    });
+  }
+
+  @Get(":waitlistId/records")
+  async getEmailsRecord(
+    @Param("waitlistId", ParseObjectIdPipe) waitlistId: Types.ObjectId,
+    @UserId() userId: Types.ObjectId,
+  ) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    return await this.emailsService.getEmailsRecord({
+      userId,
+      waitlistId,
+    });
+  }
+
+  @Get(":waitlistId/records/list")
+  async getEmailSendRecordsList(
+    @Param("waitlistId", ParseObjectIdPipe) waitlistId: Types.ObjectId,
+    @UserId() userId: Types.ObjectId,
+  ) {
+    return await this.emailsService.getEmailSendRecordsList({
+      userId,
+      waitlistId,
     });
   }
 }

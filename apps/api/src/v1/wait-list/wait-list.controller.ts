@@ -121,4 +121,25 @@ export class WaitListController {
     const waitlist = await this.waitListService.remove(id, userId);
     return waitlist;
   }
+
+  @Get(":id/webhook-events")
+  @ApiOperation({
+    summary: "Get webhook events",
+    description:
+      "Retrieves all webhook delivery events for a specific waitlist. Only the owner can access.",
+  })
+  @ApiParam({
+    name: "id",
+    description: "Waitlist MongoDB ObjectId",
+    example: "507f1f77bcf86cd799439011",
+  })
+  @ApiOkResponse({ description: "Webhook events retrieved successfully" })
+  @ApiNotFoundResponse({ description: "Waitlist not found" })
+  @ApiUnauthorizedResponse({ description: "Not authenticated" })
+  async findWebhookEvents(
+    @Param("id", ParseObjectIdPipe) id: Types.ObjectId,
+    @UserId() userId: Types.ObjectId,
+  ) {
+    return await this.waitListService.findWebhookEvents(id, userId);
+  }
 }

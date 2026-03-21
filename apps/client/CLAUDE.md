@@ -56,7 +56,35 @@ JWT tokens in cookies: `access_token` (1h TTL) and `refresh_token` (7d TTL). Mid
 
 ### Forms
 
-React Hook Form + Zod. Validation schemas are imported from `@repo/packages/shared/schemas` (the shared package). The `Form` component (`components/form.tsx`) wraps forms with error toast handling.
+React Hook Form + Zod. The `Form` component (`components/form.tsx`) wraps forms with error toast handling.
+
+**Server-synced form pattern** (used for settings/config pages that load and update server data):
+
+1. **Query**: Use `useQuery` with the waitlist `[id]` key to fetch current data. This key is shared across layout and all sub-pages so cache is consistent.
+2. **Form schema**: Define a page-specific Zod schema (e.g. `settingsFormSchema`) instead of reusing the shared schema directly — this allows form-level transforms (e.g. stripping `https://` from URLs) without breaking validation.
+3. **Sync with `values`**: Pass `values` (not `defaultValues`) to `useForm` so the form re-syncs when server data arrives or changes.
+4. **Inputs**: Use `register()` for text/number inputs (`InputComponent` supports ref-based control). Use `Controller` for controlled components like `Switch` that need `isSelected`/`onValueChange`.
+5. **Mutation**: Use `useMutation` with `queryClient.invalidateQueries({ queryKey: [id] })` in `onSuccess` to refresh cached data. Always show toast on success and error.
+6. **Submit transform**: If the form stores values differently than the API expects (e.g. URL without protocol), transform in `onSubmit` before calling `mutate`.
+7. **Delete actions**: Always use a confirmation modal before destructive operations.
+
+```tsx
+// Example pattern
+const { data } = useQuery({ queryKey: [id], queryFn: () => getData(id) });
+const queryClient = useQueryClient();
+const { mutate } = useMutation({
+  mutationFn: (values) => updateData(id, values),
+  onSuccess: () => {
+    queryClient.invalidateQueries({ queryKey: [id] });
+    addToast({ description: "Updated", color: "success" });
+  },
+  onError: (err) => addToast({ title: "Error", description: err.message, color: "danger" })
+});
+const { register, control, handleSubmit } = useForm({
+  resolver: zodResolver(formSchema),
+  values: data  // syncs when data loads and to edit specific values should be values: { values: { field: value }}
+});
+```
 
 ### Visual Hierarchy
 

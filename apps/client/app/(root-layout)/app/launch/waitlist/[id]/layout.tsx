@@ -1,14 +1,38 @@
 "use client";
 
+import { getWaitListStats } from "@/actions/wait-list/stats.actions";
+import HeaderNavigation from "@/components/navigation/header.navigation";
 import SidebarNavigation from "@/components/navigation/sidebar.navigation";
-import { ArrowUturnLeftIcon, BoltIcon, Cog6ToothIcon, EnvelopeIcon, HomeIcon, KeyIcon } from "@heroicons/react/24/outline";
+import Chip from "@/components/ui/chip";
+import { ArrowUturnLeftIcon, BoltIcon, Cog6ToothIcon, EnvelopeIcon, HomeIcon } from "@heroicons/react/24/outline";
+import { useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 
 export default function WaitListLayout({ children }: { children: React.ReactNode }) {
   const { id } = useParams<{ id: string }>();
 
+  const { data, isPending } = useQuery({
+    queryKey: [id],
+    queryFn: () => getWaitListStats(id)
+  });
+
+  const statusLabel = data?.isAvailable ? "Active" : "Disabled";
+
   return (
     <>
+      <HeaderNavigation
+        navigationItems={[
+          { label: "Wait-List", pathname: "/app/waitlist/dashboard" },
+          {
+            label: isPending ? "Loading..." : (data?.name ?? ""),
+            pathname: ""
+          }
+        ]}
+      >
+        <Chip status={isPending ? "skeleton" : (data?.isAvailable ? "active" : "warning")}>
+          {isPending ? "Loading" : statusLabel}
+        </Chip>
+      </HeaderNavigation>
       <SidebarNavigation
         navItems={[
           {
@@ -30,13 +54,24 @@ export default function WaitListLayout({ children }: { children: React.ReactNode
           {
             href: `/app/launch/waitlist/${id}/email`,
             icon: EnvelopeIcon,
-            label: "Email",
+            label: "Emails",
+            subItem: [
+              {
+                label: "Metrics",
+                href: `/app/launch/waitlist/${id}/email/metrics`
+              },
+              {
+                label: "Campaign",
+                href: `/app/launch/waitlist/${id}/email/campaign`
+              }
+            ]
           },
-          {
-            href: `/app/launch/waitlist/${id}/api-keys`,
-            icon: KeyIcon,
-            label: "Api Keys"
-          },
+
+          // {
+          //   href: `/app/launch/waitlist/${id}/api-keys`,
+          //   icon: KeyIcon,
+          //   label: "Api Keys"
+          // },
           { type: "divider" },
           {
             href: `/app/launch/waitlist/${id}/settings`,
