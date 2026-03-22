@@ -1,7 +1,202 @@
-import React from 'react'
+"use client";
+
+import { getUserQuote } from "@/actions/user-quote/user-quote.actions";
+import GlobalButton from "@/components/global/button";
+import PrimaryActionButton from "@/components/global/primary-action-button";
+import Title from "@/components/global/title";
+import PageComponent from "@/components/layouts/page-component";
+import Type from "@/components/type";
+import { CircularProgress } from "@heroui/react";
+import { useQuery } from "@tanstack/react-query";
+
+interface QuotaItem {
+  label: string;
+  used: number;
+  limit: number;
+}
+
+interface QuotaSection {
+  title: string;
+  description: string;
+  items: QuotaItem[];
+}
+
+function getPercentage(used: number, limit: number) {
+  if (limit === 0) return 0;
+
+  return Math.min(Math.round((used / limit) * 100), 100);
+}
+
+function getProgressColor(percentage: number): "primary" | "warning" | "danger" | "success" {
+  if (percentage >= 90) return "danger";
+  if (percentage >= 70) return "warning";
+  if (percentage > 0) return "primary";
+
+  return "success";
+}
+
+function buildSections(quote: any): QuotaSection[] {
+  if (!quote) return [];
+
+  return [
+    {
+      title: "Waitlist",
+      description: "Create and manage waitlists to collect user sign-ups before launch.",
+      items: [
+        { label: "Waitlists", used: quote.waitlistUsed ?? 0, limit: quote.waitlist ?? 0 },
+        {
+          label: "User sign-ups",
+          used: quote.userSignUpUsed ?? 0,
+          limit: quote.userSignUp ?? 0
+        }
+      ]
+    },
+    {
+      title: "Email",
+      description: "Send transactional and campaign emails to your audience.",
+      items: [
+        { label: "Emails sent", used: quote.emailsSentUsed ?? 0, limit: quote.emailsSent ?? 0 },
+        {
+          label: "Email templates",
+          used: quote.emailsTemplatesUsed ?? 0,
+          limit: quote.emailsTemplates ?? 0
+        }
+      ]
+    },
+    {
+      title: "Landing Pages",
+      description: "Build and publish landing pages for your products.",
+      items: [
+        {
+          label: "Landing pages",
+          used: quote.landingPageUsed ?? 0,
+          limit: quote.landingPage ?? 0
+        }
+      ]
+    },
+    {
+      title: "Domains",
+      description: "Connect custom domains for email sending and landing pages.",
+      items: [
+        {
+          label: "Email domains",
+          used: quote.domains?.emailUsed ?? 0,
+          limit: quote.domains?.email ?? 0
+        },
+        {
+          label: "General domains",
+          used: quote.domains?.generalUsed ?? 0,
+          limit: quote.domains?.general ?? 0
+        }
+      ]
+    }
+  ];
+}
+
+function QuotaRow({ item }: { item: QuotaItem }) {
+  const percentage = getPercentage(item.used, item.limit);
+  const color = getProgressColor(percentage);
+
+  return (
+    <div className="flex items-center justify-between py-3">
+      <div className="flex items-center gap-3">
+        <CircularProgress
+          value={percentage}
+          color={color}
+          size="sm"
+          aria-label={`${item.label} usage`}
+          classNames={{
+            svg: "w-5 h-5",
+            indicator: "stroke-[3px]",
+            track: "stroke-[3px]"
+          }}
+        />
+        <Type variant="sm">{item.label}</Type>
+      </div>
+      <Type variant="sm" className="text-muted-foreground">
+        {item.used.toLocaleString()} / {item.limit.toLocaleString()}
+      </Type>
+    </div>
+  );
+}
+
+function QuotaSectionBlock({
+  section,
+  isLast
+}: {
+  section: QuotaSection;
+  isLast: boolean;
+}) {
+  return (
+    <div className={!isLast ? "border-b pb-10" : ""}>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-10 py-10">
+        <div className="flex flex-col gap-3">
+          <Type variant="h4">{section.title}</Type>
+          <Type className="text-muted-foreground max-w-xs">
+            {section.description}
+          </Type>
+          <div className="mt-2">
+            <PrimaryActionButton>Upgrade</PrimaryActionButton>
+          </div>
+        </div>
+
+        <div>
+          <Type variant="h6" className="mb-2">
+            Free
+          </Type>
+          <div className="divide-y divide-border">
+            {section.items.map((item) => (
+              <QuotaRow key={item.label} item={item} />
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function UsagePage() {
+  const { data: quote, isPending } = useQuery({
+    queryKey: ["user-quote"],
+    queryFn: getUserQuote
+  });
+
+  const sections = buildSections(quote);
+
   return (
-    <div>UsagePage</div>
-  )
+    <PageComponent className="max-w-7xl mx-auto mt-8">
+      <Title
+        description="Monitor your resource usage and quota limits across all services."
+        className="mb-2"
+      >
+        Usage
+      </Title>
+
+      {isPending ? (
+        <div className="flex flex-col gap-10 mt-10">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="grid grid-cols-1 md:grid-cols-2 gap-10">
+              <div className="flex flex-col gap-3">
+                <div className="h-5 w-32 bg-default-100 animate-pulse rounded-sm" />
+                <div className="h-4 w-48 bg-default-100 animate-pulse rounded-sm" />
+              </div>
+              <div className="flex flex-col gap-3">
+                <div className="h-4 w-16 bg-default-100 animate-pulse rounded-sm" />
+                <div className="h-10 bg-default-100 animate-pulse rounded-sm" />
+                <div className="h-10 bg-default-100 animate-pulse rounded-sm" />
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        sections.map((section, i) => (
+          <QuotaSectionBlock
+            key={section.title}
+            section={section}
+            isLast={i === sections.length - 1}
+          />
+        ))
+      )}
+    </PageComponent>
+  );
 }
