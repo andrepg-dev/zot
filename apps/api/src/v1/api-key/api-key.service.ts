@@ -1,5 +1,10 @@
 import { handleDatabaseErrors } from "@api/src/common/error-handling/handle-database-errors";
-import { Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
+import {
+  HttpException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { randomBytes } from "crypto";
 import { Model, Types } from "mongoose";
@@ -82,7 +87,7 @@ export class ApiKeyService {
 
       return { message: "API key deleted successfully" };
     } catch (error) {
-      handleDatabaseErrors(error);
+      throw new HttpException(String(error), 404);
     }
   }
 

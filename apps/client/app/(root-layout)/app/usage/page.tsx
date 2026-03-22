@@ -1,7 +1,6 @@
 "use client";
 
 import { getUserQuote } from "@/actions/user-quote/user-quote.actions";
-import GlobalButton from "@/components/global/button";
 import PrimaryActionButton from "@/components/global/primary-action-button";
 import Title from "@/components/global/title";
 import PageComponent from "@/components/layouts/page-component";
@@ -164,7 +163,7 @@ export default function UsagePage() {
   const sections = buildSections(quote);
 
   return (
-    <PageComponent className="max-w-7xl mx-auto mt-8">
+    <PageComponent className="p-8 py-6">
       <Title
         description="Monitor your resource usage and quota limits across all services."
         className="mb-2"

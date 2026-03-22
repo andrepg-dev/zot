@@ -38,8 +38,8 @@ import Title from "@/components/global/title";
 import PageComponent from "@/components/layouts/page-component";
 import Type from "@/components/type";
 import CopyButton from "@/components/ui/copy-button";
-import { formatDate } from "@/lib/format-date";
 import InputComponent from "@/components/ui/input";
+import { formatDate } from "@/lib/format-date";
 import { TrashIcon } from "@heroicons/react/24/outline";
 
 const columns = [

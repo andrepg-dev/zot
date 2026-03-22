@@ -19,7 +19,7 @@ export default function LandingPage() {
       />
 
       {/* Cards */}
-      <div className="grid grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
+      <div className="grid grid-cols-4 xl:grid-cols-4 2xl:grid-cols-6 gap-4">
         <LandingPageCard
           imageSrc="https://landingfoliocom.imgix.net/inspiration/1753871525950Headroomdesktopaea69be627494885b22b2d1d83b19207png?&q=75&auto=format&crop=top,left&fit=crop&auto=format&w=600&h=800"
           title="Breyta"
