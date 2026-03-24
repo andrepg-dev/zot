@@ -400,7 +400,7 @@ export default function ApiKeys() {
                     if (deletingItem) deleteMutation.mutate(deletingItem._id);
                   }}
                 >
-                  Delete
+                  Revoke access
                 </GlobalButton>
               </ModalFooter>
             </>

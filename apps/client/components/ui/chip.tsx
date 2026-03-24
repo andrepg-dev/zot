@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 
-type ChipStatus = "active" | "warning" | "neutral" | "danger" | "primary" | "skeleton";
+type ChipStatus = "active" | "warning" | "neutral" | "danger" | "primary" | "skeleton" | "purple";
 
 interface ChipProps {
   status: ChipStatus;
@@ -19,6 +19,7 @@ export default function Chip({ status, children, className }: ChipProps) {
         status === "danger" && "bg-destructive/20 text-destructive",
         status === "primary" && "bg-primary/20 text-primary",
         status === "skeleton" && "bg-muted animate-pulse text-transparent",
+        status === "purple" && "bg-[#4338CA]/60 text-white",
         className
       )}
     >

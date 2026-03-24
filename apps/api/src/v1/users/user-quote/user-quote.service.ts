@@ -20,7 +20,7 @@ export class UserQuoteService {
     @InjectModel(QuoteUsageHistory.name) private quoteUsageHistoryModel: Model<QuoteUsageHistory>,
   ) {}
 
-  private readonly freeQuote = {
+  public readonly freeQuote = {
     userSignUp: 15000,
     waitlist: 3,
     landingPage: 3,
@@ -29,7 +29,7 @@ export class UserQuoteService {
     domains: { email: 0, general: 0 },
   };
 
-  private readonly premiumQuote = {
+  public readonly premiumQuote = {
     userSignUp: 1500000,
     waitlist: 30,
     landingPage: 30,

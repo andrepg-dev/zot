@@ -1,5 +1,6 @@
 "use client";
 
+import Chip from "@/components/ui/chip";
 import { cn } from "@/lib/utils";
 import { EnvelopeIcon, LinkIcon, RectangleStackIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
@@ -7,15 +8,8 @@ import Link from "next/link";
 const dashboardTasks = [
   {
     id: 1,
-    icon: RectangleStackIcon,
-    title: "Create landing page",
-    description: "Build with templates and AI assistance.",
-    href: "/app/landing-page"
-  },
-  {
-    id: 2,
     icon: LinkIcon,
-    title: "Launch waitlist",
+    title: "Create wait-list",
     description: "Collect and manage signups.",
     href: "/app/waitlist/launch"
   },
@@ -23,9 +17,18 @@ const dashboardTasks = [
     id: 3,
     icon: EnvelopeIcon,
     title: "Email campaigns",
-    description: "Engage your audience at scale.",
-    href: "/app/emails"
-  }
+    description: "Write your first email template",
+    href: "/app/emails",
+    hasAI: true
+  },
+  {
+    id: 2,
+    icon: RectangleStackIcon,
+    title: "Create landing page",
+    description: "Build with templates and AI assistance.",
+    href: "/app/landing-page",
+    development: true
+  },
 ];
 
 export default function TaskCards() {
@@ -35,12 +38,14 @@ export default function TaskCards() {
         <Link key={task.id} href={task.href}>
           <div
             className={cn(
-              "flex flex-col gap-4 py-5 px-5 rounded border border-dashed hover:from-background hover:to-zinc-950 hover:bg-radial-[at_50%_25%]",
+              "flex flex-col gap-4 py-5 px-5 rounded border border-dashed hover:from-background hover:to-zinc-950 hover:bg-radial-[at_50%_25%] relative",
               index === 0
                 ? "hover:from-background hover:to-zinc-950 hover:bg-radial-[at_50%_25%] border-r border-b border-t border-l-4 !border-l-primary/70 hover:!border-l-primary rounded-l-none !border-r-zinc-800"
                 : "hover:!border-zinc-700"
             )}
           >
+            {task.hasAI && <Chip status="purple" className="absolute top-4 right-4">Template with AI</Chip>}
+            {task.development && <Chip status="warning" className="absolute top-4 right-4">In Development</Chip>}
             <div
               className={cn(
                 "size-10 rounded-md bg-default-100 flex items-center justify-center transition-colors",
