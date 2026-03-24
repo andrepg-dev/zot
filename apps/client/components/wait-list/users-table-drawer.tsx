@@ -36,20 +36,14 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useState } from "react";
 import Type from "../type";
 
+import { formatDate } from "@/lib/format-date";
+
 const baseColumns = [
   { key: "position", label: "#" },
   { key: "email", label: "Email" },
   { key: "referredBy", label: "Referred By" },
   { key: "createdAt", label: "Joined" }
 ];
-
-function formatDate(date: Date) {
-  return new Date(date).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric"
-  });
-}
 
 interface UsersTableDrawerProps {
   waitlistId: string;

@@ -20,19 +20,13 @@ import { useQuery } from "@tanstack/react-query";
 import React, { useState } from "react";
 import Type from "../type";
 
+import { formatDate } from "@/lib/format-date";
+
 const columns = [
   { key: "email", label: "Email" },
   { key: "reasons", label: "Reasons" },
   { key: "createdAt", label: "Blocked At" }
 ];
-
-function formatDate(date: Date) {
-  return new Date(date).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric"
-  });
-}
 
 interface BlockedUsersTableDrawerProps {
   waitlistId: string;

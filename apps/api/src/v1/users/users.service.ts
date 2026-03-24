@@ -54,7 +54,7 @@ export class UsersService {
         userDocument.password = bcrypt.hashSync(user.password, 10);
       }
 
-      const userQuote = await this.userQuoteService.createFreeUserQuote(userDocument._id);
+      const userQuote = await this.userQuoteService.createQuote(userDocument._id);
 
       userDocument.quote = userQuote._id;
 
@@ -173,8 +173,6 @@ export class UsersService {
         },
         { new: true },
       );
-
-      await this.userQuoteService.syncQuoteByPlan(userId, suscriptionPlan);
 
       return updatedUser;
     } catch (error) {

@@ -85,7 +85,7 @@ export class WaitListUserService {
         await this.userQuoteService.editUserQuote({
           ownerId: waitlist.owner,
           service: "userSignUp",
-          decrease: 1,
+          usage: 1,
         });
       }
 

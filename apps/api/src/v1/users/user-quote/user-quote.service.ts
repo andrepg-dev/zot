@@ -7,6 +7,7 @@ import {
 } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, Types } from "mongoose";
+import { User } from "../schemas/users.schema";
 import { QuoteUsageHistory } from "./schemas/quote-usage-history.schema";
 import { DomainsQuote, UserQuote } from "./schemas/user-quote.schema";
 import { QUOTE_SERVICE_KEYS, QuoteServiceKey } from "./types/quote-service-key";
@@ -18,9 +19,19 @@ export class UserQuoteService {
   constructor(
     @InjectModel(UserQuote.name) private userQuoteModel: Model<UserQuote>,
     @InjectModel(QuoteUsageHistory.name) private quoteUsageHistoryModel: Model<QuoteUsageHistory>,
+    @InjectModel(User.name) private userModel: Model<User>,
   ) {}
 
-  private readonly freeQuote = {
+  public readonly quote = {
+    userSignUp: 0,
+    waitlist: 0,
+    landingPage: 0,
+    emailsSent: 0,
+    emailsTemplates: 0,
+    domains: { email: 0, general: 0 },
+  };
+
+  public readonly freeQuoteLimit = {
     userSignUp: 15000,
     waitlist: 3,
     landingPage: 3,
@@ -29,7 +40,7 @@ export class UserQuoteService {
     domains: { email: 0, general: 0 },
   };
 
-  private readonly premiumQuote = {
+  public readonly premiumQuoteLimit = {
     userSignUp: 1500000,
     waitlist: 30,
     landingPage: 30,
@@ -48,29 +59,15 @@ export class UserQuoteService {
     };
   }
 
-  async createFreeUserQuote(ownerId: Types.ObjectId | string) {
+  async createQuote(ownerId: Types.ObjectId | string) {
     const id = toObjectId(ownerId);
     return this.userQuoteModel.create({
       owner: id,
-      ...this.freeQuote,
+      ...this.quote,
     });
   }
 
-  async syncQuoteByPlan(ownerId: Types.ObjectId | string, plan: "FREE" | "PREMIUM" | "SCALE") {
-    const id = toObjectId(ownerId);
-
-    const quoteTemplate = plan === "PREMIUM" ? this.premiumQuote : this.freeQuote;
-
-    return this.userQuoteModel.findOneAndUpdate(
-      { owner: id },
-      {
-        $set: quoteTemplate,
-      },
-      { upsert: true, new: true },
-    );
-  }
-
-  async findUserQuote(userId: Types.ObjectId): Promise<UserQuote> {
+  async findUserQuote(userId: Types.ObjectId) {
     try {
       const ownerId = toObjectId(userId);
       const quote = await this.userQuoteModel.findOne({ owner: ownerId }).select("+owner");
@@ -79,63 +76,92 @@ export class UserQuoteService {
         throw new NotFoundException("Quote not found");
       }
 
-      return quote.toJSON();
+      const user = await this.userModel.findById(ownerId);
+      const limits =
+        user?.suscriptionPlan === "PREMIUM" ? this.premiumQuoteLimit : this.freeQuoteLimit;
+
+      const quoteJson = quote.toJSON();
+
+      return {
+        usage: {
+          ...quoteJson,
+          domains: this.normalizeDomains(quoteJson.domains),
+        },
+        limits,
+        plan: user?.suscriptionPlan ?? "FREE",
+      };
     } catch {
       throw new InternalServerErrorException("Cannot find the <quote> of the user in database");
     }
   }
 
   /**
-   * Manage user's quote
+   * Increase user usage
    */
   async editUserQuote({
     ownerId,
     service,
-    decrease,
+    usage,
   }: {
     ownerId: Types.ObjectId;
     service: QuoteServiceKey;
-    decrease: number;
+    usage: number;
   }) {
     try {
       if (!QUOTE_SERVICE_KEYS.includes(service)) {
         throw new BadRequestException("Invalid service provided to update user quote");
       }
 
-      if (decrease <= 0) {
+      if (usage <= 0) {
         throw new InternalServerErrorException("Amount must be greater than 0");
       }
+
+      const user = await this.userModel.findById(ownerId);
+      const userPlan = user?.suscriptionPlan;
 
       let quote = await this.userQuoteModel.findOne({ owner: ownerId }).select("+owner");
 
       if (!quote) {
-        quote = (await this.createFreeUserQuote(ownerId)) as typeof quote & object;
+        quote = (await this.createQuote(ownerId)) as typeof quote & object;
       }
 
       const isNested = service === "domains.email" || service === "domains.general";
-      let currentValue: number;
+      let currentServiceValue: number;
 
       if (isNested) {
         const domains = this.normalizeDomains(quote.domains);
-        currentValue = service === "domains.email" ? domains.email : domains.general;
+        currentServiceValue = service === "domains.email" ? domains.email : domains.general;
       } else {
-        currentValue = quote[service];
+        currentServiceValue = quote[service];
       }
 
-      if (currentValue < decrease) {
-        throw new BadRequestException(`Insufficient credits for ${service} service`);
+      let serviceLimit: number;
+
+      if (isNested) {
+        const subKey = service === "domains.email" ? "email" : "general";
+        serviceLimit =
+          userPlan === "PREMIUM"
+            ? this.premiumQuoteLimit.domains[subKey]
+            : this.freeQuoteLimit.domains[subKey];
+      } else {
+        serviceLimit =
+          userPlan === "PREMIUM" ? this.premiumQuoteLimit[service] : this.freeQuoteLimit[service];
       }
 
-      const newValue = currentValue - decrease;
+      if (currentServiceValue + usage > serviceLimit) {
+        throw new BadRequestException(`Limits reached for ${service} service`);
+      }
+
+      const usageValue = currentServiceValue + usage;
 
       if (isNested) {
         const domains = this.normalizeDomains(quote.domains);
         quote.domains = {
           ...domains,
-          [service === "domains.email" ? "email" : "general"]: newValue,
+          [service === "domains.email" ? "email" : "general"]: usageValue,
         };
       } else {
-        (quote as unknown as Record<string, number>)[service] = newValue;
+        (quote as unknown as Record<string, number>)[service] = usageValue;
       }
 
       await quote.save();
@@ -148,8 +174,8 @@ export class UserQuoteService {
         void this.quoteUsageHistoryModel.create({
           owner: ownerId,
           service,
-          amount: decrease,
-          remainingAfter: newValue,
+          amount: usage,
+          remainingAfter: serviceLimit - usageValue,
         });
       }
 

@@ -57,13 +57,13 @@ export default function WaitListLayout({ children }: { children: React.ReactNode
             label: "Emails",
             subItem: [
               {
-                label: "Metrics",
-                href: `/app/launch/waitlist/${id}/email/metrics`
-              },
-              {
                 label: "Campaign",
                 href: `/app/launch/waitlist/${id}/email/campaign`
-              }
+              },
+              {
+                label: "History",
+                href: `/app/launch/waitlist/${id}/email/metrics`
+              },
             ]
           },
 

@@ -143,6 +143,8 @@ Maintain these patterns for consistency across all pages and components:
 
 **Destructive actions**: All delete operations must show a confirmation dialog before executing. Never delete directly on button press.
 
+**Date formatting**: Always use `toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })` for dates — renders as `Mar 10, 2026`.
+
 ### Code Style
 
 - Prettier: double quotes, semicolons, 100 char width, trailing commas off.

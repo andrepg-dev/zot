@@ -21,10 +21,7 @@ import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import React from "react";
 
-function formatDate(dateStr: string) {
-  const d = new Date(dateStr);
-  return d.toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" });
-}
+import { formatShortDate } from "@/lib/format-date";
 
 function generateLast20Days() {
   const days: string[] = [];
@@ -32,7 +29,7 @@ function generateLast20Days() {
   const today = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
   for (let i = 19; i >= 0; i--) {
     const date = new Date(today - i * 86400000);
-    days.push(formatDate(date.toISOString()));
+    days.push(formatShortDate(date.toISOString()));
   }
   return days;
 }
@@ -102,7 +99,7 @@ export default function LaunchedWaitList({ params }: { params: Promise<{ id: str
   ];
 
   const rawRegistrations = data?.dailyRegistration?.map((d) => ({
-    date: formatDate(d.createdAt),
+    date: formatShortDate(d.createdAt),
     registrations: d.registrations,
     referrals: 0,
   }));
@@ -110,7 +107,7 @@ export default function LaunchedWaitList({ params }: { params: Promise<{ id: str
   const dailyRegistrationsData = fillDailyData(rawRegistrations, last20Days, { registrations: 0, referrals: 0 });
 
   const rawBlocked = data?.dailyUsersBlocked?.map((d) => ({
-    date: formatDate(d.createdAt),
+    date: formatShortDate(d.createdAt),
     blocked: d.blocked,
   }));
   const fakeUsersBlockedData = fillDailyData(rawBlocked, last20Days, { blocked: 0 });
@@ -129,7 +126,7 @@ export default function LaunchedWaitList({ params }: { params: Promise<{ id: str
   })() : undefined;
 
   const rawConversion = data?.conversionRateOverTime?.map((d) => ({
-    date: formatDate(d.createdAt),
+    date: formatShortDate(d.createdAt),
     rate: Math.round(d.conversionRate * 100) / 100,
   }));
 

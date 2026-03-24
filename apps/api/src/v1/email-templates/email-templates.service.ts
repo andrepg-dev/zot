@@ -20,7 +20,7 @@ export class EmailTemplatesService {
       await this.userQuoteService.editUserQuote({
         ownerId: owner,
         service: "emailsTemplates",
-        decrease: 1,
+        usage: 1,
       });
 
       return await this.EmailTemplateModel.create({

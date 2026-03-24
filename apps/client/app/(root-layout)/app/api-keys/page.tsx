@@ -1,6 +1,6 @@
 "use client";
 
-import { PlusIcon } from "@heroicons/react/24/outline";
+import { PencilIcon, PlusIcon } from "@heroicons/react/24/outline";
 import {
   Modal,
   ModalBody,
@@ -17,16 +17,29 @@ import {
 } from "@heroui/react";
 import { addToast } from "@heroui/toast";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { createApiKeySchema, type CreateApiKeyValues } from "@repo/packages/shared/schemas";
+import {
+  createApiKeySchema,
+  updateApiKeySchema,
+  type CreateApiKeyValues,
+  type UpdateApiKeyValues
+} from "@repo/packages/shared/schemas";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useState, type ReactNode } from "react";
 import { Controller, useForm } from "react-hook-form";
 
-import { createApiKey, deleteApiKey, getApiKeys } from "@/actions/api-key/api-key.actions";
+import {
+  createApiKey,
+  deleteApiKey,
+  getApiKeys,
+  updateApiKey
+} from "@/actions/api-key/api-key.actions";
 import GlobalButton from "@/components/global/button";
 import Title from "@/components/global/title";
 import PageComponent from "@/components/layouts/page-component";
 import Type from "@/components/type";
+import CopyButton from "@/components/ui/copy-button";
 import InputComponent from "@/components/ui/input";
+import { formatDate } from "@/lib/format-date";
 import { TrashIcon } from "@heroicons/react/24/outline";
 
 const columns = [
@@ -34,14 +47,33 @@ const columns = [
   { key: "apiKey", label: "API Key" },
   { key: "createdAt", label: "Created" },
   { key: "actions", label: "Actions" }
-];
+] as const;
+
+type ApiKeyTableColumn = (typeof columns)[number];
+type ApiKeyTableColumnKey = ApiKeyTableColumn["key"];
+
+type ModalPhase = "form" | "created" | "edit";
 
 export default function ApiKeys() {
   const modal = useDisclosure();
+  const deleteModal = useDisclosure();
   const queryClient = useQueryClient();
+  const [modalPhase, setModalPhase] = useState<ModalPhase>("form");
+  const [createdKey, setCreatedKey] = useState<string>("");
+  const [editingItem, setEditingItem] = useState<{ _id: string; name: string } | null>(null);
+  const [deletingItem, setDeletingItem] = useState<{ _id: string; name: string } | null>(null);
 
   const { control, handleSubmit, reset, formState: { errors } } = useForm<CreateApiKeyValues>({
     resolver: zodResolver(createApiKeySchema)
+  });
+
+  const {
+    control: editControl,
+    handleSubmit: handleEditSubmit,
+    reset: resetEdit,
+    formState: { errors: editErrors }
+  } = useForm<UpdateApiKeyValues>({
+    resolver: zodResolver(updateApiKeySchema)
   });
 
   const { data, isPending } = useQuery({
@@ -51,11 +83,25 @@ export default function ApiKeys() {
 
   const createMutation = useMutation({
     mutationFn: (values: CreateApiKeyValues) => createApiKey(values),
-    onSuccess: () => {
-      reset()
+    onSuccess: (response: any) => {
+      reset();
       queryClient.invalidateQueries({ queryKey: ["api-keys"] });
       addToast({ description: "API key created", color: "success" });
-      modal.onClose();
+      setCreatedKey(response.apiKey);
+      setModalPhase("created");
+    },
+    onError: (err) => {
+      addToast({ title: "Error", description: err.message, color: "danger" });
+    }
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: ({ id, values }: { id: string; values: UpdateApiKeyValues }) =>
+      updateApiKey(id, values),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["api-keys"] });
+      addToast({ description: "API key updated", color: "success" });
+      handleCloseModal();
     },
     onError: (err) => {
       addToast({ title: "Error", description: err.message, color: "danger" });
@@ -67,11 +113,18 @@ export default function ApiKeys() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["api-keys"] });
       addToast({ description: "API key deleted", color: "danger" });
+      setDeletingItem(null);
+      deleteModal.onClose();
     },
     onError: (err) => {
       addToast({ title: "Error", description: err.message, color: "danger" });
     }
   });
+
+  const handleOpenDelete = (item: { _id: string; name: string }) => {
+    setDeletingItem(item);
+    deleteModal.onOpen();
+  };
 
   const rows = data ?? [];
 
@@ -79,16 +132,157 @@ export default function ApiKeys() {
     createMutation.mutate(values);
   };
 
+  const onEditSubmit = (values: UpdateApiKeyValues) => {
+    if (!editingItem) return;
+    updateMutation.mutate({ id: editingItem._id, values });
+  };
+
+  const handleCloseModal = () => {
+    modal.onClose();
+    setModalPhase("form");
+    setCreatedKey("");
+    setEditingItem(null);
+    reset();
+    resetEdit();
+  };
+
+  const handleOpenEdit = (item: { _id: string; name: string }) => {
+    setEditingItem(item);
+    resetEdit({ name: item.name });
+    setModalPhase("edit");
+    modal.onOpen();
+  };
+
+  const renderModalContent = (onClose: () => void) => {
+    if (modalPhase === "created") {
+      return (
+        <>
+          <ModalHeader>API Key Created</ModalHeader>
+          <ModalBody>
+            <div className="flex flex-col gap-3">
+              <Type>
+                Make sure to copy your API key now. You won{"'"}t be able to see it again.
+              </Type>
+              <InputComponent value={createdKey} isReadOnly className="w-full mt-2" endContent={<CopyButton text={createdKey} className="min-w-7 h-7 shrink-0">
+                Copy
+              </CopyButton>} />
+            </div>
+          </ModalBody>
+          <ModalFooter>
+            <GlobalButton color="primary" onPress={handleCloseModal}>
+              Done
+            </GlobalButton>
+          </ModalFooter>
+        </>
+      );
+    }
+
+    if (modalPhase === "edit") {
+      return (
+        <form onSubmit={handleEditSubmit(onEditSubmit)}>
+          <ModalHeader>Edit API Key</ModalHeader>
+          <ModalBody>
+            <div className="flex flex-col gap-2">
+              <Type className="font-medium">Name</Type>
+              <Controller
+                name="name"
+                control={editControl}
+                render={({ field }) => (
+                  <InputComponent
+                    placeholder="e.g. Production, Development"
+                    maxLength={50}
+                    isInvalid={!!editErrors.name}
+                    errorMessage={editErrors.name?.message}
+                    value={field.value ?? ""}
+                    onChange={field.onChange}
+                    onBlur={field.onBlur}
+                    ref={field.ref}
+                  />
+                )}
+              />
+            </div>
+          </ModalBody>
+          <ModalFooter>
+            <GlobalButton variant="light" onPress={handleCloseModal}>
+              Cancel
+            </GlobalButton>
+            <GlobalButton
+              color="primary"
+              type="submit"
+              isLoading={updateMutation.isPending}
+            >
+              Save
+            </GlobalButton>
+          </ModalFooter>
+        </form>
+      );
+    }
+
+    return (
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <ModalHeader>Create API Key</ModalHeader>
+        <ModalBody>
+          <div className="flex flex-col gap-2">
+            <Type variant="sm" className="text-muted-foreground">
+              Give your API key a name to help you identify it later.
+            </Type>
+
+            <Type className="font-medium mt-4">Name</Type>
+            <Controller
+              name="name"
+              control={control}
+              render={({ field }) => (
+                <InputComponent
+                  placeholder="My Wait-List Integration"
+                  maxLength={50}
+                  isInvalid={!!errors.name}
+                  errorMessage={errors.name?.message}
+                  value={field.value ?? ""}
+                  onChange={field.onChange}
+                  onBlur={field.onBlur}
+                  ref={field.ref}
+                />
+              )}
+            />
+          </div>
+        </ModalBody>
+        <ModalFooter>
+          <GlobalButton variant="light" onPress={handleCloseModal}>
+            Cancel
+          </GlobalButton>
+          <GlobalButton
+            color="primary"
+            type="submit"
+            isLoading={createMutation.isPending}
+          >
+            Create
+          </GlobalButton>
+        </ModalFooter>
+      </form>
+    );
+  };
+
   return (
     <PageComponent>
       <Title
-        description="Manage your API keys for programmatic access"
+        description={
+          <>
+            You have permission to view and manage all API keys.
+            <br />
+            <br />
+            Do not share your API key with others or expose it in the browser or other client-side
+            code.
+          </>
+        }
         className="mb-6"
         rightChildren={
           <GlobalButton
             color="primary"
             startContent={<PlusIcon className="size-4" />}
-            onPress={modal.onOpen}
+            onPress={() => {
+              setModalPhase("form");
+              modal.onOpen();
+            }}
           >
             Add API Key
           </GlobalButton>
@@ -106,7 +300,7 @@ export default function ApiKeys() {
           td: "first:before:rounded-none last:before:rounded-e-none cursor-pointer py-3"
         }}
       >
-        <TableHeader columns={columns}>
+        <TableHeader<ApiKeyTableColumn> columns={[...columns]}>
           {(column) => (
             <TableColumn key={column.key}>{column.label}</TableColumn>
           )}
@@ -116,7 +310,7 @@ export default function ApiKeys() {
           {(item) => (
             <TableRow key={item._id}>
               {(columnKey: string | number) => {
-                const valueMap: Record<typeof columns[number]["key"], React.ReactNode> = {
+                const valueMap: Record<ApiKeyTableColumnKey, ReactNode> = {
                   name: <Type>{item.name}</Type>,
                   apiKey: (
                     <div className="flex items-center gap-1.5">
@@ -127,23 +321,33 @@ export default function ApiKeys() {
                   ),
                   createdAt: (
                     <Type variant="sm" className="text-muted-foreground">
-                      {new Date(item.createdAt).toLocaleDateString()}
+                      {formatDate(item.createdAt)}
                     </Type>
                   ),
                   actions: (
-                    <GlobalButton
-                      isIconOnly
-                      variant="light"
-                      color="danger"
-                      className="min-w-5 h-5"
-                      onPress={() => deleteMutation.mutate(item._id)}
-                    >
-                      <TrashIcon className="size-3.5" />
-                    </GlobalButton>
+                    <div className="flex items-center gap-1">
+                      <GlobalButton
+                        isIconOnly
+                        variant="light"
+                        onPress={() => handleOpenEdit(item)}
+                      >
+                        <PencilIcon className="size-3.5" />
+                      </GlobalButton>
+                      <GlobalButton
+                        isIconOnly
+                        variant="light"
+                        color="danger"
+                        onPress={() => handleOpenDelete(item)}
+                      >
+                        <TrashIcon className="size-3.5" />
+                      </GlobalButton>
+                    </div>
                   )
                 };
 
-                return <TableCell>{valueMap[columnKey]}</TableCell>;
+                return (
+                  <TableCell>{valueMap[columnKey as ApiKeyTableColumnKey]}</TableCell>
+                );
               }}
             </TableRow>
           )}
@@ -153,53 +357,53 @@ export default function ApiKeys() {
       <Modal
         isOpen={modal.isOpen}
         onOpenChange={(open) => {
-          modal.onOpenChange();
-          if (!open) reset();
+          if (!open) handleCloseModal();
+        }}
+        radius="sm"
+        isDismissable={modalPhase !== "created"}
+        hideCloseButton={modalPhase === "created"}
+      >
+        <ModalContent>
+          {(onClose) => renderModalContent(onClose)}
+        </ModalContent>
+      </Modal>
+
+      <Modal
+        isOpen={deleteModal.isOpen}
+        onOpenChange={(open) => {
+          if (!open) {
+            setDeletingItem(null);
+            deleteModal.onClose();
+          }
         }}
         radius="sm"
       >
         <ModalContent>
           {(onClose) => (
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <ModalHeader>Create API Key</ModalHeader>
+            <>
+              <ModalHeader>Delete API Key</ModalHeader>
               <ModalBody>
-                <div className="flex flex-col gap-2">
-                  <Type variant="sm" className="text-muted-foreground">
-                    Give your API key a name to help you identify it later.
-                  </Type>
-
-                  <Type className="font-medium mt-4" >Name</Type>
-                  <Controller
-                    name="name"
-                    control={control}
-                    render={({ field }) => (
-                      <InputComponent
-                        placeholder="e.g. Production, Development"
-                        maxLength={50}
-                        isInvalid={!!errors.name}
-                        errorMessage={errors.name?.message}
-                        value={field.value ?? ""}
-                        onChange={field.onChange}
-                        onBlur={field.onBlur}
-                        ref={field.ref}
-                      />
-                    )}
-                  />
-                </div>
+                <Type className="text-muted-foreground">
+                  Are you sure you want to delete the API key{" "}
+                  <Type variant="code">{deletingItem?.name}</Type>? This action
+                  cannot be undone and any applications using this key will lose access.
+                </Type>
               </ModalBody>
               <ModalFooter>
                 <GlobalButton variant="light" onPress={onClose}>
                   Cancel
                 </GlobalButton>
                 <GlobalButton
-                  color="primary"
-                  type="submit"
-                  isLoading={createMutation.isPending}
+                  color="danger"
+                  isLoading={deleteMutation.isPending}
+                  onPress={() => {
+                    if (deletingItem) deleteMutation.mutate(deletingItem._id);
+                  }}
                 >
-                  Create
+                  Revoke access
                 </GlobalButton>
               </ModalFooter>
-            </form>
+            </>
           )}
         </ModalContent>
       </Modal>

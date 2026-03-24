@@ -34,7 +34,7 @@ export class WaitListService {
       await this.userQuoteService.editUserQuote({
         ownerId: owner,
         service: "waitlist",
-        decrease: 1,
+        usage: 1,
       });
 
       const document = await this.WaitListModel.create({

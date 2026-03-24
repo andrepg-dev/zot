@@ -36,6 +36,8 @@ import { use, useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
+import { formatDateTime } from "@/lib/format-date";
+
 const webhookFormSchema = z.object({
   webhook: z
     .object({
@@ -54,16 +56,6 @@ const columns = [
   { key: "responseStatusCode", label: "Status Code" },
   { key: "sentAt", label: "Sent At" }
 ];
-
-function formatDate(date: string) {
-  return new Date(date).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-    hour: "numeric",
-    minute: "2-digit"
-  });
-}
 
 export default function Webhooks({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -200,7 +192,7 @@ export default function Webhooks({ params }: { params: Promise<{ id: string }> }
                   ),
                   sentAt: item.sentAt ? (
                     <span className="text-muted-foreground font-mono text-xs">
-                      {formatDate(item.sentAt)}
+                      {formatDateTime(item.sentAt)}
                     </span>
                   ) : (
                     <span className="text-muted-foreground text-xs">—</span>
@@ -291,7 +283,7 @@ export default function Webhooks({ params }: { params: Promise<{ id: string }> }
             )}
           </div>
           <p className="text-sm text-muted-foreground font-normal">
-            {selectedEvent?.sentAt ? formatDate(selectedEvent.sentAt) : "—"}
+            {selectedEvent?.sentAt ? formatDateTime(selectedEvent.sentAt) : "—"}
           </p>
         </DrawerHeader>
 

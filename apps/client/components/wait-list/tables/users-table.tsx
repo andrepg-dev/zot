@@ -22,6 +22,8 @@ import type { EmailSendRecordItem } from "@repo/packages/shared/schemas";
 import { useQuery } from "@tanstack/react-query";
 import React, { useState } from "react";
 
+import { formatDateTime } from "@/lib/format-date";
+
 const columns = [
   { key: "position", label: "#" },
   { key: "subject", label: "Subject" },
@@ -33,16 +35,6 @@ const columns = [
   { key: "failedCount", label: "Failed" },
   { key: "createdAt", label: "Date" }
 ];
-
-function formatDate(date: string) {
-  return new Date(date).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-    hour: "numeric",
-    minute: "2-digit"
-  });
-}
 
 export default function UsersTable({ id }: { id: string }) {
   const [search, setSearch] = useState("");
@@ -63,7 +55,7 @@ export default function UsersTable({ id }: { id: string }) {
         record.payload.subject.toLowerCase().includes(query) ||
         record.payload.from.toLowerCase().includes(query) ||
         record.recipientEmails.some((email) => email.toLowerCase().includes(query)) ||
-        formatDate(record.createdAt).toLowerCase().includes(query)
+        formatDateTime(record.createdAt).toLowerCase().includes(query)
     );
   }, [records, search]);
 
@@ -165,7 +157,7 @@ export default function UsersTable({ id }: { id: string }) {
                     ),
                     createdAt: (
                       <span className="text-muted-foreground font-mono text-xs">
-                        {formatDate(item.createdAt)}
+                        {formatDateTime(item.createdAt)}
                       </span>
                     )
                   };
@@ -197,7 +189,7 @@ export default function UsersTable({ id }: { id: string }) {
             )}
           </div>
           <p className="text-sm text-muted-foreground font-normal">
-            {selectedRecord ? formatDate(selectedRecord.createdAt) : "—"}
+            {selectedRecord ? formatDateTime(selectedRecord.createdAt) : "—"}
           </p>
         </DrawerHeader>
 

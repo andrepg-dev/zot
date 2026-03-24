@@ -9,7 +9,7 @@ export default function Title({
   rightChildren
 }: {
   children: React.ReactNode;
-  description?: string;
+  description?: React.ReactNode;
   className?: string;
   classNames?: {
     title?: string;
@@ -23,7 +23,7 @@ export default function Title({
         <Type variant="h4" className={cn("font-medium", classNames?.title)}>
           {children}
         </Type>
-        <h6 className={cn("text-muted-foreground", classNames?.description)}>
+        <h6 className={cn("text-muted-foreground mt-1", classNames?.description)}>
           {description}
         </h6>
       </div>
