@@ -125,7 +125,7 @@ export class EmailsService {
       const usage = await this.userquoteService.editUserQuote({
         ownerId: userId,
         service: "emailsSent",
-        decrease: emailUsageSending,
+        usage: emailUsageSending,
       });
 
       return {
@@ -141,7 +141,7 @@ export class EmailsService {
         await this.userquoteService.editUserQuote({
           ownerId: userId,
           service: "emailsSent",
-          decrease: emailUsageSending,
+          usage: emailUsageSending,
         });
       }
 
