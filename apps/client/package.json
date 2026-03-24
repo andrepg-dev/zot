@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
+    "@heroicons-animated/react": "^1.3.0",
     "@heroicons/react": "^2.2.0",
     "@heroui/accordion": "2.2.24",
     "@heroui/alert": "2.2.27",
