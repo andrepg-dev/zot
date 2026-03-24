@@ -60,11 +60,11 @@ const InputComponent = forwardRef<HTMLInputElement, InputProps>((props, ref) => 
         onChange={handleChange}
         maxLength={maxLength}
         className={cn(
-          "flex-1 outline-primary data-[focus=true]:outline-2 data-[focus=true]:outline-0 rounded-sm hover:!bg-transparent !text-[13px]"
+          "flex-1 rounded-sm hover:!bg-transparent !text-[13px]"
         )}
         classNames={{
           inputWrapper:
-            "!text-[13px] data-[focus=true]:bg-default-100/50 data-[hover=true]:!bg-default-100/50 bg-default-100/50 border",
+            "!text-[13px] data-[focus=true]:ring-2 data-[focus=true]:ring-primary data-[focus=true]:bg-default-100/50 data-[hover=true]:!bg-default-100/50 bg-default-100/50 border",
           input: "!text-[13px]"
         }}
         startContent={startContent || defaultStartContent}
