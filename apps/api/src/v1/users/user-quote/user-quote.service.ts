@@ -67,7 +67,7 @@ export class UserQuoteService {
     });
   }
 
-  async findUserQuote(userId: Types.ObjectId): Promise<UserQuote> {
+  async findUserQuote(userId: Types.ObjectId) {
     try {
       const ownerId = toObjectId(userId);
       const quote = await this.userQuoteModel.findOne({ owner: ownerId }).select("+owner");
@@ -76,7 +76,20 @@ export class UserQuoteService {
         throw new NotFoundException("Quote not found");
       }
 
-      return quote.toJSON();
+      const user = await this.userModel.findById(ownerId);
+      const limits =
+        user?.suscriptionPlan === "PREMIUM" ? this.premiumQuoteLimit : this.freeQuoteLimit;
+
+      const quoteJson = quote.toJSON();
+
+      return {
+        usage: {
+          ...quoteJson,
+          domains: this.normalizeDomains(quoteJson.domains),
+        },
+        limits,
+        plan: user?.suscriptionPlan ?? "FREE",
+      };
     } catch {
       throw new InternalServerErrorException("Cannot find the <quote> of the user in database");
     }

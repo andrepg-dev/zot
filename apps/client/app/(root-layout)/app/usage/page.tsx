@@ -1,7 +1,7 @@
 "use client";
 
 import { getUserQuote } from "@/actions/user-quote/user-quote.actions";
-import PrimaryActionButton from "@/components/global/primary-action-button";
+import BillingDrawing from "@/components/global/billing-drawing";
 import Title from "@/components/global/title";
 import PageComponent from "@/components/layouts/page-component";
 import Type from "@/components/type";
@@ -20,6 +20,26 @@ interface QuotaSection {
   items: QuotaItem[];
 }
 
+interface UserQuoteResponse {
+  usage: {
+    userSignUp: number;
+    waitlist: number;
+    landingPage: number;
+    emailsSent: number;
+    emailsTemplates: number;
+    domains: { email: number; general: number };
+  };
+  limits: {
+    userSignUp: number;
+    waitlist: number;
+    landingPage: number;
+    emailsSent: number;
+    emailsTemplates: number;
+    domains: { email: number; general: number };
+  };
+  plan: string;
+}
+
 function getPercentage(used: number, limit: number) {
   if (limit === 0) return 0;
 
@@ -34,59 +54,39 @@ function getProgressColor(percentage: number): "primary" | "warning" | "danger" 
   return "success";
 }
 
-function buildSections(quote: any): QuotaSection[] {
-  if (!quote) return [];
+function buildSections(data: UserQuoteResponse): QuotaSection[] {
+  const { usage, limits } = data;
 
   return [
     {
       title: "Waitlist",
       description: "Create and manage waitlists to collect user sign-ups before launch.",
       items: [
-        { label: "Waitlists", used: quote.waitlistUsed ?? 0, limit: quote.waitlist ?? 0 },
-        {
-          label: "User sign-ups",
-          used: quote.userSignUpUsed ?? 0,
-          limit: quote.userSignUp ?? 0
-        }
+        { label: "Waitlists", used: usage.waitlist, limit: limits.waitlist },
+        { label: "User sign-ups", used: usage.userSignUp, limit: limits.userSignUp }
       ]
     },
     {
       title: "Email",
       description: "Send transactional and campaign emails to your audience.",
       items: [
-        { label: "Emails sent", used: quote.emailsSentUsed ?? 0, limit: quote.emailsSent ?? 0 },
-        {
-          label: "Email templates",
-          used: quote.emailsTemplatesUsed ?? 0,
-          limit: quote.emailsTemplates ?? 0
-        }
+        { label: "Emails sent", used: usage.emailsSent, limit: limits.emailsSent },
+        { label: "Email templates", used: usage.emailsTemplates, limit: limits.emailsTemplates }
       ]
     },
     {
       title: "Landing Pages",
       description: "Build and publish landing pages for your products.",
       items: [
-        {
-          label: "Landing pages",
-          used: quote.landingPageUsed ?? 0,
-          limit: quote.landingPage ?? 0
-        }
+        { label: "Landing pages", used: usage.landingPage, limit: limits.landingPage }
       ]
     },
     {
       title: "Domains",
       description: "Connect custom domains for email sending and landing pages.",
       items: [
-        {
-          label: "Email domains",
-          used: quote.domains?.emailUsed ?? 0,
-          limit: quote.domains?.email ?? 0
-        },
-        {
-          label: "General domains",
-          used: quote.domains?.generalUsed ?? 0,
-          limit: quote.domains?.general ?? 0
-        }
+        { label: "Email domains", used: usage.domains.email, limit: limits.domains.email },
+        { label: "General domains", used: usage.domains.general, limit: limits.domains.general }
       ]
     }
   ];
@@ -121,11 +121,15 @@ function QuotaRow({ item }: { item: QuotaItem }) {
 
 function QuotaSectionBlock({
   section,
+  plan,
   isLast
 }: {
   section: QuotaSection;
+  plan: string;
   isLast: boolean;
 }) {
+  const isPremium = plan === "PREMIUM";
+
   return (
     <div className={!isLast ? "border-b pb-10" : ""}>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10 py-10">
@@ -134,14 +138,20 @@ function QuotaSectionBlock({
           <Type className="text-muted-foreground max-w-xs">
             {section.description}
           </Type>
-          <div className="mt-2">
-            <PrimaryActionButton>Upgrade</PrimaryActionButton>
-          </div>
+          {!isPremium && (
+            <div className="mt-2">
+              <BillingDrawing>
+                <span className="inline-flex cursor-pointer items-center text-xs rounded-sm border bg-foreground px-3 py-1.5 text-white dark:text-black">
+                  Upgrade
+                </span>
+              </BillingDrawing>
+            </div>
+          )}
         </div>
 
         <div>
           <Type variant="h6" className="mb-2">
-            Free
+            {isPremium ? "Premium" : "Free"}
           </Type>
           <div className="divide-y divide-border">
             {section.items.map((item) => (
@@ -155,12 +165,13 @@ function QuotaSectionBlock({
 }
 
 export default function UsagePage() {
-  const { data: quote, isPending } = useQuery({
+  const { data, isPending } = useQuery({
     queryKey: ["user-quote"],
     queryFn: getUserQuote
   });
 
-  const sections = buildSections(quote);
+  const quoteData = data as UserQuoteResponse | undefined;
+  const sections = quoteData ? buildSections(quoteData) : [];
 
   return (
     <PageComponent className="p-8 py-6">
@@ -192,6 +203,7 @@ export default function UsagePage() {
           <QuotaSectionBlock
             key={section.title}
             section={section}
+            plan={quoteData?.plan ?? "FREE"}
             isLast={i === sections.length - 1}
           />
         ))

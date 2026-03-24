@@ -44,7 +44,7 @@ export default function TaskCards() {
                 : "hover:!border-zinc-700"
             )}
           >
-            {task.hasAI && <Chip status="purple" className="absolute top-4 right-4">Template with AI</Chip>}
+            {task.hasAI && <Chip status="purple" className="absolute top-4 right-4">Templates with AI</Chip>}
             {task.development && <Chip status="warning" className="absolute top-4 right-4">In Development</Chip>}
             <div
               className={cn(
