@@ -1,13 +1,11 @@
 "use client";
 
 import { getEmailSendRecords } from "@/actions/emails/emails.actions";
-import PrimaryActionButton from "@/components/global/primary-action-button";
 import Title from "@/components/global/title";
 import PageComponent from "@/components/layouts/page-component";
 import EmailsSentChart from "@/components/wait-list/charts/emails-sent-chart";
 import UsersTable from "@/components/wait-list/tables/users-table";
 import { useHotkey } from "@/hooks/use-hotkey";
-import { RocketLaunchIcon } from "@heroicons/react/24/outline";
 import { Kbd } from "@heroui/kbd";
 import { Tab, Tabs } from "@heroui/tabs";
 import { useQuery } from "@tanstack/react-query";
@@ -66,6 +64,7 @@ export default function MetricPage({ params }: { params: Promise<{ id: string }>
         <Tabs
           aria-label="Tabs sizes"
           size={"sm"}
+          radius="sm"
           selectedKey={selectedTab}
           onSelectionChange={(key) => setSelectedTab(String(key))}
         >
@@ -88,11 +87,6 @@ export default function MetricPage({ params }: { params: Promise<{ id: string }>
             }
           />
         </Tabs>
-
-        <PrimaryActionButton startContent={<RocketLaunchIcon className="size-4" />}>
-          Send email campaign
-          <Kbd keys={["command"]} className="text-xs">K</Kbd>
-        </PrimaryActionButton>
       </div>
 
       {selectedTab === "analytics" && <EmailsSentChart data={emailsSentData} />}

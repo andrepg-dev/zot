@@ -44,11 +44,12 @@ export default function TaskCards() {
                 : "hover:!border-zinc-700"
             )}
           >
-            {task.hasAI && <Chip status="purple" className="absolute top-4 right-4">Templates with AI</Chip>}
+            {task.hasAI && <Chip status="purple" className="absolute top-4 right-4">AI Included</Chip>}
             {task.development && <Chip status="warning" className="absolute top-4 right-4">In Development</Chip>}
+
             <div
               className={cn(
-                "size-10 rounded-md bg-default-100 flex items-center justify-center transition-colors",
+                "size-10 rounded-sm bg-default-100 flex items-center justify-center transition-colors",
                 index === 0 && "!bg-primary-200",
                 "group-hover:bg-primary-200"
               )}

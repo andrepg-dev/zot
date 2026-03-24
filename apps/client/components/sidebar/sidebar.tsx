@@ -3,8 +3,6 @@
 import { cn } from "@/lib/utils";
 import {
   BookOpenIcon,
-  Cog6ToothIcon,
-  CreditCardIcon,
   GlobeAltIcon,
   SunIcon
 } from "@heroicons/react/24/outline";
