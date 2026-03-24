@@ -28,7 +28,24 @@ const config = {
     }
   },
   darkMode: "class",
-  plugins: [heroui()]
+  plugins: [
+    heroui({
+      prefix: "heroui",
+      addCommonColors: false,
+      defaultTheme: "dark",
+      defaultExtendTheme: "dark",
+      layout: {
+        disabledOpacity: "0.5",
+        radius: {
+          small: "5px",
+          medium: ".45rem"
+        },
+        borderWidth: {
+          medium: "thin"
+        }
+      }
+    })
+  ]
 };
 
 module.exports = config;

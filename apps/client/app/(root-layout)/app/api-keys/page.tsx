@@ -223,7 +223,7 @@ export default function ApiKeys() {
         <ModalHeader>Create API Key</ModalHeader>
         <ModalBody>
           <div className="flex flex-col gap-2">
-            <Type variant="sm" className="text-muted-foreground">
+            <Type className="text-muted-foreground">
               Give your API key a name to help you identify it later.
             </Type>
 
