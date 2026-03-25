@@ -48,12 +48,12 @@ function TaskCard({ task, index }: { task: (typeof dashboardTasks)[number]; inde
         onMouseLeave={() => iconRef.current?.stopAnimation()}
       >
         {task.hasAI && (
-          <Chip status="purple" className="absolute top-4 right-4">
+          <Chip status="purple" className="absolute top-4 right-4 font-mono rounded-sm">
             AI Included
           </Chip>
         )}
         {task.development && (
-          <Chip status="warning" className="absolute top-4 right-4">
+          <Chip status="warning" className="absolute top-4 right-4 rounded-sm font-mono">
             In Development
           </Chip>
         )}

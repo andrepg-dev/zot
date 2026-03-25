@@ -56,7 +56,7 @@ export const defaultNavItems = [
     inDevelopment: true
   },
   {
-    href: "/app/waitlist/domains",
+    href: "/app/domains",
     label: "Domains",
     icon: GlobeAltIcon,
     inDevelopment: true

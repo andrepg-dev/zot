@@ -1,10 +1,17 @@
-import Title from "@/components/global/title";
+"use client";
+
+import ComingSoon from "@/components/global/coming-soon";
 import PageComponent from "@/components/layouts/page-component";
+import { GlobeAltIcon } from "@heroicons-animated/react";
 
 export default function DomainsPage() {
   return (
     <PageComponent>
-      <Title description="Manage your custom domains">Domains</Title>
+      <ComingSoon
+        icon={GlobeAltIcon}
+        title="Custom Domains are coming soon"
+        description="Soon you'll be able to connect your own domains to serve waitlists and landing pages under your brand."
+      />
     </PageComponent>
   );
 }
