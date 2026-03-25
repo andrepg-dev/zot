@@ -2,25 +2,30 @@
 
 import { cn } from "@/lib/utils";
 import {
-  BookOpenIcon,
   GlobeAltIcon,
   SunIcon
 } from "@heroicons/react/24/outline";
-import clsx from "clsx";
-import Link from "next/link";
 
+import { getProfile } from "@/actions/auth/profile";
 import useSidebarStore from "@/store/sidebar/sidebar.store";
 import {
   Dropdown,
   DropdownItem,
   DropdownMenu,
   DropdownSection,
-  DropdownTrigger
+  DropdownTrigger,
+  Skeleton
 } from "@heroui/react";
+import { useQuery } from "@tanstack/react-query";
 import ItemList from "./items-list";
 
 export default function Sidebar() {
   const { navItems, children, hidden, className } = useSidebarStore();
+
+  const { data, isPending } = useQuery({
+    queryKey: ["user-profile"],
+    queryFn: getProfile,
+  })
 
   return (
     <aside
@@ -44,7 +49,7 @@ export default function Sidebar() {
             <hr />
 
             <div className="my-4">
-              <Link
+              {/* <Link
                 href={"/docs"}
                 target="_blank"
                 className={clsx(
@@ -52,7 +57,7 @@ export default function Sidebar() {
                 )}
               >
                 <BookOpenIcon className={cn("size-5")} /> Documentation
-              </Link>
+              </Link> */}
 
               <Dropdown
                 showArrow
@@ -66,30 +71,29 @@ export default function Sidebar() {
               >
                 <DropdownTrigger>
                   <div className="flex items-center justify-between px-4 h-[45px] hover:bg-default/60">
-                    <div className="flex w-full items-center gap-2 cursor-pointer ">
-                      <div className="border size-6 flex items-center justify-center bg-default-100 rounded-full text-[9px] font-light text-muted-foreground">
-                        AP
+                    {isPending ? (
+                      <div className="flex w-full items-center gap-2">
+                        <Skeleton className="size-6 rounded-full" />
+                        <div className="flex flex-col gap-1">
+                          <Skeleton className="h-3 w-24 rounded-md" />
+                          <Skeleton className="h-2.5 w-14 rounded-md" />
+                        </div>
                       </div>
-                      <div className="flex flex-col text-[12px] leading-3.5 font-light">
-                        <p>Andre Ponce</p>
-                        <p className="text-muted-foreground">Premium</p>
+                    ) : (
+                      <div className="flex w-full items-center gap-2 cursor-pointer">
+                        <div className="border size-6 flex items-center justify-center bg-default-100 rounded-full text-[9px] font-light text-muted-foreground">
+                          {data?.name?.slice(0, 1)}{data?.lastName?.slice(0, 1)}
+                        </div>
+                        <div className="flex flex-col text-[12px] leading-3.5 font-light">
+                          <p>{data?.name} {data?.lastName}</p>
+                          <p className="text-muted-foreground">{data?.suscriptionPlan}</p>
+                        </div>
                       </div>
-                    </div>
-
-                    {/* <Button
-                      as={Link}
-                      href="/app/billing"
-                      size="sm"
-                      variant="faded"
-                      radius="full"
-                      className="px-5 text-muted-foreground h-[29px] py-2 text-[12px] scale-95 !bg-default-100"
-                    >
-                      Upgrade
-                    </Button> */}
+                    )}
                   </div>
                 </DropdownTrigger>
                 <DropdownMenu aria-label="Dropdown menu with description">
-                  <DropdownSection title={"asponceg@gmail.com"} showDivider>
+                  <DropdownSection title={data?.email} showDivider>
                     <DropdownItem
                       className="!transition-none"
                       key="theme"

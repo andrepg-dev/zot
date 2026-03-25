@@ -1,5 +1,6 @@
 "use client";
 
+import Chip from "@/components/ui/chip";
 import { cn } from "@/lib/utils";
 import { NavItemOrDivider, NavItemsI } from "@/store/sidebar/sidebar.constants";
 import { ChevronRightIcon } from "@heroicons/react/24/outline";
@@ -75,7 +76,7 @@ export default function ItemList({ navItems }: { navItems: NavItemOrDivider[] | 
           subItem?: Array<{ href: string; label: string; icon?: React.ComponentType<any> }>;
         };
 
-        const { icon: Icon, label: Label, href, subItem } = navItem;
+        const { icon: Icon, label: Label, href, subItem, inDevelopment } = navItem as any;
         const itemId = getItemId(navItem);
         const isExpanded = expandedItems.has(itemId);
         const isActive = isItemActive(navItem);
@@ -112,7 +113,10 @@ export default function ItemList({ navItems }: { navItems: NavItemOrDivider[] | 
                   )}
                 >
                   {Icon ? <Icon className={cn("size-4", isActive && "text-primary-400")} /> : null}
-                  {Label}
+                  <span className="flex-1">{Label}</span>
+                  {inDevelopment && (
+                    <Chip status="warning" className="text-[8px] px-1.5 py-0 border-transparent">Soon</Chip>
+                  )}
                 </Link>
               ) : null}
               {hasSubItems && isExpanded && (

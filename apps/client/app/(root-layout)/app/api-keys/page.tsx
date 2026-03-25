@@ -1,7 +1,9 @@
 "use client";
 
+import { useHotkey } from "@/hooks/use-hotkey";
 import { PencilIcon, PlusIcon } from "@heroicons/react/24/outline";
 import {
+  Kbd,
   Modal,
   ModalBody,
   ModalContent,
@@ -62,6 +64,15 @@ export default function ApiKeys() {
   const [createdKey, setCreatedKey] = useState<string>("");
   const [editingItem, setEditingItem] = useState<{ _id: string; name: string } | null>(null);
   const [deletingItem, setDeletingItem] = useState<{ _id: string; name: string } | null>(null);
+
+  useHotkey({
+    key: "k",
+    modifiers: ["meta"],
+    onPress: () => {
+      setModalPhase("form");
+      modal.onOpen();
+    }
+  });
 
   const { control, handleSubmit, reset, formState: { errors } } = useForm<CreateApiKeyValues>({
     resolver: zodResolver(createApiKeySchema)
@@ -279,6 +290,7 @@ export default function ApiKeys() {
           <GlobalButton
             color="primary"
             startContent={<PlusIcon className="size-4" />}
+            endContent={<Kbd className="text-xs" keys={["command"]}>K</Kbd>}
             onPress={() => {
               setModalPhase("form");
               modal.onOpen();

@@ -77,6 +77,7 @@ export interface NavItem {
   label: string;
   icon?: React.ForwardRefExoticComponent<any>;
   subItem?: NavItem[];
+  inDevelopment?: boolean;
 }
 
 export interface NavDivider {

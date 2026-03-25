@@ -10,7 +10,16 @@ export const accessTokenResponseSchema = z.object({
 });
 
 export const userProfileResponseSchema = z.object({
-  userId: z.string(),
+  _id: z.string(),
+  name: z.string().optional(),
+  lastName: z.string().optional(),
+  email: z.string(),
+  username: z.string(),
+  providers: z.array(z.enum(["google", "local", "github"])),
+  avatar: z.string().optional(),
+  suscriptionPlan: z.enum(["FREE", "PREMIUM", "SCALE"]),
+  createdAt: z.string(),
+  updatedAt: z.string(),
 });
 
 export const logoutResponseSchema = z.object({
