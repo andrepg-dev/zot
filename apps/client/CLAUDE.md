@@ -131,7 +131,7 @@ Maintain these patterns for consistency across all pages and components:
 
 **Table empty content**: Always wrap `emptyContent` in the `<Type>` component: `emptyContent={<Type>No items yet.</Type>}`. Never use plain strings.
 
-**Buttons**: default `size="sm"`, `radius="sm"`, ripple disabled via `GlobalButton`.
+**Buttons**: default `size="sm"`, `radius="sm"`, ripple disabled via `GlobalButton`. Never change button text based on loading state (e.g. `isPending ? "Saving" : "Save"`). Keep the normal label and use `isLoading` for the spinner.
 
 **Chips** (`components/ui/chip.tsx`): `rounded-full text-[10px]` with status variants — `active` (success), `warning`, `danger`, `primary`, `neutral`.
 
