@@ -23,7 +23,14 @@ export default function Dashboard() {
             isClosable
             radius="sm"
             endContent={
-              <Button as={Link} href="/app/billing" size="sm" className="mx-4" variant="flat" radius="sm">
+              <Button
+                as={Link}
+                href="/app/billing"
+                size="sm"
+                className="mx-4 border bg-default-50"
+                variant="bordered"
+                radius="sm"
+              >
                 Upgrade now
               </Button>
             }

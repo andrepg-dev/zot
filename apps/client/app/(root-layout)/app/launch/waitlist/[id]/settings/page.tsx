@@ -209,7 +209,7 @@ export default function SettingsPage({ params }: { params: Promise<{ id: string 
                   type="submit"
                   isLoading={generalMutation.isPending}
                 >
-                  {generalMutation.isPending ? "Saving" : "Save changes"}
+                  Save changes
                 </Button>
               </CardFooter>
             </CardBody>

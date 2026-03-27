@@ -129,7 +129,7 @@ export default function GeneralSettingsPage() {
                   type="submit"
                   isLoading={updateMutation.isPending}
                 >
-                  {updateMutation.isPending ? "Saving" : "Save changes"}
+                  Save changes
                 </Button>
               </CardFooter>
             </CardBody>

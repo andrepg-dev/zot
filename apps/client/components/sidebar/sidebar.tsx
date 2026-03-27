@@ -1,10 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import {
-  GlobeAltIcon,
-  SunIcon
-} from "@heroicons/react/24/outline";
+import { Cog6ToothIcon, GlobeAltIcon, SunIcon } from "@heroicons/react/24/outline";
 
 import { getProfile } from "@/actions/auth/profile";
 import useSidebarStore from "@/store/sidebar/sidebar.store";
@@ -24,8 +21,8 @@ export default function Sidebar() {
 
   const { data, isPending } = useQuery({
     queryKey: ["user-profile"],
-    queryFn: getProfile,
-  })
+    queryFn: getProfile
+  });
 
   return (
     <aside
@@ -63,8 +60,7 @@ export default function Sidebar() {
                 showArrow
                 classNames={{
                   base: "before:bg-default-200", // change arrow background
-                  content:
-                    "py-1 px-1 border bg-default-50"
+                  content: "py-1 px-1 border bg-default-50"
                 }}
                 radius="sm"
                 disableAnimation
@@ -82,10 +78,13 @@ export default function Sidebar() {
                     ) : (
                       <div className="flex w-full items-center gap-2 cursor-pointer">
                         <div className="border size-6 flex items-center justify-center bg-default-100 rounded-full text-[9px] font-light text-muted-foreground">
-                          {data?.name?.slice(0, 1)}{data?.lastName?.slice(0, 1)}
+                          {data?.name?.slice(0, 1)}
+                          {data?.lastName?.slice(0, 1)}
                         </div>
                         <div className="flex flex-col text-[12px] leading-3.5 font-light">
-                          <p>{data?.name} {data?.lastName}</p>
+                          <p>
+                            {data?.name} {data?.lastName}
+                          </p>
                           <p className="text-muted-foreground">{data?.suscriptionPlan}</p>
                         </div>
                       </div>
@@ -110,6 +109,14 @@ export default function Sidebar() {
                       startContent={<GlobeAltIcon className="size-4" />}
                     >
                       Language
+                    </DropdownItem>
+
+                    <DropdownItem
+                      className="!transition-none"
+                      key="settings"
+                      startContent={<Cog6ToothIcon className="size-4" />}
+                    >
+                      Settings
                     </DropdownItem>
                   </DropdownSection>
 

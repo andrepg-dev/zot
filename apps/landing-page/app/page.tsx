@@ -3,7 +3,6 @@ import type { LogoItem } from "@/components/LogoLoop";
 import LogoLoop from "@/components/LogoLoop";
 import ProductivityInsightsCard from "@/components/ProductivityInsightsCard";
 import ProjectsChartSVG from "@/components/ProjectsChartSVG";
-import ShinyText from "@/components/ShinyText";
 import { getDashboardUrl } from "@/lib/dashboard-url";
 import {
   ChartColumnIcon,
@@ -60,6 +59,8 @@ const ReadyToStartSection = dynamic(
 );
 
 const FaqSection = dynamic(() => import("@/components/FaqSection"));
+
+const ShinyText = dynamic(() => import("@/components/ShinyText"));
 
 const logoipsumLogos: LogoItem[] = [
   { src: "/icons/zot-icon-only.svg", alt: "Zot", title: "Zot", width: 55, height: 32 },
@@ -299,13 +300,13 @@ export default function HomePage() {
             {/* Lado izquierdo: imagen con difuminado en el borde derecho */}
             <div className="relative h-[280px] lg:h-auto lg:min-h-[320px] shrink-0">
               <div className="absolute inset-0 bg-zinc-900/80">
-                {/* Sustituir por <Image /> cuando tengas la imagen en /public (ej. task-management-preview.webp) */}
-                <div
-                  className="absolute inset-0 bg-cover bg-center"
-                  style={{
-                    backgroundImage: "url(/ai-editor-2.webp)",
-                    backgroundColor: "rgb(39 39 42)", // fallback si no hay imagen
-                  }}
+                <Image
+                  src="/ai-editor-2.webp"
+                  alt="AI editor preview"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  loading="lazy"
                 />
               </div>
               {/* Difuminado: gradiente para integrar la imagen con el fondo de la card */}
