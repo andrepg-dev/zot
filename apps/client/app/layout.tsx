@@ -25,12 +25,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <html suppressHydrationWarning lang="en">
         <body
           className={clsx(
-            "min-h-screen text-foreground font-sans antialiased relative",
+            "min-h-screen text-foreground antialiased relative",
             interFont.variable,
             geistMonoFont.variable
           )}
         >
-          <ToastProvider />
+          <ToastProvider toastProps={{ radius: "sm" }} />
           <Providers themeProps={{ attribute: "class", forcedTheme: "dark" }}>
             {/* <NextTopLoader
             color="#006fee"
@@ -39,7 +39,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             zIndex={100000}
           /> */}
             <QueryProvider>
-
               {children}
             </QueryProvider>
           </Providers>

@@ -27,7 +27,7 @@ export default function BillingDrawing({ children }: { children: React.ReactNode
               {plans.slice(1).map((plan) => (
                 <div
                   key={plan.name}
-                  className={`relative scale-90 -ml-6 flex flex-col rounded-2xl border bg-card/80 p-6 shadow-lg backdrop-blur ${
+                  className={`relative scale-90 -ml-6 flex flex-col rounded-sm border bg-card/80 p-6 shadow-lg backdrop-blur ${
                     plan.popular ? "border-blue-500/60 ring-1 ring-blue-500/40" : "border-white/10"
                   }`}
                 >
@@ -51,7 +51,7 @@ export default function BillingDrawing({ children }: { children: React.ReactNode
                   <Link
                     href={plan.ctaHref}
                     onClick={onOpenChange}
-                    className={`mt-6 inline-flex h-11 items-center justify-center rounded-md border px-4 text-sm font-semibold transition-colors ${
+                    className={`mt-6 inline-flex h-11 items-center justify-center rounded-sm border px-4 text-sm font-semibold transition-colors ${
                       plan.popular
                         ? "bg-blue-500 text-white border-blue-500 drop-shadow-lg drop-shadow-black "
                         : "border-blue-500/50 text-blue-100 hover:border-blue-400 hover:bg-blue-500/10"

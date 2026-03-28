@@ -1,9 +1,9 @@
 import {
   ChartBarIcon,
   Cog6ToothIcon,
-  KeyIcon,
   GlobeAltIcon,
   InboxStackIcon,
+  KeyIcon,
   Square3Stack3DIcon,
   Squares2X2Icon
 } from "@heroicons/react/24/outline";
@@ -52,12 +52,14 @@ export const defaultNavItems = [
   {
     href: "/app/landing-page",
     label: "Landing page",
-    icon: Square3Stack3DIcon
+    icon: Square3Stack3DIcon,
+    inDevelopment: true
   },
   {
-    href: "/app/waitlist/domains",
+    href: "/app/domains",
     label: "Domains",
-    icon: GlobeAltIcon
+    icon: GlobeAltIcon,
+    inDevelopment: true
   },
 
   { type: "divider" },
@@ -75,6 +77,7 @@ export interface NavItem {
   label: string;
   icon?: React.ForwardRefExoticComponent<any>;
   subItem?: NavItem[];
+  inDevelopment?: boolean;
 }
 
 export interface NavDivider {

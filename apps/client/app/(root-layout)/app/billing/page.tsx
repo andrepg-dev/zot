@@ -20,11 +20,10 @@ export default function BillingPage() {
           {plans.map((plan) => (
             <div
               key={plan.name}
-              className={`relative flex flex-col rounded-2xl border bg-card/80 p-6 shadow-lg backdrop-blur ${
-                plan.popular
-                  ? "border-blue-500/60 ring-1 ring-blue-500/40 -translate-y-5"
-                  : "border-white/10"
-              }`}
+              className={`relative flex flex-col bg-[#0D0D0E] border p-6 shadow-lg backdrop-blur ${plan.popular
+                ? "border-[#4338CA] -translate-y-5"
+                : "border-white/10"
+                }`}
             >
               {plan.popular && (
                 <span className="absolute right-4 top-4 rounded-full bg-blue-500/20 px-3 py-1 text-xs font-semibold text-blue-100">
@@ -43,11 +42,10 @@ export default function BillingPage() {
 
               <Link
                 href={plan.ctaHref}
-                className={`mt-6 inline-flex h-11 items-center justify-center rounded-md border px-4 text-sm font-semibold transition-colors ${
-                  plan.popular
-                    ? "bg-blue-500 text-white border-blue-500 drop-shadow-lg drop-shadow-black "
-                    : "border-blue-500/50 text-blue-100 hover:border-blue-400 hover:bg-blue-500/10"
-                }`}
+                className={`mt-6 inline-flex h-10.5 items-center justify-center rounded-sm border px-4 text-sm font-semibold transition-colors ${plan.popular
+                  ? "bg-[#4338CA] text-white border-blue-500 drop-shadow-lg drop-shadow-black "
+                  : "border-blue-500/50 text-blue-100 hover:border-blue-400 hover:bg-blue-500/10"
+                  }`}
               >
                 {plan.ctaLabel}
               </Link>

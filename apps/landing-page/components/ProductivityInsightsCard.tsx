@@ -50,10 +50,12 @@ export default function ProductivityInsightsCard({
         <div className="mx-2 mr-0 border-t overflow-hidden rounded rounded-tr-none bg-black/10 min-h-[200px] sm:min-h-[280px] lg:min-h-[320px]">
           <Image
             src={previewImage.src}
-            width={800}
-            height={800}
+            width={612}
+            height={467}
             alt={previewImage.alt ?? "Vista previa"}
             className="object-cover rounded"
+            sizes="(max-width: 640px) 85vw, (max-width: 1024px) 45vw, 500px"
+            loading="lazy"
           />
         </div>
       </div>

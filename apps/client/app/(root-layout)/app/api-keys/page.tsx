@@ -1,7 +1,9 @@
 "use client";
 
+import { useHotkey } from "@/hooks/use-hotkey";
 import { PencilIcon, PlusIcon } from "@heroicons/react/24/outline";
 import {
+  Kbd,
   Modal,
   ModalBody,
   ModalContent,
@@ -63,7 +65,21 @@ export default function ApiKeys() {
   const [editingItem, setEditingItem] = useState<{ _id: string; name: string } | null>(null);
   const [deletingItem, setDeletingItem] = useState<{ _id: string; name: string } | null>(null);
 
-  const { control, handleSubmit, reset, formState: { errors } } = useForm<CreateApiKeyValues>({
+  useHotkey({
+    key: "k",
+    modifiers: ["meta"],
+    onPress: () => {
+      setModalPhase("form");
+      modal.onOpen();
+    }
+  });
+
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors }
+  } = useForm<CreateApiKeyValues>({
     resolver: zodResolver(createApiKeySchema)
   });
 
@@ -163,9 +179,16 @@ export default function ApiKeys() {
               <Type>
                 Make sure to copy your API key now. You won{"'"}t be able to see it again.
               </Type>
-              <InputComponent value={createdKey} isReadOnly className="w-full mt-2" endContent={<CopyButton text={createdKey} className="min-w-7 h-7 shrink-0">
-                Copy
-              </CopyButton>} />
+              <InputComponent
+                value={createdKey}
+                isReadOnly
+                className="w-full mt-2"
+                endContent={
+                  <CopyButton text={createdKey} className="min-w-7 h-7 shrink-0">
+                    Copy
+                  </CopyButton>
+                }
+              />
             </div>
           </ModalBody>
           <ModalFooter>
@@ -206,11 +229,7 @@ export default function ApiKeys() {
             <GlobalButton variant="light" onPress={handleCloseModal}>
               Cancel
             </GlobalButton>
-            <GlobalButton
-              color="primary"
-              type="submit"
-              isLoading={updateMutation.isPending}
-            >
+            <GlobalButton color="primary" type="submit" isLoading={updateMutation.isPending}>
               Save
             </GlobalButton>
           </ModalFooter>
@@ -223,7 +242,7 @@ export default function ApiKeys() {
         <ModalHeader>Create API Key</ModalHeader>
         <ModalBody>
           <div className="flex flex-col gap-2">
-            <Type variant="sm" className="text-muted-foreground">
+            <Type className="text-muted-foreground">
               Give your API key a name to help you identify it later.
             </Type>
 
@@ -250,11 +269,7 @@ export default function ApiKeys() {
           <GlobalButton variant="light" onPress={handleCloseModal}>
             Cancel
           </GlobalButton>
-          <GlobalButton
-            color="primary"
-            type="submit"
-            isLoading={createMutation.isPending}
-          >
+          <GlobalButton color="primary" type="submit" isLoading={createMutation.isPending}>
             Create
           </GlobalButton>
         </ModalFooter>
@@ -279,6 +294,11 @@ export default function ApiKeys() {
           <GlobalButton
             color="primary"
             startContent={<PlusIcon className="size-4" />}
+            endContent={
+              <Kbd className="text-xs" keys={["command"]}>
+                K
+              </Kbd>
+            }
             onPress={() => {
               setModalPhase("form");
               modal.onOpen();
@@ -301,9 +321,7 @@ export default function ApiKeys() {
         }}
       >
         <TableHeader<ApiKeyTableColumn> columns={[...columns]}>
-          {(column) => (
-            <TableColumn key={column.key}>{column.label}</TableColumn>
-          )}
+          {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
         </TableHeader>
 
         <TableBody items={rows} isLoading={isPending} emptyContent={<Type>No API keys yet.</Type>}>
@@ -315,7 +333,8 @@ export default function ApiKeys() {
                   apiKey: (
                     <div className="flex items-center gap-1.5">
                       <code className="text-xs text-muted-foreground">
-                        {item.apiKey?.slice(0, 12)}{"..."}
+                        {item.apiKey?.slice(0, 12)}
+                        {"..."}
                       </code>
                     </div>
                   ),
@@ -326,11 +345,7 @@ export default function ApiKeys() {
                   ),
                   actions: (
                     <div className="flex items-center gap-1">
-                      <GlobalButton
-                        isIconOnly
-                        variant="light"
-                        onPress={() => handleOpenEdit(item)}
-                      >
+                      <GlobalButton isIconOnly variant="light" onPress={() => handleOpenEdit(item)}>
                         <PencilIcon className="size-3.5" />
                       </GlobalButton>
                       <GlobalButton
@@ -345,9 +360,7 @@ export default function ApiKeys() {
                   )
                 };
 
-                return (
-                  <TableCell>{valueMap[columnKey as ApiKeyTableColumnKey]}</TableCell>
-                );
+                return <TableCell>{valueMap[columnKey as ApiKeyTableColumnKey]}</TableCell>;
               }}
             </TableRow>
           )}
@@ -363,9 +376,7 @@ export default function ApiKeys() {
         isDismissable={modalPhase !== "created"}
         hideCloseButton={modalPhase === "created"}
       >
-        <ModalContent>
-          {(onClose) => renderModalContent(onClose)}
-        </ModalContent>
+        <ModalContent>{(onClose) => renderModalContent(onClose)}</ModalContent>
       </Modal>
 
       <Modal
@@ -385,8 +396,8 @@ export default function ApiKeys() {
               <ModalBody>
                 <Type className="text-muted-foreground">
                   Are you sure you want to delete the API key{" "}
-                  <Type variant="code">{deletingItem?.name}</Type>? This action
-                  cannot be undone and any applications using this key will lose access.
+                  <Type variant="code">{deletingItem?.name}</Type>? This action cannot be undone and
+                  any applications using this key will lose access.
                 </Type>
               </ModalBody>
               <ModalFooter>

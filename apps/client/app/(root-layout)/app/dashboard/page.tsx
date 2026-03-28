@@ -21,8 +21,16 @@ export default function Dashboard() {
             }
             variant="faded"
             isClosable
+            radius="sm"
             endContent={
-              <Button as={Link} href="/app/billing" size="sm" className="mx-4" variant="faded">
+              <Button
+                as={Link}
+                href="/app/billing"
+                size="sm"
+                className="mx-4 border bg-default-50"
+                variant="bordered"
+                radius="sm"
+              >
                 Upgrade now
               </Button>
             }

@@ -95,7 +95,7 @@ Maintain these patterns for consistency across all pages and components:
 - h4: `text-base font-medium` — Page/section titles (most common)
 - h6: `text-sm font-medium` — Small headings
 - base: `text-sm` — Body text
-- sm: `text-xs` — Secondary/metadata text
+- sm: `text-xs` — Secondary/metadata text. **Only use `variant="sm"` when the UI specifically needs small text** (e.g. metadata, captions). Default to base `<Type>` for general content.
 
 **Colors** (dark theme default):
 - Primary text: `text-foreground` (implicit default)
@@ -131,7 +131,7 @@ Maintain these patterns for consistency across all pages and components:
 
 **Table empty content**: Always wrap `emptyContent` in the `<Type>` component: `emptyContent={<Type>No items yet.</Type>}`. Never use plain strings.
 
-**Buttons**: default `size="sm"`, `radius="sm"`, ripple disabled via `GlobalButton`.
+**Buttons**: default `size="sm"`, `radius="sm"`, ripple disabled via `GlobalButton`. Never change button text based on loading state (e.g. `isPending ? "Saving" : "Save"`). Keep the normal label and use `isLoading` for the spinner.
 
 **Chips** (`components/ui/chip.tsx`): `rounded-full text-[10px]` with status variants — `active` (success), `warning`, `danger`, `primary`, `neutral`.
 
