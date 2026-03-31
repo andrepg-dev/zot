@@ -89,6 +89,7 @@ export default function UsersTable({ id }: { id: string }) {
 
         <Table
           aria-label="Email Send Records Table"
+          isStriped
           radius="sm"
           checkboxesProps={{
             size: "sm",

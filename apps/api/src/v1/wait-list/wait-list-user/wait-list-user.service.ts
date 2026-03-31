@@ -173,7 +173,7 @@ export class WaitListUserService {
           $match: { waitlistId },
         },
         {
-          $sort: { position: 1 },
+          $sort: { createdAt: -1 },
         },
         {
           $project: {

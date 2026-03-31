@@ -72,7 +72,9 @@ export default function MetricPage({ params }: { params: Promise<{ id: string }>
             key="table"
             title={
               <>
-                <Kbd className="text-xs bg-background mr-2" keys={["command"]}>1</Kbd>
+                <Kbd className="text-xs bg-background mr-2" keys={["command"]}>
+                  1
+                </Kbd>
                 History
               </>
             }
@@ -81,7 +83,9 @@ export default function MetricPage({ params }: { params: Promise<{ id: string }>
             key="analytics"
             title={
               <>
-                <Kbd className="text-xs bg-background mr-2" keys={["command"]}>2</Kbd>
+                <Kbd className="text-xs bg-background mr-2" keys={["command"]}>
+                  2
+                </Kbd>
                 Analytics
               </>
             }
@@ -89,9 +93,8 @@ export default function MetricPage({ params }: { params: Promise<{ id: string }>
         </Tabs>
       </div>
 
-      {selectedTab === "analytics" && <EmailsSentChart data={emailsSentData} />}
       {selectedTab === "table" && <UsersTable id={id} />}
-
+      {selectedTab === "analytics" && <EmailsSentChart data={emailsSentData} />}
     </PageComponent>
   );
 }

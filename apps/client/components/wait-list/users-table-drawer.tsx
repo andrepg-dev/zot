@@ -36,6 +36,7 @@ import React, { useState } from "react";
 import Type from "../type";
 
 import { formatDate } from "@/lib/format-date";
+import PrimaryActionButton from "../global/primary-action-button";
 
 const baseColumns = [
   { key: "position", label: "#" },
@@ -178,13 +179,14 @@ export default function UsersTableDrawer({
                 {selectedKeys.size > 0 && (
                   <Dropdown>
                     <DropdownTrigger>
-                      <GlobalButton
+                      <PrimaryActionButton
                         size="sm"
                         variant="faded"
+                        color="primary"
                         endContent={<ChevronDownIcon className="size-4" />}
                       >
                         Actions ({selectedKeys.size})
-                      </GlobalButton>
+                      </PrimaryActionButton>
                     </DropdownTrigger>
                     <DropdownMenu aria-label="Actions">
                       <DropdownItem
@@ -199,16 +201,14 @@ export default function UsersTableDrawer({
                     </DropdownMenu>
                   </Dropdown>
                 )}
-
-                <span className="text-default-400 text-small">
-                  {filteredUsers.length} user{filteredUsers.length !== 1 ? "s" : ""}
-                </span>
               </div>
             </div>
 
             <Table
               aria-label="Waitlist Users Table"
               radius="sm"
+              isVirtualized
+              isHeaderSticky
               selectionMode="multiple"
               selectedKeys={selectedKeys}
               onSelectionChange={(keys) => {
@@ -224,9 +224,10 @@ export default function UsersTableDrawer({
                   wrapper: "before:border-1"
                 }
               }}
+              color="primary"
               classNames={{
                 th: "!rounded-b-none",
-                wrapper: "p-0 border",
+                wrapper: "p-0",
                 td: "first:before:rounded-none last:before:rounded-e-none py-3"
               }}
             >
@@ -239,7 +240,7 @@ export default function UsersTableDrawer({
               </TableHeader>
 
               <TableBody
-                items={filteredUsers.map((user, index) => ({ ...user, position: index + 1 }))}
+                items={filteredUsers}
                 isLoading={isPending}
                 loadingContent={<Spinner size="sm" />}
                 emptyContent={<Type>No users registered yet.</Type>}

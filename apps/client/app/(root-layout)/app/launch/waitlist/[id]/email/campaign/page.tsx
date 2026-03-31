@@ -265,6 +265,7 @@ export default function CampaignPage({ params }: { params: Promise<{ id: string 
         <Table
           aria-label="Waitlist Users Table"
           radius="sm"
+          isHeaderSticky
           selectionMode="multiple"
           selectedKeys={selectedKeys}
           onSelectionChange={(keys) => {
@@ -289,7 +290,7 @@ export default function CampaignPage({ params }: { params: Promise<{ id: string 
           </TableHeader>
 
           <TableBody
-            items={filteredUsers.map((user, index) => ({ ...user, position: index + 1 }))}
+            items={filteredUsers}
             isLoading={isPending}
             loadingContent={<Spinner size="sm" />}
             emptyContent={<Type>No users yet.</Type>}
