@@ -1,6 +1,7 @@
 import { toObjectId } from "@api/src/common/data-transform/to-object-id";
 import {
   BadRequestException,
+  HttpException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -142,7 +143,7 @@ export class UserQuoteService {
       const cumulativeUsage = userQuoteService + usage;
 
       if (cumulativeUsage > serviceLimit) {
-        throw new BadRequestException(`Limits reached for ${service} service`);
+        throw new HttpException(`Limits reached for ${service} service`, 402);
       }
 
       // <================== UPDATE THE VALUES INTO THE DATABASE ==================>

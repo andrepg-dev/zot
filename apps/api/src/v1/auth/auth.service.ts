@@ -129,7 +129,7 @@ export class AuthService {
     }
 
     if (!isValid) {
-      throw new UnauthorizedException("refresh token invalid");
+      throw new HttpException("refresh token invalid", 498);
     }
 
     return { userId: toObjectId(payload.userId) };
