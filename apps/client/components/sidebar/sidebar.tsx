@@ -3,6 +3,7 @@
 import { cn } from "@/lib/utils";
 import { Cog6ToothIcon, GlobeAltIcon, SunIcon } from "@heroicons/react/24/outline";
 
+import { logout } from "@/actions/auth/logout";
 import { getProfile } from "@/actions/auth/profile";
 import useSidebarStore from "@/store/sidebar/sidebar.store";
 import {
@@ -11,9 +12,16 @@ import {
   DropdownMenu,
   DropdownSection,
   DropdownTrigger,
-  Skeleton
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  Skeleton,
+  useDisclosure
 } from "@heroui/react";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import GlobalButton from "../global/button";
 import ItemList from "./items-list";
 
 export default function Sidebar() {
@@ -22,6 +30,12 @@ export default function Sidebar() {
   const { data, isPending } = useQuery({
     queryKey: ["user-profile"],
     queryFn: getProfile
+  });
+
+  const logoutModal = useDisclosure();
+
+  const { mutate: handleLogout, isPending: isLoadingLogout } = useMutation({
+    mutationFn: logout
   });
 
   return (
@@ -121,7 +135,11 @@ export default function Sidebar() {
                   </DropdownSection>
 
                   <DropdownSection>
-                    <DropdownItem className="!transition-none" key="logout">
+                    <DropdownItem
+                      className="!transition-none"
+                      key="logout"
+                      onPress={logoutModal.onOpen}
+                    >
                       Logout
                     </DropdownItem>
                   </DropdownSection>
@@ -131,6 +149,36 @@ export default function Sidebar() {
           </div>
         )}
       </div>
+      <Modal isOpen={logoutModal.isOpen} onOpenChange={logoutModal.onOpenChange} radius="sm">
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader>Logout</ModalHeader>
+              <ModalBody>
+                <p className="text-sm text-muted-foreground">
+                  Are you sure you want to log out of your account?
+                </p>
+              </ModalBody>
+              <ModalFooter>
+                <GlobalButton variant="light" onPress={onClose}>
+                  Cancel
+                </GlobalButton>
+                <GlobalButton
+                  color="danger"
+                  isLoading={isLoadingLogout}
+                  onPress={() =>
+                    handleLogout(undefined, {
+                      onSettled: () => onClose()
+                    })
+                  }
+                >
+                  Logout
+                </GlobalButton>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
     </aside>
   );
 }
