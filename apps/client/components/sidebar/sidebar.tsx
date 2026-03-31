@@ -21,11 +21,13 @@ import {
   useDisclosure
 } from "@heroui/react";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import GlobalButton from "../global/button";
 import ItemList from "./items-list";
 
 export default function Sidebar() {
   const { navItems, children, hidden, className } = useSidebarStore();
+  const router = useRouter();
 
   const { data, isPending } = useQuery({
     queryKey: ["user-profile"],
@@ -107,7 +109,7 @@ export default function Sidebar() {
                 </DropdownTrigger>
                 <DropdownMenu aria-label="Dropdown menu with description">
                   <DropdownSection title={data?.email} showDivider>
-                    <DropdownItem
+                    {/* <DropdownItem
                       className="!transition-none"
                       key="theme"
                       isReadOnly
@@ -123,12 +125,15 @@ export default function Sidebar() {
                       startContent={<GlobeAltIcon className="size-4" />}
                     >
                       Language
-                    </DropdownItem>
+                    </DropdownItem> */}
 
                     <DropdownItem
                       className="!transition-none"
                       key="settings"
                       startContent={<Cog6ToothIcon className="size-4" />}
+                      onPress={() => {
+                        router.push("/app/settings");
+                      }}
                     >
                       Settings
                     </DropdownItem>
