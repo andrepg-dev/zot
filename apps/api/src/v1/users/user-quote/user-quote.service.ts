@@ -9,7 +9,7 @@ import { InjectModel } from "@nestjs/mongoose";
 import { Model, Types } from "mongoose";
 import { User } from "../schemas/users.schema";
 import { QuoteUsageHistory } from "./schemas/quote-usage-history.schema";
-import { DomainsQuote, UserQuote } from "./schemas/user-quote.schema";
+import { UserQuote } from "./schemas/user-quote.schema";
 import { QUOTE_SERVICE_KEYS, QuoteServiceKey } from "./types/quote-service-key";
 
 export type { QuoteServiceKey };
@@ -49,16 +49,6 @@ export class UserQuoteService {
     domains: { email: 10, general: 10000 },
   };
 
-  /** Normalize domains from DB (supports legacy number or object). */
-  private normalizeDomains(domains: DomainsQuote | number | undefined): DomainsQuote {
-    if (domains == null) return { email: 0, general: 0 };
-    if (typeof domains === "number") return { email: 0, general: domains };
-    return {
-      email: typeof domains.email === "number" ? domains.email : 0,
-      general: typeof domains.general === "number" ? domains.general : 0,
-    };
-  }
-
   async createQuote(ownerId: Types.ObjectId | string) {
     const id = toObjectId(ownerId);
     return this.userQuoteModel.create({
@@ -69,14 +59,13 @@ export class UserQuoteService {
 
   async findUserQuote(userId: Types.ObjectId) {
     try {
-      const ownerId = toObjectId(userId);
-      const quote = await this.userQuoteModel.findOne({ owner: ownerId }).select("+owner");
+      const quote = await this.userQuoteModel.findOne({ owner: userId }).select("+owner");
 
       if (!quote) {
         throw new NotFoundException("Quote not found");
       }
 
-      const user = await this.userModel.findById(ownerId);
+      const user = await this.userModel.findById(userId);
       const limits =
         user?.suscriptionPlan === "PREMIUM" ? this.premiumQuoteLimit : this.freeQuoteLimit;
 
@@ -85,7 +74,6 @@ export class UserQuoteService {
       return {
         usage: {
           ...quoteJson,
-          domains: this.normalizeDomains(quoteJson.domains),
         },
         limits,
         plan: user?.suscriptionPlan ?? "FREE",
@@ -116,29 +104,31 @@ export class UserQuoteService {
         throw new InternalServerErrorException("Amount must be greater than 0");
       }
 
+      // <================== GET THE USER QUOTE SERVICE ==================>
       const user = await this.userModel.findById(ownerId);
       const userPlan = user?.suscriptionPlan;
 
       let quote = await this.userQuoteModel.findOne({ owner: ownerId }).select("+owner");
 
       if (!quote) {
-        quote = (await this.createQuote(ownerId)) as typeof quote & object;
+        quote = await this.createQuote(ownerId);
       }
 
       const isNested = service === "domains.email" || service === "domains.general";
-      let currentServiceValue: number;
+      let userQuoteService: number;
 
       if (isNested) {
-        const domains = this.normalizeDomains(quote.domains);
-        currentServiceValue = service === "domains.email" ? domains.email : domains.general;
+        const domains = quote.domains;
+        userQuoteService = service === "domains.email" ? domains.email : domains.general;
       } else {
-        currentServiceValue = quote[service];
+        userQuoteService = quote[service];
       }
 
+      // <================== GET THE USER LIMITS ==================>
       let serviceLimit: number;
+      let subKey = service === "domains.email" ? "email" : "general";
 
       if (isNested) {
-        const subKey = service === "domains.email" ? "email" : "general";
         serviceLimit =
           userPlan === "PREMIUM"
             ? this.premiumQuoteLimit.domains[subKey]
@@ -148,26 +138,28 @@ export class UserQuoteService {
           userPlan === "PREMIUM" ? this.premiumQuoteLimit[service] : this.freeQuoteLimit[service];
       }
 
-      if (currentServiceValue + usage > serviceLimit) {
+      // <================== ACTUAL USER QUOTE VALIDATION TO KNOW IF HE REACHED THE LIMIT ==================>
+      const cumulativeUsage = userQuoteService + usage;
+
+      if (cumulativeUsage > serviceLimit) {
         throw new BadRequestException(`Limits reached for ${service} service`);
       }
 
-      const usageValue = currentServiceValue + usage;
-
+      // <================== UPDATE THE VALUES INTO THE DATABASE ==================>
       if (isNested) {
-        const domains = this.normalizeDomains(quote.domains);
         quote.domains = {
-          ...domains,
-          [service === "domains.email" ? "email" : "general"]: usageValue,
+          ...quote.domains,
+          [subKey]: cumulativeUsage,
         };
       } else {
-        (quote as unknown as Record<string, number>)[service] = usageValue;
+        quote[service] = cumulativeUsage;
       }
 
+      // THIS UPDATE INTO THE DATABASE
       await quote.save();
 
-      // <================== SAVE IN USER QUOTE HISTORY ==================>
-      const dontSaveInHistoryUsage = ["userSignUp", "waitlist"];
+      // <================== SAVE IN USER QUOTE HISTORY, TO KNOW IN CHARTS ==================>
+      const dontSaveInHistoryUsage = ["userSignUp"];
 
       // Allow only services available
       if (!dontSaveInHistoryUsage.includes(service)) {
@@ -175,7 +167,7 @@ export class UserQuoteService {
           owner: ownerId,
           service,
           amount: usage,
-          remainingAfter: serviceLimit - usageValue,
+          remainingAfter: serviceLimit - cumulativeUsage,
         });
       }
 
@@ -217,7 +209,6 @@ export class UserQuoteService {
 
       const limit = filters?.limit ?? 50;
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return await this.quoteUsageHistoryModel.aggregate([
         { $match: matchStage },
         { $sort: { createdAt: -1 } },
