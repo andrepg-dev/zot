@@ -109,12 +109,12 @@ export default function Sidebar() {
                 </DropdownTrigger>
                 <DropdownMenu aria-label="Dropdown menu with description">
                   <DropdownSection title={data?.email} showDivider>
-                    {/* <DropdownItem
+                    <DropdownItem
                       className="!transition-none"
                       key="theme"
                       isReadOnly
-                      shortcut={"T"}
                       startContent={<SunIcon className="size-4" />}
+                      classNames={{ base: "opacity-50" }}
                     >
                       Theme
                     </DropdownItem>
@@ -123,9 +123,11 @@ export default function Sidebar() {
                       className="!transition-none"
                       key="language"
                       startContent={<GlobeAltIcon className="size-4" />}
+                      classNames={{ base: "opacity-50" }}
+                      isReadOnly
                     >
                       Language
-                    </DropdownItem> */}
+                    </DropdownItem>
 
                     <DropdownItem
                       className="!transition-none"
