@@ -64,7 +64,13 @@ export default function DailyRegistrationsChart({
           </p>
         </div>
 
-        <Button size="sm" variant="light" endContent={<ArrowTopRightOnSquareIcon className="size-3" />} className="text-muted-foreground" onPress={onOpen}>
+        <Button
+          size="sm"
+          variant="light"
+          endContent={<ArrowTopRightOnSquareIcon className="size-3" />}
+          className="text-muted-foreground"
+          onPress={onOpen}
+        >
           Show user's table
         </Button>
       </div>

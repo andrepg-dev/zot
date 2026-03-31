@@ -51,7 +51,7 @@ export default function LaunchedWaitList({ params }: { params: Promise<{ id: str
   const { data, isPending } = useQuery({
     queryKey: [id],
     queryFn: async () => getWaitListStats(id)
-  })
+  });
 
   React.useEffect(() => {
     setAnimated(true);
@@ -65,21 +65,21 @@ export default function LaunchedWaitList({ params }: { params: Promise<{ id: str
       title: "Total Sign Ups",
       value: data?.users?.total ?? 0,
       icon: UserPlusIcon,
-      iconColor: "text-blue-500",
+      iconColor: "text-blue-500"
     },
     {
       id: 2,
       title: "Total Referrals",
       value: data?.users?.referred ?? 0,
       icon: ShareIcon,
-      iconColor: "text-green-500",
+      iconColor: "text-green-500"
     },
     {
       id: 3,
       title: "Sign Ups Today",
       value: data?.users?.signUpsToday ?? 0,
       icon: UserGroupIcon,
-      iconColor: "text-yellow-500",
+      iconColor: "text-yellow-500"
     },
     {
       id: 4,
@@ -87,47 +87,52 @@ export default function LaunchedWaitList({ params }: { params: Promise<{ id: str
       value: data?.emailsSent ?? 0,
       icon: EnvelopeIcon,
       iconColor: "text-muted-foreground",
-      href: `/app/launch/waitlist/${id}/email`,
+      href: `/app/launch/waitlist/${id}/email/metrics`
     },
     {
       id: 5,
       title: "Fake users blocked",
       value: data?.usersBlocked ?? 0,
       icon: HandRaisedIcon,
-      iconColor: "text-purple-500",
+      iconColor: "text-purple-500"
     }
   ];
 
   const rawRegistrations = data?.dailyRegistration?.map((d) => ({
     date: formatShortDate(d.createdAt),
     registrations: d.registrations,
-    referrals: 0,
+    referrals: 0
   }));
 
-  const dailyRegistrationsData = fillDailyData(rawRegistrations, last20Days, { registrations: 0, referrals: 0 });
+  const dailyRegistrationsData = fillDailyData(rawRegistrations, last20Days, {
+    registrations: 0,
+    referrals: 0
+  });
 
   const rawBlocked = data?.dailyUsersBlocked?.map((d) => ({
     date: formatShortDate(d.createdAt),
-    blocked: d.blocked,
+    blocked: d.blocked
   }));
   const fakeUsersBlockedData = fillDailyData(rawBlocked, last20Days, { blocked: 0 });
 
   const TOP_REFERRERS_SLOTS = 10;
-  const topReferrersData = data ? (() => {
-    const real = data.topReferrers.map((d) => ({
-      name: d.email,
-      referrals: d.referrals,
-    }));
-    const empty = Array.from({ length: TOP_REFERRERS_SLOTS - real.length }, (_, i) => ({
-      name: `Empty ${i + real.length + 1}`,
-      referrals: 0,
-    }));
-    return [...real, ...empty];
-  })() : undefined;
+  const topReferrersData = data
+    ? (() => {
+        const real = data.topReferrers.map((d) => ({
+          name: d.email,
+          referrals: d.referrals
+        }));
+        const empty = Array.from({ length: TOP_REFERRERS_SLOTS - real.length }, (_, i) => ({
+          name: `Empty ${i + real.length + 1}`,
+          referrals: 0
+        }));
+        return [...real, ...empty];
+      })()
+    : undefined;
 
   const rawConversion = data?.conversionRateOverTime?.map((d) => ({
     date: formatShortDate(d.createdAt),
-    rate: Math.round(d.conversionRate * 100) / 100,
+    rate: Math.round(d.conversionRate * 100) / 100
   }));
 
   const conversionRateData = fillDailyData(rawConversion, last20Days, { rate: 0 });
@@ -143,10 +148,7 @@ export default function LaunchedWaitList({ params }: { params: Promise<{ id: str
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mt-4 rounded-default">
         {stats.map((stat) => (
-          <div
-            key={stat.id}
-            className="relative border rounded bg-background"
-          >
+          <div key={stat.id} className="relative border rounded bg-background">
             {"href" in stat && stat.href && (
               <Link
                 href={stat.href}
@@ -159,7 +161,10 @@ export default function LaunchedWaitList({ params }: { params: Promise<{ id: str
             <div className="px-5 py-4.5">
               <div className="flex flex-col gap-2">
                 <div className="flex items-baseline gap-2">
-                  <NumberFlow value={isPending ? 0 : (animated ? stat.value : 0)} className="text-2xl font-semibold" />
+                  <NumberFlow
+                    value={isPending ? 0 : animated ? stat.value : 0}
+                    className="text-2xl font-semibold"
+                  />
                 </div>
 
                 <div className="flex gap-2 items-center">

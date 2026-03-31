@@ -178,15 +178,14 @@ export default function UsersTable({ id }: { id: string }) {
         <DrawerHeader className="flex flex-col gap-1">
           <div className="flex items-center gap-2">
             <h2 className="text-base font-medium">Email record details</h2>
-            {selectedRecord && (
-              selectedRecord.failedCount === 0 ? (
+            {selectedRecord &&
+              (selectedRecord.failedCount === 0 ? (
                 <Chip status="active">Success</Chip>
               ) : selectedRecord.sentSuccessfully === 0 ? (
                 <Chip status="danger">Failed</Chip>
               ) : (
                 <Chip status="warning">Partial</Chip>
-              )
-            )}
+              ))}
           </div>
           <p className="text-sm text-muted-foreground font-normal">
             {selectedRecord ? formatDateTime(selectedRecord.createdAt) : "—"}
@@ -204,13 +203,11 @@ export default function UsersTable({ id }: { id: string }) {
 
                 <div className="flex items-center gap-2">
                   <Type variant="base">Successful</Type>
-                  <span className="font-mono text-sm">
-                    {selectedRecord.sentSuccessfully}
-                  </span>
+                  <span className="font-mono text-sm">{selectedRecord.sentSuccessfully}</span>
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <Type variant="base" className="text-muted-foreground">Failed</Type>
+                  <Type variant="base">Failed</Type>
                   <span
                     className={`font-mono text-sm ${selectedRecord.failedCount > 0 ? "" : "text-muted-foreground"}`}
                   >
@@ -259,9 +256,7 @@ export default function UsersTable({ id }: { id: string }) {
 
               {selectedRecord.failedEmails.length > 0 && (
                 <div className="flex flex-col gap-1">
-                  <Type variant="h6">
-                    Failed · {selectedRecord.failedEmails.length}
-                  </Type>
+                  <Type variant="h6">Failed · {selectedRecord.failedEmails.length}</Type>
                   <div className="flex flex-col bg-default-100 rounded-sm border overflow-auto max-h-60 mt-2">
                     {selectedRecord.failedEmails.map((email) => (
                       <span

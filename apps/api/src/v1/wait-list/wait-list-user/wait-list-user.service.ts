@@ -213,18 +213,22 @@ export class WaitListUserService {
     }
   }
 
-  async remove(waitlistId: Types.ObjectId, email: string, owner: Types.ObjectId) {
+  async remove(waitlistId: Types.ObjectId, emails: Array<string>, owner: Types.ObjectId) {
     try {
       await this.validateOwnership(waitlistId, owner);
 
-      const response = await this.WaitListUserModel.findOneAndDelete({
-        waitlistId: waitlistId,
-        email,
+      const response = await this.WaitListUserModel.deleteMany({
+        waitlistId,
+        email: { $in: emails },
       });
+
+      if (response.deletedCount == 0) {
+        throw new HttpException("There is not emails to delete.", HttpStatus.BAD_REQUEST);
+      }
 
       if (!response) {
         throw new HttpException(
-          `User with email "${email}" not found in this waitlist.`,
+          `User with email "${JSON.stringify(Array.isArray(emails) ? emails.join(", ") : emails)}" not found in this waitlist.`,
           HttpStatus.BAD_REQUEST,
         );
       }

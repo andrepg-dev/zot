@@ -1,14 +1,13 @@
 "use client";
 
-import { deleteWaitListUser, getWaitListUserCount, getWaitListUsers } from "@/actions/wait-list/wait-list-user.actions";
+import {
+  deleteWaitListUser,
+  getWaitListUserCount,
+  getWaitListUsers
+} from "@/actions/wait-list/wait-list-user.actions";
 import GlobalButton from "@/components/global/button";
 import GlobalDrawer from "@/components/global/drawer";
-import Chip from "@/components/ui/chip";
-import {
-  ChevronDownIcon,
-  MagnifyingGlassIcon,
-  TrashIcon
-} from "@heroicons/react/24/outline";
+import { ChevronDownIcon, MagnifyingGlassIcon, TrashIcon } from "@heroicons/react/24/outline";
 import {
   DrawerBody,
   DrawerHeader,
@@ -51,7 +50,11 @@ interface UsersTableDrawerProps {
   onOpenChange: (open: boolean) => void;
 }
 
-export default function UsersTableDrawer({ waitlistId, isOpen, onOpenChange }: UsersTableDrawerProps) {
+export default function UsersTableDrawer({
+  waitlistId,
+  isOpen,
+  onOpenChange
+}: UsersTableDrawerProps) {
   const [search, setSearch] = useState("");
   const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set());
   const [emailsToDelete, setEmailsToDelete] = useState<string[]>([]);
@@ -72,7 +75,7 @@ export default function UsersTableDrawer({ waitlistId, isOpen, onOpenChange }: U
 
   const deleteMutation = useMutation({
     mutationFn: async (emails: string[]) => {
-      await Promise.all(emails.map((email) => deleteWaitListUser(waitlistId, email)));
+      await deleteWaitListUser(waitlistId, emails);
     },
     onSuccess: (_data, emails) => {
       queryClient.invalidateQueries({ queryKey: ["waitlist-users", waitlistId] });
@@ -123,9 +126,7 @@ export default function UsersTableDrawer({ waitlistId, isOpen, onOpenChange }: U
       (user) =>
         user.email.toLowerCase().includes(query) ||
         (user.metadata &&
-          Object.values(user.metadata).some((v) =>
-            String(v).toLowerCase().includes(query)
-          ))
+          Object.values(user.metadata).some((v) => String(v).toLowerCase().includes(query)))
     );
   }, [users, search]);
 
@@ -262,7 +263,9 @@ export default function UsersTableDrawer({ waitlistId, isOpen, onOpenChange }: U
 
                       const valueMap: Record<string, React.ReactNode> = {
                         position: (
-                          <span className="text-muted-foreground font-mono truncate block max-w-[200px]">{item.position}</span>
+                          <span className="text-muted-foreground font-mono truncate block max-w-[200px]">
+                            {item.position}
+                          </span>
                         ),
                         email: (
                           <span className="font-mono truncate block max-w-[200px]">
@@ -274,7 +277,9 @@ export default function UsersTableDrawer({ waitlistId, isOpen, onOpenChange }: U
                             {referralCodeToEmail.get(item.referredBy) ?? item.referredBy}
                           </span>
                         ) : (
-                          <span className="text-muted-foreground text-xs truncate block max-w-[200px]">—</span>
+                          <span className="text-muted-foreground text-xs truncate block max-w-[200px]">
+                            —
+                          </span>
                         ),
                         createdAt: (
                           <span className="text-muted-foreground font-mono text-xs truncate block max-w-[200px]">
@@ -299,7 +304,9 @@ export default function UsersTableDrawer({ waitlistId, isOpen, onOpenChange }: U
               <ModalHeader>Confirm Deletion</ModalHeader>
               <ModalBody>
                 <p className="text-sm text-muted-foreground">
-                  Are you sure you want to remove {emailsToDelete.length} user{emailsToDelete.length > 1 ? "s" : ""} from this waitlist? This action cannot be undone.
+                  Are you sure you want to remove {emailsToDelete.length} user
+                  {emailsToDelete.length > 1 ? "s" : ""} from this waitlist? This action cannot be
+                  undone.
                 </p>
               </ModalBody>
               <ModalFooter>

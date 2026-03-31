@@ -44,8 +44,9 @@ export async function getBlockedUserCount(waitlistId: string) {
   return await FetchWrapper<{ total: number }>(`/wait-list/${waitlistId}/user/blocked/count`);
 }
 
-export async function deleteWaitListUser(waitlistId: string, email: string) {
-  return await FetchWrapper(`/wait-list/${waitlistId}/user/${encodeURIComponent(email)}`, {
-    method: "DELETE"
+export async function deleteWaitListUser(waitlistId: string, emails: string | Array<string>) {
+  return await FetchWrapper(`/wait-list/${waitlistId}/user/bulk-delete`, {
+    method: "POST",
+    body: JSON.stringify(emails)
   });
 }

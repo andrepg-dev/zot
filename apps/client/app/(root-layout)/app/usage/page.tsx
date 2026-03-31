@@ -77,9 +77,7 @@ function buildSections(data: UserQuoteResponse): QuotaSection[] {
     {
       title: "Landing Pages",
       description: "Build and publish landing pages for your products.",
-      items: [
-        { label: "Landing pages", used: usage.landingPage, limit: limits.landingPage }
-      ]
+      items: [{ label: "Landing pages", used: usage.landingPage, limit: limits.landingPage }]
     },
     {
       title: "Domains",
@@ -135,9 +133,7 @@ function QuotaSectionBlock({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10 py-10">
         <div className="flex flex-col gap-3">
           <Type variant="h4">{section.title}</Type>
-          <Type className="text-muted-foreground max-w-xs">
-            {section.description}
-          </Type>
+          <Type className="text-muted-foreground max-w-xs">{section.description}</Type>
           {!isPremium && (
             <div className="mt-2">
               <BillingDrawing>

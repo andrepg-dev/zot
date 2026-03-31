@@ -1,5 +1,5 @@
 import { UserId } from "@api/src/common/decorators/user-id.decorator";
-import { Body, Controller, Delete, Get, Param, Post, Query } from "@nestjs/common";
+import { Body, Controller, Get, Param, Post, Query } from "@nestjs/common";
 import { ParseObjectIdPipe } from "@nestjs/mongoose";
 import {
   ApiBearerAuth,
@@ -154,7 +154,7 @@ export class WaitListUserController {
     return await this.waitListUserService.findByEmail(waitlistId, email, userId);
   }
 
-  @Delete(":email")
+  @Post("bulk-delete")
   @ApiBearerAuth("JWT-auth")
   @ApiOperation({
     summary: "Remove user from waitlist",
@@ -170,9 +170,15 @@ export class WaitListUserController {
   @ApiUnauthorizedResponse({ description: "Not authenticated or not the waitlist owner" })
   async remove(
     @Param("waitlistId", ParseObjectIdPipe) waitlistId: Types.ObjectId,
-    @Param("email") email: string,
     @UserId() userId: Types.ObjectId,
+    @Body() emails: Array<string> | string,
   ) {
-    return await this.waitListUserService.remove(waitlistId, email, userId);
+    let emailsToSend = emails;
+
+    if (typeof emailsToSend === "string") {
+      emailsToSend = emailsToSend.split(" ");
+    }
+
+    return await this.waitListUserService.remove(waitlistId, emailsToSend, userId);
   }
 }
