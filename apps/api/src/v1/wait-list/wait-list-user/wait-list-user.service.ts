@@ -1,7 +1,8 @@
-import { HttpService } from "@api/src/common/http-service/http.service";
+import { HttpService } from "@nestjs/axios";
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import mongoose, { Model, Types } from "mongoose";
+import { firstValueFrom } from "rxjs";
 import { EmailSecurityService } from "../../core/email-security/email-security.service";
 import { UserQuoteService } from "../../users/user-quote/user-quote.service";
 import { UsersService } from "../../users/users.service";
@@ -121,7 +122,9 @@ export class WaitListUserService {
           }
 
           try {
-            const response = await this.httpService.post(waitlist.webhook.url, webhookBody);
+            const response = await firstValueFrom(
+              this.httpService.post(waitlist.webhook.url, webhookBody),
+            );
 
             await this.WaitlistWebhookEventModel.create({
               waitlistId,

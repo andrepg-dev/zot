@@ -13,6 +13,7 @@ import { ReactToHtmlModule } from "./react-to-html/react-to-html.module";
 import { SubscriptionsModule } from "./subscriptions/subscriptions.module";
 import { UsersModule } from "./users/users.module";
 import { WaitListModule } from "./wait-list/wait-list.module";
+import { AiServerConnectionModule } from './ai-server-connection/ai-server-connection.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { WaitListModule } from "./wait-list/wait-list.module";
     EmailTemplatesModule,
     EmailsModule,
     ApiKeyModule,
+    AiServerConnectionModule,
   ],
   providers: [
     JwtAuthGuard,
