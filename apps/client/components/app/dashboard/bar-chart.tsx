@@ -36,7 +36,7 @@ function formatDate(dateStr: string) {
   return `${monthNames[Number(month) - 1]} ${Number(day)}`;
 }
 
-export default function BarChartComponent({ data, isPending }: BarChartComponentProps) {
+export default function BarChartComponent({ data }: BarChartComponentProps) {
   const { isClient } = useIsClient();
 
   const chartData = (() => {
