@@ -193,6 +193,35 @@ export class WaitListUserService {
     }
   }
 
+  async getAllUsersBasedOnOwner(owner: Types.ObjectId, pipeline: mongoose.PipelineStage[] = []) {
+    // get all the user waitlist to find all the result based on his wailtist's
+    const userWaitlists = await this.WaitListModel.find({ owner }).select("_id");
+
+    const waitlistIds = userWaitlists.map((w) => w._id);
+
+    try {
+      const basePipeline: mongoose.PipelineStage[] = [
+        {
+          $match: { waitlistId: { $in: waitlistIds } },
+        },
+        {
+          $sort: { createdAt: -1 },
+        },
+        {
+          $project: {
+            waitlistId: 0,
+          },
+        },
+      ];
+
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+      return await this.WaitListUserModel.aggregate([...basePipeline, ...pipeline]).exec();
+    } catch (error) {
+      if (error instanceof HttpException) throw error;
+      throw new HttpException("Error fetching waitlist users.", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
   async findByEmail(waitlistId: Types.ObjectId, email: string, owner: Types.ObjectId) {
     try {
       await this.validateOwnership(waitlistId, owner);

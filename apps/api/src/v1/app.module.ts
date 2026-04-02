@@ -1,6 +1,7 @@
 import { ReactToHtmlService } from "@api/src/v1/core/react-to-html/react-to-html.service";
 import { Module } from "@nestjs/common";
 import { APP_GUARD } from "@nestjs/core";
+import { AiServerConnectionModule } from "./ai-server-connection/ai-server-connection.module";
 import { ApiKeyModule } from "./api-key/api-key.module";
 import { AuthModule } from "./auth/auth.module";
 import { ApiKeyGuard } from "./auth/guards/api-key.guard";
@@ -9,11 +10,12 @@ import { JwtAuthGuard } from "./auth/guards/jwt.guard";
 import { EmailSendingService } from "./core/email-sending/email-sending.service";
 import { EmailTemplatesModule } from "./email-templates/email-templates.module";
 import { EmailsModule } from "./emails/emails.module";
+import { GeneralStatsModule } from "./general-stats/general-stats.module";
+import { GeneralStatsService } from "./general-stats/general-stats.service";
 import { ReactToHtmlModule } from "./react-to-html/react-to-html.module";
 import { SubscriptionsModule } from "./subscriptions/subscriptions.module";
 import { UsersModule } from "./users/users.module";
 import { WaitListModule } from "./wait-list/wait-list.module";
-import { AiServerConnectionModule } from './ai-server-connection/ai-server-connection.module';
 
 @Module({
   imports: [
@@ -26,6 +28,7 @@ import { AiServerConnectionModule } from './ai-server-connection/ai-server-conne
     EmailsModule,
     ApiKeyModule,
     AiServerConnectionModule,
+    GeneralStatsModule,
   ],
   providers: [
     JwtAuthGuard,
@@ -36,6 +39,7 @@ import { AiServerConnectionModule } from './ai-server-connection/ai-server-conne
     },
     ReactToHtmlService,
     EmailSendingService,
+    GeneralStatsService,
   ],
 })
 export class V1Module {}

@@ -38,7 +38,7 @@ export default function AreaChartComponent() {
           <h3 className="text-base font-medium">Analitycs overview</h3>
         </div>
         <p className="text-sm text-muted-foreground">
-          Showing total visitors for the last 6 months
+          Showing total registration in your waitlist for the last 6 months
         </p>
       </div>
       <div className="h-64 min-h-[16rem] w-full min-w-0">
