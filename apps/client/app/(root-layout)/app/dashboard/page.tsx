@@ -1,14 +1,21 @@
 "use client";
 
+import { getGeneralStats, type GeneralStats } from "@/actions/general-stats/general-stats.actions";
 import AreaChartComponent from "@/components/app/dashboard/area-chart";
 import BarChartComponent from "@/components/app/dashboard/bar-chart";
 import TaskCards from "@/components/app/dashboard/task-cards";
 import Title from "@/components/global/title";
 import PageComponent from "@/components/layouts/page-component";
 import { Alert, Button } from "@heroui/react";
+import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 
 export default function Dashboard() {
+  const { data, isPending } = useQuery<GeneralStats>({
+    queryKey: ["general-stats"],
+    queryFn: getGeneralStats
+  });
+
   return (
     <>
       <PageComponent className="!py-0 text-sm">
@@ -50,8 +57,8 @@ export default function Dashboard() {
       <PageComponent className="pt-0">
         <div className="flex flex-col gap-8">
           <div className="grid grid-cols-5 gap-4">
-            <AreaChartComponent />
-            <BarChartComponent />
+            <AreaChartComponent data={data?.signupsByDay} isPending={isPending} />
+            <BarChartComponent data={data?.signupsByDay} isPending={isPending} />
           </div>
         </div>
       </PageComponent>
