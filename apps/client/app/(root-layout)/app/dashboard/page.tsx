@@ -57,7 +57,7 @@ export default function Dashboard() {
       <PageComponent className="pt-0">
         <div className="flex flex-col gap-8">
           <div className="grid grid-cols-5 gap-4">
-            <AreaChartComponent data={data?.signupsByDay} isPending={isPending} />
+            <AreaChartComponent data={data} isPending={isPending} />
             <BarChartComponent data={data?.signupsByDay} isPending={isPending} />
           </div>
         </div>

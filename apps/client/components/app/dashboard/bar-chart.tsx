@@ -1,8 +1,7 @@
 "use client";
 
-import type { GeneralStats } from "@/actions/general-stats/general-stats.actions";
+import type { DayCount } from "@/actions/general-stats/general-stats.actions";
 import useIsClient from "@/hooks/is-client";
-import { Skeleton } from "@heroui/react";
 import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis } from "recharts";
 import CustomGradientBar from "./custom-gradient-bar";
 
@@ -13,8 +12,8 @@ const tooltipText = "#a1a1aa";
 const strokeColor = "#006fee";
 
 interface BarChartComponentProps {
-  data?: GeneralStats["signupsByDay"];
-  isPending: boolean;
+  data?: DayCount[];
+  isPending?: boolean;
 }
 
 function formatDate(dateStr: string) {
@@ -65,9 +64,7 @@ export default function BarChartComponent({ data, isPending }: BarChartComponent
         <p className="text-sm text-muted-foreground">Daily registration count</p>
       </div>
       <div className="h-64 min-h-[16rem] w-full min-w-0">
-        {!isClient || isPending ? (
-          <Skeleton className="h-full w-full rounded-sm" />
-        ) : (
+        {isClient && (
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
               <XAxis

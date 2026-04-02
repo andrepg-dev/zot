@@ -35,6 +35,6 @@ import { WaitListService } from "./wait-list.service";
   ],
   controllers: [WaitListController, WaitListUserController],
   providers: [WaitListService, WaitListUserService, EmailSecurityService],
-  exports: [WaitListService, WaitListUserService],
+  exports: [WaitListService, WaitListUserService, MongooseModule],
 })
 export class WaitListModule {}

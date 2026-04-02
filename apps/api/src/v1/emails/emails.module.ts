@@ -22,5 +22,6 @@ import { EmailSchema } from "./schemas/email.schema";
   ],
   controllers: [EmailsController],
   providers: [EmailsService, EmailSendingService],
+  exports: [MongooseModule],
 })
 export class EmailsModule {}

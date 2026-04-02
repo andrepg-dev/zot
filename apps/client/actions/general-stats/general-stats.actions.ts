@@ -2,11 +2,16 @@
 
 import { FetchWrapper } from "@/lib/api/fetch-wrapper";
 
+export interface DayCount {
+  date: string;
+  count: number;
+}
+
 export interface GeneralStats {
-  signupsByDay: {
-    date: string;
-    count: number;
-  }[];
+  signupsByDay: DayCount[];
+  emailsByDay: DayCount[];
+  blockedByDay: DayCount[];
+  webhooksByDay: DayCount[];
 }
 
 export async function getGeneralStats() {
