@@ -1,8 +1,6 @@
 "use client";
 
 import useIsClient from "@/hooks/is-client";
-import { ArrowTrendingUpIcon } from "@heroicons/react/24/outline";
-import { Badge } from "@heroui/react";
 import {
   Area,
   AreaChart,
@@ -31,20 +29,13 @@ const desktopColor = "#3b82f6";
 const mobileColor = "#10b981";
 
 export default function AreaChartComponent() {
-  const { isClient } = useIsClient()
+  const { isClient } = useIsClient();
 
   return (
     <div className="col-span-3 flex min-w-0 flex-col rounded border border-dashed p-6 ">
       <div className="flex flex-col gap-2 mb-4">
         <div className="flex items-center gap-2">
           <h3 className="text-base font-medium">Analitycs overview</h3>
-          <Badge
-            variant="flat"
-            className="text-green-500 bg-green-500/10 border-none flex items-center gap-1"
-          >
-            <ArrowTrendingUpIcon className="h-4 w-4" />
-            <span>5.2%</span>
-          </Badge>
         </div>
         <p className="text-sm text-muted-foreground">
           Showing total visitors for the last 6 months

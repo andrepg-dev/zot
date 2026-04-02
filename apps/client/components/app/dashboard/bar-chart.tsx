@@ -1,8 +1,6 @@
 "use client";
 
 import useIsClient from "@/hooks/is-client";
-import { ArrowTrendingUpIcon } from "@heroicons/react/24/outline";
-import { Badge } from "@heroui/react";
 import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis } from "recharts";
 import CustomGradientBar from "./custom-gradient-bar";
 
@@ -22,20 +20,13 @@ const tooltipText = "#EDEEF0";
 const strokeColor = "#006fee";
 
 export default function BarChartComponent() {
-  const { isClient } = useIsClient()
+  const { isClient } = useIsClient();
 
   return (
     <div className="col-span-2 flex min-w-0 flex-col rounded border border-dashed p-6 bg-background">
       <div className="flex flex-col gap-2 mb-4">
         <div className="flex items-center gap-2">
           <h3 className="text-base font-medium">Bar Chart</h3>
-          <Badge
-            variant="flat"
-            className="text-green-500 bg-green-500/10 border-none flex items-center gap-1"
-          >
-            <ArrowTrendingUpIcon className="h-4 w-4" />
-            <span>5.2%</span>
-          </Badge>
         </div>
         <p className="text-sm text-muted-foreground">January - June 2025</p>
       </div>

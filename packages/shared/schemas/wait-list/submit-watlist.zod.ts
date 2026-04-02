@@ -13,6 +13,7 @@ export const submitWaitlistSchema = z.object({
     .pipe(z.string().url().optional()),
   sendEmail: z.boolean().optional(),
   addSecurity: z.boolean().optional(),
+  webhookUrl: z.string().url({ message: "Must be a valid URL" }).optional().or(z.literal("")),
 });
 
 export type SubmitWaitListValues = z.infer<typeof submitWaitlistSchema>;
