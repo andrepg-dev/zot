@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import ComingSoon from "@/components/global/coming-soon";
 import PageComponent from "@/components/layouts/page-component";
