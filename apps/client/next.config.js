@@ -15,7 +15,8 @@ const nextConfig = {
         hostname: "*"
       }
     ]
-  }
+  },
+  devIndicators: false
 };
 
 module.exports = nextConfig;
