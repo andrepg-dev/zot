@@ -143,7 +143,10 @@ export class UserQuoteService {
       const cumulativeUsage = userQuoteService + usage;
 
       if (cumulativeUsage > serviceLimit) {
-        throw new HttpException(`Limits reached for ${service} service`, 402);
+        throw new HttpException(
+          `Limits reached for ${service} service, to handle more operations please upgrade your plan.`,
+          402,
+        );
       }
 
       // <================== UPDATE THE VALUES INTO THE DATABASE ==================>

@@ -1,6 +1,7 @@
 import {
   ChartBarIcon,
   Cog6ToothIcon,
+  CreditCardIcon,
   GlobeAltIcon,
   InboxStackIcon,
   KeyIcon,
@@ -24,7 +25,11 @@ export const defaultNavItems = [
     label: "Usage",
     icon: ChartBarIcon
   },
-
+  {
+    href: "/app/billing",
+    label: "Billing",
+    icon: CreditCardIcon
+  },
   // {
   //   href: "/app/emails",
   //   label: "Emails",

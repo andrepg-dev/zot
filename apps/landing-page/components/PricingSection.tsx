@@ -80,7 +80,10 @@ const PLANS = [
 export default function PricingSection() {
   const dashboardUrl = getDashboardUrl();
   return (
-    <section className="px-4 sm:px-6 md:px-8 lg:px-16 pb-16 sm:pb-20 lg:pb-24 pt-12 sm:pt-14 lg:pt-16 bg-[#000000]" id="pricing">
+    <section
+      className="px-4 sm:px-6 md:px-8 lg:px-16 pb-16 sm:pb-20 lg:pb-24 pt-12 sm:pt-14 lg:pt-16 bg-[#000000]"
+      id="pricing"
+    >
       <LandingPageTitle
         subtitle="Pricing"
         title={{ before: "Choose the plan that", gradient: "fits" }}
@@ -128,19 +131,30 @@ export default function PricingSection() {
                       centerVariation={0.2}
                       className="absolute inset-0 w-full h-full"
                     />
-                    <div className="absolute inset-0 bg-[#0D0D0E]/50 pointer-events-none" aria-hidden />
+                    <div
+                      className="absolute inset-0 bg-[#0D0D0E]/50 pointer-events-none"
+                      aria-hidden
+                    />
                     <div
                       className="absolute inset-0 pointer-events-none"
-                      style={{ background: "linear-gradient(to right, rgba(13,13,14,0.9) 0%, rgba(13,13,14,0.45) 40%, transparent 70%)" }}
+                      style={{
+                        background:
+                          "linear-gradient(to right, rgba(13,13,14,0.9) 0%, rgba(13,13,14,0.45) 40%, transparent 70%)",
+                      }}
                       aria-hidden
                     />
                   </>
                 ) : (
-                  <div className="absolute inset-0 bg-zinc-900/90" aria-hidden />
+                  <div
+                    className="absolute inset-0 bg-zinc-900/90"
+                    aria-hidden
+                  />
                 )}
               </div>
 
-              <div className={`relative z-10 flex flex-col flex-1 p-4 sm:p-5 lg:p-6 ${isPremium ? "bg-[#0D0D0E]/60" : "bg-black/40"}`}>
+              <div
+                className={`relative z-10 flex flex-col flex-1 p-4 sm:p-5 lg:p-6 ${isPremium ? "bg-[#0D0D0E]/60" : "bg-black/40"}`}
+              >
                 {"earlyUserOffer" in plan && plan.earlyUserOffer && (
                   <span className="absolute right-4 top-4 rounded-full bg-[#4338ca] px-3 py-1 text-xs font-semibold text-white z-20">
                     Early user offer
@@ -169,7 +183,8 @@ export default function PricingSection() {
                           for {plan.earlyUserOffer.period}
                         </span>
                         <span className="text-lg text-muted-foreground line-through ml-1 inline-block">
-                          {plan.price}{plan.frequency}
+                          {plan.price}
+                          {plan.frequency}
                         </span>
                       </>
                     ) : (
@@ -177,7 +192,9 @@ export default function PricingSection() {
                         <span className="text-3xl sm:text-4xl font-semibold text-foreground">
                           {plan.price}
                         </span>
-                        <span className="text-muted-foreground">{plan.frequency}</span>
+                        <span className="text-muted-foreground">
+                          {plan.frequency}
+                        </span>
                       </>
                     )}
                   </div>
@@ -185,17 +202,23 @@ export default function PricingSection() {
 
                 <div className="mt-6">
                   <Link
-                    href={plan.ctaHref === "__dashboard__" ? dashboardUrl : plan.ctaHref}
-                    className={`inline-flex h-10 w-full cursor-pointer items-center justify-center rounded border px-5 py-2.5 text-sm font-medium transition ${isPremium
-                      ? "border-[#4338ca]/60 bg-[#4338ca] text-white hover:bg-[#3730a3] hover:border-[#4338ca]"
-                      : "border border-zinc-600/80 bg-[#131315] text-white hover:bg-zinc-800/80 hover:border-zinc-500"
-                      }`}
+                    href={
+                      plan.ctaHref === "__dashboard__"
+                        ? dashboardUrl
+                        : plan.ctaHref
+                    }
+                    className={`inline-flex h-10 w-full cursor-pointer items-center justify-center rounded border px-5 py-2.5 text-sm font-medium transition ${
+                      isPremium
+                        ? "border-[#4338ca]/60 bg-[#4338ca] text-white hover:bg-[#3730a3] hover:border-[#4338ca]"
+                        : "border border-zinc-600/80 bg-[#131315] text-white hover:bg-zinc-800/80 hover:border-zinc-500"
+                    }`}
                   >
                     {plan.ctaLabel}
                   </Link>
                   {(plan.name === "Premium" || plan.name === "Scale") && (
                     <p className="mt-2 text-xs text-zinc-500 text-center">
-                      This offer is valid during our early user adoption phase. You won&apos;t be charged.
+                      This offer is valid during our early user adoption phase.
+                      You won&apos;t be charged.
                     </p>
                   )}
                 </div>
@@ -210,7 +233,16 @@ export default function PricingSection() {
                         className={`mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full ${isPremium ? "bg-[#131315] text-white" : "text-zinc-400"}`}
                         aria-hidden
                       >
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <svg
+                          width="14"
+                          height="14"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
                           <polyline points="20 6 9 17 4 12" />
                         </svg>
                       </span>

@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { defaultNavItems, NavItemsI, NavItemOrDivider } from "./sidebar.constants";
+import { defaultNavItems, NavItemOrDivider, NavItemsI } from "./sidebar.constants";
 
 interface SidebarStateI {
   navItems?: NavItemsI | NavItemOrDivider[] | null;

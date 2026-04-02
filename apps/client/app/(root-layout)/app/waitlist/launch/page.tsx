@@ -11,12 +11,9 @@ import SidebarNavigation from "@/components/navigation/sidebar.navigation";
 import Type from "@/components/type";
 import InputComponent from "@/components/ui/input";
 import { useHotkey } from "@/hooks/use-hotkey";
-import { addToast, Button, Card, CardBody, CardFooter, Checkbox } from "@heroui/react";
+import { Button, Card, CardBody, CardFooter, Checkbox } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  submitWaitlistSchema,
-  SubmitWaitListValues
-} from "@repo/packages/shared/schemas/index";
+import { submitWaitlistSchema, SubmitWaitListValues } from "@repo/packages/shared/schemas/index";
 import { useMutation } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -34,24 +31,23 @@ export default function LaunchWaitList() {
     }
   });
 
-  const router = useRouter()
+  const router = useRouter();
 
-  useHotkey({ key: "escape", onPress: () => { router.push("/app/waitlist/dashboard") } })
+  useHotkey({
+    key: "escape",
+    onPress: () => {
+      router.push("/app/waitlist/dashboard");
+    }
+  });
 
   const { isPending, error, mutate } = useMutation({
     mutationFn: (data: SubmitWaitListValues) =>
       createWaitList({
         name: data.name,
         sendEmailToNewSignup: data.sendEmail,
-        isSecurityActive: data.addSecurity,
+        isSecurityActive: data.addSecurity
       }),
-    onSuccess: () => {
-      addToast({
-        title: "Wait-List created",
-        description: "Your Wait-List has been created",
-        color: "primary"
-      });
-    }
+    onSuccess: () => {}
   });
 
   const onSubmit = (data: SubmitWaitListValues) => {
@@ -80,7 +76,7 @@ export default function LaunchWaitList() {
               },
               {
                 number: 2,
-                title: "Configure api key",
+                title: "Configure api key"
               },
               {
                 number: 3,
@@ -97,9 +93,17 @@ export default function LaunchWaitList() {
       />
 
       <div className="flex flex-col gap-4">
-        <Title description="Getting started by adding basic details of your waitlist">General configurations</Title>
+        <Title description="Getting started by adding basic details of your waitlist">
+          General configurations
+        </Title>
 
-        <Card radius="sm" as={Form} onSubmit={handleSubmit(onSubmit)} className="flex flex-col border" error={error}>
+        <Card
+          radius="sm"
+          as={Form}
+          onSubmit={handleSubmit(onSubmit)}
+          className="flex flex-col border"
+          error={error}
+        >
           <CardBody className="p-0 flex flex-col">
             <FormField
               title="Wait-List Name"
@@ -108,7 +112,12 @@ export default function LaunchWaitList() {
               isRequired
               className="p-4 rounded"
             >
-              <InputComponent placeholder="App Launch" maxLength={30} {...register("name")} autoFocus />
+              <InputComponent
+                placeholder="App Launch"
+                maxLength={30}
+                {...register("name")}
+                autoFocus
+              />
             </FormField>
 
             <hr />
@@ -128,7 +137,14 @@ export default function LaunchWaitList() {
 
             <FormField
               title="Add security to your WaitList"
-              description={<>Prevent fake emails from being sent to your WaitList with <Link href={"https://dymo.tpeoficial.com/"} target="_blank"><Type variant="link">Dymo Security Services.</Type></Link></>}
+              description={
+                <>
+                  Prevent fake emails from being sent to your WaitList with{" "}
+                  <Link href={"https://dymo.tpeoficial.com/"} target="_blank">
+                    <Type variant="link">Dymo Security Services.</Type>
+                  </Link>
+                </>
+              }
               isPremiumFeature
               error={errors.addSecurity}
               className="p-4"
@@ -141,7 +157,13 @@ export default function LaunchWaitList() {
 
           <CardFooter className="border-t flex justify-end py-4">
             <div className="flex gap-2 justify-end">
-              <Button as={Link} href="/app/waitlist/dashboard" className="w-fit" variant="bordered" size="sm">
+              <Button
+                as={Link}
+                href="/app/waitlist/dashboard"
+                className="w-fit"
+                variant="bordered"
+                size="sm"
+              >
                 <Type variant="sm">Cancel</Type>
               </Button>
               <Button
