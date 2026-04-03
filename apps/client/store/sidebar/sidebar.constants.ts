@@ -31,7 +31,7 @@ export const defaultNavItems = [
     icon: CreditCardIcon
   },
   // {
-  //   href: "/app/emails",
+  //   href: "/app/waitlist/emails",
   //   label: "Emails",
   //   icon: EnvelopeIcon
   // },
