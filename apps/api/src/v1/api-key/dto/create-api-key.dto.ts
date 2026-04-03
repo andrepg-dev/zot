@@ -10,6 +10,6 @@ export class CreateApiKeyDto {
   })
   @IsString()
   @MinLength(2)
-  @MaxLength(100)
+  @MaxLength(50)
   name: string;
 }
