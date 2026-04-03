@@ -25,7 +25,7 @@ export const plans = [
     price: "$49",
     frequency: "/ month",
     blurb: "For products in production that need headroom and support.",
-    ctaLabel: "Upgrade now",
+    ctaLabel: "Upgrade plan",
     ctaHref: "/app/billing",
     popular: true,
     features: [

@@ -30,7 +30,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             geistMonoFont.variable
           )}
         >
-          <ToastProvider toastProps={{ radius: "sm" }} />
+          <ToastProvider toastProps={{ radius: "sm" }} placement="top-right" />
           <Providers themeProps={{ attribute: "class", forcedTheme: "dark" }}>
             {/* <NextTopLoader
             color="#006fee"

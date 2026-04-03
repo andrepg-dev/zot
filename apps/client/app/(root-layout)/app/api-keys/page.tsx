@@ -260,6 +260,7 @@ export default function ApiKeys() {
                   onChange={field.onChange}
                   onBlur={field.onBlur}
                   ref={field.ref}
+                  autoFocus
                 />
               )}
             />
@@ -314,9 +315,11 @@ export default function ApiKeys() {
       <Table
         aria-label="API Keys Table"
         radius="sm"
+        removeWrapper
+        isCompact
+        className="bg-default-50 rounded-xl! border overflow-hidden"
         classNames={{
-          th: "!rounded-b-none",
-          wrapper: "p-0 border",
+          th: "!rounded-b-none rounded-none",
           td: "first:before:rounded-none last:before:rounded-e-none cursor-pointer py-3"
         }}
       >

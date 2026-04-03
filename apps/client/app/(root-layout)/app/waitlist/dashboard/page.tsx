@@ -24,17 +24,26 @@ import {
   TableCell,
   TableColumn,
   TableHeader,
-  TableRow,
+  TableRow
 } from "@heroui/react";
 
-import { deleteWaitList, getWaitLists, updateWaitList } from "@/actions/wait-list/wait-list.actions";
+import {
+  deleteWaitList,
+  getWaitLists,
+  updateWaitList
+} from "@/actions/wait-list/wait-list.actions";
 import GlobalButton from "@/components/global/button";
 import Title from "@/components/global/title";
 import WaitListCardSkeleton from "@/components/skeletons/wait-list/card";
 import Type from "@/components/type";
 import Chip from "@/components/ui/chip";
 import { useHotkey } from "@/hooks/use-hotkey";
-import { ChevronDownIcon, ClipboardDocumentIcon, NoSymbolIcon, TrashIcon } from "@heroicons/react/24/outline";
+import {
+  ChevronDownIcon,
+  ClipboardDocumentIcon,
+  NoSymbolIcon,
+  TrashIcon
+} from "@heroicons/react/24/outline";
 import { addToast } from "@heroui/toast";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
@@ -55,8 +64,10 @@ export default function WaitListPage() {
   });
 
   useHotkey({
-    key: "k", modifiers: ["meta"], onPress: () => {
-      router.push("/app/waitlist/launch")
+    key: "k",
+    modifiers: ["meta"],
+    onPress: () => {
+      router.push("/app/waitlist/launch");
     }
   });
 
@@ -222,7 +233,11 @@ export default function WaitListPage() {
               size="sm"
               variant="shadow"
               type="button"
-              endContent={<Kbd className="text-xs" keys={["command"]}>K</Kbd>}
+              endContent={
+                <Kbd className="text-xs" keys={["command"]}>
+                  K
+                </Kbd>
+              }
             >
               New Launch
             </Button>
@@ -265,7 +280,7 @@ export default function WaitListPage() {
             classNames={{
               th: "!rounded-b-none bg-",
               wrapper: "p-0 border",
-              td: "first:before:rounded-none last:before:rounded-e-none cursor-pointer py-3",
+              td: "first:before:rounded-none last:before:rounded-e-none cursor-pointer py-3"
             }}
             onRowAction={(e) => {
               router.push(`/app/launch/waitlist/${e}`);
@@ -293,7 +308,10 @@ export default function WaitListPage() {
                             className="min-w-5 h-5 cursor-pointer"
                             onPress={() => {
                               navigator.clipboard.writeText(item._id);
-                              addToast({ title: "Copied", description: "Waitlist ID copied to clipboard." });
+                              addToast({
+                                title: "Copied",
+                                description: "Waitlist ID copied to clipboard."
+                              });
                             }}
                           >
                             <ClipboardDocumentIcon className="size-3.5" />
@@ -352,9 +370,13 @@ export default function WaitListPage() {
                               variant="light"
                               className="min-w-5 h-5 cursor-pointer relative z-10"
                               onClick={(e) => {
-                                e.stopPropagation(); e.preventDefault();
+                                e.stopPropagation();
+                                e.preventDefault();
                                 navigator.clipboard.writeText(item._id);
-                                addToast({ title: "Copied", description: "Waitlist ID copied to clipboard." });
+                                addToast({
+                                  title: "Copied",
+                                  description: "Waitlist ID copied to clipboard."
+                                });
                               }}
                             >
                               <ClipboardDocumentIcon className="size-3.5" />

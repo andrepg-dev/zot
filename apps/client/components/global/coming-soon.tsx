@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import { motion } from "framer-motion";
 import { CheckCircleIcon } from "@heroicons/react/24/outline";
+import { motion } from "framer-motion";
+import { useState } from "react";
 import Type from "../type";
 import InputComponent from "../ui/input";
 import PrimaryActionButton from "./primary-action-button";
@@ -86,10 +86,10 @@ export default function ComingSoon({
         </div>
 
         {submitted ? (
-          <div className="flex flex-col items-center gap-3">
-            <CheckCircleIcon className="size-8 text-success" />
+          <div className="flex items-center gap-2">
+            <CheckCircleIcon className="size-5 text-success" />
             <Type className="text-success">
-              We&apos;ll notify you when this feature is available.
+              Thanks! We&apos;ll notify you when this feature is available.
             </Type>
           </div>
         ) : (

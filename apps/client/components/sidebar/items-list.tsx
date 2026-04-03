@@ -3,7 +3,7 @@
 import Chip from "@/components/ui/chip";
 import { cn } from "@/lib/utils";
 import { NavItemOrDivider, NavItemsI } from "@/store/sidebar/sidebar.constants";
-import { BellIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
+import { ChevronRightIcon, CodeBracketIcon } from "@heroicons/react/24/outline";
 import clsx from "clsx";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -115,8 +115,11 @@ export default function ItemList({ navItems }: { navItems: NavItemOrDivider[] | 
                   {Icon ? <Icon className={cn("size-4", isActive && "text-primary-400")} /> : null}
                   <span className="flex-1">{Label}</span>
                   {inDevelopment && (
-                    <Chip status="warning" className="py-0 border-transparent">
-                      <BellIcon className="size-4"/>
+                    <Chip
+                      status="warning"
+                      className="py-0 border-transparent max-w-5 flex items-center justify-center"
+                    >
+                      <CodeBracketIcon className="size-4 min-w-3.5 min-h-3.5" />
                     </Chip>
                   )}
                 </Link>

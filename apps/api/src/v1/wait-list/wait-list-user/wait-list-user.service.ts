@@ -1,7 +1,8 @@
-import { HttpService } from "@api/src/common/http-service/http.service";
+import { HttpService } from "@nestjs/axios";
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import mongoose, { Model, Types } from "mongoose";
+import { firstValueFrom } from "rxjs";
 import { EmailSecurityService } from "../../core/email-security/email-security.service";
 import { UserQuoteService } from "../../users/user-quote/user-quote.service";
 import { UsersService } from "../../users/users.service";
@@ -121,7 +122,9 @@ export class WaitListUserService {
           }
 
           try {
-            const response = await this.httpService.post(waitlist.webhook.url, webhookBody);
+            const response = await firstValueFrom(
+              this.httpService.post(waitlist.webhook.url, webhookBody),
+            );
 
             await this.WaitlistWebhookEventModel.create({
               waitlistId,
@@ -173,7 +176,36 @@ export class WaitListUserService {
           $match: { waitlistId },
         },
         {
-          $sort: { position: 1 },
+          $sort: { createdAt: -1 },
+        },
+        {
+          $project: {
+            waitlistId: 0,
+          },
+        },
+      ];
+
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+      return await this.WaitListUserModel.aggregate([...basePipeline, ...pipeline]).exec();
+    } catch (error) {
+      if (error instanceof HttpException) throw error;
+      throw new HttpException("Error fetching waitlist users.", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async getAllUsersBasedOnOwner(owner: Types.ObjectId, pipeline: mongoose.PipelineStage[] = []) {
+    // get all the user waitlist to find all the result based on his wailtist's
+    const userWaitlists = await this.WaitListModel.find({ owner }).select("_id");
+
+    const waitlistIds = userWaitlists.map((w) => w._id);
+
+    try {
+      const basePipeline: mongoose.PipelineStage[] = [
+        {
+          $match: { waitlistId: { $in: waitlistIds } },
+        },
+        {
+          $sort: { createdAt: -1 },
         },
         {
           $project: {
@@ -213,18 +245,22 @@ export class WaitListUserService {
     }
   }
 
-  async remove(waitlistId: Types.ObjectId, email: string, owner: Types.ObjectId) {
+  async remove(waitlistId: Types.ObjectId, emails: Array<string>, owner: Types.ObjectId) {
     try {
       await this.validateOwnership(waitlistId, owner);
 
-      const response = await this.WaitListUserModel.findOneAndDelete({
-        waitlistId: waitlistId,
-        email,
+      const response = await this.WaitListUserModel.deleteMany({
+        waitlistId,
+        email: { $in: emails },
       });
+
+      if (response.deletedCount == 0) {
+        throw new HttpException("There is not emails to delete.", HttpStatus.BAD_REQUEST);
+      }
 
       if (!response) {
         throw new HttpException(
-          `User with email "${email}" not found in this waitlist.`,
+          `User with email "${JSON.stringify(Array.isArray(emails) ? emails.join(", ") : emails)}" not found in this waitlist.`,
           HttpStatus.BAD_REQUEST,
         );
       }

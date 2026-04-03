@@ -94,15 +94,15 @@ describe("WaitListUserController", () => {
 
   it("should remove a user from a waitlist", async () => {
     const waitlistId = new Types.ObjectId();
-    const email = "delete@example.com";
+    const emails = ["delete@example.com"];
     const userId = new Types.ObjectId();
     const expected = { deleted: true };
 
     mockWaitListUserService.remove.mockResolvedValue(expected);
 
-    const result = await controller.remove(waitlistId, email, userId);
+    const result = await controller.remove(waitlistId, userId, emails);
 
-    expect(service.remove).toHaveBeenCalledWith(waitlistId, email, userId);
+    expect(service.remove).toHaveBeenCalledWith(waitlistId, emails, userId);
     expect(result).toBe(expected);
   });
 });

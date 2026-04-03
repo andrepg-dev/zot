@@ -12,7 +12,14 @@ import InputComponent from "@/components/ui/input";
 import { Alert } from "@heroui/alert";
 import { Button } from "@heroui/button";
 import { Card, CardBody, CardFooter } from "@heroui/card";
-import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from "@heroui/react";
+import {
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  useDisclosure
+} from "@heroui/react";
 import { addToast } from "@heroui/toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -83,7 +90,7 @@ export default function GeneralSettingsPage() {
       {/* Profile Form */}
       <form onSubmit={handleSubmit((values) => updateMutation.mutate(values))}>
         <div className="flex flex-col gap-4">
-          <Title>Profile</Title>
+          <Title>Account</Title>
 
           <Card className="border" radius="sm">
             <CardBody className="p-0">
@@ -143,12 +150,8 @@ export default function GeneralSettingsPage() {
           Delete Account
         </Title>
 
-        <Alert
-          color="danger"
-          variant="faded"
-          classNames={{ iconWrapper: "bg-red-500 mb-auto mt-3.5" }}
-        >
-          <div className="flex items-center flex-col gap-1 mt-3">
+        <Alert color="danger" variant="faded" classNames={{ iconWrapper: "bg-red-500 mb-auto" }}>
+          <div className="flex items-center flex-col gap-1">
             <div className="flex flex-col">
               <Type variant="h6" className="text-white">
                 Delete your account
@@ -160,7 +163,12 @@ export default function GeneralSettingsPage() {
             </div>
 
             <div className="flex justify-start w-full mt-2">
-              <Button size="sm" color="danger" className="text-foreground" onPress={confirmModal.onOpen}>
+              <Button
+                size="sm"
+                color="danger"
+                className="text-foreground"
+                onPress={confirmModal.onOpen}
+              >
                 Delete account
               </Button>
             </div>
@@ -182,8 +190,8 @@ export default function GeneralSettingsPage() {
               <ModalHeader>Confirm Account Deletion</ModalHeader>
               <ModalBody>
                 <p className="text-sm text-muted-foreground">
-                  This action cannot be undone. Type{" "}
-                  <Type variant="code">{deletePhrase}</Type> to confirm.
+                  This action cannot be undone. Type <Type variant="code">{deletePhrase}</Type> to
+                  confirm.
                 </p>
                 <InputComponent
                   placeholder={deletePhrase}

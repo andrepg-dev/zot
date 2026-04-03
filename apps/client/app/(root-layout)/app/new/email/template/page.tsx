@@ -38,9 +38,7 @@ export default function CreateEmailPage() {
           { label: "Create template", pathname: "" }
         ]}
         postNavigationItems={
-          <PrimaryActionButton
-            startContent={<FolderPlusIcon className="size-4" strokeWidth={2} />}
-          >
+          <PrimaryActionButton startContent={<FolderPlusIcon className="size-4" strokeWidth={2} />}>
             Save template
           </PrimaryActionButton>
         }

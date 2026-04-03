@@ -14,18 +14,18 @@ const container = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: { staggerChildren: 0.08, delayChildren: 0.15 },
-  },
+    transition: { staggerChildren: 0.08, delayChildren: 0.15 }
+  }
 };
 
 const item = {
   hidden: { opacity: 0, y: 12 },
-  visible: { opacity: 1, y: 0 },
+  visible: { opacity: 1, y: 0 }
 };
 
 const bgText = {
   hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { duration: 1.2, ease: "easeOut" } },
+  visible: { opacity: 1, transition: { duration: 1.2, ease: "easeOut" } }
 };
 
 function SuccessContent() {
@@ -61,26 +61,19 @@ function SuccessContent() {
             >
               Payment confirmed
             </motion.p>
-            <motion.h1
-              variants={item}
-              className="text-3xl font-semibold"
-            >
+            <motion.h1 variants={item} className="text-3xl font-semibold">
               Welcome to Zot Premium
             </motion.h1>
             <motion.p
               variants={item}
               className="text-muted-foreground max-w-md mx-auto leading-relaxed"
             >
-              Your subscription is now active. All Premium features are ready
-              for you to use, unlimited waitlists, more email capacity, extra
-              domains, and powerful AI models.
+              Your subscription is now active. All Premium features are ready for you to use,
+              unlimited waitlists, more email capacity, extra domains, and powerful AI models.
             </motion.p>
           </div>
 
-          <motion.div
-            variants={item}
-            className="flex flex-col sm:flex-row gap-3 mt-4"
-          >
+          <motion.div variants={item} className="flex flex-col sm:flex-row gap-3 mt-4">
             <Button
               as={Link}
               href="/app/waitlist/launch"
@@ -108,10 +101,7 @@ function SuccessContent() {
           </motion.div>
 
           {sessionId && (
-            <motion.p
-              variants={item}
-              className="text-xs text-muted-foreground/60 mt-4 font-mono"
-            >
+            <motion.p variants={item} className="text-xs text-muted-foreground/60 mt-4 font-mono">
               Session {sessionId.slice(0, 20)}…
             </motion.p>
           )}

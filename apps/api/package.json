@@ -22,6 +22,7 @@
   "dependencies": {
     "@babel/core": "^7.28.6",
     "@babel/preset-react": "^7.28.5",
+    "@nestjs/axios": "^4.0.1",
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.0.1",
@@ -33,6 +34,7 @@
     "@nestjs/swagger": "^11.2.5",
     "@react-email/components": "1.0.6",
     "@react-email/render": "2.0.4",
+    "axios": "^1.14.0",
     "bcrypt": "^6.0.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.3",

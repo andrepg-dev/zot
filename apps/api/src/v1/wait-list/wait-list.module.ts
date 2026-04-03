@@ -1,3 +1,4 @@
+import { HttpModule } from "@nestjs/axios";
 import { Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
 import { EmailSecurityService } from "../core/email-security/email-security.service";
@@ -27,12 +28,13 @@ import { WaitListService } from "./wait-list.service";
       { name: EmailSecurity.name, schema: EmailSecuritySchema },
       { name: WaitlistWebhookEvent.name, schema: WaitlistWebhookEventSchema },
     ]),
+    HttpModule,
     StatsModule,
     UserQuoteModule,
     UsersModule,
   ],
   controllers: [WaitListController, WaitListUserController],
   providers: [WaitListService, WaitListUserService, EmailSecurityService],
-  exports: [WaitListService, WaitListUserService],
+  exports: [WaitListService, WaitListUserService, MongooseModule],
 })
 export class WaitListModule {}

@@ -86,6 +86,42 @@ const { register, control, handleSubmit } = useForm({
 });
 ```
 
+### Stepper (`components/global/stepper.tsx`)
+
+Multi-step wizard component. Controlled via `activeStep` + `onStepChange`.
+
+**Props**:
+- `steps: StepperStep[]` — step definitions (`number`, `title`, `optional?`)
+- `activeStep: number` — current active step (1-based)
+- `onStepChange?: (step: number) => void` — called when a step indicator is clicked
+- `children?: ReactNode[]` — content for each step; renders `children[activeStep - 1]`
+- `className?: string`
+
+**Usage with children** (Stepper renders step content automatically):
+```tsx
+const [step, setStep] = useState(1);
+
+<Stepper activeStep={step} onStepChange={setStep} steps={steps}>
+  <Step1Content />
+  <Step2Content />
+  <Step3Content />
+</Stepper>
+```
+
+**Usage in sidebar** (step content rendered separately by the page):
+```tsx
+const [step, setStep] = useState(1);
+
+<SidebarNavigation>
+  <Stepper activeStep={step} onStepChange={setStep} steps={steps} />
+</SidebarNavigation>
+
+{step === 1 && <Step1Content />}
+{step === 2 && <Step2Content />}
+```
+
+Navigation between steps is handled by the page with buttons calling `setStep(n)`. Only the final step should submit forms.
+
 ### Visual Hierarchy
 
 Maintain these patterns for consistency across all pages and components:
