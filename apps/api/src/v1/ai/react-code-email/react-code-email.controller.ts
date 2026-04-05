@@ -10,7 +10,12 @@ export class AiServerConnectionController {
 
   @Post("")
   async send_message_to_ai(@Body() data: AIMessageDto, @UserId() userId: Types.ObjectId) {
-    return this.aiService.message_to_ai(data.message, userId.toString(), data.conversationId);
+    return await this.aiService.message_to_ai(data.message, userId.toString(), data.conversationId);
+  }
+
+  @Get("conversations")
+  async getConversations(@UserId() userId: Types.ObjectId) {
+    return await this.aiService.getConversations(userId);
   }
 
   @Get(":conversationId")
@@ -18,6 +23,6 @@ export class AiServerConnectionController {
     @Param("conversationId") conversationId: string,
     @UserId() userId: Types.ObjectId,
   ) {
-    return this.aiService.getConversation(conversationId, userId.toString());
+    return await this.aiService.getConversation(conversationId, userId.toString());
   }
 }

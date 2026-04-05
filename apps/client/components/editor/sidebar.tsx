@@ -9,21 +9,33 @@ import { useLandingPageState } from "@/store/landing-page/landing-page.store";
 
 interface EditorSidebarProps {
   onCodeReceived?: (code: string) => void;
+  conversationId: string;
 }
 
-export default function EditorSidebar({ onCodeReceived }: EditorSidebarProps) {
+export default function EditorSidebar({ onCodeReceived, conversationId }: EditorSidebarProps) {
   const { editionType } = useLandingPageState();
-  const { messages, isPending, sendMessage } = useAiChat({ onCodeReceived });
+  const { messages, isPending, sendMessage } = useAiChat({ conversationId, onCodeReceived });
+
+  const isCode = messages.some((message) => message.operation_type == "code");
 
   return (
     <SidebarNavigation
       className={cn(
         "overflow-y-auto z-50 duration-400 transition-all",
-        editionType === "ai" ? "min-w-[435px] w-[435px]" : "min-w-0 w-0"
+        editionType === "ai" ? (isCode ? "min-w-[455px] w-[455px]" : "min-w-full") : "min-w-0 w-0"
       )}
       children={
-        <div className="p-4 pb-0 flex flex-col h-full flex-1 text-sm gap-2 min-w-[435px]">
-          <ChatMessageList messages={messages} isPending={isPending} />
+        <div
+          className={cn(
+            "p-4 pb-0 flex flex-col h-full flex-1 text-sm gap-2 mx-auto",
+            isCode ? "w-full" : "w-3xl"
+          )}
+        >
+          <ChatMessageList
+            messages={messages}
+            isPending={isPending}
+            conversationId={conversationId}
+          />
           <ChatInput isPending={isPending} onSend={sendMessage} />
         </div>
       }

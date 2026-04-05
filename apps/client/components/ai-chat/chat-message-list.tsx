@@ -2,16 +2,21 @@
 
 import type { AiMessage } from "@/actions/ai/ai-email.actions";
 import { SparklesIcon } from "@heroicons/react/24/outline";
-import { Spinner } from "@heroui/spinner";
 import { useEffect, useRef } from "react";
+import ShinyText from "../ui/shiny-text";
 import ChatMessage from "./chat-message";
 
 interface ChatMessageListProps {
   messages: AiMessage[];
   isPending: boolean;
+  conversationId: string;
 }
 
-export default function ChatMessageList({ messages, isPending }: ChatMessageListProps) {
+export default function ChatMessageList({
+  messages,
+  isPending,
+  conversationId
+}: ChatMessageListProps) {
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -35,8 +40,7 @@ export default function ChatMessageList({ messages, isPending }: ChatMessageList
 
       {isPending && (
         <div className="flex items-center gap-2 p-2">
-          <Spinner size="sm" />
-          <span className="text-xs text-muted-foreground">Generating...</span>
+          <ShinyText text="Generating" />
         </div>
       )}
 

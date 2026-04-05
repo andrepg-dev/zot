@@ -82,4 +82,10 @@ export class AiServerConnectionService {
 
     return conversation;
   }
+
+  async getConversations(userId: Types.ObjectId) {
+    const conversations = await this.aiConversationModel.find({ owner: userId });
+    if (!conversations) throw new NotFoundException("Not conversations");
+    return conversations;
+  }
 }

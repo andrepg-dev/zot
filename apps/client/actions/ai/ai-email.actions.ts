@@ -37,3 +37,7 @@ export async function sendMessageToAi(message: string, conversationId?: string) 
 export async function getAiConversation(conversationId: string) {
   return await FetchWrapper<AiConversation>(`/ai/react-code-email/${conversationId}`);
 }
+
+export async function getAiConversations() {
+  return await FetchWrapper<AiConversation[]>("/ai/react-code-email/conversations");
+}

@@ -1,17 +1,35 @@
 "use client";
 
-import { type AiMessage, sendMessageToAi } from "@/actions/ai/ai-email.actions";
+import {
+  type AiMessage,
+  getAiConversation,
+  sendMessageToAi
+} from "@/actions/ai/ai-email.actions";
 import { addToast } from "@heroui/toast";
-import { useMutation } from "@tanstack/react-query";
-import { useCallback, useRef, useState } from "react";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 interface UseAiChatOptions {
+  conversationId?: string;
   onCodeReceived?: (code: string) => void;
 }
 
-export function useAiChat({ onCodeReceived }: UseAiChatOptions = {}) {
+export function useAiChat({ conversationId: initialConversationId, onCodeReceived }: UseAiChatOptions = {}) {
   const [messages, setMessages] = useState<AiMessage[]>([]);
-  const conversationIdRef = useRef<string | null>(null);
+  const conversationIdRef = useRef<string | null>(initialConversationId ?? null);
+
+  const { data, isPending: isLoadingConversation } = useQuery({
+    queryKey: ["ai-conversation", initialConversationId],
+    queryFn: () => getAiConversation(initialConversationId!),
+    enabled: !!initialConversationId
+  });
+
+  useEffect(() => {
+    if (data?.messages) {
+      setMessages(data.messages);
+      conversationIdRef.current = data._id;
+    }
+  }, [data]);
 
   const { mutate, isPending } = useMutation({
     mutationFn: (message: string) =>
@@ -60,5 +78,5 @@ export function useAiChat({ onCodeReceived }: UseAiChatOptions = {}) {
     [mutate, isPending]
   );
 
-  return { messages, isPending, sendMessage };
+  return { messages, isPending, isLoadingConversation, sendMessage };
 }

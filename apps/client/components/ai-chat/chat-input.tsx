@@ -50,7 +50,7 @@ export default function ChatInput({ isPending, onSend }: ChatInputProps) {
           <button
             onClick={handleSubmit}
             disabled={!input.trim() || isPending}
-            className="disabled:opacity-60 bg-primary p-1.5 rounded-full cursor-pointer hover:ring-2 ring-primary/30"
+            className="disabled:opacity-60 bg-white p-1.5 rounded-full cursor-pointer hover:ring-2 ring-primary/30 text-black"
           >
             <ChevronRightIcon className="size-4" />
           </button>
