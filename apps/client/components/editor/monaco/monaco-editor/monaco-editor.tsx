@@ -6,9 +6,11 @@ import { MonacoJsxSyntaxHighlight, getWorker } from "monaco-jsx-syntax-highlight
 import { useCallback, useState } from "react";
 import OneDarkPro from "../../../../theme/one-dark-pro.json";
 
-export default function MonacoEditor({ ...props }: EditorProps) {
-  const [editorData, setEditorData] = useState("");
+export default function MonacoEditor({ value: externalValue, onChange: externalOnChange, ...props }: EditorProps) {
+  const [internalData, setInternalData] = useState("");
   const { editionType } = useLandingPageState();
+
+  const editorData = externalValue ?? internalData;
 
   const convertThemeToMonaco = (theme: any) => {
     const tokenColors = (theme.tokenColors || []).filter((token: any) => token && token.settings);
@@ -227,8 +229,12 @@ export default function MonacoEditor({ ...props }: EditorProps) {
       path="file:///index.tsx"
       loading={<div className="bg-[#0F0F10] h-full w-full text-center flex justify-center items-center"></div>}
       value={editorData}
-      onChange={(value) => {
-        setEditorData(value ?? "");
+      onChange={(value, ev) => {
+        if (externalOnChange) {
+          externalOnChange(value, ev);
+        } else {
+          setInternalData(value ?? "");
+        }
       }}
       options={{
         fontSize: 13,

@@ -16,6 +16,13 @@ export function formatDateTime(date: string | Date): string {
   });
 }
 
+export function formatTime(date: string | Date): string {
+  return new Date(date).toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit"
+  });
+}
+
 export function formatShortDate(date: string | Date): string {
   return new Date(date).toLocaleDateString("en-US", {
     month: "short",
