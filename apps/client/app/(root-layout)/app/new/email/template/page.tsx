@@ -27,6 +27,11 @@ type VisualizationType = "code" | "preview";
 
 export default function CreateEmailPage() {
   const [visualizationType, setVisualizationType] = useState<VisualizationType>("code");
+  const [editorCode, setEditorCode] = useState("");
+
+  const handleCodeReceived = (code: string) => {
+    setEditorCode(code);
+  };
 
   return (
     <PageComponent className="flex flex-1 h-full p-0">
@@ -45,7 +50,7 @@ export default function CreateEmailPage() {
       />
 
       {/* Sidebar */}
-      <EditorSidebar />
+      <EditorSidebar onCodeReceived={handleCodeReceived} />
 
       {/* Main Content */}
       <div className="flex flex-col w-full">
@@ -123,7 +128,11 @@ export default function CreateEmailPage() {
             <div className="flex flex-col flex-1 min-w-0">
               <HeaderTabulation tabs={[{ title: "EmailComponent.tsx", isActive: true }]} />
               <div className="flex-1 min-h-0">
-                <MonacoEditor height="100%" />
+                <MonacoEditor
+                  height="100%"
+                  value={editorCode}
+                  onChange={(value) => setEditorCode(value ?? "")}
+                />
               </div>
             </div>
           )}
