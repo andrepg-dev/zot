@@ -39,7 +39,6 @@ export default function ChatInput({ isPending, onSend }: ChatInputProps) {
           className="w-full p-4 text-sm resize-none outline-none"
           placeholder="Describe your email..."
           rows={2}
-          disabled={isPending}
         />
 
         <div className="flex px-3 pb-2 pt-1 items-center justify-between">

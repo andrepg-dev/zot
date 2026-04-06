@@ -56,7 +56,7 @@ export default function EmailsPage() {
             <Card
               key={conversation._id}
               as={Link}
-              href={`/app/new/email/template?conversationId=${conversation._id}`}
+              href={`/app/new/email/template?conversationId=${conversation._id}&isEdition=true`}
               isPressable
               className="border"
               radius="sm"

@@ -11,16 +11,21 @@ import "katex/dist/katex.min.css";
 interface ChatMessageListProps {
   messages: AiMessage[];
   isPending: boolean;
+  isLoadingMessages: boolean;
 }
 
-export default function ChatMessageList({ messages, isPending }: ChatMessageListProps) {
+export default function ChatMessageList({
+  messages,
+  isPending,
+  isLoadingMessages
+}: ChatMessageListProps) {
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isPending]);
 
-  if (messages.length === 0 && !isPending) {
+  if (messages.length === 0 && !isPending && !isLoadingMessages) {
     return (
       <div className="flex flex-col items-center justify-center h-full text-muted-foreground gap-2">
         <SparklesIcon className="size-5" />

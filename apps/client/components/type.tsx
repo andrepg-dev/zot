@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { cn } from "@/lib/utils";
 import { CheckIcon, ClipboardDocumentIcon } from "@heroicons/react/24/outline";
@@ -60,7 +60,14 @@ function CopyButton({ text }: { text: string }) {
   );
 }
 
-export default function Type<C extends React.ElementType = "span">({ variant = "base", children, className, as, showCopyButton = false, ...props }: TypeProps<C>) {
+export default function Type<C extends React.ElementType = "span">({
+  variant = "base",
+  children,
+  className,
+  as,
+  showCopyButton = false,
+  ...props
+}: TypeProps<C>) {
   const Component = as || elementMap[variant];
 
   if (variant === "code") {
