@@ -2,6 +2,7 @@
 
 import PageComponent from "@/components/layouts/page-component";
 import {
+  EllipsisHorizontalIcon,
   FunnelIcon,
   ListBulletIcon,
   MagnifyingGlassIcon,
@@ -40,22 +41,28 @@ import Chip from "@/components/ui/chip";
 import CopyButton from "@/components/ui/copy-button";
 import { useHotkey } from "@/hooks/use-hotkey";
 import {
+  CheckIcon,
   ChevronDownIcon,
   ClipboardDocumentIcon,
   NoSymbolIcon,
-  TrashIcon
+  PencilIcon,
+  TrashIcon,
+  XMarkIcon
 } from "@heroicons/react/24/outline";
 import { addToast } from "@heroui/toast";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 type ViewMode = "table" | "cards";
 
 export default function WaitListPage() {
   const [viewMode, setViewMode] = useState<ViewMode>("cards");
   const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set());
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editingName, setEditingName] = useState("");
+  const editInputRef = useRef<HTMLInputElement>(null);
 
   const queryClient = useQueryClient();
 
@@ -115,6 +122,30 @@ export default function WaitListPage() {
       });
     }
   });
+
+  const renameMutation = useMutation({
+    mutationFn: ({ id, name }: { id: string; name: string }) => updateWaitList(id, { name }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["waitlists"] });
+      setEditingId(null);
+      addToast({ description: "Name updated", color: "primary" });
+    },
+    onError: (err) => {
+      addToast({ title: "Error", description: err.message, color: "danger" });
+    }
+  });
+
+  function startEditing(id: string, name: string) {
+    setEditingId(id);
+    setEditingName(name);
+    setTimeout(() => editInputRef.current?.focus(), 0);
+  }
+
+  function confirmRename(id: string) {
+    const trimmed = editingName.trim();
+    if (!trimmed) return;
+    renameMutation.mutate({ id, name: trimmed });
+  }
 
   const rows = data ?? [];
 
@@ -357,40 +388,98 @@ export default function WaitListPage() {
               rows.map((item: any) => (
                 <Card
                   key={item._id}
-                  as={Link}
-                  href={`/app/launch/waitlist/${item._id}`}
-                  isPressable
-                  className="border border-dashed bg-default-50/60"
+                  className="border border-dashed bg-default-50/60 relative transition-colors group"
                   radius="none"
                 >
-                  <CardBody className="p-5">
+                  {editingId !== item._id && (
+                    <Link
+                      href={`/app/launch/waitlist/${item._id}`}
+                      className="absolute inset-0 z-10"
+                    />
+                  )}
+                  <CardBody className="p-5 relative z-20 pointer-events-none">
                     <div className="flex flex-col gap-3">
                       <div className="flex items-start justify-between">
                         <div className="flex flex-col gap-1 flex-1">
-                          <Type variant="link">{item.name}</Type>
+                          {editingId === item._id ? (
+                            <div className="flex items-center gap-1 pointer-events-auto w-[90%] h-[21px]">
+                              <input
+                                ref={editInputRef}
+                                value={editingName}
+                                onChange={(e) => setEditingName(e.target.value)}
+                                onKeyDown={(e) => {
+                                  if (e.key === "Enter") confirmRename(item._id);
+                                  if (e.key === "Escape") setEditingId(null);
+                                }}
+                                className="border-primary outline-none text-sm w-full"
+                                maxLength={30}
+                              />
+                              <GlobalButton
+                                isIconOnly
+                                variant="light"
+                                className="min-w-5 h-5 cursor-pointer"
+                                isLoading={renameMutation.isPending}
+                                onPress={() => confirmRename(item._id)}
+                              >
+                                <CheckIcon className="size-3.5 text-primary" />
+                              </GlobalButton>
+                              <GlobalButton
+                                isIconOnly
+                                variant="light"
+                                className="min-w-5 h-5 cursor-pointer"
+                                onPress={() => setEditingId(null)}
+                              >
+                                <XMarkIcon className="size-3.5" />
+                              </GlobalButton>
+                            </div>
+                          ) : (
+                            <div className="flex items-center gap-1">
+                              <Type variant="link">{item.name}</Type>
+                              <div className="pointer-events-auto opacity-0 group-hover:opacity-100 transition-opacity">
+                                <GlobalButton
+                                  isIconOnly
+                                  variant="light"
+                                  className="min-w-5 h-5 cursor-pointer"
+                                  onPress={() => startEditing(item._id, item.name)}
+                                >
+                                  <PencilIcon className="size-3" />
+                                </GlobalButton>
+                              </div>
+                            </div>
+                          )}
                           <div className="flex items-center gap-1.5">
                             <p className="text-xs text-muted-foreground">ID: {item._id}</p>
-                            <GlobalButton
-                              isIconOnly
-                              variant="light"
-                              className="min-w-5 h-5 cursor-pointer relative z-10"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                e.preventDefault();
-                                navigator.clipboard.writeText(item._id);
-                                addToast({
-                                  title: "Copied",
-                                  description: "Waitlist ID copied to clipboard."
-                                });
-                              }}
-                            >
-                              <ClipboardDocumentIcon className="size-3.5" />
-                            </GlobalButton>
+                            <div className="pointer-events-auto">
+                              <GlobalButton
+                                isIconOnly
+                                variant="light"
+                                className="min-w-5 h-5 cursor-pointer"
+                                onPress={() => {
+                                  navigator.clipboard.writeText(item._id);
+                                  addToast({
+                                    title: "Copied",
+                                    description: "Waitlist ID copied to clipboard."
+                                  });
+                                }}
+                              >
+                                <ClipboardDocumentIcon className="size-3.5" />
+                              </GlobalButton>
+                            </div>
                           </div>
                         </div>
-                        <Chip status={item.isAvailable ? "active" : "warning"}>
-                          {item.isAvailable ? "Active" : "Disabled"}
-                        </Chip>
+                        <div className="flex gap-2">
+                          <Button
+                            // isIconOnly
+                            className="min-h-2 h-5 !max-w-1 min-w-1 !w-1 border bg-default-50/70 flex items-center justify-center z-50"
+                            radius="sm"
+                          >
+                            <EllipsisHorizontalIcon className="w-4 min-w-4" />
+                          </Button>
+
+                          <Chip status={item.isAvailable ? "active" : "warning"}>
+                            {item.isAvailable ? "Active" : "Disabled"}
+                          </Chip>
+                        </div>
                       </div>
                       <div className="flex flex-col gap-2 border-default-200">
                         <div className="flex justify-between items-center">

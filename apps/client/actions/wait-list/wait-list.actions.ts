@@ -23,10 +23,14 @@ export async function getWaitListById(id: string) {
 }
 
 export async function updateWaitList(id: string, data: UpdateWaitListValues) {
-  return await FetchWrapper<WaitListResponse>(`/wait-list/${id}`, {
-    method: "PATCH",
-    body: JSON.stringify(data)
-  });
+  const [result] = await Promise.all([
+    FetchWrapper<WaitListResponse>(`/wait-list/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(data)
+    }),
+    new Promise((resolve) => setTimeout(resolve, 550))
+  ]);
+  return result;
 }
 
 export async function deleteWaitList(id: string) {
