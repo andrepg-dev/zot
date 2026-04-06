@@ -6,17 +6,14 @@ import { useEffect, useRef } from "react";
 import ShinyText from "../ui/shiny-text";
 import ChatMessage from "./chat-message";
 
+import "katex/dist/katex.min.css";
+
 interface ChatMessageListProps {
   messages: AiMessage[];
   isPending: boolean;
-  conversationId: string;
 }
 
-export default function ChatMessageList({
-  messages,
-  isPending,
-  conversationId
-}: ChatMessageListProps) {
+export default function ChatMessageList({ messages, isPending }: ChatMessageListProps) {
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

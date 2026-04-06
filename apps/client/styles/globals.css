@@ -1,7 +1,9 @@
 @plugin './hero.ts';
 @import "tailwindcss";
+@import "streamdown/styles.css";
 @config "../tailwind.config.js";
 @source '../../../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}';
+@source '../../../node_modules/streamdown/dist/*.js';
 
 .dark {
   --background: #000000;

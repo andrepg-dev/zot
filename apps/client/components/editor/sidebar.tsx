@@ -9,7 +9,7 @@ import { useLandingPageState } from "@/store/landing-page/landing-page.store";
 
 interface EditorSidebarProps {
   onCodeReceived?: (code: string) => void;
-  conversationId: string;
+  conversationId?: string;
 }
 
 export default function EditorSidebar({ onCodeReceived, conversationId }: EditorSidebarProps) {
@@ -31,11 +31,7 @@ export default function EditorSidebar({ onCodeReceived, conversationId }: Editor
             isCode ? "w-full" : "w-3xl"
           )}
         >
-          <ChatMessageList
-            messages={messages}
-            isPending={isPending}
-            conversationId={conversationId}
-          />
+          <ChatMessageList messages={messages} isPending={isPending} />
           <ChatInput isPending={isPending} onSend={sendMessage} />
         </div>
       }

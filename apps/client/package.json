@@ -80,6 +80,7 @@
     "recharts": "^3.5.1",
     "remotion": "^4.0.438",
     "shiki": "^4.0.2",
+    "streamdown": "^2.5.0",
     "zod": "^4.1.13",
     "zustand": "^5.0.9"
   },
