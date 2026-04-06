@@ -13,6 +13,7 @@ export interface PageActionsProps {
     label: string;
     href: string;
     icon?: React.ReactNode;
+    endContent?: React.ReactNode;
   };
   onSearchChange?: (value: string) => void;
   className?: string;
@@ -53,6 +54,7 @@ export default function PageActions({
         href={actionButton.href}
         className="bg-primary border-transparent border transition-none"
         startContent={actionButton.icon || <PlusIcon className="size-5" />}
+        endContent={actionButton.endContent}
         size="sm"
         variant="shadow"
         type="button"
