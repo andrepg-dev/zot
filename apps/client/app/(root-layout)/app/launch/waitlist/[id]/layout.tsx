@@ -4,7 +4,14 @@ import { getWaitListStats } from "@/actions/wait-list/stats.actions";
 import HeaderNavigation from "@/components/navigation/header.navigation";
 import SidebarNavigation from "@/components/navigation/sidebar.navigation";
 import Chip from "@/components/ui/chip";
-import { ArrowUturnLeftIcon, BoltIcon, Cog6ToothIcon, EnvelopeIcon, HomeIcon } from "@heroicons/react/24/outline";
+import {
+  ArrowUturnLeftIcon,
+  BoltIcon,
+  Cog6ToothIcon,
+  EnvelopeIcon,
+  HomeIcon,
+  UsersIcon
+} from "@heroicons/react/24/outline";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 
@@ -29,7 +36,7 @@ export default function WaitListLayout({ children }: { children: React.ReactNode
           }
         ]}
       >
-        <Chip status={isPending ? "skeleton" : (data?.isAvailable ? "active" : "warning")}>
+        <Chip status={isPending ? "skeleton" : data?.isAvailable ? "active" : "warning"}>
           {isPending ? "Loading" : statusLabel}
         </Chip>
       </HeaderNavigation>
@@ -52,6 +59,11 @@ export default function WaitListLayout({ children }: { children: React.ReactNode
             label: "Webhooks"
           },
           {
+            href: `/app/launch/waitlist/${id}/audience`,
+            icon: UsersIcon,
+            label: "Audience"
+          },
+          {
             href: `/app/launch/waitlist/${id}/email`,
             icon: EnvelopeIcon,
             label: "Emails",
@@ -63,7 +75,7 @@ export default function WaitListLayout({ children }: { children: React.ReactNode
               {
                 label: "History",
                 href: `/app/launch/waitlist/${id}/email/metrics`
-              },
+              }
             ]
           },
 
@@ -77,7 +89,7 @@ export default function WaitListLayout({ children }: { children: React.ReactNode
             href: `/app/launch/waitlist/${id}/settings`,
             icon: Cog6ToothIcon,
             label: "Settings"
-          },
+          }
           // {
           //   href: `/app/launch/waitlist/${id}/widget-builder`,
           //   icon: PlusCircleIcon,

@@ -37,6 +37,7 @@ import Title from "@/components/global/title";
 import WaitListCardSkeleton from "@/components/skeletons/wait-list/card";
 import Type from "@/components/type";
 import Chip from "@/components/ui/chip";
+import CopyButton from "@/components/ui/copy-button";
 import { useHotkey } from "@/hooks/use-hotkey";
 import {
   ChevronDownIcon,
@@ -301,8 +302,8 @@ export default function WaitListPage() {
                     const valueMap: Record<string, any> = {
                       _id: (
                         <div className="flex items-center gap-1.5">
-                          <span>{item._id?.slice(0, 8) + "..."}</span>
-                          <GlobalButton
+                          <span title={item._id}>{item._id?.slice(0, 8) + "..."}</span>
+                          {/* <GlobalButton
                             isIconOnly
                             variant="flat"
                             className="min-w-5 h-5 cursor-pointer"
@@ -315,7 +316,12 @@ export default function WaitListPage() {
                             }}
                           >
                             <ClipboardDocumentIcon className="size-3.5" />
-                          </GlobalButton>
+                          </GlobalButton> */}
+                          <CopyButton
+                            text={item._id}
+                            className="max-h-6 max-w-4"
+                            variant="light"
+                          ></CopyButton>
                         </div>
                       ),
                       name: (
@@ -354,9 +360,8 @@ export default function WaitListPage() {
                   as={Link}
                   href={`/app/launch/waitlist/${item._id}`}
                   isPressable
-                  // disableRipple
-                  className="border"
-                  radius="sm"
+                  className="border border-dashed bg-default-50/60"
+                  radius="none"
                 >
                   <CardBody className="p-5">
                     <div className="flex flex-col gap-3">

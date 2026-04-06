@@ -207,8 +207,6 @@ export default function UsersTableDrawer({
             <Table
               aria-label="Waitlist Users Table"
               radius="sm"
-              isVirtualized
-              isHeaderSticky
               selectionMode="multiple"
               selectedKeys={selectedKeys}
               onSelectionChange={(keys) => {
