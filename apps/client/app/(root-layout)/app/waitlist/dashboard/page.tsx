@@ -6,7 +6,6 @@ import {
   ListBulletIcon,
   MagnifyingGlassIcon,
   PlusIcon,
-  RocketLaunchIcon,
   ViewColumnsIcon
 } from "@heroicons/react/24/outline";
 
@@ -34,13 +33,11 @@ import {
   updateWaitList
 } from "@/actions/wait-list/wait-list.actions";
 import GlobalButton from "@/components/global/button";
-import PrimaryActionButton from "@/components/global/primary-action-button";
 import Title from "@/components/global/title";
 import WaitListCardSkeleton from "@/components/skeletons/wait-list/card";
 import Type from "@/components/type";
 import Chip from "@/components/ui/chip";
 import CopyButton from "@/components/ui/copy-button";
-import UsersTableDrawer from "@/components/wait-list/users-table-drawer";
 import { useHotkey } from "@/hooks/use-hotkey";
 import { cn } from "@/lib/utils";
 import {
@@ -48,6 +45,7 @@ import {
   CheckIcon,
   ChevronDownIcon,
   ClipboardDocumentIcon,
+  Cog6ToothIcon,
   NoSymbolIcon,
   PencilIcon,
   TrashIcon,
@@ -67,7 +65,6 @@ export default function WaitListPage() {
   const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set());
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingName, setEditingName] = useState("");
-  const [audienceWaitlistId, setAudienceWaitlistId] = useState<string | null>(null);
   const editInputRef = useRef<HTMLInputElement>(null);
 
   const queryClient = useQueryClient();
@@ -519,9 +516,20 @@ export default function WaitListPage() {
                               <DropdownItem
                                 key="audience"
                                 startContent={<UsersIcon className="size-3.5" />}
-                                onPress={() => setAudienceWaitlistId(item._id)}
+                                onPress={() =>
+                                  router.push(`/app/launch/waitlist/${item._id}/audience`)
+                                }
                               >
                                 Audience
+                              </DropdownItem>
+                              <DropdownItem
+                                key="settings"
+                                startContent={<Cog6ToothIcon className="size-3.5" />}
+                                onPress={() =>
+                                  router.push(`/app/launch/waitlist/${item._id}/settings`)
+                                }
+                              >
+                                Settings
                               </DropdownItem>
 
                               <DropdownItem
@@ -569,28 +577,6 @@ export default function WaitListPage() {
           </div>
         )}
       </div>
-
-      {audienceWaitlistId && (
-        <UsersTableDrawer
-          waitlistId={audienceWaitlistId}
-          isOpen={!!audienceWaitlistId}
-          onOpenChange={(open) => {
-            if (!open) setAudienceWaitlistId(null);
-          }}
-          sendCampaignButton={
-            <PrimaryActionButton
-              size="sm"
-              className="border"
-              onPress={() =>
-                router.push(`/app/launch/waitlist/${audienceWaitlistId}/email/campaign`)
-              }
-            >
-              <RocketLaunchIcon className="size-4" />
-              Send campaign
-            </PrimaryActionButton>
-          }
-        />
-      )}
     </PageComponent>
   );
 }
