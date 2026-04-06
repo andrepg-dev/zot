@@ -49,12 +49,14 @@ interface UsersTableDrawerProps {
   waitlistId: string;
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
+  sendCampaignButton?: React.ReactNode;
 }
 
 export default function UsersTableDrawer({
   waitlistId,
   isOpen,
-  onOpenChange
+  onOpenChange,
+  sendCampaignButton
 }: UsersTableDrawerProps) {
   const [search, setSearch] = useState("");
   const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set());
@@ -151,11 +153,13 @@ export default function UsersTableDrawer({
   return (
     <>
       <GlobalDrawer isOpen={isOpen} onOpenChange={onOpenChange} size="4xl" expandedSize="5xl">
-        <DrawerHeader className="flex flex-col gap-1">
-          <h2 className="text-base font-medium">Users Table</h2>
-          <p className="text-sm text-muted-foreground font-normal">
-            {counts?.total ?? 0} total users · {counts?.referred ?? 0} referred
-          </p>
+        <DrawerHeader className="flex flex-row items-center justify-between">
+          <div className="flex flex-col gap-1">
+            <h2 className="text-base font-medium">Users Table</h2>
+            <p className="text-sm text-muted-foreground font-normal">
+              {counts?.total ?? 0} total users · {counts?.referred ?? 0} referred
+            </p>
+          </div>
         </DrawerHeader>
 
         <DrawerBody className="overflow-y-auto">
@@ -201,6 +205,8 @@ export default function UsersTableDrawer({
                     </DropdownMenu>
                   </Dropdown>
                 )}
+
+                {sendCampaignButton}
               </div>
             </div>
 
