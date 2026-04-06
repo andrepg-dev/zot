@@ -2,7 +2,6 @@
 
 import PageComponent from "@/components/layouts/page-component";
 import {
-  EllipsisHorizontalIcon,
   FunnelIcon,
   ListBulletIcon,
   MagnifyingGlassIcon,
@@ -35,12 +34,14 @@ import {
 } from "@/actions/wait-list/wait-list.actions";
 import GlobalButton from "@/components/global/button";
 import Title from "@/components/global/title";
+import { cn } from "@/lib/utils";
 import WaitListCardSkeleton from "@/components/skeletons/wait-list/card";
 import Type from "@/components/type";
 import Chip from "@/components/ui/chip";
 import CopyButton from "@/components/ui/copy-button";
 import { useHotkey } from "@/hooks/use-hotkey";
 import {
+  BoltIcon,
   CheckIcon,
   ChevronDownIcon,
   ClipboardDocumentIcon,
@@ -129,6 +130,21 @@ export default function WaitListPage() {
       queryClient.invalidateQueries({ queryKey: ["waitlists"] });
       setEditingId(null);
       addToast({ description: "Name updated", color: "primary" });
+    },
+    onError: (err) => {
+      addToast({ title: "Error", description: err.message, color: "danger" });
+    }
+  });
+
+  const toggleStatusMutation = useMutation({
+    mutationFn: ({ id, isAvailable }: { id: string; isAvailable: boolean }) =>
+      updateWaitList(id, { isAvailable }),
+    onSuccess: (_data, { isAvailable }) => {
+      queryClient.invalidateQueries({ queryKey: ["waitlists"] });
+      addToast({
+        description: `Waitlist ${isAvailable ? "activated" : "disabled"}`,
+        color: isAvailable ? "primary" : "warning"
+      });
     },
     onError: (err) => {
       addToast({ title: "Error", description: err.message, color: "danger" });
@@ -467,18 +483,51 @@ export default function WaitListPage() {
                             </div>
                           </div>
                         </div>
-                        <div className="flex gap-2">
-                          <Button
-                            // isIconOnly
-                            className="min-h-2 h-5 !max-w-1 min-w-1 !w-1 border bg-default-50/70 flex items-center justify-center z-50"
-                            radius="sm"
+                        <div className="flex items-center pointer-events-auto">
+                          <span
+                            className={cn(
+                              "px-2 py-[2px] h-5.5 flex items-center rounded-l-full text-[10px] tracking-wide border border-r-0",
+                              item.isAvailable
+                                ? "bg-success/20 text-success"
+                                : "bg-warning/20 text-warning"
+                            )}
                           >
-                            <EllipsisHorizontalIcon className="w-4 min-w-4" />
-                          </Button>
-
-                          <Chip status={item.isAvailable ? "active" : "warning"}>
                             {item.isAvailable ? "Active" : "Disabled"}
-                          </Chip>
+                          </span>
+                          <Dropdown radius="sm" placement="bottom-end">
+                            <DropdownTrigger>
+                              <button
+                                className={cn(
+                                  "h-5.5 px-1 flex items-center rounded-r-full border cursor-pointer",
+                                  item.isAvailable
+                                    ? "bg-success/20 text-success border-success/20"
+                                    : "bg-warning/20 text-warning border-warning/20"
+                                )}
+                              >
+                                <ChevronDownIcon className="size-3" />
+                              </button>
+                            </DropdownTrigger>
+                            <DropdownMenu aria-label="Status actions">
+                              <DropdownItem
+                                key="toggle"
+                                startContent={
+                                  item.isAvailable ? (
+                                    <NoSymbolIcon className="size-4" />
+                                  ) : (
+                                    <BoltIcon className="size-4" />
+                                  )
+                                }
+                                onPress={() =>
+                                  toggleStatusMutation.mutate({
+                                    id: item._id,
+                                    isAvailable: !item.isAvailable
+                                  })
+                                }
+                              >
+                                {item.isAvailable ? "Disable" : "Activate"}
+                              </DropdownItem>
+                            </DropdownMenu>
+                          </Dropdown>
                         </div>
                       </div>
                       <div className="flex flex-col gap-2 border-default-200">
