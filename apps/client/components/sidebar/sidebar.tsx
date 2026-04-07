@@ -117,7 +117,7 @@ export default function Sidebar() {
       ref={asideRef}
       style={{ width: hidden ? 8 : width }}
       className={cn(
-        "relative overflow-hidden bg-sidebar backdrop-blur-md flex flex-col shrink-0 min-w-0",
+        "relative overflow-hidden bg-sidebar backdrop-blur-md flex flex-col shrink-0 min-w-0 scrollbar-hide",
         !isResizing && "transition-[width] duration-250",
         className
       )}
@@ -263,6 +263,7 @@ export default function Sidebar() {
           )}
         </ModalContent>
       </Modal>
+
       {!hidden && (
         <div
           onMouseDown={handleMouseDown}
