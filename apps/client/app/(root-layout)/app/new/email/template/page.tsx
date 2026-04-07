@@ -8,6 +8,7 @@ import GlobalTooltip from "@/components/global/tooltip";
 import PageComponent from "@/components/layouts/page-component";
 import Type from "@/components/type";
 import { cn } from "@/lib/utils";
+import useReactCodeEditorStore from "@/store/emails/react-code-editor-email.store";
 import {
   ArrowDownTrayIcon,
   Bars3Icon,
@@ -35,6 +36,8 @@ export default function CreateEmailPage() {
   const handleCodeReceived = (code: string) => {
     setEditorCode(code);
   };
+
+  const { lastCodeMessageHtmlCode } = useReactCodeEditorStore();
 
   return (
     <PageComponent className="flex flex-1 h-full p-0">
@@ -133,18 +136,21 @@ export default function CreateEmailPage() {
           )}
 
           {/* Preview Panel */}
-          {visualizationType === "preview" && (
-            <div className="flex-1 w-full relative bg-default-50">
-              <div className="flex flex-col text-muted-foreground w-full h-full justify-center items-center gap-2 bg-default-50">
-                <EnvelopeIcon className="size-5" />
-                <span className="text-xs">Email preview will appear here</span>
+          {visualizationType === "preview" &&
+            (!lastCodeMessageHtmlCode ? (
+              <div className="flex-1 w-full relative bg-default-50">
+                <div className="flex flex-col text-muted-foreground w-full h-full justify-center items-center gap-2 bg-default-50">
+                  <EnvelopeIcon className="size-5" />
+                  <span className="text-xs">Email preview will appear here</span>
 
-                <footer className="absolute bottom-4 mx-auto flex gap-4 text-muted-foreground/40 text-xs">
-                  Start editing to see the preview
-                </footer>
+                  <footer className="absolute bottom-4 mx-auto flex gap-4 text-muted-foreground/40 text-xs">
+                    Start editing to see the preview
+                  </footer>
+                </div>
               </div>
-            </div>
-          )}
+            ) : (
+              <iframe srcDoc={lastCodeMessageHtmlCode.html} className="h-full" />
+            ))}
         </div>
       </div>
     </PageComponent>

@@ -1,7 +1,10 @@
 "use client";
 
 import { type AiMessage, getAiConversation, sendMessageToAi } from "@/actions/ai/ai-email.actions";
+import { reactToHtml } from "@/actions/react-to-html/react-to-html.actions";
+import useReactCodeEditorStore from "@/store/emails/react-code-editor-email.store";
 import { addToast } from "@heroui/toast";
+import { ReactToHtmlValues } from "@repo/packages/shared/schemas";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -20,12 +23,21 @@ export function useAiChat({
 
   const router = useRouter();
 
+  const { setLastCodeMessageHtmlCode } = useReactCodeEditorStore();
+
   const { data, isFetching: isLoadingConversation } = useQuery({
     queryKey: ["ai-conversation", initialConversationId],
     queryFn: async () => {
       return await getAiConversation(initialConversationId!);
     },
     enabled: !!initialConversationId
+  });
+
+  const { mutate: reactToEmailMutate } = useMutation({
+    mutationFn: (data: ReactToHtmlValues) => reactToHtml(data),
+    onSuccess: (response) => {
+      setLastCodeMessageHtmlCode(response);
+    }
   });
 
   useEffect(() => {
@@ -35,10 +47,12 @@ export function useAiChat({
       conversationIdRef.current = data._id;
 
       if (messages.some((message) => message.operation_type == "code")) {
-        const lastCodeMessage = messages.findLast((value) => value.code != null);
+        const lastCodeMessage = messages.findLast((value) => value.code != null)?.code;
 
-        if (lastCodeMessage?.code && onCodeReceived) {
-          onCodeReceived(lastCodeMessage.code);
+        if (lastCodeMessage && onCodeReceived) {
+          onCodeReceived(lastCodeMessage);
+          // Send fetch to the react2html
+          reactToEmailMutate({ code: lastCodeMessage });
         }
       }
     }
