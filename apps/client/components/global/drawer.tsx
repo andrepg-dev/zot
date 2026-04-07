@@ -115,9 +115,10 @@ export default function GlobalDrawer({
       onOpenChange={handleOpenChange}
       size={currentSize}
       radius="sm"
+      backdrop="blur"
       classNames={{
         ...classNames,
-        base: `transition-all duration-300 ${classNames?.base ?? ""}`
+        base: `transition-all duration-300 ${classNames?.base ?? ""} bg-[#0A0A0A]`
       }}
       {...props}
     >

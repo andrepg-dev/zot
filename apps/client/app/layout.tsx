@@ -38,12 +38,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             showSpinner={false}
             zIndex={100000}
           /> */}
-            <QueryProvider>
-              {children}
-            </QueryProvider>
+            <QueryProvider>{children}</QueryProvider>
           </Providers>
         </body>
       </html>
     </>
-  )
+  );
 }

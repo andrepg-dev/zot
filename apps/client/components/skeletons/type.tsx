@@ -12,7 +12,7 @@ const heightMap: Record<VariantKey, string> = {
   h6: "h-5",
   base: "h-5",
   sm: "h-4",
-  link: "h-5",
+  link: "h-5"
 };
 
 type TypeSkeletonProps = {
@@ -22,7 +22,5 @@ type TypeSkeletonProps = {
 };
 
 export default function TypeSkeleton({ variant = "base", width, className }: TypeSkeletonProps) {
-  return (
-    <Skeleton className={cn(heightMap[variant], width, "rounded-md", className)} />
-  );
+  return <Skeleton className={cn(heightMap[variant], width, "rounded-md", className)} />;
 }

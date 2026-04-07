@@ -1,12 +1,9 @@
 "use client";
 
-import {
-  type AiMessage,
-  getAiConversation,
-  sendMessageToAi
-} from "@/actions/ai/ai-email.actions";
+import { type AiMessage, getAiConversation, sendMessageToAi } from "@/actions/ai/ai-email.actions";
 import { addToast } from "@heroui/toast";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 interface UseAiChatOptions {
@@ -14,26 +11,41 @@ interface UseAiChatOptions {
   onCodeReceived?: (code: string) => void;
 }
 
-export function useAiChat({ conversationId: initialConversationId, onCodeReceived }: UseAiChatOptions = {}) {
+export function useAiChat({
+  conversationId: initialConversationId,
+  onCodeReceived
+}: UseAiChatOptions = {}) {
   const [messages, setMessages] = useState<AiMessage[]>([]);
   const conversationIdRef = useRef<string | null>(initialConversationId ?? null);
 
-  const { data, isPending: isLoadingConversation } = useQuery({
+  const router = useRouter();
+
+  const { data, isFetching: isLoadingConversation } = useQuery({
     queryKey: ["ai-conversation", initialConversationId],
-    queryFn: () => getAiConversation(initialConversationId!),
+    queryFn: async () => {
+      return await getAiConversation(initialConversationId!);
+    },
     enabled: !!initialConversationId
   });
 
   useEffect(() => {
-    if (data?.messages) {
+    const messages = data?.messages;
+    if (messages) {
       setMessages(data.messages);
       conversationIdRef.current = data._id;
+
+      if (messages.some((message) => message.operation_type == "code")) {
+        const lastCodeMessage = messages.findLast((value) => value.code != null);
+
+        if (lastCodeMessage?.code && onCodeReceived) {
+          onCodeReceived(lastCodeMessage.code);
+        }
+      }
     }
   }, [data]);
 
   const { mutate, isPending } = useMutation({
-    mutationFn: (message: string) =>
-      sendMessageToAi(message, conversationIdRef.current ?? undefined),
+    mutationFn: (message: string) => sendMessageToAi(message, conversationIdRef.current),
     onMutate: (message) => {
       setMessages((prev) => [
         ...prev,
@@ -47,6 +59,9 @@ export function useAiChat({ conversationId: initialConversationId, onCodeReceive
     },
     onSuccess: (data) => {
       conversationIdRef.current = data.conversationId;
+
+      // set windows query
+      router.replace(`?conversationId=${data.conversationId}`);
 
       setMessages((prev) => [
         ...prev,

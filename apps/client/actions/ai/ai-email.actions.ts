@@ -27,7 +27,7 @@ export interface AiEmailResponse {
   conversationId: string;
 }
 
-export async function sendMessageToAi(message: string, conversationId?: string) {
+export async function sendMessageToAi(message: string, conversationId?: string | null) {
   return await FetchWrapper<AiEmailResponse>("/ai/react-code-email", {
     method: "POST",
     body: JSON.stringify({ message, conversationId })

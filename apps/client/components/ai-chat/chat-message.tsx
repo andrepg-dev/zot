@@ -7,6 +7,7 @@ import { formatTime } from "@/lib/format-date";
 import { cn } from "@/lib/utils";
 import { CheckIcon, ClipboardDocumentIcon, ClockIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";
+import { Streamdown } from "streamdown";
 
 interface ChatMessageProps {
   message: AiMessage;
@@ -51,7 +52,11 @@ export default function ChatMessage({ message }: ChatMessageProps) {
         className={cn("p-2.5 rounded-lg text-sm", isUser ? "bg-default-100 border" : "flex gap-2")}
       >
         <div className="flex flex-col gap-1">
-          <Type className="whitespace-pre-wrap">{content}</Type>
+          {isUser ? (
+            <Type className="whitespace-pre-wrap">{content}</Type>
+          ) : (
+            <Streamdown>{content ?? ""}</Streamdown>
+          )}
           {!isUser && actions}
         </div>
       </div>

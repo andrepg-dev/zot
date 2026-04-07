@@ -5,16 +5,28 @@ import PageActions from "@/components/global/page-actions";
 import Title from "@/components/global/title";
 import PageComponent from "@/components/layouts/page-component";
 import Type from "@/components/type";
+import { useHotkey } from "@/hooks/use-hotkey";
 import { formatDateTime } from "@/lib/format-date";
 import { ChatBubbleLeftRightIcon, SparklesIcon } from "@heroicons/react/24/outline";
 import { Card, CardBody } from "@heroui/card";
+import { Kbd } from "@heroui/react";
 import { Spinner } from "@heroui/spinner";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function EmailsPage() {
   const [search, setSearch] = useState("");
+  const router = useRouter();
+
+  useHotkey({
+    key: "k",
+    modifiers: ["meta"],
+    onPress: () => {
+      router.push("/app/new/email/template");
+    }
+  });
 
   const { data, isPending } = useQuery({
     queryKey: ["ai-conversations"],
@@ -34,7 +46,12 @@ export default function EmailsPage() {
         onSearchChange={setSearch}
         actionButton={{
           label: "Create template",
-          href: "/app/new/email/template"
+          href: "/app/new/email/template",
+          endContent: (
+            <Kbd className="text-xs" keys={["command"]}>
+              K
+            </Kbd>
+          )
         }}
       />
 
@@ -56,7 +73,7 @@ export default function EmailsPage() {
             <Card
               key={conversation._id}
               as={Link}
-              href={`/app/new/email/template?conversationId=${conversation._id}`}
+              href={`/app/new/email/template?conversationId=${conversation._id}&isEdition=true`}
               isPressable
               className="border"
               radius="sm"

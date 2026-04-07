@@ -1,4 +1,4 @@
-import { IsMongoId, IsNotEmpty, IsOptional, IsString, MinLength } from "class-validator";
+import { IsNotEmpty, IsOptional, IsString, MinLength } from "class-validator";
 
 export class AIMessageDto {
   @IsString()
@@ -7,6 +7,6 @@ export class AIMessageDto {
   message: string = "";
 
   @IsOptional()
-  @IsMongoId()
+  @IsString()
   conversationId?: string;
 }

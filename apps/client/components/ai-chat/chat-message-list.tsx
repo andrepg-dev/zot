@@ -6,16 +6,18 @@ import { useEffect, useRef } from "react";
 import ShinyText from "../ui/shiny-text";
 import ChatMessage from "./chat-message";
 
+import "katex/dist/katex.min.css";
+
 interface ChatMessageListProps {
   messages: AiMessage[];
   isPending: boolean;
-  conversationId: string;
+  isLoadingMessages: boolean;
 }
 
 export default function ChatMessageList({
   messages,
   isPending,
-  conversationId
+  isLoadingMessages
 }: ChatMessageListProps) {
   const bottomRef = useRef<HTMLDivElement>(null);
 
@@ -23,7 +25,7 @@ export default function ChatMessageList({
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isPending]);
 
-  if (messages.length === 0 && !isPending) {
+  if (messages.length === 0 && !isPending && !isLoadingMessages) {
     return (
       <div className="flex flex-col items-center justify-center h-full text-muted-foreground gap-2">
         <SparklesIcon className="size-5" />

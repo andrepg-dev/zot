@@ -12,13 +12,21 @@ import { EnvelopeIcon } from "@heroicons/react/24/outline";
 import { Alert } from "@heroui/alert";
 import { Button } from "@heroui/button";
 import { Card, CardBody, CardFooter } from "@heroui/card";
-import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from "@heroui/react";
+import {
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  useDisclosure
+} from "@heroui/react";
 import { Switch } from "@heroui/switch";
 import { addToast } from "@heroui/toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type UpdateWaitListValues } from "@repo/packages/shared/schemas";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
+import posthog from "posthog-js";
 import { use, useEffect, useState } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
@@ -73,6 +81,7 @@ export default function SettingsPage({ params }: { params: Promise<{ id: string 
   const deleteMutation = useMutation({
     mutationFn: () => deleteWaitList(id),
     onSuccess: () => {
+      posthog.capture("waitlist_deleted", { waitlist_id: id, name: data?.name });
       addToast({ description: "Waitlist deleted", color: "default" });
       router.push("/app/waitlist/dashboard");
     },
@@ -152,17 +161,13 @@ export default function SettingsPage({ params }: { params: Promise<{ id: string 
                   name="isAvailable"
                   render={({ field }) => (
                     <div className="flex flex-col gap-2">
-                      <Switch
-                        size="sm"
-                        isSelected={field.value}
-                        onValueChange={field.onChange}
-                      >
+                      <Switch size="sm" isSelected={field.value} onValueChange={field.onChange}>
                         <Type variant="sm">{field.value ? "Active" : "Paused"}</Type>
                       </Switch>
                       {!field.value && (
                         <Type variant="sm" className="text-warning">
-                          Your wait-list will be paused. No new registrations will be accepted until you
-                          re-enable it.
+                          Your wait-list will be paused. No new registrations will be accepted until
+                          you re-enable it.
                         </Type>
                       )}
                     </div>
@@ -266,13 +271,18 @@ export default function SettingsPage({ params }: { params: Promise<{ id: string 
                 Deleting WaitList
               </Type>
               <span className="text-muted-foreground">
-                All landing pages connected to this waitlist will stop working. Make sure to
-                update them before proceeding.
+                All landing pages connected to this waitlist will stop working. Make sure to update
+                them before proceeding.
               </span>
             </div>
 
             <div className="flex justify-start w-full mt-2">
-              <Button size="sm" color="danger" className="text-foreground" onPress={confirmModal.onOpen}>
+              <Button
+                size="sm"
+                color="danger"
+                className="text-foreground"
+                onPress={confirmModal.onOpen}
+              >
                 Delete
               </Button>
             </div>
@@ -294,7 +304,8 @@ export default function SettingsPage({ params }: { params: Promise<{ id: string 
               <ModalHeader>Confirm Deletion</ModalHeader>
               <ModalBody>
                 <p className="text-sm text-muted-foreground">
-                  This action cannot be undone. Type <Type variant="code">{deletePhrase}</Type> to confirm.
+                  This action cannot be undone. Type <Type variant="code">{deletePhrase}</Type> to
+                  confirm.
                 </p>
                 <InputComponent
                   placeholder={deletePhrase}

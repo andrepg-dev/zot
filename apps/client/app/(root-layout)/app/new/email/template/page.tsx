@@ -4,10 +4,8 @@ import MonacoEditorTemplate from "@/components/editor/monaco/monaco-editor/monac
 import MonacoEditor from "@/components/editor/monaco/monaco-editor/monaco-editor";
 import HeaderTabulation from "@/components/editor/monaco/tabulation/header-tab";
 import EditorSidebar from "@/components/editor/sidebar";
-import PrimaryActionButton from "@/components/global/primary-action-button";
 import GlobalTooltip from "@/components/global/tooltip";
 import PageComponent from "@/components/layouts/page-component";
-import HeaderNavigation from "@/components/navigation/header.navigation";
 import Type from "@/components/type";
 import { cn } from "@/lib/utils";
 import {
@@ -15,8 +13,7 @@ import {
   Bars3Icon,
   CodeBracketIcon,
   EnvelopeIcon,
-  EyeIcon,
-  FolderPlusIcon
+  EyeIcon
 } from "@heroicons/react/24/outline";
 import { Button } from "@heroui/button";
 import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@heroui/dropdown";
@@ -27,12 +24,13 @@ import { useState } from "react";
 type VisualizationType = "code" | "preview";
 
 export default function CreateEmailPage() {
-  const [visualizationType, setVisualizationType] = useState<VisualizationType>("code");
+  const [visualizationType, setVisualizationType] = useState<VisualizationType>("preview");
   const [editorCode, setEditorCode] = useState("");
 
   const searchParams = useSearchParams();
 
   const conversationId = searchParams.get("conversationId") ?? "";
+  const isEdition = searchParams.get("isEdition") ?? false;
 
   const handleCodeReceived = (code: string) => {
     setEditorCode(code);
@@ -41,21 +39,13 @@ export default function CreateEmailPage() {
   return (
     <PageComponent className="flex flex-1 h-full p-0">
       {/* Header Navigation */}
-      <HeaderNavigation
-        navigationItems={[
-          { label: "Wait-List", pathname: "/app/waitlist/dashboard" },
-          { label: "Emails", pathname: "/app/waitlist/emails" },
-          { label: "Create template", pathname: "" }
-        ]}
-        postNavigationItems={
-          <PrimaryActionButton startContent={<FolderPlusIcon className="size-4" strokeWidth={2} />}>
-            Save template
-          </PrimaryActionButton>
-        }
-      />
 
       {/* Sidebar */}
-      <EditorSidebar onCodeReceived={handleCodeReceived} conversationId={conversationId} />
+      <EditorSidebar
+        onCodeReceived={handleCodeReceived}
+        conversationId={conversationId}
+        isEdition={isEdition}
+      />
 
       {/* Main Content */}
       <div className="flex flex-col w-full">

@@ -33,6 +33,7 @@ import { submitWaitlistSchema, SubmitWaitListValues } from "@repo/packages/share
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import posthog from "posthog-js";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
@@ -114,7 +115,13 @@ export default function LaunchWaitList() {
         sendEmailToNewSignup: data.sendEmail,
         isSecurityActive: data.addSecurity
       }),
-    onSuccess: () => {}
+    onSuccess: (_data, variables) => {
+      posthog.capture("waitlist_created", {
+        name: variables.name,
+        send_email_to_new_signup: variables.sendEmail,
+        security_active: variables.addSecurity,
+      });
+    }
   });
 
   const onSubmit = (data: SubmitWaitListValues) => {

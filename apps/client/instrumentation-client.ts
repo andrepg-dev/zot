@@ -3,15 +3,28 @@
 // https://docs.sentry.io/platforms/javascript/guides/nextjs/
 
 import * as Sentry from "@sentry/nextjs";
+import posthog from "posthog-js";
+
+if (process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN) {
+  posthog.init(process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN, {
+    api_host: "/ingest",
+    ui_host: "https://us.posthog.com",
+    defaults: "2026-01-30",
+    capture_exceptions: true,
+    debug: process.env.NODE_ENV === "development"
+  });
+}
 
 Sentry.init({
   dsn: "https://506810c8a55cb24758660b6f0383ab63@o4511154223513600.ingest.us.sentry.io/4511154246582272",
+
+  enabled: true,
 
   // Add optional integrations for additional features
   integrations: [Sentry.replayIntegration()],
 
   // Define how likely traces are sampled. Adjust this value in production, or use tracesSampler for greater control.
-  tracesSampleRate: 1,
+  tracesSampleRate: 0.1,
   // Enable logs to be sent to Sentry
   enableLogs: true,
 
@@ -25,7 +38,7 @@ Sentry.init({
 
   // Enable sending user PII (Personally Identifiable Information)
   // https://docs.sentry.io/platforms/javascript/guides/nextjs/configuration/options/#sendDefaultPii
-  sendDefaultPii: true,
+  sendDefaultPii: true
 });
 
 export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;

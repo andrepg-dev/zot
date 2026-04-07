@@ -13,6 +13,7 @@ import { useMutation } from "@tanstack/react-query";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import posthog from "posthog-js";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
@@ -33,8 +34,14 @@ export default function LoginPage() {
   });
 
   const { isPending, mutate } = useMutation({
-    mutationFn: async (data: LoginFormValues) => await login(data),
-    onSuccess: () => {
+    mutationFn: async (data: LoginFormValues) => {
+      const result = await login(data);
+      return { result, email: data.email };
+    },
+    onSuccess: ({ email }) => {
+      posthog.identify(email, { email });
+      posthog.capture("user_logged_in", { email, method: "email" });
+
       addToast({
         title: "Success",
         description: "You will be redirected."

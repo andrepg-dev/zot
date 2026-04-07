@@ -11,7 +11,7 @@ export default function HeaderNavigation({
   hidden
 }: {
   children?: ReactNode;
-  navigationItems?: Array<{ label: string; pathname: string }>;
+  navigationItems?: Array<{ label: React.ReactNode; pathname: string }>;
   postNavigationItems?: ReactNode;
   hidden?: boolean;
 }) {

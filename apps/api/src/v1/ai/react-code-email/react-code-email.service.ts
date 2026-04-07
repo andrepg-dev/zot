@@ -22,11 +22,13 @@ export class AiServerConnectionService {
   ): Promise<{ agent_response: string; conversationId: string }> {
     const AI_URL_SERVICE = this.configService.get("AI_URL_SERVICE");
 
+    const thread_id = conversationId ? conversationId : new Types.ObjectId();
+
     const result = await firstValueFrom(
       this.http.post(AI_URL_SERVICE, {
         message,
         user_id: userId,
-        thread_id: conversationId ?? new Types.ObjectId(),
+        thread_id,
       }),
     );
 
