@@ -133,6 +133,7 @@ export default function ItemList({ navItems }: { navItems: NavItemOrDivider[] | 
                       <li key={sub.href}>
                         <Link
                           href={sub.href}
+                          prefetch={false}
                           className={cn(
                             "flex items-center gap-2 py-1.5 px-3 !rounded-l-none h-[35px] text-muted-foreground rounded-sm border-l-3",
                             isSubActive && "text-white",

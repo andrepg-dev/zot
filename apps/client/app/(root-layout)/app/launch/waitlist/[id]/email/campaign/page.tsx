@@ -44,6 +44,7 @@ import {
 import { addToast } from "@heroui/toast";
 import { Player } from "@remotion/player";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import posthog from "posthog-js";
 import React, { useEffect, useState } from "react";
 
 import { formatDate } from "@/lib/format-date";
@@ -97,9 +98,10 @@ export default function CampaignPage({ params }: { params: Promise<{ id: string 
 
   const { mutate: sendCampaign, isPending: isSending } = useMutation({
     mutationFn: (qty: number) => sendEmail({ waitlistId: id, quantity: qty }),
-    onSuccess: () => {
+    onSuccess: (_data, qty) => {
       queryClient.invalidateQueries({ queryKey: [id, "email-records"] });
       queryClient.invalidateQueries({ queryKey: [id, "email-records-list"] });
+      posthog.capture("email_campaign_sent", { waitlist_id: id, quantity: qty });
       setSendResult("success");
     },
     onError: (err) => {
@@ -116,6 +118,7 @@ export default function CampaignPage({ params }: { params: Promise<{ id: string 
       queryClient.invalidateQueries({ queryKey: [id, "waitlist-users"] });
       setSelectedKeys([]);
       setEmailsToDelete([]);
+      posthog.capture("waitlist_user_removed", { waitlist_id: id, count: emails.length });
       addToast({
         title: "Removed",
         description: `${emails.length} user${emails.length > 1 ? "s" : ""} removed from the waitlist.`,

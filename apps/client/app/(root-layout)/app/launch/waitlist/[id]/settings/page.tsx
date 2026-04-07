@@ -26,6 +26,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { type UpdateWaitListValues } from "@repo/packages/shared/schemas";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
+import posthog from "posthog-js";
 import { use, useEffect, useState } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
@@ -80,6 +81,7 @@ export default function SettingsPage({ params }: { params: Promise<{ id: string 
   const deleteMutation = useMutation({
     mutationFn: () => deleteWaitList(id),
     onSuccess: () => {
+      posthog.capture("waitlist_deleted", { waitlist_id: id, name: data?.name });
       addToast({ description: "Waitlist deleted", color: "default" });
       router.push("/app/waitlist/dashboard");
     },

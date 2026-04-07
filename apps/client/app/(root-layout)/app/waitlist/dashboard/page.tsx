@@ -56,6 +56,7 @@ import { addToast } from "@heroui/toast";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import posthog from "posthog-js";
 import { useRef, useState } from "react";
 
 type ViewMode = "table" | "cards";
@@ -141,8 +142,9 @@ export default function WaitListPage() {
   const toggleStatusMutation = useMutation({
     mutationFn: ({ id, isAvailable }: { id: string; isAvailable: boolean }) =>
       updateWaitList(id, { isAvailable }),
-    onSuccess: (_data, { isAvailable }) => {
+    onSuccess: (_data, { id, isAvailable }) => {
       queryClient.invalidateQueries({ queryKey: ["waitlists"] });
+      posthog.capture("waitlist_status_toggled", { waitlist_id: id, is_available: isAvailable });
       addToast({
         description: `Waitlist ${isAvailable ? "activated" : "disabled"}`,
         color: isAvailable ? "primary" : "warning"

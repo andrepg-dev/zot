@@ -1,3 +1,4 @@
+import { getPostHogClient } from "@/lib/posthog-server";
 import { cookies } from "next/headers";
 import { type NextRequest, NextResponse } from "next/server";
 
@@ -25,6 +26,15 @@ export async function GET(request: NextRequest) {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax"
+  });
+
+  const posthog = getPostHogClient();
+  const distinctId = request.nextUrl.searchParams.get("distinct_id") ?? access_token.slice(0, 16);
+
+  posthog.capture({
+    distinctId,
+    event: "oauth_login_completed",
+    properties: { method: "oauth" },
   });
 
   return NextResponse.redirect(new URL("/app/dashboard", request.url));
