@@ -53,6 +53,8 @@ export default function EditorSidebar({
 
       <SidebarNavigation
         resizable={isCode}
+        maxWidth={900}
+        storageKey="sidebar-width:email-template"
         className={cn(
           "overflow-y-auto z-50",
           editionType === "ai" ? (isCode ? "" : "min-w-full") : "min-w-0 w-0"
@@ -61,7 +63,7 @@ export default function EditorSidebar({
           <div
             className={cn(
               "p-4 pb-0 flex flex-col h-full flex-1 text-sm gap-2 mx-auto min-w-0",
-              isCode ? "w-full" : "w-3xl"
+              isCode ? "w-full max-w-[755px]" : "w-3xl"
             )}
           >
             <ChatMessageList

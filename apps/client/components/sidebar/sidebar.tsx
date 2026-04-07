@@ -21,29 +21,30 @@ import {
   useDisclosure
 } from "@heroui/react";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { usePathname, useRouter } from "next/navigation";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import GlobalButton from "../global/button";
 import ItemList from "./items-list";
 
 const MIN_WIDTH = 220;
-const MAX_WIDTH = 480;
+const DEFAULT_MAX_WIDTH = 480;
 const DEFAULT_WIDTH = 280;
-const PLATFORM_STORAGE_KEY = "sidebar-width";
-const EMAIL_TEMPLATE_STORAGE_KEY = "sidebar-width:email-template";
+const DEFAULT_STORAGE_KEY = "sidebar-width";
 
 export default function Sidebar() {
-  const { navItems, children, hidden, className, resizable = true } = useSidebarStore();
+  const {
+    navItems,
+    children,
+    hidden,
+    className,
+    resizable = true,
+    maxWidth: storeMaxWidth,
+    storageKey: storeStorageKey
+  } = useSidebarStore();
   const router = useRouter();
-  const pathname = usePathname();
-  const storageKey = useMemo(
-    () =>
-      pathname?.startsWith("/app/new/email/template")
-        ? EMAIL_TEMPLATE_STORAGE_KEY
-        : PLATFORM_STORAGE_KEY,
-    [pathname]
-  );
+  const maxWidth = storeMaxWidth ?? DEFAULT_MAX_WIDTH;
+  const storageKey = storeStorageKey ?? DEFAULT_STORAGE_KEY;
 
   const { data, isPending } = useQuery({
     queryKey: ["user-profile"],
@@ -52,6 +53,11 @@ export default function Sidebar() {
 
   const [width, setWidth] = useState<number>(DEFAULT_WIDTH);
   const [isResizing, setIsResizing] = useState(false);
+  const [handleRect, setHandleRect] = useState<{
+    left: number;
+    top: number;
+    height: number;
+  } | null>(null);
   const asideRef = useRef<HTMLElement>(null);
   const widthRef = useRef<number>(DEFAULT_WIDTH);
   const startXRef = useRef<number>(0);
@@ -60,12 +66,10 @@ export default function Sidebar() {
   useEffect(() => {
     const stored = localStorage.getItem(storageKey);
     const n = stored ? Number(stored) : NaN;
-    const next = !Number.isNaN(n)
-      ? Math.min(MAX_WIDTH, Math.max(MIN_WIDTH, n))
-      : DEFAULT_WIDTH;
+    const next = !Number.isNaN(n) ? Math.min(maxWidth, Math.max(MIN_WIDTH, n)) : DEFAULT_WIDTH;
     widthRef.current = next;
     setWidth(next);
-  }, [storageKey]);
+  }, [storageKey, maxWidth]);
 
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
@@ -85,7 +89,7 @@ export default function Sidebar() {
     const apply = () => {
       rafId = 0;
       const delta = pendingX - startXRef.current;
-      const next = Math.min(MAX_WIDTH, Math.max(MIN_WIDTH, startWidthRef.current + delta));
+      const next = Math.min(maxWidth, Math.max(MIN_WIDTH, startWidthRef.current + delta));
       widthRef.current = next;
       if (asideRef.current) asideRef.current.style.width = `${next}px`;
     };
@@ -111,7 +115,30 @@ export default function Sidebar() {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
     };
-  }, [isResizing, storageKey]);
+  }, [isResizing, storageKey, maxWidth]);
+
+  useEffect(() => {
+    if (hidden || !resizable) {
+      setHandleRect(null);
+      return;
+    }
+    const update = () => {
+      const el = asideRef.current;
+      if (!el) return;
+      const r = el.getBoundingClientRect();
+      setHandleRect({ left: r.right - 6, top: r.top, height: r.height });
+    };
+    update();
+    const ro = new ResizeObserver(update);
+    if (asideRef.current) ro.observe(asideRef.current);
+    window.addEventListener("resize", update);
+    window.addEventListener("scroll", update, true);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", update);
+      window.removeEventListener("scroll", update, true);
+    };
+  }, [hidden, resizable, width]);
 
   const logoutModal = useDisclosure();
 
@@ -271,14 +298,27 @@ export default function Sidebar() {
         </ModalContent>
       </Modal>
 
-      {!hidden && resizable && (
-        <div
-          onMouseDown={handleMouseDown}
-          role="separator"
-          aria-orientation="vertical"
-          className="absolute top-0 right-0 h-full w-1.5 cursor-col-resize hover:bg-default/60 active:bg-default/80 z-50"
-        />
-      )}
+      {!hidden &&
+        resizable &&
+        handleRect &&
+        typeof document !== "undefined" &&
+        createPortal(
+          <div
+            onMouseDown={handleMouseDown}
+            role="separator"
+            aria-orientation="vertical"
+            style={{
+              position: "fixed",
+              left: handleRect.left,
+              top: handleRect.top,
+              height: handleRect.height,
+              width: 6,
+              zIndex: 2147483646
+            }}
+            className="cursor-col-resize hover:bg-default/60 active:bg-default/80"
+          />,
+          document.body
+        )}
       {isResizing &&
         typeof document !== "undefined" &&
         createPortal(
