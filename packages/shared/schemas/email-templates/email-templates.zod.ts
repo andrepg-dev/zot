@@ -11,6 +11,14 @@ export const createEmailTemplateSchema = z.object({
 
 export const updateEmailTemplateSchema = createEmailTemplateSchema.partial();
 
+export const emailTemplateSchema = createEmailTemplateSchema.extend({
+  _id: z.string(),
+  html: z.string().optional(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+});
+
 export type EmailTemplateStatus = z.infer<typeof emailTemplateStatusEnum>;
 export type CreateEmailTemplateValues = z.infer<typeof createEmailTemplateSchema>;
 export type UpdateEmailTemplateValues = z.infer<typeof updateEmailTemplateSchema>;
+export type EmailTemplate = z.infer<typeof emailTemplateSchema>;

@@ -13,6 +13,7 @@ import {
   ArrowDownTrayIcon,
   Bars3Icon,
   CodeBracketIcon,
+  DocumentIcon,
   EnvelopeIcon,
   EyeIcon
 } from "@heroicons/react/24/outline";
@@ -62,7 +63,10 @@ function CreateEmailPageContent() {
       <div className="flex flex-col w-full">
         <MonacoEditorTemplate>
           <div className="flex items-center gap-2">
-            <Type variant="sm">React Email</Type>
+            <Type variant="sm" className="flex items-center gap-2">
+              <DocumentIcon className="size-4" />
+              Templates
+            </Type>
           </div>
 
           {/* Toggle Code/Preview */}
@@ -157,7 +161,30 @@ function CreateEmailPageContent() {
                 </div>
               </div>
             ) : (
-              <iframe srcDoc={lastCodeMessageHtmlCode.html} className="h-full" />
+              <div className="flex flex-col w-full h-full bg-white">
+                <div className="flex flex-col mx-auto w-4/5 h-full font-sans">
+                  <div className="flex flex-col my-4 text-black/80">
+                    <div>
+                      <div className="flex border-b items-center h-[40px] !border-muted-foreground/30">
+                        <Type className="w-[60px]">From</Type>
+                        <input
+                          className="w-full h-full outline-0 disabled:opacity-70"
+                          placeholder="Company <x@example.com>"
+                          value={"info@zot.so"}
+                          disabled
+                        />
+                        <Type style={{ textWrap: "nowrap" }} className="text-black/70">
+                          Feature for premium users
+                        </Type>
+                      </div>
+                      <div className="flex border-b items-center h-[40px] !border-muted-foreground/30">
+                        <input className="w-full h-full outline-0" placeholder="Subject" />
+                      </div>
+                    </div>
+                  </div>
+                  <iframe srcDoc={lastCodeMessageHtmlCode.html} className="h-full w-full" />
+                </div>
+              </div>
             ))}
         </div>
       </div>
