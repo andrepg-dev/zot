@@ -9,14 +9,16 @@ export default function SidebarNavigation({
   children,
   navItems,
   hidden,
-  className
+  className,
+  resizable
 }: {
   children?: React.ReactNode;
   navItems?: NavItemOrDivider[] | NavItemsI;
   hidden?: boolean;
   className?: string;
+  resizable?: boolean;
 }) {
-  const { setNavItems, setChildren, setHidden, setClassName } = useSidebarStore();
+  const { setNavItems, setChildren, setHidden, setClassName, setResizable } = useSidebarStore();
   const pathname = usePathname();
 
   // Reset values
@@ -26,6 +28,7 @@ export default function SidebarNavigation({
       setChildren(null);
       setHidden(false);
       setClassName(null);
+      setResizable(true);
     };
   }, [pathname]);
 
@@ -48,6 +51,12 @@ export default function SidebarNavigation({
       setClassName(className);
     }
   }, [className, setClassName]);
+
+  useEffect(() => {
+    if (resizable != undefined) {
+      setResizable(resizable);
+    }
+  }, [resizable, setResizable]);
 
   return null;
 }

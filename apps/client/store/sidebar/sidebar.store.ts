@@ -6,14 +6,17 @@ interface SidebarStateI {
   children?: React.ReactNode | null;
   hidden?: boolean;
   className?: string | null;
+  resizable?: boolean;
   setNavItems: (navItems: NavItemsI | NavItemOrDivider[] | null) => void;
   setChildren: (children: React.ReactNode | null) => void;
   setHidden: (hidden: boolean) => void;
   setClassName: (className: string | null) => void;
+  setResizable: (resizable: boolean) => void;
 }
 
 const useSidebarStore = create<SidebarStateI>((set) => ({
   navItems: defaultNavItems,
+  resizable: true,
   setNavItems: (navItems) => {
     set({ navItems });
   },
@@ -25,6 +28,9 @@ const useSidebarStore = create<SidebarStateI>((set) => ({
   },
   setClassName(className) {
     set({ className });
+  },
+  setResizable: (resizable) => {
+    set({ resizable });
   }
 }));
 

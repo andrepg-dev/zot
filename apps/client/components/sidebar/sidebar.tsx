@@ -21,8 +21,8 @@ import {
   useDisclosure
 } from "@heroui/react";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import GlobalButton from "../global/button";
 import ItemList from "./items-list";
@@ -30,11 +30,20 @@ import ItemList from "./items-list";
 const MIN_WIDTH = 220;
 const MAX_WIDTH = 480;
 const DEFAULT_WIDTH = 280;
-const STORAGE_KEY = "sidebar-width";
+const PLATFORM_STORAGE_KEY = "sidebar-width";
+const EMAIL_TEMPLATE_STORAGE_KEY = "sidebar-width:email-template";
 
 export default function Sidebar() {
-  const { navItems, children, hidden, className } = useSidebarStore();
+  const { navItems, children, hidden, className, resizable = true } = useSidebarStore();
   const router = useRouter();
+  const pathname = usePathname();
+  const storageKey = useMemo(
+    () =>
+      pathname?.startsWith("/app/new/email/template")
+        ? EMAIL_TEMPLATE_STORAGE_KEY
+        : PLATFORM_STORAGE_KEY,
+    [pathname]
+  );
 
   const { data, isPending } = useQuery({
     queryKey: ["user-profile"],
@@ -49,16 +58,14 @@ export default function Sidebar() {
   const startWidthRef = useRef<number>(DEFAULT_WIDTH);
 
   useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      const n = Number(stored);
-      if (!Number.isNaN(n)) {
-        const clamped = Math.min(MAX_WIDTH, Math.max(MIN_WIDTH, n));
-        widthRef.current = clamped;
-        setWidth(clamped);
-      }
-    }
-  }, []);
+    const stored = localStorage.getItem(storageKey);
+    const n = stored ? Number(stored) : NaN;
+    const next = !Number.isNaN(n)
+      ? Math.min(MAX_WIDTH, Math.max(MIN_WIDTH, n))
+      : DEFAULT_WIDTH;
+    widthRef.current = next;
+    setWidth(next);
+  }, [storageKey]);
 
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
@@ -92,7 +99,7 @@ export default function Sidebar() {
       if (rafId) cancelAnimationFrame(rafId);
       document.body.style.cursor = "";
       document.body.style.userSelect = "";
-      localStorage.setItem(STORAGE_KEY, String(widthRef.current));
+      localStorage.setItem(storageKey, String(widthRef.current));
       setWidth(widthRef.current);
       setIsResizing(false);
     };
@@ -104,7 +111,7 @@ export default function Sidebar() {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
     };
-  }, [isResizing]);
+  }, [isResizing, storageKey]);
 
   const logoutModal = useDisclosure();
 
@@ -264,7 +271,7 @@ export default function Sidebar() {
         </ModalContent>
       </Modal>
 
-      {!hidden && (
+      {!hidden && resizable && (
         <div
           onMouseDown={handleMouseDown}
           role="separator"

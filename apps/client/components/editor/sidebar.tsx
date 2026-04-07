@@ -52,6 +52,7 @@ export default function EditorSidebar({
       />
 
       <SidebarNavigation
+        resizable={isCode}
         className={cn(
           "overflow-y-auto z-50",
           editionType === "ai" ? (isCode ? "" : "min-w-full") : "min-w-0 w-0"
