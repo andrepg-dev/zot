@@ -4,7 +4,6 @@
     "outDir": "lib",
     "removeComments": true,
     "target": "ES6",
-    "baseUrl": "./",
     "esModuleInterop": true,
     "moduleResolution": "node",
     "paths": {
@@ -19,8 +18,8 @@
     "noImplicitReturns": true,
     "noUncheckedIndexedAccess": true,
     "noUnusedLocals": true,
-    "noUnusedParameters": true,
+    "noUnusedParameters": true
   },
   "include": ["./**/*.ts"],
-  "exclude": ["node_modules/**/*"],
+  "exclude": ["node_modules/**/*"]
 }
