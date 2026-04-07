@@ -53,20 +53,14 @@ export default function EditorSidebar({
 
       <SidebarNavigation
         className={cn(
-          "overflow-y-auto z-50 duration-1000 transition-all",
-          editionType === "ai"
-            ? isCode
-              ? isEdition
-                ? "w-[650px]"
-                : "min-w-[455px]"
-              : "min-w-full"
-            : "min-w-0 w-0"
+          "overflow-y-auto z-50",
+          editionType === "ai" ? (isCode ? "" : "min-w-full") : "min-w-0 w-0"
         )}
         children={
           <div
             className={cn(
-              "p-4 pb-0 flex flex-col h-full flex-1 text-sm gap-2 mx-auto",
-              isCode ? "w-full min-w-[445px] max-w-[455px]" : "w-3xl"
+              "p-4 pb-0 flex flex-col h-full flex-1 text-sm gap-2 mx-auto min-w-0",
+              isCode ? "w-full" : "w-3xl"
             )}
           >
             <ChatMessageList

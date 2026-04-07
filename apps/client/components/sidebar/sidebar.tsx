@@ -22,8 +22,15 @@ import {
 } from "@heroui/react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import GlobalButton from "../global/button";
 import ItemList from "./items-list";
+
+const MIN_WIDTH = 220;
+const MAX_WIDTH = 480;
+const DEFAULT_WIDTH = 280;
+const STORAGE_KEY = "sidebar-width";
 
 export default function Sidebar() {
   const { navItems, children, hidden, className } = useSidebarStore();
@@ -34,6 +41,71 @@ export default function Sidebar() {
     queryFn: getProfile
   });
 
+  const [width, setWidth] = useState<number>(DEFAULT_WIDTH);
+  const [isResizing, setIsResizing] = useState(false);
+  const asideRef = useRef<HTMLElement>(null);
+  const widthRef = useRef<number>(DEFAULT_WIDTH);
+  const startXRef = useRef<number>(0);
+  const startWidthRef = useRef<number>(DEFAULT_WIDTH);
+
+  useEffect(() => {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      const n = Number(stored);
+      if (!Number.isNaN(n)) {
+        const clamped = Math.min(MAX_WIDTH, Math.max(MIN_WIDTH, n));
+        widthRef.current = clamped;
+        setWidth(clamped);
+      }
+    }
+  }, []);
+
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    startXRef.current = e.clientX;
+    startWidthRef.current = widthRef.current;
+    setIsResizing(true);
+    document.body.style.cursor = "col-resize";
+    document.body.style.userSelect = "none";
+  }, []);
+
+  useEffect(() => {
+    if (!isResizing) return;
+
+    let rafId = 0;
+    let pendingX = 0;
+
+    const apply = () => {
+      rafId = 0;
+      const delta = pendingX - startXRef.current;
+      const next = Math.min(MAX_WIDTH, Math.max(MIN_WIDTH, startWidthRef.current + delta));
+      widthRef.current = next;
+      if (asideRef.current) asideRef.current.style.width = `${next}px`;
+    };
+
+    const handleMouseMove = (e: MouseEvent) => {
+      pendingX = e.clientX;
+      if (!rafId) rafId = requestAnimationFrame(apply);
+    };
+
+    const handleMouseUp = () => {
+      if (rafId) cancelAnimationFrame(rafId);
+      document.body.style.cursor = "";
+      document.body.style.userSelect = "";
+      localStorage.setItem(STORAGE_KEY, String(widthRef.current));
+      setWidth(widthRef.current);
+      setIsResizing(false);
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseup", handleMouseUp);
+    return () => {
+      if (rafId) cancelAnimationFrame(rafId);
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, [isResizing]);
+
   const logoutModal = useDisclosure();
 
   const { mutate: handleLogout, isPending: isLoadingLogout } = useMutation({
@@ -42,13 +114,18 @@ export default function Sidebar() {
 
   return (
     <aside
+      ref={asideRef}
+      style={{ width: hidden ? 8 : width }}
       className={cn(
-        "overflow-hidden bg-sidebar backdrop-blur-md flex flex-col transition-all duration-250",
-        hidden ? "w-[8px]" : "w-[280px]",
+        "relative overflow-hidden bg-sidebar backdrop-blur-md flex flex-col shrink-0 min-w-0",
+        !isResizing && "transition-[width] duration-250",
         className
       )}
     >
-      <div className="flex flex-col justify-between flex-1 min-w-[230px]">
+      <div
+        style={{ minWidth: hidden ? undefined : MIN_WIDTH }}
+        className="flex flex-col justify-between flex-1"
+      >
         {!navItems && children && <>{children}</>}
 
         {navItems && !children && <ItemList navItems={navItems} />}
@@ -186,6 +263,23 @@ export default function Sidebar() {
           )}
         </ModalContent>
       </Modal>
+      {!hidden && (
+        <div
+          onMouseDown={handleMouseDown}
+          role="separator"
+          aria-orientation="vertical"
+          className="absolute top-0 right-0 h-full w-1.5 cursor-col-resize hover:bg-default/60 active:bg-default/80 z-50"
+        />
+      )}
+      {isResizing &&
+        typeof document !== "undefined" &&
+        createPortal(
+          <div
+            className="fixed inset-0 cursor-col-resize"
+            style={{ zIndex: 2147483647, background: "transparent" }}
+          />,
+          document.body
+        )}
     </aside>
   );
 }
