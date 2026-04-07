@@ -20,11 +20,19 @@ import { Button } from "@heroui/button";
 import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@heroui/dropdown";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 
 type VisualizationType = "code" | "preview";
 
 export default function CreateEmailPage() {
+  return (
+    <Suspense fallback={null}>
+      <CreateEmailPageContent />
+    </Suspense>
+  );
+}
+
+function CreateEmailPageContent() {
   const [visualizationType, setVisualizationType] = useState<VisualizationType>("preview");
   const [editorCode, setEditorCode] = useState("");
 
