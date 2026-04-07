@@ -27,9 +27,9 @@ import { createPortal } from "react-dom";
 import GlobalButton from "../global/button";
 import ItemList from "./items-list";
 
-const MIN_WIDTH = 220;
+const DEFAULT_MIN_WIDTH = 220;
 const DEFAULT_MAX_WIDTH = 480;
-const DEFAULT_WIDTH = 280;
+const DEFAULT_WIDTH = 232;
 const DEFAULT_STORAGE_KEY = "sidebar-width";
 
 export default function Sidebar() {
@@ -40,10 +40,12 @@ export default function Sidebar() {
     className,
     resizable = true,
     maxWidth: storeMaxWidth,
+    minWidth: storeMinWidth,
     storageKey: storeStorageKey
   } = useSidebarStore();
   const router = useRouter();
   const maxWidth = storeMaxWidth ?? DEFAULT_MAX_WIDTH;
+  const minWidth = storeMinWidth ?? DEFAULT_MIN_WIDTH;
   const storageKey = storeStorageKey ?? DEFAULT_STORAGE_KEY;
 
   const { data, isPending } = useQuery({
@@ -59,6 +61,8 @@ export default function Sidebar() {
     height: number;
   } | null>(null);
   const asideRef = useRef<HTMLElement>(null);
+  const handleElRef = useRef<HTMLDivElement>(null);
+  const lastClickTimeRef = useRef<number>(0);
   const widthRef = useRef<number>(DEFAULT_WIDTH);
   const startXRef = useRef<number>(0);
   const startWidthRef = useRef<number>(DEFAULT_WIDTH);
@@ -66,19 +70,37 @@ export default function Sidebar() {
   useEffect(() => {
     const stored = localStorage.getItem(storageKey);
     const n = stored ? Number(stored) : NaN;
-    const next = !Number.isNaN(n) ? Math.min(maxWidth, Math.max(MIN_WIDTH, n)) : DEFAULT_WIDTH;
+    const next = !Number.isNaN(n) ? Math.min(maxWidth, Math.max(minWidth, n)) : DEFAULT_WIDTH;
     widthRef.current = next;
     setWidth(next);
-  }, [storageKey, maxWidth]);
+  }, [storageKey, maxWidth, minWidth]);
 
-  const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    e.preventDefault();
-    startXRef.current = e.clientX;
-    startWidthRef.current = widthRef.current;
-    setIsResizing(true);
-    document.body.style.cursor = "col-resize";
-    document.body.style.userSelect = "none";
-  }, []);
+  const handleMouseDown = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault();
+      const now = Date.now();
+      if (now - lastClickTimeRef.current < 300) {
+        lastClickTimeRef.current = 0;
+        const next = Math.min(maxWidth, Math.max(minWidth, DEFAULT_WIDTH));
+        widthRef.current = next;
+        setWidth(next);
+        localStorage.setItem(storageKey, String(next));
+        if (asideRef.current) asideRef.current.style.width = `${next}px`;
+        if (handleElRef.current) {
+          const r = asideRef.current?.getBoundingClientRect();
+          if (r) handleElRef.current.style.left = `${r.right - 6}px`;
+        }
+        return;
+      }
+      lastClickTimeRef.current = now;
+      startXRef.current = e.clientX;
+      startWidthRef.current = widthRef.current;
+      setIsResizing(true);
+      document.body.style.cursor = "col-resize";
+      document.body.style.userSelect = "none";
+    },
+    [maxWidth, minWidth, storageKey]
+  );
 
   useEffect(() => {
     if (!isResizing) return;
@@ -89,9 +111,13 @@ export default function Sidebar() {
     const apply = () => {
       rafId = 0;
       const delta = pendingX - startXRef.current;
-      const next = Math.min(maxWidth, Math.max(MIN_WIDTH, startWidthRef.current + delta));
+      const next = Math.min(maxWidth, Math.max(minWidth, startWidthRef.current + delta));
       widthRef.current = next;
       if (asideRef.current) asideRef.current.style.width = `${next}px`;
+      if (handleElRef.current) {
+        const r = asideRef.current?.getBoundingClientRect();
+        if (r) handleElRef.current.style.left = `${r.right - 6}px`;
+      }
     };
 
     const handleMouseMove = (e: MouseEvent) => {
@@ -115,7 +141,7 @@ export default function Sidebar() {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
     };
-  }, [isResizing, storageKey, maxWidth]);
+  }, [isResizing, storageKey, maxWidth, minWidth]);
 
   useEffect(() => {
     if (hidden || !resizable) {
@@ -157,7 +183,7 @@ export default function Sidebar() {
       )}
     >
       <div
-        style={{ minWidth: hidden ? undefined : MIN_WIDTH }}
+        style={{ minWidth: hidden ? undefined : minWidth }}
         className="flex flex-col justify-between flex-1"
       >
         {!navItems && children && <>{children}</>}
@@ -304,6 +330,7 @@ export default function Sidebar() {
         typeof document !== "undefined" &&
         createPortal(
           <div
+            ref={handleElRef}
             onMouseDown={handleMouseDown}
             role="separator"
             aria-orientation="vertical"
@@ -315,8 +342,10 @@ export default function Sidebar() {
               width: 6,
               zIndex: 2147483646
             }}
-            className="cursor-col-resize hover:bg-default/60 active:bg-default/80"
-          />,
+            className="cursor-col-resize relative flex items-center justify-center group"
+          >
+            <div className="opacity-0 group-hover:opacity-100 group-active:opacity-100 bg-default-50 left-2 relative rounded-full border border-black h-16 w-12"></div>
+          </div>,
           document.body
         )}
       {isResizing &&

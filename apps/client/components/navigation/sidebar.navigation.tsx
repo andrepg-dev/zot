@@ -12,6 +12,7 @@ export default function SidebarNavigation({
   className,
   resizable,
   maxWidth,
+  minWidth,
   storageKey
 }: {
   children?: React.ReactNode;
@@ -20,6 +21,7 @@ export default function SidebarNavigation({
   className?: string;
   resizable?: boolean;
   maxWidth?: number;
+  minWidth?: number;
   storageKey?: string;
 }) {
   const {
@@ -29,6 +31,7 @@ export default function SidebarNavigation({
     setClassName,
     setResizable,
     setMaxWidth,
+    setMinWidth,
     setStorageKey
   } = useSidebarStore();
   const pathname = usePathname();
@@ -42,6 +45,7 @@ export default function SidebarNavigation({
       setClassName(null);
       setResizable(true);
       setMaxWidth(null);
+      setMinWidth(null);
       setStorageKey(null);
     };
   }, [pathname]);
@@ -75,6 +79,10 @@ export default function SidebarNavigation({
   useEffect(() => {
     setMaxWidth(maxWidth ?? null);
   }, [maxWidth, setMaxWidth]);
+
+  useEffect(() => {
+    setMinWidth(minWidth ?? null);
+  }, [minWidth, setMinWidth]);
 
   useEffect(() => {
     setStorageKey(storageKey ?? null);

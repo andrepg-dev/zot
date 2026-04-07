@@ -51,9 +51,9 @@ export default function BillingPage() {
                     is_popular: plan.popular ?? false
                   })
                 }
-                className={`mt-6 inline-flex h-10.5 items-center justify-center rounded-sm border px-4 text-sm font-semibold transition-colors ${
+                className={`mt-6 inline-flex h-10.5 items-center justify-center border px-4 text-sm font-semibold transition-colors ${
                   plan.popular
-                    ? "bg-[#4338CA] text-white border-blue-500 drop-shadow-lg drop-shadow-black "
+                    ? "hover:bg-[#4338CA]/50 bg-[#4338CA]/70 text-white border-blue-500 drop-shadow-lg drop-shadow-black "
                     : "border-blue-500/50 text-blue-100 hover:border-blue-400 hover:bg-blue-500/10"
                 }`}
               >
