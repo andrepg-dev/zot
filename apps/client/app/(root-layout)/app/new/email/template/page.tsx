@@ -120,12 +120,13 @@ function CreateEmailPageContent() {
               Templates
             </Type>
             <SlashIcon className="size-4 text-muted-foreground" />
+
             <Controller
               name="alias"
               control={control}
               render={({ field }) => (
                 <input
-                  className="text-xs font-semibold tracking-wide bg-transparent outline-0 px-1"
+                  className="text-xs font-semibold tracking-wide bg-transparent outline-0 px-1 w-[115px]"
                   placeholder="Untitled template"
                   value={field.value ?? ""}
                   onChange={field.onChange}
