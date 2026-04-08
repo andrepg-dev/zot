@@ -74,8 +74,6 @@ export default function EditorSidebar({
   const onSaveSubmit = (values: Omit<CreateEmailTemplateValues, "code">) => {
     const lastCode = messages.findLast((m) => m.code != null)?.code;
 
-    console.log({ ...values, code: lastCode });
-
     if (!lastCode) {
       addToast({ description: "No code to save yet", color: "danger" });
       return;
@@ -94,6 +92,7 @@ export default function EditorSidebar({
             pathname: ""
           }
         ]}
+        hidden={isCode}
         postNavigationItems={
           isCode && (
             <Popover

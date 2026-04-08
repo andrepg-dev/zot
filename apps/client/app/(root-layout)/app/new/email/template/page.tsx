@@ -4,9 +4,11 @@ import MonacoEditorTemplate from "@/components/editor/monaco/monaco-editor/monac
 import MonacoEditor from "@/components/editor/monaco/monaco-editor/monaco-editor";
 import HeaderTabulation from "@/components/editor/monaco/tabulation/header-tab";
 import EditorSidebar from "@/components/editor/sidebar";
+import PrimaryActionButton from "@/components/global/primary-action-button";
 import GlobalTooltip from "@/components/global/tooltip";
 import PageComponent from "@/components/layouts/page-component";
 import Type from "@/components/type";
+import Chip from "@/components/ui/chip";
 import { cn } from "@/lib/utils";
 import useReactCodeEditorStore from "@/store/emails/react-code-editor-email.store";
 import {
@@ -15,7 +17,9 @@ import {
   CodeBracketIcon,
   DocumentIcon,
   EnvelopeIcon,
-  EyeIcon
+  EyeIcon,
+  FolderPlusIcon,
+  SlashIcon
 } from "@heroicons/react/24/outline";
 import { Button } from "@heroui/button";
 import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@heroui/dropdown";
@@ -62,11 +66,19 @@ function CreateEmailPageContent() {
       {/* Main Content */}
       <div className="flex flex-col w-full">
         <MonacoEditorTemplate>
-          <div className="flex items-center gap-2">
-            <Type variant="sm" className="flex items-center gap-2">
+          <div className="flex items-center font-medium font-sans">
+            <Type variant="sm" className="flex items-center gap-2 text-muted-foreground">
               <DocumentIcon className="size-4" />
               Templates
             </Type>
+            <SlashIcon className="size-4 text-muted-foreground" />
+            <Type variant="sm" className="font-semibold tracking-wide">
+              Untitled template
+            </Type>
+
+            <Chip status="neutral" className="ml-1.5 mt-0.5 bg-default-300 border rounded-sm">
+              Draft
+            </Chip>
           </div>
 
           {/* Toggle Code/Preview */}
@@ -128,6 +140,12 @@ function CreateEmailPageContent() {
                 </DropdownItem>
               </DropdownMenu>
             </Dropdown>
+
+            <PrimaryActionButton
+              startContent={<FolderPlusIcon className="size-4" strokeWidth={2} />}
+            >
+              Save template
+            </PrimaryActionButton>
           </div>
         </MonacoEditorTemplate>
 
@@ -162,13 +180,13 @@ function CreateEmailPageContent() {
               </div>
             ) : (
               <div className="flex flex-col w-full h-full bg-white">
-                <div className="flex flex-col mx-auto w-4/5 h-full font-sans">
+                <div className="flex flex-col mx-auto w-4/5 h-full font-sans mt-4">
                   <div className="flex flex-col my-4 text-black/80">
                     <div>
                       <div className="flex border-b items-center h-[40px] !border-muted-foreground/30">
                         <Type className="w-[60px]">From</Type>
                         <input
-                          className="w-full h-full outline-0 disabled:opacity-70"
+                          className="w-full h-full outline-0 disabled:opacity-70 cursor-not-allowed"
                           placeholder="Company <x@example.com>"
                           value={"info@zot.so"}
                           disabled
