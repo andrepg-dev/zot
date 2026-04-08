@@ -1,7 +1,16 @@
 "use client";
 
 import { useChartHoverStore } from "@/store/chart-hover";
-import { CartesianGrid, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import {
+  CartesianGrid,
+  Line,
+  LineChart,
+  ReferenceLine,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis
+} from "recharts";
 import AnimatedCursor from "./animated-cursor";
 
 interface ConversionRateChartProps {

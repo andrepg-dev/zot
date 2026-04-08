@@ -2,9 +2,10 @@
 
 import type { DayCount } from "@/actions/general-stats/general-stats.actions";
 import useIsClient from "@/hooks/is-client";
-import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis } from "recharts";
+import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import CustomGradientBar from "./custom-gradient-bar";
 
+const gridColor = "rgba(255, 255, 255, 0.1)";
 const axisColor = "#b4b4b4";
 const tooltipBg = "rgb(24, 24, 24)";
 const tooltipBorder = "rgba(255, 255, 255, 0.06)";
@@ -56,7 +57,7 @@ export default function BarChartComponent({ data, isPending }: BarChartComponent
   })();
 
   return (
-    <div className="col-span-2 flex min-w-0 flex-col rounded border border-dashed p-6 bg-background">
+    <div className="col-span-2 flex min-w-0 flex-col border border-dashed p-6">
       <div className="flex flex-col gap-2 mb-4">
         <div className="flex items-center gap-2">
           <h3 className="text-base font-medium">Signups per day</h3>
@@ -71,12 +72,27 @@ export default function BarChartComponent({ data, isPending }: BarChartComponent
         )}
         {isClient && chartData.length > 0 && (
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+            <BarChart data={chartData} margin={{ top: 10, right: 10, left: -15, bottom: 0 }}>
+              <CartesianGrid
+                vertical
+                horizontal
+                strokeDasharray="3 3"
+                stroke={gridColor}
+                opacity={0.5}
+              />
               <XAxis
                 dataKey="date"
                 tickLine={false}
                 tickMargin={10}
                 axisLine={false}
+                stroke={axisColor}
+                fontSize={12}
+                tick={{ fill: axisColor }}
+              />
+              <YAxis
+                tickLine={false}
+                axisLine={false}
+                tickMargin={8}
                 stroke={axisColor}
                 fontSize={12}
                 tick={{ fill: axisColor }}

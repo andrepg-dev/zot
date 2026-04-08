@@ -15,8 +15,8 @@ export default function RootLayoutContent({ children }: { children: React.ReactN
       {/* Content */}
       <main
         className={cn(
-          "relative z-[9999] w-full rounded-t bg-background border border-b-0 inset-shadow-background inset-shadow-sm",
-          "shadow-[0_0_10px_rgba(0,0,0,0.06)] dark:shadow-[0_0_16px_rgba(0,0,0,0.35)]",
+          "relative z-[9999] w-full rounded-t bg-default-50/40 border border-b-0 inset-shadow-background",
+          // "shadow-[0_0_10px_rgba(0,0,0,0.06)] dark:shadow-[0_0_16px_rgba(0,0,0,0.35)]",
           pathname.includes("/app/edit") && editionType === "manually"
             ? "overflow-hidden m-2 mb-0 mt-0"
             : "overflow-auto mx-2 ml-0"

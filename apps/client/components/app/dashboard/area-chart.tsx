@@ -94,7 +94,7 @@ export default function AreaChartComponent({ data, isPending }: AreaChartCompone
   })();
 
   return (
-    <div className="col-span-3 flex min-w-0 flex-col rounded border border-dashed p-6 ">
+    <div className="col-span-3 flex min-w-0 flex-col border border-dashed p-6 ">
       <div className="flex flex-col gap-2 mb-4">
         <div className="flex items-center gap-2">
           <h3 className="text-base font-medium">Activity overview</h3>
