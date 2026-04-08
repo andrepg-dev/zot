@@ -1,5 +1,6 @@
 "use client";
 
+import { createEmailTemplate } from "@/actions/email-templates/email-templates.actions";
 import MonacoEditorTemplate from "@/components/editor/monaco/monaco-editor/monaco-edito-header-template";
 import MonacoEditor from "@/components/editor/monaco/monaco-editor/monaco-editor";
 import HeaderTabulation from "@/components/editor/monaco/tabulation/header-tab";
@@ -9,6 +10,7 @@ import GlobalTooltip from "@/components/global/tooltip";
 import PageComponent from "@/components/layouts/page-component";
 import Type from "@/components/type";
 import Chip from "@/components/ui/chip";
+import InputComponent from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import useReactCodeEditorStore from "@/store/emails/react-code-editor-email.store";
 import {
@@ -23,9 +25,19 @@ import {
 } from "@heroicons/react/24/outline";
 import { Button } from "@heroui/button";
 import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@heroui/dropdown";
+import { Popover, PopoverContent, PopoverTrigger } from "@heroui/popover";
+import { Radio, RadioGroup } from "@heroui/radio";
+import { addToast } from "@heroui/toast";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  createEmailTemplateSchema,
+  type CreateEmailTemplateValues
+} from "@repo/packages/shared/schemas";
+import { useMutation } from "@tanstack/react-query";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 
 type VisualizationType = "code" | "preview";
 
@@ -52,6 +64,42 @@ function CreateEmailPageContent() {
 
   const { lastCodeMessageHtmlCode } = useReactCodeEditorStore();
 
+  const [isSaveOpen, setIsSaveOpen] = useState(false);
+
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors }
+  } = useForm<Omit<CreateEmailTemplateValues, "code">>({
+    resolver: zodResolver(createEmailTemplateSchema.omit({ code: true })),
+    defaultValues: {
+      alias: "",
+      subject: "",
+      status: "published"
+    }
+  });
+
+  const { mutate: createEmailTemplateMutate, isPending: isSaving } = useMutation({
+    mutationFn: (data: CreateEmailTemplateValues) => createEmailTemplate(data),
+    onSuccess: () => {
+      addToast({ description: "Template saved", color: "success" });
+      setIsSaveOpen(false);
+      reset();
+    },
+    onError: (err: Error) => {
+      addToast({ title: "Error", description: err.message, color: "danger" });
+    }
+  });
+
+  const onSaveSubmit = (values: Omit<CreateEmailTemplateValues, "code">) => {
+    if (!editorCode) {
+      addToast({ description: "No code to save yet", color: "danger" });
+      return;
+    }
+    createEmailTemplateMutate({ ...values, code: editorCode });
+  };
+
   return (
     <PageComponent className="flex flex-1 h-full p-0">
       {/* Header Navigation */}
@@ -72,9 +120,20 @@ function CreateEmailPageContent() {
               Templates
             </Type>
             <SlashIcon className="size-4 text-muted-foreground" />
-            <Type variant="sm" className="font-semibold tracking-wide">
-              Untitled template
-            </Type>
+            <Controller
+              name="alias"
+              control={control}
+              render={({ field }) => (
+                <input
+                  className="text-xs font-semibold tracking-wide bg-transparent outline-0 px-1"
+                  placeholder="Untitled template"
+                  value={field.value ?? ""}
+                  onChange={field.onChange}
+                  onBlur={field.onBlur}
+                  ref={field.ref}
+                />
+              )}
+            />
 
             <Chip status="neutral" className="ml-1.5 mt-0.5 bg-default-300 border rounded-sm">
               Draft
@@ -141,11 +200,81 @@ function CreateEmailPageContent() {
               </DropdownMenu>
             </Dropdown>
 
-            <PrimaryActionButton
-              startContent={<FolderPlusIcon className="size-4" strokeWidth={2} />}
+            <Popover
+              radius="sm"
+              placement="bottom-end"
+              size="lg"
+              isOpen={isSaveOpen}
+              onOpenChange={setIsSaveOpen}
             >
-              Save template
-            </PrimaryActionButton>
+              <PopoverTrigger>
+                <PrimaryActionButton
+                  startContent={<FolderPlusIcon className="size-4" strokeWidth={2} />}
+                >
+                  Save template
+                </PrimaryActionButton>
+              </PopoverTrigger>
+              <PopoverContent className="p-0 w-80">
+                <form
+                  onSubmit={handleSubmit(onSaveSubmit)}
+                  className="flex flex-col gap-3 p-4 w-full"
+                >
+                  <div className="flex flex-col gap-1">
+                    <Type className="font-medium">Save template</Type>
+                    <Type variant="sm" className="text-muted-foreground font-normal">
+                      Store this email so you can reuse it later.
+                    </Type>
+                  </div>
+
+                  <div className="flex flex-col gap-1.5">
+                    <Type variant="sm">Template name</Type>
+                    <Controller
+                      name="alias"
+                      control={control}
+                      render={({ field }) => (
+                        <InputComponent
+                          size="sm"
+                          placeholder="e.g. Welcome email"
+                          maxLength={60}
+                          isInvalid={!!errors.alias}
+                          errorMessage={errors.alias?.message}
+                          value={field.value ?? ""}
+                          onChange={field.onChange}
+                          onBlur={field.onBlur}
+                          ref={field.ref}
+                          autoFocus
+                        />
+                      )}
+                    />
+                  </div>
+
+                  <div className="flex flex-col gap-1.5">
+                    <Type variant="sm">Status</Type>
+                    <Controller
+                      name="status"
+                      control={control}
+                      render={({ field }) => (
+                        <RadioGroup
+                          orientation="horizontal"
+                          size="sm"
+                          value={field.value}
+                          onValueChange={field.onChange}
+                        >
+                          <Radio value="draft">Draft</Radio>
+                          <Radio value="published">Published</Radio>
+                        </RadioGroup>
+                      )}
+                    />
+                  </div>
+
+                  <div className="flex justify-end gap-2 pt-1">
+                    <PrimaryActionButton type="submit" isLoading={isSaving} className="w-full">
+                      Publish template
+                    </PrimaryActionButton>
+                  </div>
+                </form>
+              </PopoverContent>
+            </Popover>
           </div>
         </MonacoEditorTemplate>
 
@@ -196,7 +325,20 @@ function CreateEmailPageContent() {
                         </Type>
                       </div>
                       <div className="flex border-b items-center h-[40px] !border-muted-foreground/30">
-                        <input className="w-full h-full outline-0" placeholder="Subject" />
+                        <Controller
+                          name="subject"
+                          control={control}
+                          render={({ field }) => (
+                            <input
+                              className="w-full h-full outline-0"
+                              placeholder="Subject"
+                              value={field.value ?? ""}
+                              onChange={field.onChange}
+                              onBlur={field.onBlur}
+                              ref={field.ref}
+                            />
+                          )}
+                        />
                       </div>
                     </div>
                   </div>
