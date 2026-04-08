@@ -88,7 +88,7 @@ export default function ItemList({ navItems }: { navItems: NavItemOrDivider[] | 
               {hasSubItems ? (
                 <div
                   className={clsx(
-                    "flex items-center gap-2 py-1.5 px-2 h-[35px] text-muted-foreground rounded-sm cursor-pointer",
+                    "flex items-center gap-2 py-1.5 px-2 h-[35px] text-muted-foreground cursor-pointer",
                     !isActive && "hover:bg-default-100/70 hover:text-white",
                     isActive && "text-white"
                   )}
@@ -107,9 +107,9 @@ export default function ItemList({ navItems }: { navItems: NavItemOrDivider[] | 
                 <Link
                   href={href}
                   className={clsx(
-                    "flex items-center gap-2 py-1.5 px-2 h-[35px] text-muted-foreground rounded",
-                    !isActive && "hover:bg-default-100/70 hover:text-white",
-                    isActive && "text-white bg-default-100"
+                    "flex items-center gap-2 py-1.5 px-2 h-[35px] text-muted-foreground",
+                    !isActive && "hover:bg-default-100/50 hover:text-white",
+                    isActive && "text-white bg-default-100/70"
                   )}
                 >
                   {Icon ? <Icon className={cn("size-4", isActive && "text-primary-400")} /> : null}

@@ -62,7 +62,7 @@ const InputComponent = forwardRef<HTMLInputElement, InputProps>((props, ref) => 
         className={cn("flex-1 hover:!bg-transparent !text-[13px]")}
         classNames={{
           inputWrapper:
-            "!text-[13px] data-[focus=true]:ring-offset-2 data-[focus=true]:ring-offset-black data-[focus=true]:ring-2 data-[focus=true]:ring-primary data-[focus=true]:bg-default-100/50 data-[hover=true]:!bg-default-100/50 bg-default-100/50 border",
+            "!text-[13px] data-[focus=true]:ring-offset-2 data-[focus=true]:ring-offset-black data-[focus=true]:ring-2 data-[focus=true]:ring-primary/70 data-[focus=true]:bg-default-100/50 data-[hover=true]:!bg-default-100/50 bg-default-100/50 border",
           input: "!text-[13px]"
         }}
         startContent={startContent || defaultStartContent}

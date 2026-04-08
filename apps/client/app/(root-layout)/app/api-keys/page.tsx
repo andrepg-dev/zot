@@ -314,13 +314,12 @@ export default function ApiKeys() {
 
       <Table
         aria-label="API Keys Table"
-        radius="sm"
+        radius="none"
         removeWrapper
         isCompact
-        className="bg-default-50 rounded-xl! border overflow-hidden"
+        className="bg-default-50 border"
         classNames={{
-          th: "!rounded-b-none rounded-none",
-          td: "first:before:rounded-none last:before:rounded-e-none cursor-pointer py-3"
+          td: "py-3"
         }}
       >
         <TableHeader<ApiKeyTableColumn> columns={[...columns]}>

@@ -49,7 +49,7 @@ export default function FakeUsersBlockedChart({ data = defaultData }: FakeUsersB
           <p className="text-sm text-muted-foreground">Suspicious users blocked over time</p>
         </div>
 
-        <Button size="sm" variant="light" endContent={<ArrowTopRightOnSquareIcon className="size-3" />} className="text-muted-foreground" onPress={onOpen}>
+        <Button size="sm" radius="none" variant="light" endContent={<ArrowTopRightOnSquareIcon className="size-3" />} className="text-muted-foreground" onPress={onOpen}>
           Show blocked users
         </Button>
       </div>

@@ -41,7 +41,10 @@ import { formatDateTime } from "@/lib/format-date";
 const webhookFormSchema = z.object({
   webhook: z
     .object({
-      url: z.string().min(1).transform((v) => (v.startsWith("https://") ? v : `https://${v}`)),
+      url: z
+        .string()
+        .min(1)
+        .transform((v) => (v.startsWith("https://") ? v : `https://${v}`)),
       range: z.number().int().min(1)
     })
     .optional()
@@ -141,7 +144,10 @@ export default function Webhooks({ params }: { params: Promise<{ id: string }> }
             startContent={<WrenchIcon className="size-4" />}
             onPress={configureDrawer.onOpen}
           >
-            Configure Webhook <Kbd classNames={{ base: "text-xs" }} keys={["command"]}>P</Kbd>
+            Configure Webhook{" "}
+            <Kbd classNames={{ base: "text-xs" }} keys={["command"]}>
+              P
+            </Kbd>
           </PrimaryActionButton>
         }
       >
@@ -150,11 +156,11 @@ export default function Webhooks({ params }: { params: Promise<{ id: string }> }
 
       <Table
         aria-label="Webhook Events"
-        radius="sm"
+        radius="none"
+        removeWrapper
+        className="bg-default-50 border"
         classNames={{
-          th: "!rounded-b-none",
-          wrapper: "p-0 border",
-          td: "first:before:rounded-none last:before:rounded-e-none cursor-pointer py-3"
+          td: "py-3"
         }}
       >
         <TableHeader columns={columns}>
@@ -165,9 +171,13 @@ export default function Webhooks({ params }: { params: Promise<{ id: string }> }
           items={events ?? []}
           isLoading={isEventsLoading}
           loadingContent={<Spinner size="sm" />}
-          emptyContent={(<Type>
-            {data?.webhook?.url ? "Webhook configured. Events will appear here once triggered." : "No webhook configured. Click Configure Webhook to get started."}
-          </Type>)}
+          emptyContent={
+            <Type>
+              {data?.webhook?.url
+                ? "Webhook configured. Events will appear here once triggered."
+                : "No webhook configured. Click Configure Webhook to get started."}
+            </Type>
+          }
         >
           {(item) => (
             <TableRow key={item._id} onClick={() => handleRowClick(item)}>
@@ -251,7 +261,11 @@ export default function Webhooks({ params }: { params: Promise<{ id: string }> }
                 <Button
                   color={data?.webhook?.url && !isDirty ? "success" : "primary"}
                   variant={data?.webhook?.url && !isDirty ? "flat" : "solid"}
-                  className={data?.webhook?.url && !isDirty ? "text-black bg-success/20 border border-success" : ""}
+                  className={
+                    data?.webhook?.url && !isDirty
+                      ? "text-black bg-success/20 border border-success"
+                      : ""
+                  }
                   size="sm"
                   type="submit"
                   isLoading={isPending}
@@ -274,13 +288,14 @@ export default function Webhooks({ params }: { params: Promise<{ id: string }> }
         <DrawerHeader className="flex flex-col gap-1">
           <div className="flex items-center gap-2 capitalize">
             <h2 className="text-base font-medium">Event Details</h2>
-            {selectedEvent && (
-              selectedEvent.status === "success" ? (
-                <Chip status="active" className="flex items-center max-h-5">success</Chip>
+            {selectedEvent &&
+              (selectedEvent.status === "success" ? (
+                <Chip status="active" className="flex items-center max-h-5">
+                  success
+                </Chip>
               ) : (
                 <Chip status="danger">failed</Chip>
-              )
-            )}
+              ))}
           </div>
           <p className="text-sm text-muted-foreground font-normal">
             {selectedEvent?.sentAt ? formatDateTime(selectedEvent.sentAt) : "—"}

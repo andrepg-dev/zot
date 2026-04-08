@@ -212,7 +212,6 @@ export default function UsersTableDrawer({
 
             <Table
               aria-label="Waitlist Users Table"
-              radius="sm"
               selectionMode="multiple"
               selectedKeys={selectedKeys}
               onSelectionChange={(keys) => {
@@ -229,10 +228,11 @@ export default function UsersTableDrawer({
                 }
               }}
               color="primary"
+              radius="none"
+              removeWrapper
+              className="bg-default-50 border overflow-hidden"
               classNames={{
-                th: "!rounded-b-none",
-                wrapper: "p-0",
-                td: "first:before:rounded-none last:before:rounded-e-none py-3"
+                td: "py-3"
               }}
             >
               <TableHeader columns={columns}>

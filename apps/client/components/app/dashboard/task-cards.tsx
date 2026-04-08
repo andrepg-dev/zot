@@ -60,7 +60,7 @@ function TaskCard({ task, index }: { task: (typeof dashboardTasks)[number]; inde
 
         <div
           className={cn(
-            "size-10 rounded-sm bg-default-100 flex items-center justify-center transition-colors",
+            "size-10 rounded-sm bg-default-100/70 flex items-center justify-center transition-colors",
             index === 0 && "!bg-primary-200",
             "group-hover:bg-primary-200"
           )}

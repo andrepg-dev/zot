@@ -93,11 +93,11 @@ export default function BlockedUsersTableDrawer({
 
           <Table
             aria-label="Blocked Users Table"
-            radius="sm"
+            radius="none"
+            removeWrapper
+            className="bg-default-50 border"
             classNames={{
-              th: "!rounded-b-none",
-              wrapper: "p-0 border",
-              td: "first:before:rounded-none last:before:rounded-e-none py-3"
+              td: "py-3"
             }}
           >
             <TableHeader columns={columns}>

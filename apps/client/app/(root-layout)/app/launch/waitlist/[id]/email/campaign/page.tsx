@@ -26,7 +26,6 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
-  Input,
   Modal,
   ModalBody,
   ModalContent,
@@ -246,18 +245,14 @@ export default function CampaignPage({ params }: { params: Promise<{ id: string 
 
       <div className="flex flex-col gap-4">
         <div className="flex justify-between items-center">
-          <Input
+          <InputComponent
             placeholder="Search by email, referral code or metadata..."
-            variant="bordered"
             startContent={<MagnifyingGlassIcon className="text-default-300 size-5" />}
             size="sm"
             isClearable
             value={search}
             onValueChange={setSearch}
-            classNames={{
-              base: "max-w-sm",
-              inputWrapper: "border-1"
-            }}
+            className="w-[350px]"
           />
 
           <span className="text-default-400 text-small">
@@ -267,7 +262,6 @@ export default function CampaignPage({ params }: { params: Promise<{ id: string 
 
         <Table
           aria-label="Waitlist Users Table"
-          radius="sm"
           isHeaderSticky
           selectionMode="multiple"
           selectedKeys={selectedKeys}
@@ -282,10 +276,11 @@ export default function CampaignPage({ params }: { params: Promise<{ id: string 
             size: "sm",
             classNames: { wrapper: "before:border-1" }
           }}
+          radius="none"
+          removeWrapper
+          className="bg-default-50 border"
           classNames={{
-            th: "!rounded-b-none",
-            wrapper: "p-0 border",
-            td: "first:before:rounded-none last:before:rounded-e-none cursor-pointer py-3"
+            td: "py-3"
           }}
         >
           <TableHeader columns={columns}>

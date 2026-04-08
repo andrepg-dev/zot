@@ -5,6 +5,7 @@ import GlobalButton from "@/components/global/button";
 import Title from "@/components/global/title";
 import PageComponent from "@/components/layouts/page-component";
 import Type from "@/components/type";
+import InputComponent from "@/components/ui/input";
 import { formatDate } from "@/lib/format-date";
 import { ChevronDownIcon, MagnifyingGlassIcon, TrashIcon } from "@heroicons/react/24/outline";
 import {
@@ -12,7 +13,6 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
-  Input,
   Modal,
   ModalBody,
   ModalContent,
@@ -127,7 +127,7 @@ export default function AudiencePage({ params }: { params: Promise<{ id: string 
 
       <div className="flex flex-col gap-4 mt-6">
         <div className="flex justify-between items-center">
-          <Input
+          <InputComponent
             placeholder="Search by email..."
             variant="bordered"
             startContent={<MagnifyingGlassIcon className="text-default-300 size-5" />}
@@ -135,10 +135,6 @@ export default function AudiencePage({ params }: { params: Promise<{ id: string 
             isClearable
             value={search}
             onValueChange={setSearch}
-            classNames={{
-              base: "max-w-sm",
-              inputWrapper: "border-1"
-            }}
           />
 
           <div className="flex gap-2 items-center">
@@ -175,7 +171,6 @@ export default function AudiencePage({ params }: { params: Promise<{ id: string 
 
         <Table
           aria-label="Audience Table"
-          radius="sm"
           isCompact
           selectionMode="multiple"
           selectedKeys={selectedKeys}
@@ -190,10 +185,11 @@ export default function AudiencePage({ params }: { params: Promise<{ id: string 
             size: "sm",
             classNames: { wrapper: "before:border-1" }
           }}
+          radius="none"
+          removeWrapper
+          className="bg-default-50 border"
           classNames={{
-            th: "!rounded-b-none",
-            wrapper: "p-0 border",
-            td: "first:before:rounded-none last:before:rounded-e-none py-3"
+            td: "py-3"
           }}
         >
           <TableHeader columns={columns}>

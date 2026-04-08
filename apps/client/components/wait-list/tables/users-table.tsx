@@ -23,6 +23,7 @@ import { useQuery } from "@tanstack/react-query";
 import React, { useState } from "react";
 
 import { formatDateTime } from "@/lib/format-date";
+import InputComponent from "@/components/ui/input";
 
 const columns = [
   { key: "position", label: "#" },
@@ -68,18 +69,13 @@ export default function UsersTable({ id }: { id: string }) {
     <>
       <div className="flex flex-col gap-4">
         <div className="flex justify-between items-center">
-          <Input
+          <InputComponent
             placeholder="Search by subject, email or date..."
-            variant="bordered"
             startContent={<MagnifyingGlassIcon className="text-default-300 size-5" />}
             size="sm"
             isClearable
             value={search}
             onValueChange={setSearch}
-            classNames={{
-              base: "max-w-sm",
-              inputWrapper: "border-1"
-            }}
           />
 
           <span className="text-default-400 text-small">
@@ -90,15 +86,15 @@ export default function UsersTable({ id }: { id: string }) {
         <Table
           aria-label="Email Send Records Table"
           isStriped
-          radius="sm"
           checkboxesProps={{
             size: "sm",
             classNames: { wrapper: "before:border-1" }
           }}
+          radius="none"
+          removeWrapper
+          className="bg-default-50 border"
           classNames={{
-            th: "!rounded-b-none",
-            wrapper: "p-0 border",
-            td: "first:before:rounded-none last:before:rounded-e-none cursor-pointer py-3"
+            td: "py-3"
           }}
         >
           <TableHeader columns={columns}>

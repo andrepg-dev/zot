@@ -39,7 +39,8 @@ const config = {
           colors: {
             default: {
               50: "#141415"
-            }
+            },
+            content1: "#141415"
           }
         }
       },
