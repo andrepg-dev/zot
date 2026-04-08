@@ -3,6 +3,7 @@
 import { cn } from "@/lib/utils";
 import { FunnelIcon, MagnifyingGlassIcon, PlusIcon } from "@heroicons/react/24/outline";
 import { Button } from "@heroui/button";
+import { Input } from "@heroui/input";
 import Link from "next/link";
 import InputComponent from "../ui/input";
 

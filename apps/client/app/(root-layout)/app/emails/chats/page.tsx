@@ -1,11 +1,10 @@
 "use client";
 
 import { getAiConversations, type AiConversation } from "@/actions/ai/ai-email.actions";
+import PageActions from "@/components/global/page-actions";
 import Title from "@/components/global/title";
 import PageComponent from "@/components/layouts/page-component";
 import Type from "@/components/type";
-import InputComponent from "@/components/ui/input";
-import { AdjustmentsHorizontalIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { Spinner } from "@heroui/spinner";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
@@ -39,14 +38,15 @@ export default function EmailChatsPage() {
     <PageComponent className="">
       <Title description="Your AI email conversations">Chats</Title>
 
-      <div className="flex items-center gap-2 my-4">
+      {/* <div className="flex items-center gap-2 my-4 mt-5">
         <div className="flex-1">
           <InputComponent
             size="sm"
             placeholder="Search chats..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            startContent={<MagnifyingGlassIcon className="size-4 text-muted-foreground" />}
+            startContent={<MagnifyingGlassIcon className="size-4 text-default-300" />}
+            isClearable
           />
         </div>
         <button
@@ -56,7 +56,17 @@ export default function EmailChatsPage() {
           <AdjustmentsHorizontalIcon className="size-4" />
           Filter
         </button>
-      </div>
+      </div> */}
+
+      <PageActions
+        searchPlaceholder="Search chats..."
+        onSearchChange={setSearch}
+        actionButton={{
+          label: "Create template",
+          href: "/app/new/email/template"
+        }}
+        className="w-full"
+      />
 
       {isPending ? (
         <div className="flex justify-center py-12">
@@ -71,7 +81,7 @@ export default function EmailChatsPage() {
         </div>
       ) : (
         <div className="flex flex-col">
-          <div className="grid grid-cols-[1fr_200px_120px] gap-4 px-4 py-2 text-xs text-muted-foreground border-b">
+          <div className="grid grid-cols-[1fr_200px_120px] gap-4 px-4 py-2 text-xs text-muted-foreground">
             <span>Name</span>
             <span>Project</span>
             <span className="text-right">Updated</span>
@@ -83,7 +93,7 @@ export default function EmailChatsPage() {
               onClick={() =>
                 router.push(`/app/new/email/template?conversationId=${c._id}&isEdition=true`)
               }
-              className="grid grid-cols-[1fr_200px_120px] gap-4 items-center px-4 py-4 border-b text-left hover:bg-default-50 transition-colors cursor-pointer"
+              className="grid grid-cols-[1fr_200px_120px] gap-4 items-center px-4 py-4 rounded-sm text-left hover:bg-default-50 cursor-pointer"
             >
               <Type className="truncate">{c.title || "Untitled chat"}</Type>
               <Type variant="sm" className="text-muted-foreground">

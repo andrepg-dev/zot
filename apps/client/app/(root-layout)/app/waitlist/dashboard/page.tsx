@@ -17,7 +17,6 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
-  Input,
   Kbd,
   Table,
   TableBody,
@@ -38,6 +37,7 @@ import WaitListCardSkeleton from "@/components/skeletons/wait-list/card";
 import Type from "@/components/type";
 import Chip from "@/components/ui/chip";
 import CopyButton from "@/components/ui/copy-button";
+import InputComponent from "@/components/ui/input";
 import { useHotkey } from "@/hooks/use-hotkey";
 import { cn } from "@/lib/utils";
 import {
@@ -210,16 +210,11 @@ export default function WaitListPage() {
       <div className="flex flex-col gap-4">
         <div className="flex justify-between">
           <div className="flex gap-2">
-            <Input
+            <InputComponent
               placeholder="Search by name..."
-              variant="bordered"
               startContent={<MagnifyingGlassIcon className="text-default-300 size-5" />}
               size="sm"
               isClearable
-              classNames={{
-                base: "max-w-sm",
-                inputWrapper: "border-1"
-              }}
             />
 
             <Button size="sm" variant="light" className="min-w-max border border-dashed">
@@ -408,7 +403,7 @@ export default function WaitListPage() {
               rows.map((item: any) => (
                 <Card
                   key={item._id}
-                  className="border border-dashed bg-default-50/60 relative transition-colors group"
+                  className="border bg-default-100/50 relative transition-colors group"
                   radius="none"
                 >
                   {editingId !== item._id && (

@@ -37,7 +37,7 @@ export default function Header() {
 
                 <Link
                   href={value.pathname}
-                  className="hover:underline-2 hover:underline decoration-2 rounded-md !text-[13px]"
+                  className="hover:underline-2 hover:underline decoration-2 rounded-md !text-[13px] max-w-[16ch] truncate"
                 >
                   {value.label}
                 </Link>

@@ -71,7 +71,7 @@ export default function EmailTemplatesPage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4">
           {templates.map((template) => (
-            <Card key={template._id} className="border bg-default-100/50" radius="sm">
+            <Card key={template._id} className="border bg-default-100/50" radius="none">
               <CardBody className="p-5">
                 <div className="flex flex-col gap-3">
                   <div className="flex items-start justify-between gap-2">

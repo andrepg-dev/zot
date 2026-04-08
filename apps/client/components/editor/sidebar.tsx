@@ -44,7 +44,6 @@ export default function EditorSidebar({
     <>
       <HeaderNavigation
         navigationItems={[
-          { label: "Wait-List", pathname: "/app/waitlist/dashboard" },
           { label: "Emails", pathname: "/app/waitlist/emails" },
           {
             label: messages?.[0]?.message ?? "Create template",
@@ -69,7 +68,11 @@ export default function EditorSidebar({
               isCode ? "w-full max-w-[755px]" : "w-3xl"
             )}
           >
-            <div className={cn(isCode ? "flex items-center sticky top-0 left-0 bg-black pb-2" : "hidden")}>
+            <div
+              className={cn(
+                isCode ? "flex items-center sticky top-0 left-0 bg-black pb-2" : "hidden"
+              )}
+            >
               <Link href={"/app/dashboard"}>
                 <span className="font-bold text-2xl">zot</span>
               </Link>
@@ -86,7 +89,10 @@ export default function EditorSidebar({
 
                     <Link
                       href={value.pathname}
-                      className="hover:underline-2 hover:underline decoration-2 rounded-md !text-[13px] max-w-[16ch] truncate"
+                      className={cn(
+                        "hover:underline-2 hover:underline decoration-2 rounded-md !text-[13px] max-w-[16ch] truncate",
+                        "transition-all"
+                      )}
                     >
                       {value.label}
                     </Link>
