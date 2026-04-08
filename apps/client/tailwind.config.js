@@ -34,6 +34,15 @@ const config = {
       addCommonColors: false,
       defaultTheme: "dark",
       defaultExtendTheme: "dark",
+      themes: {
+        dark: {
+          colors: {
+            default: {
+              50: "#141415"
+            }
+          }
+        }
+      },
       layout: {
         disabledOpacity: "0.5",
         radius: {

@@ -20,7 +20,7 @@ export default function Dashboard() {
     <>
       <PageComponent className="!py-0 text-sm">
         <div className="flex flex-col gap-4">
-          <Alert
+          {/* <Alert
             color="primary"
             title={"Trial expired"}
             description={
@@ -42,7 +42,7 @@ export default function Dashboard() {
               </Button>
             }
             className="mt-6"
-          ></Alert>
+          /> */}
         </div>
 
         <Title description="Below are some tasks to get you started." className="mt-8">

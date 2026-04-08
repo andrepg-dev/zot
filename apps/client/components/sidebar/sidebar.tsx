@@ -22,17 +22,149 @@ import {
 } from "@heroui/react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import GlobalButton from "../global/button";
 import ItemList from "./items-list";
 
+const DEFAULT_MIN_WIDTH = 220;
+const DEFAULT_MAX_WIDTH = 480;
+const DEFAULT_WIDTH = 232;
+const DEFAULT_STORAGE_KEY = "sidebar-width";
+
 export default function Sidebar() {
-  const { navItems, children, hidden, className } = useSidebarStore();
+  const {
+    navItems,
+    children,
+    hidden,
+    className,
+    resizable = true,
+    maxWidth: storeMaxWidth,
+    minWidth: storeMinWidth,
+    storageKey: storeStorageKey
+  } = useSidebarStore();
   const router = useRouter();
+  const maxWidth = storeMaxWidth ?? DEFAULT_MAX_WIDTH;
+  const minWidth = storeMinWidth ?? DEFAULT_MIN_WIDTH;
+  const storageKey = storeStorageKey ?? DEFAULT_STORAGE_KEY;
 
   const { data, isPending } = useQuery({
     queryKey: ["user-profile"],
     queryFn: getProfile
   });
+
+  const [width, setWidth] = useState<number>(DEFAULT_WIDTH);
+  const [isResizing, setIsResizing] = useState(false);
+  const [handleRect, setHandleRect] = useState<{
+    left: number;
+    top: number;
+    height: number;
+  } | null>(null);
+  const asideRef = useRef<HTMLElement>(null);
+  const handleElRef = useRef<HTMLDivElement>(null);
+  const lastClickTimeRef = useRef<number>(0);
+  const widthRef = useRef<number>(DEFAULT_WIDTH);
+  const startXRef = useRef<number>(0);
+  const startWidthRef = useRef<number>(DEFAULT_WIDTH);
+
+  useEffect(() => {
+    const stored = localStorage.getItem(storageKey);
+    const n = stored ? Number(stored) : NaN;
+    const next = !Number.isNaN(n) ? Math.min(maxWidth, Math.max(minWidth, n)) : DEFAULT_WIDTH;
+    widthRef.current = next;
+    setWidth(next);
+  }, [storageKey, maxWidth, minWidth]);
+
+  const handleMouseDown = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault();
+      const now = Date.now();
+      if (now - lastClickTimeRef.current < 300) {
+        lastClickTimeRef.current = 0;
+        const next = Math.min(maxWidth, Math.max(minWidth, DEFAULT_WIDTH));
+        widthRef.current = next;
+        setWidth(next);
+        localStorage.setItem(storageKey, String(next));
+        if (asideRef.current) asideRef.current.style.width = `${next}px`;
+        if (handleElRef.current) {
+          const r = asideRef.current?.getBoundingClientRect();
+          if (r) handleElRef.current.style.left = `${r.right - 6}px`;
+        }
+        return;
+      }
+      lastClickTimeRef.current = now;
+      startXRef.current = e.clientX;
+      startWidthRef.current = widthRef.current;
+      setIsResizing(true);
+      document.body.style.cursor = "col-resize";
+      document.body.style.userSelect = "none";
+    },
+    [maxWidth, minWidth, storageKey]
+  );
+
+  useEffect(() => {
+    if (!isResizing) return;
+
+    let rafId = 0;
+    let pendingX = 0;
+
+    const apply = () => {
+      rafId = 0;
+      const delta = pendingX - startXRef.current;
+      const next = Math.min(maxWidth, Math.max(minWidth, startWidthRef.current + delta));
+      widthRef.current = next;
+      if (asideRef.current) asideRef.current.style.width = `${next}px`;
+      if (handleElRef.current) {
+        const r = asideRef.current?.getBoundingClientRect();
+        if (r) handleElRef.current.style.left = `${r.right - 6}px`;
+      }
+    };
+
+    const handleMouseMove = (e: MouseEvent) => {
+      pendingX = e.clientX;
+      if (!rafId) rafId = requestAnimationFrame(apply);
+    };
+
+    const handleMouseUp = () => {
+      if (rafId) cancelAnimationFrame(rafId);
+      document.body.style.cursor = "";
+      document.body.style.userSelect = "";
+      localStorage.setItem(storageKey, String(widthRef.current));
+      setWidth(widthRef.current);
+      setIsResizing(false);
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseup", handleMouseUp);
+    return () => {
+      if (rafId) cancelAnimationFrame(rafId);
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, [isResizing, storageKey, maxWidth, minWidth]);
+
+  useEffect(() => {
+    if (hidden || !resizable) {
+      setHandleRect(null);
+      return;
+    }
+    const update = () => {
+      const el = asideRef.current;
+      if (!el) return;
+      const r = el.getBoundingClientRect();
+      setHandleRect({ left: r.right - 6, top: r.top, height: r.height });
+    };
+    update();
+    const ro = new ResizeObserver(update);
+    if (asideRef.current) ro.observe(asideRef.current);
+    window.addEventListener("resize", update);
+    window.addEventListener("scroll", update, true);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", update);
+      window.removeEventListener("scroll", update, true);
+    };
+  }, [hidden, resizable, width]);
 
   const logoutModal = useDisclosure();
 
@@ -42,13 +174,18 @@ export default function Sidebar() {
 
   return (
     <aside
+      ref={asideRef}
+      style={{ width: hidden ? 8 : width }}
       className={cn(
-        "overflow-hidden bg-sidebar backdrop-blur-md flex flex-col transition-all duration-250",
-        hidden ? "w-[8px]" : "w-[280px]",
+        "relative overflow-hidden bg-sidebar backdrop-blur-md flex flex-col shrink-0 min-w-0 scrollbar-hide",
+        !isResizing && "transition-[width] duration-250",
         className
       )}
     >
-      <div className="flex flex-col justify-between flex-1 min-w-[230px]">
+      <div
+        style={{ minWidth: hidden ? undefined : minWidth }}
+        className="flex flex-col justify-between flex-1"
+      >
         {!navItems && children && <>{children}</>}
 
         {navItems && !children && <ItemList navItems={navItems} />}
@@ -186,6 +323,40 @@ export default function Sidebar() {
           )}
         </ModalContent>
       </Modal>
+
+      {!hidden &&
+        resizable &&
+        handleRect &&
+        typeof document !== "undefined" &&
+        createPortal(
+          <div
+            ref={handleElRef}
+            onMouseDown={handleMouseDown}
+            role="separator"
+            aria-orientation="vertical"
+            style={{
+              position: "fixed",
+              left: handleRect.left,
+              top: handleRect.top,
+              height: handleRect.height,
+              width: 6,
+              zIndex: 2147483646
+            }}
+            className="cursor-col-resize relative flex items-center justify-center group"
+          >
+            <div className="opacity-0 group-hover:opacity-100 group-active:opacity-100 bg-default-50 left-2 relative rounded-full border border-black h-16 w-12"></div>
+          </div>,
+          document.body
+        )}
+      {isResizing &&
+        typeof document !== "undefined" &&
+        createPortal(
+          <div
+            className="fixed inset-0 cursor-col-resize"
+            style={{ zIndex: 2147483647, background: "transparent" }}
+          />,
+          document.body
+        )}
     </aside>
   );
 }

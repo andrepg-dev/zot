@@ -30,6 +30,7 @@ The input should be valid React/JSX code that exports a default component.
   async compile(@Body() body: ReactToHtmlDto) {
     const code = body.code;
     const result = await this.react2html.compile(code);
-    return result;
+
+    return { html: result };
   }
 }

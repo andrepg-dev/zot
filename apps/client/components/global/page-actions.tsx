@@ -5,6 +5,7 @@ import { FunnelIcon, MagnifyingGlassIcon, PlusIcon } from "@heroicons/react/24/o
 import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
 import Link from "next/link";
+import InputComponent from "../ui/input";
 
 export interface PageActionsProps {
   searchPlaceholder?: string;
@@ -29,16 +30,11 @@ export default function PageActions({
   return (
     <div className={cn("flex justify-between my-6", className)}>
       <div className="flex gap-2">
-        <Input
+        <InputComponent
           placeholder={searchPlaceholder}
-          variant="bordered"
           startContent={<MagnifyingGlassIcon className="text-default-300 size-5" />}
           size="sm"
           isClearable
-          classNames={{
-            base: "max-w-sm",
-            inputWrapper: "border-1"
-          }}
           onValueChange={onSearchChange}
         />
 

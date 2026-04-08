@@ -6,8 +6,8 @@ import SidebarNavigation from "@/components/navigation/sidebar.navigation";
 import { useAiChat } from "@/hooks/use-ai-chat";
 import { cn } from "@/lib/utils";
 import { useLandingPageState } from "@/store/landing-page/landing-page.store";
-import { FolderPlusIcon } from "@heroicons/react/24/outline";
-import PrimaryActionButton from "../global/primary-action-button";
+import { SlashIcon } from "@heroicons/react/24/outline";
+import Link from "next/link";
 import HeaderNavigation from "../navigation/header.navigation";
 
 interface EditorSidebarProps {
@@ -29,46 +29,77 @@ export default function EditorSidebar({
 
   const isCode = messages.some((message) => message.operation_type == "code");
 
+  const navigationItems = [
+    {
+      label: "Emails",
+      pathname: "/app/waitlist/emails"
+    },
+    {
+      label: messages?.[0]?.message ?? "Create template",
+      pathname: ""
+    }
+  ];
+
   return (
     <>
       <HeaderNavigation
         navigationItems={[
-          { label: "Wait-List", pathname: "/app/waitlist/dashboard" },
           { label: "Emails", pathname: "/app/waitlist/emails" },
           {
             label: messages?.[0]?.message ?? "Create template",
             pathname: ""
           }
         ]}
-        postNavigationItems={
-          isCode && (
-            <PrimaryActionButton
-              startContent={<FolderPlusIcon className="size-4" strokeWidth={2} />}
-            >
-              Save template
-            </PrimaryActionButton>
-          )
-        }
+        hidden={isCode}
       />
 
       <SidebarNavigation
+        resizable={isCode}
+        maxWidth={900}
+        storageKey="sidebar-width:email-template"
         className={cn(
-          "overflow-y-auto z-50 duration-1000 transition-all",
-          editionType === "ai"
-            ? isCode
-              ? isEdition
-                ? "w-[650px]"
-                : "min-w-[455px]"
-              : "min-w-full"
-            : "min-w-0 w-0"
+          "overflow-y-auto z-50",
+          editionType === "ai" ? (isCode ? "" : "min-w-full") : "min-w-0 w-0"
         )}
         children={
           <div
             className={cn(
-              "p-4 pb-0 flex flex-col h-full flex-1 text-sm gap-2 mx-auto",
-              isCode ? "w-full min-w-[445px] max-w-[455px]" : "w-3xl"
+              "p-4 pt-0 pb-0 flex flex-col h-full flex-1 text-sm gap-7 mx-auto min-w-0",
+              isCode ? "w-full max-w-[755px]" : "w-3xl"
             )}
           >
+            <div
+              className={cn(
+                isCode ? "flex items-center sticky top-0 left-0 bg-black pb-2" : "hidden"
+              )}
+            >
+              <Link href={"/app/dashboard"}>
+                <span className="font-bold text-2xl">zot</span>
+              </Link>
+
+              {navigationItems &&
+                navigationItems?.map((value, idx) => (
+                  <div
+                    key={idx}
+                    className="flex items-center text-sm font-semibold gap-2 mt-1 text-muted-foreground hover:text-foreground ml-2"
+                  >
+                    <span className="text-muted-foreground">
+                      <SlashIcon className="size-4 text-default-100" />
+                    </span>
+
+                    <Link
+                      href={value.pathname}
+                      className={cn(
+                        "hover:underline-2 hover:underline decoration-2 rounded-md !text-[13px] max-w-[16ch] truncate",
+                        "transition-all"
+                      )}
+                    >
+                      {value.label}
+                    </Link>
+                  </div>
+                ))}
+            </div>
+
             <ChatMessageList
               messages={messages}
               isPending={isPending}

@@ -9,14 +9,31 @@ export default function SidebarNavigation({
   children,
   navItems,
   hidden,
-  className
+  className,
+  resizable,
+  maxWidth,
+  minWidth,
+  storageKey
 }: {
   children?: React.ReactNode;
   navItems?: NavItemOrDivider[] | NavItemsI;
   hidden?: boolean;
   className?: string;
+  resizable?: boolean;
+  maxWidth?: number;
+  minWidth?: number;
+  storageKey?: string;
 }) {
-  const { setNavItems, setChildren, setHidden, setClassName } = useSidebarStore();
+  const {
+    setNavItems,
+    setChildren,
+    setHidden,
+    setClassName,
+    setResizable,
+    setMaxWidth,
+    setMinWidth,
+    setStorageKey
+  } = useSidebarStore();
   const pathname = usePathname();
 
   // Reset values
@@ -26,6 +43,10 @@ export default function SidebarNavigation({
       setChildren(null);
       setHidden(false);
       setClassName(null);
+      setResizable(true);
+      setMaxWidth(null);
+      setMinWidth(null);
+      setStorageKey(null);
     };
   }, [pathname]);
 
@@ -48,6 +69,24 @@ export default function SidebarNavigation({
       setClassName(className);
     }
   }, [className, setClassName]);
+
+  useEffect(() => {
+    if (resizable != undefined) {
+      setResizable(resizable);
+    }
+  }, [resizable, setResizable]);
+
+  useEffect(() => {
+    setMaxWidth(maxWidth ?? null);
+  }, [maxWidth, setMaxWidth]);
+
+  useEffect(() => {
+    setMinWidth(minWidth ?? null);
+  }, [minWidth, setMinWidth]);
+
+  useEffect(() => {
+    setStorageKey(storageKey ?? null);
+  }, [storageKey, setStorageKey]);
 
   return null;
 }

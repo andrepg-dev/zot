@@ -52,7 +52,7 @@ function YAxisTick({ x, y, payload }: { x: number; y: number; payload: { value: 
 
 export default function TopReferrersChart({ data = defaultData }: TopReferrersChartProps) {
   return (
-    <div className="flex flex-col rounded-sm border px-5 py-4.5 bg-background">
+    <div className="flex flex-col border px-5 py-4.5 bg-background">
       <div className="flex flex-col gap-2 mb-4">
         <h3 className="text-base font-medium">Top Referrers</h3>
         <p className="text-sm text-muted-foreground">Users with the most referrals</p>

@@ -17,7 +17,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-export default function EmailsPage() {
+export default function EmailTemplatesPage() {
   const [search, setSearch] = useState("");
   const router = useRouter();
 
@@ -40,7 +40,7 @@ export default function EmailsPage() {
 
   return (
     <PageComponent>
-      <Title description="Manage your saved email templates">Email</Title>
+      <Title description="Manage your saved email templates">Templates</Title>
 
       <PageActions
         searchPlaceholder="Search template..."
@@ -71,7 +71,7 @@ export default function EmailsPage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4">
           {templates.map((template) => (
-            <Card key={template._id} className="border" radius="sm">
+            <Card key={template._id} className="border bg-default-100/50" radius="none">
               <CardBody className="p-5">
                 <div className="flex flex-col gap-3">
                   <div className="flex items-start justify-between gap-2">

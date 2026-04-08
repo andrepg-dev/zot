@@ -35,7 +35,7 @@ export default function ChatMessageList({
   }
 
   return (
-    <div className="flex flex-col gap-2.5 flex-1 min-h-0 overflow-y-auto pb-4">
+    <div className="flex flex-col gap-2.5 flex-1 min-h-0 overflow-y-auto pb-4 pr-2">
       {messages.map((message) => (
         <ChatMessage key={message._id} message={message} />
       ))}

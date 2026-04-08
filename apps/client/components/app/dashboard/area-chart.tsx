@@ -104,7 +104,12 @@ export default function AreaChartComponent({ data, isPending }: AreaChartCompone
         </p>
       </div>
       <div className="h-64 min-h-[16rem] w-full min-w-0">
-        {isClient && (
+        {isClient && chartData.length === 0 && !isPending && (
+          <div className="flex h-full w-full items-center justify-center rounded-sm border-2 border-dashed bg-default-50 text-xs text-muted-foreground">
+            No data to display yet
+          </div>
+        )}
+        {isClient && chartData.length > 0 && (
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={chartData} margin={{ top: 15, right: 10, left: -15, bottom: 0 }}>
               <defs>

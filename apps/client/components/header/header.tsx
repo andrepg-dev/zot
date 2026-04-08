@@ -37,7 +37,7 @@ export default function Header() {
 
                 <Link
                   href={value.pathname}
-                  className="hover:underline-2 hover:underline decoration-2 rounded-md !text-[13px]"
+                  className="hover:underline-2 hover:underline decoration-2 rounded-md !text-[13px] max-w-[16ch] truncate"
                 >
                   {value.label}
                 </Link>
@@ -74,7 +74,12 @@ export default function Header() {
               </PopoverTrigger>
 
               <PopoverContent className="p-2 flex flex-col gap-2">
-                <GlobalTextarea size="sm" className="min-w-[300px]" placeholder="My idea to improve to zot is" variant="faded" />
+                <GlobalTextarea
+                  size="sm"
+                  className="min-w-[300px]"
+                  placeholder="My idea to improve to zot is"
+                  variant="faded"
+                />
 
                 <div className="bg-border w-full h-[1px]"></div>
 
@@ -82,9 +87,7 @@ export default function Header() {
                   <GlobalButton isIconOnly variant="faded">
                     <PhotoIcon className="size-4" />
                   </GlobalButton>
-                  <GlobalButton color="primary" >
-                    Send feedback
-                  </GlobalButton>
+                  <GlobalButton color="primary">Send feedback</GlobalButton>
                 </div>
               </PopoverContent>
             </Popover>
