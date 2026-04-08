@@ -148,7 +148,7 @@ export default function LaunchedWaitList({ params }: { params: Promise<{ id: str
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mt-4 rounded-default">
         {stats.map((stat) => (
-          <div key={stat.id} className="relative border rounded bg-background">
+          <div key={stat.id} className="relative border  bg-background">
             {"href" in stat && stat.href && (
               <Link
                 href={stat.href}

@@ -40,7 +40,7 @@ export default function FakeUsersBlockedChart({ data = defaultData }: FakeUsersB
 
   return (
     <div
-      className="flex flex-col rounded-sm border px-5 py-4.5 bg-background"
+      className="flex flex-col border px-5 py-4.5 bg-background"
       onMouseLeave={() => clearHover()}
     >
       <div className="flex justify-between">
