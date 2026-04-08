@@ -22,7 +22,7 @@ interface SidebarStateI {
 
 const useSidebarStore = create<SidebarStateI>((set) => ({
   navItems: defaultNavItems,
-  resizable: true,
+  resizable: false,
   maxWidth: null,
   minWidth: null,
   storageKey: null,

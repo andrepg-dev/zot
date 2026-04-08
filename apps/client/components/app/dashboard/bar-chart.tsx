@@ -36,7 +36,7 @@ function formatDate(dateStr: string) {
   return `${monthNames[Number(month) - 1]} ${Number(day)}`;
 }
 
-export default function BarChartComponent({ data }: BarChartComponentProps) {
+export default function BarChartComponent({ data, isPending }: BarChartComponentProps) {
   const { isClient } = useIsClient();
 
   const chartData = (() => {
@@ -64,7 +64,12 @@ export default function BarChartComponent({ data }: BarChartComponentProps) {
         <p className="text-sm text-muted-foreground">Daily registration count</p>
       </div>
       <div className="h-64 min-h-[16rem] w-full min-w-0">
-        {isClient && (
+        {isClient && chartData.length === 0 && !isPending && (
+          <div className="flex h-full w-full items-center justify-center rounded-sm border-2 border-dashed bg-default-50 text-xs text-muted-foreground">
+            No data to display yet
+          </div>
+        )}
+        {isClient && chartData.length > 0 && (
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
               <XAxis
