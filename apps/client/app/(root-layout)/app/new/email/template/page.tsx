@@ -36,7 +36,7 @@ import {
 import { useMutation } from "@tanstack/react-query";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Suspense, useState } from "react";
+import { Suspense, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 
 type VisualizationType = "code" | "preview";
@@ -52,6 +52,21 @@ export default function CreateEmailPage() {
 function CreateEmailPageContent() {
   const [visualizationType, setVisualizationType] = useState<VisualizationType>("preview");
   const [editorCode, setEditorCode] = useState("");
+  const [iframeHeight, setIframeHeight] = useState(0);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+
+  const handleIframeLoad = () => {
+    const iframe = iframeRef.current;
+    if (!iframe?.contentWindow?.document?.body) return;
+    const doc = iframe.contentWindow.document;
+    const update = () => {
+      const height = Math.max(doc.body.scrollHeight, doc.documentElement.scrollHeight);
+      setIframeHeight(height);
+    };
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(doc.body);
+  };
 
   const searchParams = useSearchParams();
 
@@ -309,8 +324,8 @@ function CreateEmailPageContent() {
                 </div>
               </div>
             ) : (
-              <div className="flex flex-col w-full h-full bg-white">
-                <div className="flex flex-col mx-auto w-4/5 h-full font-sans mt-4">
+              <div className="flex flex-col w-full h-full bg-white overflow-y-auto">
+                <div className="flex flex-col mx-auto w-4/5 font-sans my-4 mb-24">
                   <div className="flex flex-col my-4 text-black/80">
                     <div>
                       <div className="flex border-b items-center h-[40px] !border-muted-foreground/30">
@@ -343,7 +358,14 @@ function CreateEmailPageContent() {
                       </div>
                     </div>
                   </div>
-                  <iframe srcDoc={lastCodeMessageHtmlCode.html} className="h-full w-full" />
+                  <iframe
+                    ref={iframeRef}
+                    srcDoc={lastCodeMessageHtmlCode.html}
+                    onLoad={handleIframeLoad}
+                    style={{ height: iframeHeight ? `${iframeHeight}px` : undefined }}
+                    className="w-full block border-0"
+                    scrolling="no"
+                  />
                 </div>
               </div>
             ))}
