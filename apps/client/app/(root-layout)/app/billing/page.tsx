@@ -1,12 +1,29 @@
 "use client";
 
+import { createCheckoutSession } from "@/actions/subscriptions/subscriptions.actions";
 import PageComponent from "@/components/layouts/page-component";
 import { plans } from "@/constants/billing-constant";
 import { CheckIcon } from "@heroicons/react/24/solid";
+import { addToast } from "@heroui/toast";
+import { useMutation } from "@tanstack/react-query";
 import Link from "next/link";
 import posthog from "posthog-js";
 
 export default function BillingPage() {
+  const { mutate: startCheckout, isPending: isCheckoutPending } = useMutation({
+    mutationFn: () => createCheckoutSession({}),
+    onSuccess: (data) => {
+      if (data?.url) {
+        window.location.href = data.url;
+        return;
+      }
+      addToast({ title: "Error", description: "Missing checkout URL", color: "danger" });
+    },
+    onError: (err: Error) => {
+      addToast({ title: "Error", description: err.message, color: "danger" });
+    }
+  });
+
   return (
     <PageComponent className="max-w-6xl mx-auto text-foreground relative">
       <div className="flex flex-col gap-8">
@@ -19,7 +36,7 @@ export default function BillingPage() {
           </p>
         </div>
 
-        <div className="grid gap-3 lg:grid-cols-3 mt-2">
+        <div className="grid gap-3 lg:grid-cols-2 max-w-3xl mx-auto w-full mt-2">
           {plans.map((plan) => (
             <div
               key={plan.name}
@@ -42,23 +59,37 @@ export default function BillingPage() {
                 </div>
               </div>
 
-              <Link
-                href={plan.ctaHref}
-                onClick={() =>
-                  posthog.capture("checkout_initiated", {
-                    plan: plan.name,
-                    price: plan.price,
-                    is_popular: plan.popular ?? false
-                  })
-                }
-                className={`mt-6 inline-flex h-10.5 items-center justify-center border px-4 text-sm font-semibold transition-colors ${
-                  plan.popular
-                    ? "hover:bg-[#4338CA]/50 bg-[#4338CA]/70 text-white border-blue-500 drop-shadow-lg drop-shadow-black "
-                    : "border-blue-500/50 text-blue-100 hover:border-blue-400 hover:bg-blue-500/10"
-                }`}
-              >
-                {plan.ctaLabel}
-              </Link>
+              {plan.popular ? (
+                <button
+                  type="button"
+                  disabled={isCheckoutPending}
+                  onClick={() => {
+                    posthog.capture("checkout_initiated", {
+                      plan: plan.name,
+                      price: plan.price,
+                      is_popular: plan.popular ?? false
+                    });
+                    startCheckout();
+                  }}
+                  className="mt-6 inline-flex h-10.5 items-center justify-center border px-4 text-sm font-semibold transition-colors hover:bg-[#4338CA]/50 bg-[#4338CA]/70 text-white border-blue-500 drop-shadow-lg drop-shadow-black disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer"
+                >
+                  {isCheckoutPending ? "Redirecting..." : plan.ctaLabel}
+                </button>
+              ) : (
+                <Link
+                  href={plan.ctaHref}
+                  onClick={() =>
+                    posthog.capture("checkout_initiated", {
+                      plan: plan.name,
+                      price: plan.price,
+                      is_popular: plan.popular ?? false
+                    })
+                  }
+                  className="mt-6 inline-flex h-10.5 items-center justify-center border px-4 text-sm font-semibold transition-colors border-blue-500/50 text-blue-100 hover:border-blue-400 hover:bg-blue-500/10"
+                >
+                  {plan.ctaLabel}
+                </Link>
+              )}
 
               <div className="mt-6 flex-1 space-y-3">
                 {plan.features.map((feature) => (

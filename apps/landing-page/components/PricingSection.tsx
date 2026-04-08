@@ -17,58 +17,30 @@ const PLANS = [
       "15,000 users signup limit",
       "3 waitlists maximum",
       "3 landing pages maximum",
-      "2,000 users emailed per month",
+      "100 users emailed per month",
       "10 email templates",
       "Custom email creation",
       "Export your data",
-      "1 domain for branded emails and landing pages",
       "Analytics for signups and sent emails",
       "Trend search powered by Google Search",
     ],
   },
   {
     name: "Premium",
-    price: "$49",
+    price: "$14",
     frequency: "/ month",
-    /** Descuento early-user: 3 meses por $25. Si está definido, se muestra precio tachado y la oferta. */
-    earlyUserOffer: {
-      price: "$25",
-      period: "3 months",
-      label: "Early user offer",
-    },
     blurb: "For products in production that need headroom and support.",
     ctaLabel: "Start free trial",
     ctaHref: "#testimonial",
     popular: true,
     features: [
-      "Unlimited users signup",
-      "50 waitlists maximum",
-      "50 landing pages maximum",
-      "30,000 users emailed per month",
-      "50 email templates",
-      "Custom email creation",
-      "10 domains for emails and landing pages",
-      "Extra security to block fake or disposable emails",
-      "Analytics for sent emails and registered users",
-      "Export your data",
-      "Use more powerful AI models",
-    ],
-  },
-  {
-    name: "Scale",
-    price: "$180",
-    frequency: "/ month",
-    blurb: "Built for fast-growing teams with heavy launch pipelines.",
-    ctaLabel: "Contact sales",
-    ctaHref: "#testimonial",
-    popular: false,
-    features: [
-      "Unlimited users per month signup limit",
-      "100 waitlists maximum",
-      "100 landing pages maximum",
+      "1,500,000 users signup limit",
+      "30 waitlists maximum",
+      "30 landing pages maximum",
+      "10,000 users emailed per month",
       "200 email templates",
-      "100,000 users emailed per month",
-      "500 domains for emails and landing pages",
+      "Custom email creation",
+      "10 domains for branded emails",
       "Extra security to block fake or disposable emails",
       "Analytics for sent emails and registered users",
       "Export your data",
@@ -91,9 +63,9 @@ export default function PricingSection() {
         description="Transparent pricing with zero surprises. Upgrade when you need more room to scale launches, emails, and domains."
       />
 
-      <div className="mx-auto mt-10 sm:mt-12 lg:mt-16 grid max-w-6xl grid-cols-1 gap-3 sm:gap-4 lg:grid-cols-3 items-start px-0">
+      <div className="mx-auto mt-10 sm:mt-12 lg:mt-16 grid max-w-4xl grid-cols-1 gap-3 sm:gap-4 lg:grid-cols-2 items-start px-0">
         {PLANS.map((plan) => {
-          const isPremium = "earlyUserOffer" in plan && plan.earlyUserOffer;
+          const isPremium = plan.popular;
           return (
             <div
               key={plan.name}
@@ -155,9 +127,9 @@ export default function PricingSection() {
               <div
                 className={`relative z-10 flex flex-col flex-1 p-4 sm:p-5 lg:p-6 ${isPremium ? "bg-[#0D0D0E]/60" : "bg-black/40"}`}
               >
-                {"earlyUserOffer" in plan && plan.earlyUserOffer && (
+                {isPremium && (
                   <span className="absolute right-4 top-4 rounded-full bg-[#4338ca] px-3 py-1 text-xs font-semibold text-white z-20">
-                    Early user offer
+                    Most popular
                   </span>
                 )}
 
@@ -168,35 +140,13 @@ export default function PricingSection() {
                   <p className="text-lg font-semibold text-foreground">
                     {plan.blurb}
                   </p>
-                  {"earlyUserOffer" in plan && plan.earlyUserOffer && (
-                    <p className="text-xs font-medium text-zinc-400">
-                      {plan.earlyUserOffer.label}
-                    </p>
-                  )}
                   <div className="flex flex-wrap items-baseline gap-2">
-                    {"earlyUserOffer" in plan && plan.earlyUserOffer ? (
-                      <>
-                        <span className="text-3xl sm:text-4xl font-semibold text-foreground">
-                          {plan.earlyUserOffer.price}
-                        </span>
-                        <span className="text-muted-foreground">
-                          for {plan.earlyUserOffer.period}
-                        </span>
-                        <span className="text-lg text-muted-foreground line-through ml-1 inline-block">
-                          {plan.price}
-                          {plan.frequency}
-                        </span>
-                      </>
-                    ) : (
-                      <>
-                        <span className="text-3xl sm:text-4xl font-semibold text-foreground">
-                          {plan.price}
-                        </span>
-                        <span className="text-muted-foreground">
-                          {plan.frequency}
-                        </span>
-                      </>
-                    )}
+                    <span className="text-3xl sm:text-4xl font-semibold text-foreground">
+                      {plan.price}
+                    </span>
+                    <span className="text-muted-foreground">
+                      {plan.frequency}
+                    </span>
                   </div>
                 </div>
 
@@ -215,7 +165,7 @@ export default function PricingSection() {
                   >
                     {plan.ctaLabel}
                   </Link>
-                  {(plan.name === "Premium" || plan.name === "Scale") && (
+                  {plan.name === "Premium" && (
                     <p className="mt-2 text-xs text-zinc-500 text-center">
                       This offer is valid during our early user adoption phase.
                       You won&apos;t be charged.
