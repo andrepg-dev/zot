@@ -69,7 +69,7 @@ export default function EditorSidebar({
               isCode ? "w-full max-w-[755px]" : "w-3xl"
             )}
           >
-            <div className={cn(isCode ? "flex items-center" : "hidden")}>
+            <div className={cn(isCode ? "flex items-center sticky top-0 left-0 bg-black pb-2" : "hidden")}>
               <Link href={"/app/dashboard"}>
                 <span className="font-bold text-2xl">zot</span>
               </Link>

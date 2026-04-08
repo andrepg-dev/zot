@@ -2,6 +2,7 @@ import {
   ChartBarIcon,
   Cog6ToothIcon,
   CreditCardIcon,
+  EnvelopeIcon,
   GlobeAltIcon,
   InboxStackIcon,
   KeyIcon,
@@ -36,16 +37,21 @@ export const defaultNavItems = [
   //   icon: EnvelopeIcon
   // },
   {
+    href: "/app/waitlist/dashboard",
     label: "WaitList",
-    icon: InboxStackIcon,
+    icon: InboxStackIcon
+  },
+  {
+    label: "Emails",
+    icon: EnvelopeIcon,
     subItem: [
       {
-        href: "/app/waitlist/dashboard",
-        label: "Dashboard"
+        href: "/app/emails/templates",
+        label: "Templates"
       },
       {
-        href: "/app/waitlist/emails",
-        label: "Emails"
+        href: "/app/emails/chats",
+        label: "Chats"
       }
     ]
   },
