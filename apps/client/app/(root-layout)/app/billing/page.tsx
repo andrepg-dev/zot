@@ -40,12 +40,12 @@ export default function BillingPage() {
           {plans.map((plan) => (
             <div
               key={plan.name}
-              className={`relative flex flex-col bg-[#0D0D0E] border p-6 shadow-lg backdrop-blur ${
+              className={`relative flex flex-col bg-default-50/70 border p-6 shadow-lg backdrop-blur ${
                 plan.popular ? "border-[#4338CA] -translate-y-5" : "border-white/10"
               }`}
             >
               {plan.popular && (
-                <span className="absolute right-4 top-4 rounded-full bg-blue-500/20 px-3 py-1 text-xs font-semibold text-blue-100">
+                <span className="absolute right-4 top-4 bg-[#4338CA]/20 border-[#4338CA] px-3 py-1 text-xs font-semibold text-blue-100">
                   Most popular
                 </span>
               )}

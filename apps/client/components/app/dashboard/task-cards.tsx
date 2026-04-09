@@ -19,7 +19,7 @@ const dashboardTasks = [
     icon: EnvelopeIcon,
     title: "Email campaigns",
     description: "Write your first email template",
-    href: "/app/waitlist/emails",
+    href: "/app/emails/templates",
     hasAI: true
   },
   {
@@ -39,7 +39,7 @@ function TaskCard({ task, index }: { task: (typeof dashboardTasks)[number]; inde
     <Link key={task.id} href={task.href}>
       <div
         className={cn(
-          "flex flex-col gap-4 py-5 px-5 rounded border border-dashed hover:from-background hover:to-zinc-950 hover:bg-radial-[at_50%_25%] relative",
+          "flex flex-col gap-4 py-5 px-5 border border-dashed hover:from-background hover:to-zinc-950 hover:bg-radial-[at_50%_25%] relative",
           index === 0
             ? "hover:from-background hover:to-zinc-950 hover:bg-radial-[at_50%_25%] border-r border-b border-t border-l-4 !border-l-primary/70 hover:!border-l-primary rounded-l-none !border-r-zinc-800"
             : "hover:!border-zinc-700"
@@ -60,7 +60,7 @@ function TaskCard({ task, index }: { task: (typeof dashboardTasks)[number]; inde
 
         <div
           className={cn(
-            "size-10 rounded-sm bg-default-100 flex items-center justify-center transition-colors",
+            "size-10 rounded-sm bg-default-100/70 flex items-center justify-center transition-colors",
             index === 0 && "!bg-primary-200",
             "group-hover:bg-primary-200"
           )}

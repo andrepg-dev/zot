@@ -26,7 +26,6 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
-  Input,
   Modal,
   ModalBody,
   ModalContent,
@@ -133,6 +132,19 @@ export default function CampaignPage({ params }: { params: Promise<{ id: string 
       });
     }
   });
+
+  function handleRowDoubleClick(userId?: string) {
+    if (selectedKeys.length > 0) {
+      setQuantity(String(selectedKeys.length));
+      sendModal.onOpen();
+      return;
+    }
+    if (userId) {
+      setSelectedKeys([userId]);
+      setQuantity("1");
+      sendModal.onOpen();
+    }
+  }
 
   function handleSend() {
     const qty = Number(quantity);
@@ -246,18 +258,14 @@ export default function CampaignPage({ params }: { params: Promise<{ id: string 
 
       <div className="flex flex-col gap-4">
         <div className="flex justify-between items-center">
-          <Input
+          <InputComponent
             placeholder="Search by email, referral code or metadata..."
-            variant="bordered"
             startContent={<MagnifyingGlassIcon className="text-default-300 size-5" />}
             size="sm"
             isClearable
             value={search}
             onValueChange={setSearch}
-            classNames={{
-              base: "max-w-sm",
-              inputWrapper: "border-1"
-            }}
+            className="w-[350px]"
           />
 
           <span className="text-default-400 text-small">
@@ -265,108 +273,116 @@ export default function CampaignPage({ params }: { params: Promise<{ id: string 
           </span>
         </div>
 
-        <Table
-          aria-label="Waitlist Users Table"
-          radius="sm"
-          isHeaderSticky
-          selectionMode="multiple"
-          selectedKeys={selectedKeys}
-          onSelectionChange={(keys) => {
-            if (keys == "all") {
-              setSelectedKeys(filteredUsers.map((u) => u._id));
-            } else {
-              setSelectedKeys(Array.from(keys as Set<string>));
-            }
-          }}
-          checkboxesProps={{
-            size: "sm",
-            classNames: { wrapper: "before:border-1" }
-          }}
-          classNames={{
-            th: "!rounded-b-none",
-            wrapper: "p-0 border",
-            td: "first:before:rounded-none last:before:rounded-e-none cursor-pointer py-3"
-          }}
-        >
-          <TableHeader columns={columns}>
-            {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
-          </TableHeader>
-
-          <TableBody
-            items={filteredUsers}
-            isLoading={isPending}
-            loadingContent={<Spinner size="sm" />}
-            emptyContent={<Type>No users yet.</Type>}
+        <div onDoubleClick={() => handleRowDoubleClick()}>
+          <Table
+            aria-label="Waitlist Users Table"
+            isHeaderSticky
+            selectionMode="multiple"
+            selectedKeys={selectedKeys}
+            onSelectionChange={(keys) => {
+              if (keys == "all") {
+                setSelectedKeys(filteredUsers.map((u) => u._id));
+              } else {
+                setSelectedKeys(Array.from(keys as Set<string>));
+              }
+            }}
+            checkboxesProps={{
+              size: "sm",
+              classNames: { wrapper: "before:border-1" }
+            }}
+            radius="none"
+            className="bg-default-50 border"
+            classNames={{
+              td: "py-3",
+              wrapper: "p-0"
+            }}
           >
-            {(item) => (
-              <TableRow key={item._id}>
-                {(columnKey) => {
-                  const key = String(columnKey);
+            <TableHeader columns={columns}>
+              {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
+            </TableHeader>
 
-                  if (key === "position") {
-                    return (
-                      <TableCell>
-                        <span className="text-muted-foreground font-mono truncate block max-w-[200px]">
-                          {item.position}
-                        </span>
-                      </TableCell>
-                    );
-                  }
+            <TableBody
+              items={filteredUsers}
+              isLoading={isPending}
+              loadingContent={<Spinner size="sm" />}
+              emptyContent={<Type>No users yet.</Type>}
+            >
+              {(item) => (
+                <TableRow
+                  key={item._id}
+                  onDoubleClick={(e: React.MouseEvent) => {
+                    e.stopPropagation();
+                    handleRowDoubleClick(item._id);
+                  }}
+                >
+                  {(columnKey) => {
+                    const key = String(columnKey);
 
-                  if (key === "email") {
-                    return (
-                      <TableCell>
-                        <span className="font-mono text-xs truncate block max-w-[200px]">
-                          {item.email}
-                        </span>
-                      </TableCell>
-                    );
-                  }
+                    if (key === "position") {
+                      return (
+                        <TableCell>
+                          <span className="text-muted-foreground font-mono truncate block max-w-[200px]">
+                            {item.position}
+                          </span>
+                        </TableCell>
+                      );
+                    }
 
-                  if (key === "referredBy") {
-                    return (
-                      <TableCell>
-                        {item.referredBy ? (
+                    if (key === "email") {
+                      return (
+                        <TableCell>
                           <span className="font-mono text-xs truncate block max-w-[200px]">
-                            {referralCodeToEmail.get(item.referredBy) ?? item.referredBy}
+                            {item.email}
                           </span>
-                        ) : (
-                          <span className="text-muted-foreground text-xs truncate block max-w-[200px]">
-                            —
+                        </TableCell>
+                      );
+                    }
+
+                    if (key === "referredBy") {
+                      return (
+                        <TableCell>
+                          {item.referredBy ? (
+                            <span className="font-mono text-xs truncate block max-w-[200px]">
+                              {referralCodeToEmail.get(item.referredBy) ?? item.referredBy}
+                            </span>
+                          ) : (
+                            <span className="text-muted-foreground text-xs truncate block max-w-[200px]">
+                              —
+                            </span>
+                          )}
+                        </TableCell>
+                      );
+                    }
+
+                    if (key === "createdAt") {
+                      return (
+                        <TableCell>
+                          <span className="text-muted-foreground font-mono text-xs truncate block max-w-[200px]">
+                            {formatDate(item.createdAt)}
                           </span>
-                        )}
-                      </TableCell>
-                    );
-                  }
+                        </TableCell>
+                      );
+                    }
 
-                  if (key === "createdAt") {
-                    return (
-                      <TableCell>
-                        <span className="text-muted-foreground font-mono text-xs truncate block max-w-[200px]">
-                          {formatDate(item.createdAt)}
-                        </span>
-                      </TableCell>
-                    );
-                  }
+                    if (key.startsWith("meta_")) {
+                      const metaKey = key.replace("meta_", "");
+                      const value = item.metadata?.[metaKey];
+                      return (
+                        <TableCell>
+                          <span className="font-mono text-xs text-muted-foreground truncate block max-w-[200px]">
+                            {value != null ? String(value) : "—"}
+                          </span>
+                        </TableCell>
+                      );
+                    }
 
-                  if (key.startsWith("meta_")) {
-                    const metaKey = key.replace("meta_", "");
-                    const value = item.metadata?.[metaKey];
-                    return (
-                      <TableCell>
-                        <span className="font-mono text-xs text-muted-foreground truncate block max-w-[200px]">
-                          {value != null ? String(value) : "—"}
-                        </span>
-                      </TableCell>
-                    );
-                  }
-
-                  return <TableCell>—</TableCell>;
-                }}
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+                    return <TableCell>—</TableCell>;
+                  }}
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
       </div>
 
       <Modal

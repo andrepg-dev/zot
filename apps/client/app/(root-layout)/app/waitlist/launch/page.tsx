@@ -34,21 +34,10 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import posthog from "posthog-js";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useEffect, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 
 export default function LaunchWaitList() {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors }
-  } = useForm<SubmitWaitListValues>({
-    resolver: zodResolver(submitWaitlistSchema),
-    defaultValues: {
-      sendEmail: true
-    }
-  });
-
   const [step, setStep] = useState(1);
   const [connectionTab, setConnectionTab] = useState<string>("sdk");
 
@@ -61,6 +50,25 @@ export default function LaunchWaitList() {
     queryKey: ["api-keys"],
     queryFn: getApiKeys
   });
+
+  const {
+    register,
+    handleSubmit,
+    control,
+    setValue,
+    formState: { errors }
+  } = useForm<SubmitWaitListValues>({
+    resolver: zodResolver(submitWaitlistSchema),
+    defaultValues: {
+      sendEmail: true
+    }
+  });
+
+  useEffect(() => {
+    if (userData?.suscriptionPlan === "PREMIUM") {
+      setValue("addSecurity", true);
+    }
+  }, [userData?.suscriptionPlan, setValue]);
 
   const [selectedApiKey, setSelectedApiKey] = useState<string>("");
   const selectedApiKeyValue = apiKeys?.find((k) => k._id === selectedApiKey)?.apiKey;
@@ -119,7 +127,7 @@ export default function LaunchWaitList() {
       posthog.capture("waitlist_created", {
         name: variables.name,
         send_email_to_new_signup: variables.sendEmail,
-        security_active: variables.addSecurity,
+        security_active: variables.addSecurity
       });
     }
   });
@@ -206,9 +214,15 @@ export default function LaunchWaitList() {
                 error={errors.sendEmail}
                 className="p-4"
               >
-                <Checkbox size="sm" {...register("sendEmail")} defaultChecked={true}>
-                  Activate email sending
-                </Checkbox>
+                <Controller
+                  control={control}
+                  name="sendEmail"
+                  render={({ field }) => (
+                    <Checkbox size="sm" isSelected={field.value} onValueChange={field.onChange}>
+                      Activate email sending
+                    </Checkbox>
+                  )}
+                />
               </FormField>
 
               <hr />
@@ -227,9 +241,20 @@ export default function LaunchWaitList() {
                 error={errors.addSecurity}
                 className="p-4"
               >
-                <Checkbox size="sm" isDisabled={userData?.suscriptionPlan == "FREE"}>
-                  Add extra security
-                </Checkbox>
+                <Controller
+                  control={control}
+                  name="addSecurity"
+                  render={({ field }) => (
+                    <Checkbox
+                      size="sm"
+                      isDisabled={userData?.suscriptionPlan == "FREE"}
+                      isSelected={field.value}
+                      onValueChange={field.onChange}
+                    >
+                      Add extra security
+                    </Checkbox>
+                  )}
+                />
               </FormField>
 
               <hr />

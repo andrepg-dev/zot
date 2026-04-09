@@ -62,7 +62,7 @@ export default function EmailChatsPage() {
         searchPlaceholder="Search chats..."
         onSearchChange={setSearch}
         actionButton={{
-          label: "Create template",
+          label: "Create conversation",
           href: "/app/new/email/template"
         }}
         className="w-full"
@@ -93,7 +93,7 @@ export default function EmailChatsPage() {
               onClick={() =>
                 router.push(`/app/new/email/template?conversationId=${c._id}&isEdition=true`)
               }
-              className="grid grid-cols-[1fr_200px_120px] gap-4 items-center px-4 py-4 rounded-sm text-left hover:bg-default-50 cursor-pointer"
+              className="grid grid-cols-[1fr_200px_120px] gap-4 items-center px-4 py-4 text-left hover:bg-default-50 cursor-pointer"
             >
               <Type className="truncate">{c.title || "Untitled chat"}</Type>
               <Type variant="sm" className="text-muted-foreground">

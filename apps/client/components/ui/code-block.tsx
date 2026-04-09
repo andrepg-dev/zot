@@ -38,14 +38,14 @@ export default function CodeBlock({
       {html ? (
         <div
           className={cn(
-            "text-xs leading-relaxed overflow-x-auto [&_pre]:p-4 [&_pre]:m-0 [&_pre]:bg-neutral-950!",
+            "text-xs leading-relaxed overflow-x-auto [&_pre]:p-4 [&_pre]:m-0 [&_pre]:bg-zinc-950! ",
             displayCode && !revealed && "cursor-pointer"
           )}
           onClick={displayCode && !revealed ? () => setRevealed(true) : undefined}
           dangerouslySetInnerHTML={{ __html: html }}
         />
       ) : (
-        <pre className="bg-neutral-950 p-4 text-xs leading-relaxed">
+        <pre className="bg-zinc-950 p-4 text-xs leading-relaxed">
           <code>{visibleCode}</code>
         </pre>
       )}

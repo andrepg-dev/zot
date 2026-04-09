@@ -66,6 +66,7 @@ export default function DailyRegistrationsChart({
 
         <Button
           size="sm"
+          radius="none"
           variant="light"
           endContent={<ArrowTopRightOnSquareIcon className="size-3" />}
           className="text-muted-foreground"

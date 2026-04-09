@@ -12,7 +12,7 @@ import {
   YAxis
 } from "recharts";
 
-const gridColor = "rgba(255, 255, 255, 0.1)";
+const gridColor = "rgba(255, 255, 255, 0.09)";
 const axisColor = "#b4b4b4";
 const tooltipBg = "rgb(24, 24, 24)";
 const tooltipBorder = "rgba(255, 255, 255, 0.06)";
@@ -94,7 +94,7 @@ export default function AreaChartComponent({ data, isPending }: AreaChartCompone
   })();
 
   return (
-    <div className="col-span-3 flex min-w-0 flex-col rounded border border-dashed p-6 ">
+    <div className="col-span-3 flex min-w-0 flex-col border border-dashed p-6 ">
       <div className="flex flex-col gap-2 mb-4">
         <div className="flex items-center gap-2">
           <h3 className="text-base font-medium">Activity overview</h3>
@@ -125,7 +125,7 @@ export default function AreaChartComponent({ data, isPending }: AreaChartCompone
                 horizontal
                 strokeDasharray="3 3"
                 stroke={gridColor}
-                opacity={0.5}
+                opacity={1}
               />
               <XAxis
                 dataKey="date"

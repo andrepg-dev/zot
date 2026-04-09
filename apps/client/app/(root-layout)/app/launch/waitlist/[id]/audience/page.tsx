@@ -1,18 +1,25 @@
 "use client";
 
+import { getWaitListStats } from "@/actions/wait-list/stats.actions";
 import { deleteWaitListUser, getWaitListUsers } from "@/actions/wait-list/wait-list-user.actions";
 import GlobalButton from "@/components/global/button";
 import Title from "@/components/global/title";
 import PageComponent from "@/components/layouts/page-component";
 import Type from "@/components/type";
+import InputComponent from "@/components/ui/input";
 import { formatDate } from "@/lib/format-date";
-import { ChevronDownIcon, MagnifyingGlassIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { exportToCsv } from "@/lib/utils";
+import {
+  ArrowDownTrayIcon,
+  ChevronDownIcon,
+  MagnifyingGlassIcon,
+  TrashIcon
+} from "@heroicons/react/24/outline";
 import {
   Dropdown,
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
-  Input,
   Modal,
   ModalBody,
   ModalContent,
@@ -44,11 +51,17 @@ export default function AudiencePage({ params }: { params: Promise<{ id: string 
   const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set());
   const [emailsToDelete, setEmailsToDelete] = useState<string[]>([]);
   const confirmModal = useDisclosure();
+  const exportModal = useDisclosure();
   const queryClient = useQueryClient();
 
   const { data: users, isPending } = useQuery({
     queryKey: [id, "audience"],
     queryFn: () => getWaitListUsers(id)
+  });
+
+  const { data: waitlistStats } = useQuery({
+    queryKey: [id],
+    queryFn: () => getWaitListStats(id)
   });
 
   const deleteMutation = useMutation({
@@ -104,6 +117,40 @@ export default function AudiencePage({ params }: { params: Promise<{ id: string 
     );
   }, [users, search]);
 
+  const exportSource = React.useMemo(
+    () =>
+      selectedKeys.size > 0 ? filteredUsers.filter((u) => selectedKeys.has(u._id)) : filteredUsers,
+    [selectedKeys, filteredUsers]
+  );
+
+  function handleExportCsvClick() {
+    if (exportSource.length === 0) {
+      addToast({ description: "No users to export", color: "warning" });
+      return;
+    }
+    exportModal.onOpen();
+  }
+
+  function handleConfirmExport(onClose: () => void) {
+    const source = exportSource;
+
+    exportToCsv({
+      rows: source,
+      headers: ["position", "email", "referredBy", "createdAt", ...metadataKeys],
+      getRow: (u) => [
+        u.position,
+        u.email,
+        u.referredBy ? (referralCodeToEmail.get(u.referredBy) ?? u.referredBy) : "",
+        u.createdAt,
+        ...metadataKeys.map((k) => u.metadata?.[k] ?? "")
+      ],
+      filename: `${(waitlistStats?.name ?? "waitlist").replace(/[^a-z0-9-_]+/gi, "-").toLowerCase()}-users-${new Date().toISOString().slice(0, 10)}.csv`
+    });
+
+    addToast({ description: `Exported ${source.length} users`, color: "success" });
+    onClose();
+  }
+
   function handleDeleteSelected() {
     const emails = filteredUsers
       .filter((user) => selectedKeys.has(user._id))
@@ -127,7 +174,7 @@ export default function AudiencePage({ params }: { params: Promise<{ id: string 
 
       <div className="flex flex-col gap-4 mt-6">
         <div className="flex justify-between items-center">
-          <Input
+          <InputComponent
             placeholder="Search by email..."
             variant="bordered"
             startContent={<MagnifyingGlassIcon className="text-default-300 size-5" />}
@@ -135,13 +182,13 @@ export default function AudiencePage({ params }: { params: Promise<{ id: string 
             isClearable
             value={search}
             onValueChange={setSearch}
-            classNames={{
-              base: "max-w-sm",
-              inputWrapper: "border-1"
-            }}
           />
 
-          <div className="flex gap-2 items-center">
+          <div className="flex gap-4 items-end">
+            <span className="text-default-400 text-small">
+              {filteredUsers.length} user{filteredUsers.length !== 1 ? "s" : ""}
+            </span>
+
             {selectedKeys.size > 0 && (
               <Dropdown>
                 <DropdownTrigger>
@@ -167,16 +214,19 @@ export default function AudiencePage({ params }: { params: Promise<{ id: string 
               </Dropdown>
             )}
 
-            <span className="text-default-400 text-small">
-              {filteredUsers.length} user{filteredUsers.length !== 1 ? "s" : ""}
-            </span>
+            <GlobalButton
+              size="sm"
+              variant="faded"
+              startContent={<ArrowDownTrayIcon className="size-4" />}
+              onPress={handleExportCsvClick}
+            >
+              Export CSV
+            </GlobalButton>
           </div>
         </div>
 
         <Table
           aria-label="Audience Table"
-          radius="sm"
-          isCompact
           selectionMode="multiple"
           selectedKeys={selectedKeys}
           onSelectionChange={(keys) => {
@@ -190,10 +240,11 @@ export default function AudiencePage({ params }: { params: Promise<{ id: string 
             size: "sm",
             classNames: { wrapper: "before:border-1" }
           }}
+          radius="none"
+          className="bg-default-50 border"
           classNames={{
-            th: "!rounded-b-none",
-            wrapper: "p-0 border",
-            td: "first:before:rounded-none last:before:rounded-e-none py-3"
+            td: "py-3",
+            wrapper: "p-0"
           }}
         >
           <TableHeader columns={columns}>
@@ -260,6 +311,30 @@ export default function AudiencePage({ params }: { params: Promise<{ id: string 
           </TableBody>
         </Table>
       </div>
+
+      <Modal isOpen={exportModal.isOpen} onOpenChange={exportModal.onOpenChange} radius="sm">
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader>Export CSV</ModalHeader>
+              <ModalBody>
+                <p className="text-sm text-muted-foreground font-normal">
+                  You are about to export {exportSource.length} user
+                  {exportSource.length !== 1 ? "s" : ""} to a CSV file. Do you want to continue?
+                </p>
+              </ModalBody>
+              <ModalFooter>
+                <GlobalButton variant="light" onPress={onClose}>
+                  Cancel
+                </GlobalButton>
+                <GlobalButton color="primary" onPress={() => handleConfirmExport(onClose)}>
+                  Export
+                </GlobalButton>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
 
       <Modal isOpen={confirmModal.isOpen} onOpenChange={confirmModal.onOpenChange} radius="sm">
         <ModalContent>

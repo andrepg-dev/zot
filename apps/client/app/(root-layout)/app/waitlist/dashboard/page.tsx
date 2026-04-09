@@ -308,7 +308,6 @@ export default function WaitListPage() {
         {viewMode === "table" ? (
           <Table
             aria-label="Waitlist Table"
-            radius="sm"
             selectionMode="multiple"
             selectedKeys={selectedKeys}
             onSelectionChange={(keys) => {
@@ -324,10 +323,11 @@ export default function WaitListPage() {
                 wrapper: "before:border-1"
               }
             }}
+            radius="none"
+            removeWrapper
+            className="bg-default-50 border"
             classNames={{
-              th: "!rounded-b-none bg-",
-              wrapper: "p-0 border",
-              td: "first:before:rounded-none last:before:rounded-e-none cursor-pointer py-3"
+              td: "py-3"
             }}
             onRowAction={(e) => {
               router.push(`/app/launch/waitlist/${e}`);
@@ -403,7 +403,7 @@ export default function WaitListPage() {
               rows.map((item: any) => (
                 <Card
                   key={item._id}
-                  className="border bg-default-100/50 relative transition-colors group"
+                  className="border bg-default-50 relative transition-colors group"
                   radius="none"
                 >
                   {editingId !== item._id && (
