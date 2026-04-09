@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsOptional, IsString, MinLength } from "class-validator";
+import { IsNotEmpty, IsOptional, IsString, MaxLength, MinLength } from "class-validator";
 
 export class AIMessageDto {
   @IsString()
@@ -9,4 +9,12 @@ export class AIMessageDto {
   @IsOptional()
   @IsString()
   conversationId?: string;
+}
+
+export class UpdateReactCodeEmailConversation {
+  @IsString()
+  @IsOptional()
+  @MinLength(4)
+  @MaxLength(50)
+  title: string = "";
 }

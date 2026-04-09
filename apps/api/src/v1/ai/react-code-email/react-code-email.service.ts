@@ -4,6 +4,7 @@ import { ConfigService } from "@nestjs/config";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, Types } from "mongoose";
 import { firstValueFrom } from "rxjs";
+import { UpdateReactCodeEmailConversation } from "./dto/ai-messages.dto";
 import { AiConversation } from "./schemas/ai-conversation.schema";
 
 @Injectable()
@@ -85,9 +86,40 @@ export class AiServerConnectionService {
     return conversation;
   }
 
+  async editConversation(
+    conversationId: Types.ObjectId,
+    userId: Types.ObjectId,
+    data: UpdateReactCodeEmailConversation,
+  ) {
+    const conversation = await this.aiConversationModel.findOneAndUpdate(
+      { _id: conversationId, owner: userId },
+      data,
+      { new: true },
+    );
+
+    if (!conversation) {
+      throw new NotFoundException("AI Conversation not found");
+    }
+
+    return conversation;
+  }
+
   async getConversations(userId: Types.ObjectId) {
     const conversations = await this.aiConversationModel.find({ owner: userId });
     if (!conversations) throw new NotFoundException("Not conversations");
     return conversations;
+  }
+
+  async deleteConversation(conversationId: Types.ObjectId, userId: Types.ObjectId) {
+    const conversation = await this.aiConversationModel.findOneAndDelete({
+      _id: conversationId,
+      owner: userId,
+    });
+
+    if (!conversation) {
+      throw new NotFoundException("AI Conversation not found");
+    }
+
+    return "Conversation deleted";
   }
 }
