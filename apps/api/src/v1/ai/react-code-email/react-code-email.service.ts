@@ -105,7 +105,9 @@ export class AiServerConnectionService {
   }
 
   async getConversations(userId: Types.ObjectId) {
-    const conversations = await this.aiConversationModel.find({ owner: userId });
+    const conversations = await this.aiConversationModel
+      .find({ owner: userId })
+      .sort({ updatedAt: -1 });
     if (!conversations) throw new NotFoundException("Not conversations");
     return conversations;
   }
