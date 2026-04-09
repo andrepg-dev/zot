@@ -32,7 +32,7 @@ export default function EditorSidebar({
   const navigationItems = [
     {
       label: "Emails",
-      pathname: "/app/waitlist/emails"
+      pathname: "/app/emails"
     },
     {
       label: messages?.[0]?.message ?? "Create template",
@@ -44,7 +44,7 @@ export default function EditorSidebar({
     <>
       <HeaderNavigation
         navigationItems={[
-          { label: "Emails", pathname: "/app/waitlist/emails" },
+          { label: "Emails", pathname: "/app/emails" },
           {
             label: messages?.[0]?.message ?? "Create template",
             pathname: ""

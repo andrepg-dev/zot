@@ -19,7 +19,7 @@ const dashboardTasks = [
     icon: EnvelopeIcon,
     title: "Email campaigns",
     description: "Write your first email template",
-    href: "/app/waitlist/emails",
+    href: "/app/emails",
     hasAI: true
   },
   {
