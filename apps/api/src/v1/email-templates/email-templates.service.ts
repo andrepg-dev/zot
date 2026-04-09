@@ -36,7 +36,7 @@ export class EmailTemplatesService {
 
   async findAll(owner: Types.ObjectId) {
     try {
-      return await this.EmailTemplateModel.find({ owner });
+      return await this.EmailTemplateModel.find({ owner }).sort({ createdAt: -1 });
     } catch (error) {
       if (error instanceof HttpException) throw error;
       throw new HttpException("Error fetching email templates.", HttpStatus.INTERNAL_SERVER_ERROR);

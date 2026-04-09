@@ -107,5 +107,12 @@ export function useAiChat({
     [mutate, isPending]
   );
 
-  return { messages, isPending, isLoadingConversation, sendMessage };
+  return {
+    messages,
+    isPending,
+    isLoadingConversation,
+    sendMessage,
+    title: data?.title,
+    conversationId: conversationIdRef.current
+  };
 }

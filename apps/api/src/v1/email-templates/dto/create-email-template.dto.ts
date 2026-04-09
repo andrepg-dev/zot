@@ -1,11 +1,12 @@
-import { IsEnum, IsOptional, IsString } from "class-validator";
+import { IsEnum, IsNotEmpty, IsString } from "class-validator";
 
 export class CreateEmailTemplateDto {
   @IsString()
+  @IsNotEmpty()
   alias: string;
 
   @IsString()
-  @IsOptional()
+  @IsNotEmpty()
   subject: string;
 
   @IsString()

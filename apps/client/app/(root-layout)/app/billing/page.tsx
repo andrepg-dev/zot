@@ -1,15 +1,22 @@
 "use client";
 
+import { getProfile } from "@/actions/auth/profile";
 import { createCheckoutSession } from "@/actions/subscriptions/subscriptions.actions";
 import PageComponent from "@/components/layouts/page-component";
 import { plans } from "@/constants/billing-constant";
 import { CheckIcon } from "@heroicons/react/24/solid";
 import { addToast } from "@heroui/toast";
-import { useMutation } from "@tanstack/react-query";
-import Link from "next/link";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import posthog from "posthog-js";
 
 export default function BillingPage() {
+  const { data: profile } = useQuery({
+    queryKey: ["user-profile"],
+    queryFn: getProfile
+  });
+
+  const currentPlan = profile?.suscriptionPlan ?? "FREE";
+
   const { mutate: startCheckout, isPending: isCheckoutPending } = useMutation({
     mutationFn: () => createCheckoutSession({}),
     onSuccess: (data) => {
@@ -59,7 +66,11 @@ export default function BillingPage() {
                 </div>
               </div>
 
-              {plan.popular ? (
+              {currentPlan === plan.name.toUpperCase() && currentPlan !== "FREE" ? (
+                <span className="mt-6 inline-flex h-10.5 items-center justify-center border px-4 text-sm font-semibold border-blue-500/50 text-blue-100 opacity-70 cursor-default">
+                  Current plan
+                </span>
+              ) : plan.popular ? (
                 <button
                   type="button"
                   disabled={isCheckoutPending}
@@ -76,19 +87,9 @@ export default function BillingPage() {
                   {isCheckoutPending ? "Redirecting..." : plan.ctaLabel}
                 </button>
               ) : (
-                <Link
-                  href={plan.ctaHref}
-                  onClick={() =>
-                    posthog.capture("checkout_initiated", {
-                      plan: plan.name,
-                      price: plan.price,
-                      is_popular: plan.popular ?? false
-                    })
-                  }
-                  className="mt-6 inline-flex h-10.5 items-center justify-center border px-4 text-sm font-semibold transition-colors border-blue-500/50 text-blue-100 hover:border-blue-400 hover:bg-blue-500/10"
-                >
+                <span className="mt-6 inline-flex h-10.5 items-center justify-center border px-4 text-sm font-semibold border-blue-500/50 text-blue-100 opacity-50 cursor-not-allowed">
                   {plan.ctaLabel}
-                </Link>
+                </span>
               )}
 
               <div className="mt-6 flex-1 space-y-3">

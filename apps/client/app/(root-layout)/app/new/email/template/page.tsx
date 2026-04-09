@@ -11,10 +11,12 @@ import PageComponent from "@/components/layouts/page-component";
 import Type from "@/components/type";
 import Chip from "@/components/ui/chip";
 import InputComponent from "@/components/ui/input";
+import { useHotkey } from "@/hooks/use-hotkey";
 import { cn } from "@/lib/utils";
 import useReactCodeEditorStore from "@/store/emails/react-code-editor-email.store";
 import {
   ArrowDownTrayIcon,
+  ArrowUturnLeftIcon,
   Bars3Icon,
   CodeBracketIcon,
   DocumentIcon,
@@ -27,6 +29,7 @@ import { Button } from "@heroui/button";
 import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@heroui/dropdown";
 import { Popover, PopoverContent, PopoverTrigger } from "@heroui/popover";
 import { Radio, RadioGroup } from "@heroui/radio";
+import { Kbd } from "@heroui/react";
 import { addToast } from "@heroui/toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -35,7 +38,7 @@ import {
 } from "@repo/packages/shared/schemas";
 import { useMutation } from "@tanstack/react-query";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 
@@ -69,6 +72,7 @@ function CreateEmailPageContent() {
   };
 
   const searchParams = useSearchParams();
+  const router = useRouter();
 
   const conversationId = searchParams.get("conversationId") ?? "";
   const isEdition = searchParams.get("isEdition") ?? false;
@@ -101,9 +105,22 @@ function CreateEmailPageContent() {
       addToast({ description: "Template saved", color: "success" });
       setIsSaveOpen(false);
       reset();
+      router.push("/app/emails/templates");
     },
     onError: (err: Error) => {
       addToast({ title: "Error", description: err.message, color: "danger" });
+    }
+  });
+
+  useHotkey({
+    key: "Enter",
+    modifiers: ["meta"],
+    onPress: () => {
+      if (isSaveOpen) {
+        handleSubmit(onSaveSubmit)();
+      } else {
+        setIsSaveOpen(true);
+      }
     }
   });
 
@@ -226,6 +243,11 @@ function CreateEmailPageContent() {
               <PopoverTrigger>
                 <PrimaryActionButton
                   startContent={<FolderPlusIcon className="size-4" strokeWidth={2} />}
+                  endContent={
+                    <Kbd keys={["command"]} className="text-xs">
+                      <ArrowUturnLeftIcon className="size-3" />
+                    </Kbd>
+                  }
                 >
                   Save template
                 </PrimaryActionButton>
