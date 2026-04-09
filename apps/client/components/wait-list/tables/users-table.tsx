@@ -92,7 +92,7 @@ export default function UsersTable({ id }: { id: string }) {
           }}
           radius="none"
           removeWrapper
-          className="bg-default-50 border"
+          className="bg-default-50 border cursor-pointer"
           classNames={{
             td: "py-3"
           }}

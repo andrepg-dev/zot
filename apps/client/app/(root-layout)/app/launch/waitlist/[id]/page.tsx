@@ -1,10 +1,12 @@
 "use client";
 
+import { getEmailSendRecords } from "@/actions/emails/emails.actions";
 import { getWaitListStats } from "@/actions/wait-list/stats.actions";
 import Title from "@/components/global/title";
 import PageComponent from "@/components/layouts/page-component";
 import ConversionRateChart from "@/components/wait-list/charts/conversion-rate-chart";
 import DailyRegistrationsChart from "@/components/wait-list/charts/daily-registrations-chart";
+import EmailsSentChart from "@/components/wait-list/charts/emails-sent-chart";
 import FakeUsersBlockedChart from "@/components/wait-list/charts/fake-users-blocked-chart";
 import TopReferrersChart from "@/components/wait-list/charts/top-referrers-chart";
 import { cn } from "@/lib/utils";
@@ -51,6 +53,11 @@ export default function LaunchedWaitList({ params }: { params: Promise<{ id: str
   const { data, isPending } = useQuery({
     queryKey: [id],
     queryFn: async () => getWaitListStats(id)
+  });
+
+  const { data: emailRecords } = useQuery({
+    queryKey: [id, "email-records"],
+    queryFn: async () => await getEmailSendRecords(id)
   });
 
   React.useEffect(() => {
@@ -137,6 +144,14 @@ export default function LaunchedWaitList({ params }: { params: Promise<{ id: str
 
   const conversionRateData = fillDailyData(rawConversion, last20Days, { rate: 0 });
 
+  const rawEmailsSent = emailRecords?.map((d) => ({
+    date: formatShortDate(d.createdAt),
+    sent: d.sent,
+    failed: d.failed
+  }));
+
+  const emailsSentData = fillDailyData(rawEmailsSent, last20Days, { sent: 0, failed: 0 });
+
   return (
     <PageComponent>
       <div className="flex items-start gap-2">
@@ -197,6 +212,9 @@ export default function LaunchedWaitList({ params }: { params: Promise<{ id: str
         </div>
         <div className="break-inside-avoid">
           <ConversionRateChart data={conversionRateData} />
+        </div>
+        <div className="break-inside-avoid">
+          <EmailsSentChart data={emailsSentData} />
         </div>
       </div>
     </PageComponent>
