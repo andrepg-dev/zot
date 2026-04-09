@@ -161,7 +161,7 @@ export default function EmailChatsPage() {
               >
                 <Type className="truncate">{c.title || "Untitled chat"}</Type>
               </Link>
-              <Type variant="sm" className="text-muted-foreground">
+              <Type variant="sm" className="text-muted-foreground text-center">
                 Draft
               </Type>
               <Type variant="sm" className="text-muted-foreground text-right">
