@@ -32,7 +32,7 @@ export default function EditorSidebar({
   const navigationItems = [
     {
       label: "Emails",
-      pathname: "/app/emails"
+      pathname: "/app/emails/templates"
     },
     {
       label: messages?.[0]?.message ?? "Create template",
@@ -44,7 +44,7 @@ export default function EditorSidebar({
     <>
       <HeaderNavigation
         navigationItems={[
-          { label: "Emails", pathname: "/app/emails" },
+          { label: "Emails", pathname: "/app/emails/templates" },
           {
             label: messages?.[0]?.message ?? "Create template",
             pathname: ""
@@ -58,7 +58,7 @@ export default function EditorSidebar({
         maxWidth={900}
         storageKey="sidebar-width:email-template"
         className={cn(
-          "overflow-y-auto z-50",
+          "overflow-y-auto z-50 duration-0",
           editionType === "ai" ? (isCode ? "" : "min-w-full") : "min-w-0 w-0"
         )}
         children={
@@ -70,7 +70,7 @@ export default function EditorSidebar({
           >
             <div
               className={cn(
-                isCode ? "flex items-center sticky top-0 left-0 bg-black pb-2" : "hidden"
+                isCode ? "flex items-center sticky top-0 left-0 bg-black pb-2 z-50" : "hidden"
               )}
             >
               <Link href={"/app/dashboard"}>

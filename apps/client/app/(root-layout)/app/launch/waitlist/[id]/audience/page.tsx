@@ -119,9 +119,7 @@ export default function AudiencePage({ params }: { params: Promise<{ id: string 
 
   const exportSource = React.useMemo(
     () =>
-      selectedKeys.size > 0
-        ? filteredUsers.filter((u) => selectedKeys.has(u._id))
-        : filteredUsers,
+      selectedKeys.size > 0 ? filteredUsers.filter((u) => selectedKeys.has(u._id)) : filteredUsers,
     [selectedKeys, filteredUsers]
   );
 

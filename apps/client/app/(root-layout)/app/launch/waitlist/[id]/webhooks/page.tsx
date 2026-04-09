@@ -36,8 +36,8 @@ import { use, useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { formatDateTime } from "@/lib/format-date";
 import CodeBlock from "@/components/ui/code-block";
+import { formatDateTime } from "@/lib/format-date";
 
 const webhookFormSchema = z.object({
   webhook: z
@@ -348,9 +348,10 @@ export default function Webhooks({ params }: { params: Promise<{ id: string }> }
 
               <div className="flex flex-col gap-1">
                 <Type variant="h6">Payload</Type>
-                <pre className="text-xs font-mono bg-default-100 p-3 rounded-sm border overflow-auto max-h-60">
-                  {JSON.stringify(selectedEvent.payload, null, 2)}
-                </pre>
+                <CodeBlock
+                  lang="json"
+                  code={JSON.stringify(selectedEvent.payload, null, 2)}
+                ></CodeBlock>
               </div>
 
               {selectedEvent.responseBody && (

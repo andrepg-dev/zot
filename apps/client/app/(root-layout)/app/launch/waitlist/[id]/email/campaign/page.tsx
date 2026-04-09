@@ -291,10 +291,10 @@ export default function CampaignPage({ params }: { params: Promise<{ id: string 
               classNames: { wrapper: "before:border-1" }
             }}
             radius="none"
-            removeWrapper
             className="bg-default-50 border"
             classNames={{
-              td: "py-3"
+              td: "py-3",
+              wrapper: "p-0"
             }}
           >
             <TableHeader columns={columns}>
