@@ -8,7 +8,6 @@ import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import {
   DrawerBody,
   DrawerHeader,
-  Input,
   Spinner,
   Table,
   TableBody,
@@ -22,8 +21,8 @@ import type { EmailSendRecordItem } from "@repo/packages/shared/schemas";
 import { useQuery } from "@tanstack/react-query";
 import React, { useState } from "react";
 
-import { formatDateTime } from "@/lib/format-date";
 import InputComponent from "@/components/ui/input";
+import { formatDateTime } from "@/lib/format-date";
 
 const columns = [
   { key: "position", label: "#" },

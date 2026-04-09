@@ -37,6 +37,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { formatDateTime } from "@/lib/format-date";
+import CodeBlock from "@/components/ui/code-block";
 
 const webhookFormSchema = z.object({
   webhook: z
@@ -256,6 +257,22 @@ export default function Webhooks({ params }: { params: Promise<{ id: string }> }
                   {...register("webhook.range", { valueAsNumber: true })}
                 />
               </FormField>
+              <hr />
+              <div className="flex flex-col gap-2 p-4">
+                <Type variant="h6">Payload Example</Type>
+                <CodeBlock
+                  className="mt-2"
+                  lang="json"
+                  code={`{
+  "email": "user_email@example.com",
+  "event": "waitlist_user_registered",
+  "waitlist": {
+    "id": "wl_abc123",
+    "name": "Your Waitlist Name"
+  }
+}`}
+                />
+              </div>
               <hr />
               <CardFooter className="flex justify-end">
                 <Button

@@ -229,10 +229,10 @@ export default function UsersTableDrawer({
               }}
               color="primary"
               radius="none"
-              removeWrapper
               className="bg-default-50 border overflow-hidden"
               classNames={{
-                td: "py-3"
+                td: "py-3",
+                wrapper: "p-0"
               }}
             >
               <TableHeader columns={columns}>
@@ -273,7 +273,7 @@ export default function UsersTableDrawer({
                           </span>
                         ),
                         email: (
-                          <span className="font-mono truncate block max-w-[200px]">
+                          <span className="font-mono truncate block max-w-[200px] text-xs!">
                             {item.email}
                           </span>
                         ),

@@ -51,6 +51,7 @@ export default function AudiencePage({ params }: { params: Promise<{ id: string 
   const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set());
   const [emailsToDelete, setEmailsToDelete] = useState<string[]>([]);
   const confirmModal = useDisclosure();
+  const exportModal = useDisclosure();
   const queryClient = useQueryClient();
 
   const { data: users, isPending } = useQuery({
@@ -116,14 +117,24 @@ export default function AudiencePage({ params }: { params: Promise<{ id: string 
     );
   }, [users, search]);
 
-  function handleExportCsv() {
-    const source =
-      selectedKeys.size > 0 ? filteredUsers.filter((u) => selectedKeys.has(u._id)) : filteredUsers;
+  const exportSource = React.useMemo(
+    () =>
+      selectedKeys.size > 0
+        ? filteredUsers.filter((u) => selectedKeys.has(u._id))
+        : filteredUsers,
+    [selectedKeys, filteredUsers]
+  );
 
-    if (source.length === 0) {
+  function handleExportCsvClick() {
+    if (exportSource.length === 0) {
       addToast({ description: "No users to export", color: "warning" });
       return;
     }
+    exportModal.onOpen();
+  }
+
+  function handleConfirmExport(onClose: () => void) {
+    const source = exportSource;
 
     exportToCsv({
       rows: source,
@@ -139,6 +150,7 @@ export default function AudiencePage({ params }: { params: Promise<{ id: string 
     });
 
     addToast({ description: `Exported ${source.length} users`, color: "success" });
+    onClose();
   }
 
   function handleDeleteSelected() {
@@ -208,7 +220,7 @@ export default function AudiencePage({ params }: { params: Promise<{ id: string 
               size="sm"
               variant="faded"
               startContent={<ArrowDownTrayIcon className="size-4" />}
-              onPress={handleExportCsv}
+              onPress={handleExportCsvClick}
             >
               Export CSV
             </GlobalButton>
@@ -301,6 +313,30 @@ export default function AudiencePage({ params }: { params: Promise<{ id: string 
           </TableBody>
         </Table>
       </div>
+
+      <Modal isOpen={exportModal.isOpen} onOpenChange={exportModal.onOpenChange} radius="sm">
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader>Export CSV</ModalHeader>
+              <ModalBody>
+                <p className="text-sm text-muted-foreground font-normal">
+                  You are about to export {exportSource.length} user
+                  {exportSource.length !== 1 ? "s" : ""} to a CSV file. Do you want to continue?
+                </p>
+              </ModalBody>
+              <ModalFooter>
+                <GlobalButton variant="light" onPress={onClose}>
+                  Cancel
+                </GlobalButton>
+                <GlobalButton color="primary" onPress={() => handleConfirmExport(onClose)}>
+                  Export
+                </GlobalButton>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
 
       <Modal isOpen={confirmModal.isOpen} onOpenChange={confirmModal.onOpenChange} radius="sm">
         <ModalContent>
