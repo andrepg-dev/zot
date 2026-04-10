@@ -201,7 +201,7 @@ export default function UsersTable({ id }: { id: string }) {
             <div className="flex flex-col gap-4">
               <div className="flex justify-between">
                 <div className="flex flex-col gap-6">
-                  <div className="flex flex-col gap-1">
+                  <div className="flex flex-col gap-1 max-w-[300px]">
                     <Type variant="h6">Subject</Type>
                     <Type variant="code">{selectedRecord.payload.subject}</Type>
                   </div>

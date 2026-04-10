@@ -56,9 +56,9 @@ import posthog from "posthog-js";
 import React, { useEffect, useState } from "react";
 
 const baseColumns = [
-  { key: "createdAt", label: "Joined" },  
+  { key: "createdAt", label: "Joined" },
   { key: "email", label: "Email" },
-  { key: "referredBy", label: "Referred By" },
+  { key: "referredBy", label: "Referred By" }
 ];
 
 export default function AudiencePage({ params }: { params: Promise<{ id: string }> }) {
@@ -131,7 +131,8 @@ export default function AudiencePage({ params }: { params: Promise<{ id: string 
     error: sendError,
     reset: resetSend
   } = useMutation({
-    mutationFn: (userIds: string[]) => sendEmailToUsersById(id, { users: userIds,  templateId: selectedTemplate?._id }),
+    mutationFn: (userIds: string[]) =>
+      sendEmailToUsersById(id, { users: userIds, templateId: selectedTemplate?._id }),
     onSuccess: (_data, userIds) => {
       queryClient.invalidateQueries({ queryKey: [id, "email-records"] });
       queryClient.invalidateQueries({ queryKey: [id, "email-records-list"] });
@@ -354,7 +355,7 @@ export default function AudiencePage({ params }: { params: Promise<{ id: string 
         >
           <TableHeader columns={columns}>
             {(column) => (
-              <TableColumn key={column.key} allowsSorting>
+              <TableColumn key={column.key} allowsSorting className="capitalize">
                 {column.label}
               </TableColumn>
             )}
@@ -390,14 +391,9 @@ export default function AudiencePage({ params }: { params: Promise<{ id: string 
                   }
 
                   const valueMap: Record<string, React.ReactNode> = {
-                    position: (
-                      <span className="text-muted-foreground font-mono truncate block max-w-[200px]">
-                        {item.position}
-                      </span>
-                    ),
                     email: (
                       <span className="font-mono truncate block max-w-[200px] text-xs">
-                        {item.email}
+                        <span className="text-muted-foreground">#{item.position}</span> {item.email}
                       </span>
                     ),
                     referredBy: item.referredBy ? (

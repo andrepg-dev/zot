@@ -39,10 +39,9 @@ import { formatDate } from "@/lib/format-date";
 import PrimaryActionButton from "../global/primary-action-button";
 
 const baseColumns = [
-  { key: "position", label: "#" },
+  { key: "createdAt", label: "Joined" },
   { key: "email", label: "Email" },
-  { key: "referredBy", label: "Referred By" },
-  { key: "createdAt", label: "Joined" }
+  { key: "referredBy", label: "Referred By" }
 ];
 
 interface UsersTableDrawerProps {
