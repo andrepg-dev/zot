@@ -17,7 +17,8 @@ export class WaitListUserService {
     @InjectModel(WaitListUser.name) private WaitListUserModel: Model<WaitListUser>,
     @InjectModel(WaitList.name) private WaitListModel: Model<WaitList>,
     private readonly emailSecurityService: EmailSecurityService,
-    @InjectModel(WaitlistWebhookEvent.name) private WaitlistWebhookEventModel: Model<WaitlistWebhookEvent>,
+    @InjectModel(WaitlistWebhookEvent.name)
+    private WaitlistWebhookEventModel: Model<WaitlistWebhookEvent>,
     private readonly httpService: HttpService,
     private readonly userQuoteService: UserQuoteService,
     private readonly usersService: UsersService,
@@ -78,15 +79,11 @@ export class WaitListUserService {
       }
 
       // <================== USER QUOTE ===================>
-      const hasFreePlan = await this.usersService.hasFreePlan(waitlist.owner);
-
-      if (hasFreePlan) {
-        await this.userQuoteService.editUserQuote({
-          ownerId: waitlist.owner,
-          service: "userSignUp",
-          usage: 1,
-        });
-      }
+      await this.userQuoteService.editUserQuote({
+        ownerId: waitlist.owner,
+        service: "userSignUp",
+        usage: 1,
+      });
 
       const position: number =
         (await this.WaitListUserModel.countDocuments({ waitlistId: waitlistId })) + 1;
