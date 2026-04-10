@@ -1,6 +1,12 @@
-import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  InternalServerErrorException,
+} from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, Types } from "mongoose";
+import puppeteer from "puppeteer";
 import { ReactToHtmlService } from "../core/react-to-html/react-to-html.service";
 import { UserQuoteService } from "../users/user-quote/user-quote.service";
 import { CreateEmailTemplateDto } from "./dto/create-email-template.dto";
@@ -15,6 +21,26 @@ export class EmailTemplatesService {
     private readonly userQuoteService: UserQuoteService,
   ) {}
 
+  async screenshotHTML(html: string) {
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+
+    await page.setViewport({ width: 800, height: 600 });
+    await page.setContent(html, { waitUntil: "networkidle0" });
+
+    const element = await page.$("table");
+
+    if (!element) {
+      await browser.close();
+      throw new InternalServerErrorException();
+    }
+
+    const screenshot = await element.screenshot();
+    await browser.close();
+
+    return screenshot;
+  }
+
   async create(createEmailTemplateDto: CreateEmailTemplateDto, owner: Types.ObjectId) {
     try {
       await this.userQuoteService.editUserQuote({
@@ -23,9 +49,12 @@ export class EmailTemplatesService {
         usage: 1,
       });
 
+      const compiledCode = await this.reactToHtmlService.compile(createEmailTemplateDto.code);
+      const imageBuffer = await this.screenshotHTML(compiledCode);
+
       return await this.EmailTemplateModel.create({
         ...createEmailTemplateDto,
-        html: await this.reactToHtmlService.compile(createEmailTemplateDto.code),
+        html: compiledCode,
         owner,
       });
     } catch (error) {

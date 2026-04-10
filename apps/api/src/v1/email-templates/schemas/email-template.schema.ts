@@ -16,6 +16,9 @@ export class EmailTemplate extends BasedHiddenOwnerSchema {
   @Prop()
   html: string;
 
+  @Prop()
+  preview: string;
+
   @Prop({
     type: String,
     default: EmailTemplateStatus.DRAFT,
