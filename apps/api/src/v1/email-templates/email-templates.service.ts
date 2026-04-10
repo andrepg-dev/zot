@@ -7,6 +7,7 @@ import {
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, Types } from "mongoose";
 import puppeteer from "puppeteer";
+import { S3Service } from "../core/aws/s3/s3.service";
 import { ReactToHtmlService } from "../core/react-to-html/react-to-html.service";
 import { UserQuoteService } from "../users/user-quote/user-quote.service";
 import { CreateEmailTemplateDto } from "./dto/create-email-template.dto";
@@ -19,6 +20,7 @@ export class EmailTemplatesService {
     @InjectModel(EmailTemplate.name) private EmailTemplateModel: Model<EmailTemplate>,
     private readonly reactToHtmlService: ReactToHtmlService,
     private readonly userQuoteService: UserQuoteService,
+    private readonly s3Service: S3Service,
   ) {}
 
   async screenshotHTML(html: string) {
@@ -52,10 +54,18 @@ export class EmailTemplatesService {
       const compiledCode = await this.reactToHtmlService.compile(createEmailTemplateDto.code);
       const imageBuffer = await this.screenshotHTML(compiledCode);
 
+      const { url } = await this.s3Service.uploadSingleFile({ file: imageBuffer });
+      const image = await url;
+
+      if (!image.url) {
+        throw new InternalServerErrorException("Cannot upload image to S3 service");
+      }
+
       return await this.EmailTemplateModel.create({
         ...createEmailTemplateDto,
         html: compiledCode,
         owner,
+        preview: image.url,
       });
     } catch (error) {
       if (error instanceof HttpException) throw error;

@@ -16,7 +16,7 @@ export class EmailTemplate extends BasedHiddenOwnerSchema {
   @Prop()
   html: string;
 
-  @Prop()
+  @Prop({ required: true })
   preview: string;
 
   @Prop({
