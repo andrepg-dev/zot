@@ -5,7 +5,7 @@ type ChipStatus = "active" | "warning" | "neutral" | "danger" | "primary" | "ske
 interface ChipProps {
   status: ChipStatus;
   children?: React.ReactNode;
-  className?: string
+  className?: string;
 }
 
 export default function Chip({ status, children, className }: ChipProps) {
@@ -16,10 +16,10 @@ export default function Chip({ status, children, className }: ChipProps) {
         status === "active" && "bg-success/20 text-success",
         status === "warning" && "bg-warning/20 text-warning",
         status === "neutral" && "bg-default-100/70 text-default-600",
-        status === "danger" && "bg-destructive/20 text-destructive",
+        status === "danger" && "bg-danger/30 text-destructive",
         status === "primary" && "bg-primary/20 text-primary",
         status === "skeleton" && "bg-muted animate-pulse text-transparent",
-        status === "purple" && "bg-[#4338CA]/60 text-white",
+        status === "purple" && "bg-[#4338CA]/30 text-[#cdcbe8]",
         className
       )}
     >

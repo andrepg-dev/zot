@@ -1,5 +1,6 @@
 "use client";
 
+import { getProfile } from "@/actions/auth/profile";
 import { getWaitListStats } from "@/actions/wait-list/stats.actions";
 import { deleteWaitList, updateWaitList } from "@/actions/wait-list/wait-list.actions";
 import FormField from "@/components/form-field";
@@ -55,6 +56,13 @@ export default function SettingsPage({ params }: { params: Promise<{ id: string 
     queryKey: [id],
     queryFn: () => getWaitListStats(id)
   });
+
+  const { data: profile } = useQuery({
+    queryKey: ["user-profile"],
+    queryFn: getProfile
+  });
+
+  const isPremium = profile?.suscriptionPlan === "PREMIUM" || profile?.suscriptionPlan === "SCALE";
 
   const generalMutation = useMutation({
     mutationFn: (values: UpdateWaitListValues) => updateWaitList(id, values),
@@ -194,7 +202,7 @@ export default function SettingsPage({ params }: { params: Promise<{ id: string 
                   render={({ field }) => (
                     <Switch
                       size="sm"
-                      isDisabled={field.value ? false : true}
+                      isDisabled={!isPremium}
                       isSelected={field.value}
                       onValueChange={field.onChange}
                     >

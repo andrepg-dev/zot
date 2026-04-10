@@ -36,10 +36,17 @@ export default function WaitListLayout({ children }: { children: React.ReactNode
           }
         ]}
       >
-        <Chip status={isPending ? "skeleton" : data?.isAvailable ? "active" : "warning"}>
-          {isPending ? "Loading" : statusLabel}
-        </Chip>
+        <div className="flex gap-2 ml-2">
+          <Chip status={isPending ? "skeleton" : data?.isAvailable ? "active" : "warning"}>
+            {isPending ? "Loading" : statusLabel}
+          </Chip>
+
+          <Chip status={isPending ? "skeleton" : data?.isSecurityActive ? "purple" : "warning"}>
+            {data?.isSecurityActive ? "Security enabled" : "Security disabled"}
+          </Chip>
+        </div>
       </HeaderNavigation>
+
       <SidebarNavigation
         navItems={[
           {

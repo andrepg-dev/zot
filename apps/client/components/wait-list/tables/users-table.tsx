@@ -27,6 +27,7 @@ import { formatDateTime } from "@/lib/format-date";
 
 const columns = [
   { key: "position", label: "#" },
+  { key: "template", label: "Template" },
   { key: "subject", label: "Subject" },
   { key: "from", label: "From" },
   { key: "replyTo", label: "Reply To" },
@@ -117,6 +118,13 @@ export default function UsersTable({ id }: { id: string }) {
                     position: (
                       <span className="text-muted-foreground font-mono">{item.position}</span>
                     ),
+                    template: item.template?.alias ? (
+                      <span className="text-xs truncate max-w-[150px] block">
+                        {item.template.alias}
+                      </span>
+                    ) : (
+                      <span className="text-muted-foreground text-xs">—</span>
+                    ),
                     subject: (
                       <span className="font-mono text-xs truncate max-w-[200px] block">
                         {item.payload.subject}
@@ -192,89 +200,100 @@ export default function UsersTable({ id }: { id: string }) {
         <DrawerBody className="pb-20">
           {selectedRecord && (
             <div className="flex flex-col gap-4">
-              <div className="flex items-center gap-6">
-                <div className="flex items-center gap-2">
-                  <Type variant="base">Emails Sent</Type>
-                  <Type>{String(selectedRecord.quantitySent)}</Type>
+              <div className="flex justify-between">
+                <div className="flex flex-col gap-6">
+                  <div className="flex flex-col gap-1">
+                    <Type variant="h6">Subject</Type>
+                    <Type variant="code">{selectedRecord.payload.subject}</Type>
+                  </div>
+
+                  <div className="flex flex-col gap-1">
+                    <Type variant="h6">From</Type>
+                    <Type variant="code">{selectedRecord.payload.from}</Type>
+                  </div>
+
+                  {selectedRecord.payload.options.replyTo && (
+                    <div className="flex flex-col gap-1">
+                      <Type variant="h6">Reply To</Type>
+                      <Type variant="code">{selectedRecord.payload.options.replyTo}</Type>
+                    </div>
+                  )}
+
+                  <div className="flex flex-col gap-1 max-w-[400px]">
+                    <Type variant="h6">HTML</Type>
+                    <CodeBlock code={selectedRecord.payload.options.html} lang="html" />
+                  </div>
+
+                  <div className="flex items-center gap-6 bg-default-100 p-2 border rounded-sm justify-around">
+                    <div className="flex items-center gap-2">
+                      <Type variant="base">Emails Sent</Type>
+                      <Type>{String(selectedRecord.quantitySent)}</Type>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <Type variant="base">Successful</Type>
+                      <span className="font-mono text-sm">{selectedRecord.sentSuccessfully}</span>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <Type variant="base">Failed</Type>
+                      <span
+                        className={`font-mono text-sm ${selectedRecord.failedCount > 0 ? "" : "text-muted-foreground"}`}
+                      >
+                        {selectedRecord.failedCount}
+                      </span>
+                    </div>
+                  </div>
                 </div>
 
-                <div className="flex items-center gap-2">
-                  <Type variant="base">Successful</Type>
-                  <span className="font-mono text-sm">{selectedRecord.sentSuccessfully}</span>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <Type variant="base">Failed</Type>
-                  <span
-                    className={`font-mono text-sm ${selectedRecord.failedCount > 0 ? "" : "text-muted-foreground"}`}
-                  >
-                    {selectedRecord.failedCount}
-                  </span>
-                </div>
-              </div>
-
-              <div className="flex flex-col gap-1">
-                <Type variant="h6">Subject</Type>
-                <Type variant="code">{selectedRecord.payload.subject}</Type>
-              </div>
-
-              <div className="flex flex-col gap-1">
-                <Type variant="h6">From</Type>
-                <Type variant="code">{selectedRecord.payload.from}</Type>
-              </div>
-
-              {selectedRecord.payload.options.replyTo && (
-                <div className="flex flex-col gap-1">
-                  <Type variant="h6">Reply To</Type>
-                  <Type variant="code">{selectedRecord.payload.options.replyTo}</Type>
-                </div>
-              )}
-
-              {selectedRecord.template?.preview && (
-                <div className="flex flex-col gap-1">
-                  <Type variant="h6">Preview</Type>
-                  <img
-                    src={selectedRecord.template.preview}
-                    alt="Email preview"
-                    className="rounded-sm border max-h-80 object-contain"
-                  />
-                </div>
-              )}
-
-              <div className="flex flex-col gap-1">
-                <Type variant="h6">HTML</Type>
-                <CodeBlock code={selectedRecord.payload.options.html} lang="html" />
+                {selectedRecord.template?.preview && (
+                  <div className="flex flex-col gap-1">
+                    <Type variant="h6">Preview</Type>
+                    <img
+                      src={selectedRecord.template.preview}
+                      alt="Email preview"
+                      className="max-h-80 w-max"
+                    />
+                  </div>
+                )}
               </div>
 
               <div className="flex flex-col gap-1">
                 <Type variant="h6">Recipients · {selectedRecord.recipientEmails.length}</Type>
-                <div className="flex flex-col bg-default-100 rounded-sm border overflow-auto max-h-60 mt-2">
-                  {selectedRecord.recipientEmails.map((email) => (
-                    <span
-                      key={email}
-                      className="text-xs font-mono px-3 py-2 border-b last:border-b-0"
-                    >
-                      {email}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              {selectedRecord.failedEmails.length > 0 && (
-                <div className="flex flex-col gap-1">
-                  <Type variant="h6">Failed · {selectedRecord.failedEmails.length}</Type>
-                  <div className="flex flex-col bg-default-100 rounded-sm border overflow-auto max-h-60 mt-2">
-                    {selectedRecord.failedEmails.map((email) => (
-                      <span
-                        key={email}
-                        className="text-xs font-mono px-3 py-2 border-b last:border-b-0"
-                      >
-                        {email}
-                      </span>
+                <Table
+                  aria-label="Recipients table"
+                  radius="none"
+                  removeWrapper
+                  className="border mt-2"
+                  classNames={{
+                    th: "!rounded-b-none",
+                    td: "py-2"
+                  }}
+                >
+                  <TableHeader>
+                    <TableColumn>Email</TableColumn>
+                    <TableColumn className="text-right w-24">Status</TableColumn>
+                  </TableHeader>
+                  <TableBody>
+                    {selectedRecord.recipientEmails.map((email) => (
+                      <TableRow key={email}>
+                        <TableCell>
+                          <span className="text-xs font-mono">{email}</span>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          {selectedRecord.failedEmails.includes(email) ? (
+                            <Chip status="danger" className="bg-danger/40">
+                              Failed
+                            </Chip>
+                          ) : (
+                            <Chip status="active">Sent</Chip>
+                          )}
+                        </TableCell>
+                      </TableRow>
                     ))}
-                  </div>
-                </div>
-              )}
+                  </TableBody>
+                </Table>
+              </div>
               <div className="flex flex-col gap-1 border-t pt-4">
                 <Type variant="h6">Support</Type>
                 <Type variant="sm" className="text-muted-foreground">
