@@ -17,6 +17,9 @@ export class WaitList {
   @Prop({ required: true, default: true })
   sendEmailToNewSignup: boolean;
 
+  @Prop({ type: Types.ObjectId, required: false })
+  emailTemplateToNewSignUps: Types.ObjectId;
+
   @Prop({ required: true, default: false })
   isSecurityActive: boolean;
 

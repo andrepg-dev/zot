@@ -9,6 +9,7 @@ export const webhookConfigSchema = z.object({
 export const createWaitListSchema = z.object({
   name: z.string().min(1),
   sendEmailToNewSignup: z.boolean().optional(),
+  emailTemplateToNewSignUps: z.string().optional(),
   webhook: webhookConfigSchema.optional(),
   widget_id: zMongoId.optional(),
   isAvailable: z.boolean().optional(),

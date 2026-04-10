@@ -14,6 +14,7 @@ export const submitWaitlistSchema = z.object({
   sendEmail: z.boolean().optional(),
   addSecurity: z.boolean().optional(),
   webhookUrl: z.string().url({ message: "Must be a valid URL" }).optional().or(z.literal("")),
+  emailTemplateToNewSignUps: z.string().optional(),
 });
 
 export type SubmitWaitListValues = z.infer<typeof submitWaitlistSchema>;
