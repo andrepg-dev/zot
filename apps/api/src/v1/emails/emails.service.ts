@@ -1,9 +1,10 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, Types } from "mongoose";
 import { EmailSendingService } from "../core/email-sending/email-sending.service";
-import { EmailParams } from "../types/email-sending";
+import { EmailParams, ResendEmail } from "../types/email-sending";
 import { UserQuoteService } from "../users/user-quote/user-quote.service";
+import { WaitListUser } from "../wait-list/schemas/wait-list-user.schema";
 import { WaitListUserService } from "../wait-list/wait-list-user/wait-list-user.service";
 import { EmailSendRecord } from "./schemas/email-send-record.schema";
 
@@ -18,6 +19,14 @@ interface GetEmailsRecord {
   userId: Types.ObjectId;
 }
 
+interface sendEmailByUserId {
+  userId: Types.ObjectId;
+  waitlistId: Types.ObjectId;
+  users: Array<Types.ObjectId>;
+  email?: Omit<ResendEmail, "provider">;
+  templateId?: Types.ObjectId;
+}
+
 @Injectable()
 export class EmailsService {
   constructor(
@@ -26,6 +35,7 @@ export class EmailsService {
     private readonly emailService: EmailSendingService,
     private readonly WaitListUserService: WaitListUserService,
     private readonly userquoteService: UserQuoteService,
+    @InjectModel(WaitListUser.name) private readonly WaitListUserModel: Model<WaitListUser>,
   ) {}
 
   /**
@@ -131,12 +141,11 @@ export class EmailsService {
       return {
         ...result,
         quantity: emailUsageSending,
-        users: usersList,
         emailsQuoteAvailable: usage.emailsSent,
       };
     } catch (err) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      if (err?.status != 500) {
+      if ((err as any)?.status != 500) {
         // If the problem is from the server, should not be in the user quote
         await this.userquoteService.editUserQuote({
           ownerId: userId,
@@ -157,6 +166,95 @@ export class EmailsService {
       });
 
       throw err;
+    }
+  }
+
+  async sendEmailByUsersId({ userId, waitlistId, users }: sendEmailByUserId) {
+    await this.WaitListUserService.validateOwnership(waitlistId, userId);
+
+    const usersIds = await this.WaitListUserModel.aggregate([
+      {
+        $match: {
+          _id: { $in: users.map((id) => new Types.ObjectId(id)) },
+          waitlistId: new Types.ObjectId(waitlistId),
+        },
+      },
+      {
+        $project: {
+          email: 1,
+          _id: 0,
+        },
+      },
+    ]);
+
+    const totalUsersCount = usersIds?.length;
+    const userEmails = usersIds.map((user) => user?.email);
+
+    if (totalUsersCount === 0) {
+      throw new NotFoundException("Users not found in waitlist ID ");
+    }
+
+    const payload: EmailParams = {
+      from: "Zot WaitList <mail@zot.so>",
+      to: userEmails,
+      provider: "resend",
+      subject: "Testing if this works or not.",
+      options: {
+        html: "<bold>First email sending with zot.</bold>",
+        replyTo: "reply@zot.so",
+        text: "<bold>First email sending with zot.</bold>",
+      },
+    };
+
+    const { to: _, provider, ...rest } = payload;
+
+    try {
+      const result = await this.emailService.send(payload);
+
+      await this.emailSendRecordModel.create({
+        owner: userId,
+        waitlistId,
+        quantitySent: totalUsersCount,
+        recipientEmails: userEmails,
+        sentSuccessfully: totalUsersCount,
+        failedCount: 0,
+        failedEmails: [],
+        payload: rest,
+      });
+
+      await this.userquoteService.editUserQuote({
+        ownerId: userId,
+        service: "emailsSent",
+        usage: totalUsersCount, // This is the users quantity that we sent the email
+      });
+
+      return {
+        ...result,
+        quantity: totalUsersCount,
+      };
+    } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      if ((error as any)?.status != 500) {
+        // If the problem is from the server, should not be in the user quote
+        await this.userquoteService.editUserQuote({
+          ownerId: userId,
+          service: "emailsSent",
+          usage: totalUsersCount,
+        });
+      }
+
+      await this.emailSendRecordModel.create({
+        owner: userId,
+        waitlistId,
+        quantitySent: totalUsersCount,
+        recipientEmails: userEmails,
+        sentSuccessfully: 0,
+        failedCount: totalUsersCount,
+        failedEmails: userEmails,
+        payload: rest,
+      });
+
+      throw error;
     }
   }
 

@@ -1,20 +1,30 @@
 "use client";
 
+import { sendEmail } from "@/actions/emails/emails.actions";
 import { getWaitListStats } from "@/actions/wait-list/stats.actions";
 import { deleteWaitListUser, getWaitListUsers } from "@/actions/wait-list/wait-list-user.actions";
 import GlobalButton from "@/components/global/button";
+import PrimaryActionButton from "@/components/global/primary-action-button";
 import Title from "@/components/global/title";
 import PageComponent from "@/components/layouts/page-component";
 import Type from "@/components/type";
 import InputComponent from "@/components/ui/input";
+import CampaignResultAnimation from "@/components/wait-list/campaign-result-animation";
+import CampaignSentAnimation, {
+  getAnimationHeight,
+  getFramesPerRow
+} from "@/components/wait-list/campaign-sent-animation";
+import { useHotkey } from "@/hooks/use-hotkey";
 import { formatDate } from "@/lib/format-date";
 import { exportToCsv } from "@/lib/utils";
 import {
   ArrowDownTrayIcon,
   ChevronDownIcon,
   MagnifyingGlassIcon,
+  RocketLaunchIcon,
   TrashIcon
 } from "@heroicons/react/24/outline";
+import { Kbd } from "@heroui/kbd";
 import {
   Dropdown,
   DropdownItem,
@@ -35,8 +45,10 @@ import {
   useDisclosure
 } from "@heroui/react";
 import { addToast } from "@heroui/toast";
+import { Player } from "@remotion/player";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import React, { useState } from "react";
+import posthog from "posthog-js";
+import React, { useEffect, useState } from "react";
 
 const baseColumns = [
   { key: "position", label: "#" },
@@ -52,7 +64,14 @@ export default function AudiencePage({ params }: { params: Promise<{ id: string 
   const [emailsToDelete, setEmailsToDelete] = useState<string[]>([]);
   const confirmModal = useDisclosure();
   const exportModal = useDisclosure();
+  const sendModal = useDisclosure();
   const queryClient = useQueryClient();
+
+  const [quantity, setQuantity] = useState("0");
+  const [animationPhase, setAnimationPhase] = useState<"idle" | "list" | "result">("idle");
+  const [sentEmails, setSentEmails] = useState<string[]>([]);
+
+  useHotkey({ key: "k", modifiers: ["meta"], onPress: sendModal.onOpen });
 
   const { data: users, isPending } = useQuery({
     queryKey: [id, "audience"],
@@ -62,6 +81,45 @@ export default function AudiencePage({ params }: { params: Promise<{ id: string 
   const { data: waitlistStats } = useQuery({
     queryKey: [id],
     queryFn: () => getWaitListStats(id)
+  });
+
+  useEffect(() => {
+    if (users?.length) setQuantity(String(users.length));
+  }, [users?.length]);
+
+  const displayCount = Math.min(sentEmails.length, 50);
+  const framesPerRow = getFramesPerRow(displayCount);
+  const animationFrames = 10 + displayCount * framesPerRow + 40;
+  const animationDurationMs = (animationFrames / 30) * 1000;
+
+  useEffect(() => {
+    if (animationPhase !== "list") return;
+    const timer = setTimeout(() => {
+      setAnimationPhase("result");
+    }, animationDurationMs);
+    return () => clearTimeout(timer);
+  }, [animationPhase, animationDurationMs]);
+
+  function handleCloseModal() {
+    setAnimationPhase("idle");
+    resetSend();
+    sendModal.onClose();
+  }
+
+  const {
+    mutate: sendCampaign,
+    isPending: isSending,
+    isSuccess: isSendSuccess,
+    isError: isSendError,
+    error: sendError,
+    reset: resetSend
+  } = useMutation({
+    mutationFn: (qty: number) => sendEmail({ waitlistId: id, quantity: qty }),
+    onSuccess: (_data, qty) => {
+      queryClient.invalidateQueries({ queryKey: [id, "email-records"] });
+      queryClient.invalidateQueries({ queryKey: [id, "email-records-list"] });
+      posthog.capture("email_campaign_sent", { waitlist_id: id, quantity: qty });
+    }
   });
 
   const deleteMutation = useMutation({
@@ -168,6 +226,27 @@ export default function AudiencePage({ params }: { params: Promise<{ id: string 
     });
   }
 
+  function handleRowDoubleClick(userId?: string) {
+    if (selectedKeys.size > 0) {
+      setQuantity(String(selectedKeys.size));
+      sendModal.onOpen();
+      return;
+    }
+    if (userId) {
+      setSelectedKeys(new Set([userId]));
+      setQuantity("1");
+      sendModal.onOpen();
+    }
+  }
+
+  function handleSend() {
+    const qty = Number(quantity);
+    const emails = (users ?? []).slice(0, qty).map((u) => u.email);
+    setSentEmails(emails);
+    setAnimationPhase("list");
+    sendCampaign(qty);
+  }
+
   return (
     <PageComponent>
       <Title description="All registered users in this waitlist">Audience</Title>
@@ -222,6 +301,16 @@ export default function AudiencePage({ params }: { params: Promise<{ id: string 
             >
               Export CSV
             </GlobalButton>
+
+            <PrimaryActionButton
+              startContent={<RocketLaunchIcon className="size-4" />}
+              onPress={sendModal.onOpen}
+            >
+              Send campaign
+              <Kbd keys={["command"]} className="text-xs">
+                K
+              </Kbd>
+            </PrimaryActionButton>
           </div>
         </div>
 
@@ -262,7 +351,13 @@ export default function AudiencePage({ params }: { params: Promise<{ id: string 
             emptyContent={<Type>No users registered yet.</Type>}
           >
             {(item) => (
-              <TableRow key={item._id}>
+              <TableRow
+                key={item._id}
+                onDoubleClick={(e: React.MouseEvent) => {
+                  e.stopPropagation();
+                  handleRowDoubleClick(item._id);
+                }}
+              >
                 {(columnKey) => {
                   const key = String(columnKey);
 
@@ -311,6 +406,108 @@ export default function AudiencePage({ params }: { params: Promise<{ id: string 
           </TableBody>
         </Table>
       </div>
+
+      <Modal
+        isOpen={sendModal.isOpen}
+        onOpenChange={sendModal.onOpenChange}
+        radius="sm"
+        isDismissable={animationPhase === "idle"}
+        hideCloseButton={animationPhase !== "idle"}
+      >
+        <ModalContent>
+          {() => {
+            if (animationPhase === "list") {
+              return (
+                <ModalBody className="p-0 overflow-hidden">
+                  <Player
+                    component={CampaignSentAnimation}
+                    inputProps={{ emails: sentEmails }}
+                    durationInFrames={animationFrames}
+                    fps={30}
+                    compositionWidth={460}
+                    compositionHeight={getAnimationHeight(sentEmails.length)}
+                    autoPlay
+                    style={{ width: "100%", height: getAnimationHeight(sentEmails.length) }}
+                  />
+                </ModalBody>
+              );
+            }
+
+            if (animationPhase === "result") {
+              const status = isSendSuccess ? "success" : isSendError ? "error" : "pending";
+
+              return (
+                <>
+                  <ModalBody className="p-0 overflow-hidden">
+                    <Player
+                      key={status}
+                      component={CampaignResultAnimation}
+                      inputProps={{
+                        status,
+                        message: isSendSuccess
+                          ? `${sentEmails.length} emails dispatched`
+                          : isSendError
+                            ? (sendError?.message ?? "An error occurred")
+                            : "Waiting for server response..."
+                      }}
+                      durationInFrames={9000}
+                      fps={30}
+                      compositionWidth={460}
+                      compositionHeight={160}
+                      autoPlay
+                      loop={isSending}
+                      style={{ width: "100%", height: 160 }}
+                    />
+                  </ModalBody>
+                  {(isSendSuccess || isSendError) && (
+                    <ModalFooter className="justify-center">
+                      <GlobalButton variant="light" onPress={handleCloseModal}>
+                        Close
+                      </GlobalButton>
+                    </ModalFooter>
+                  )}
+                </>
+              );
+            }
+
+            return (
+              <>
+                <ModalHeader>Send Email Campaign</ModalHeader>
+                <ModalBody>
+                  <p className="text-sm text-muted-foreground">
+                    How many users do you want to send the email campaign to? There are currently{" "}
+                    <strong>{users?.length ?? 0}</strong> users in this waitlist.
+                  </p>
+
+                  <InputComponent
+                    type="number"
+                    placeholder={`Max ${users?.length ?? 0}`}
+                    variant="bordered"
+                    value={quantity}
+                    onValueChange={setQuantity}
+                    classNames={{ inputWrapper: "border-1" }}
+                  />
+                </ModalBody>
+                <ModalFooter>
+                  <GlobalButton variant="light" onPress={handleCloseModal}>
+                    Cancel
+                  </GlobalButton>
+                  <PrimaryActionButton
+                    startContent={<RocketLaunchIcon className="size-4" />}
+                    isDisabled={
+                      !quantity || Number(quantity) < 1 || Number(quantity) > (users?.length ?? 0)
+                    }
+                    isLoading={isSending}
+                    onPress={handleSend}
+                  >
+                    Send to {quantity || 0} users
+                  </PrimaryActionButton>
+                </ModalFooter>
+              </>
+            );
+          }}
+        </ModalContent>
+      </Modal>
 
       <Modal isOpen={exportModal.isOpen} onOpenChange={exportModal.onOpenChange} radius="sm">
         <ModalContent>

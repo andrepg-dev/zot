@@ -9,9 +9,6 @@ The wizard has completed a deep integration of PostHog analytics into the Zot Ne
 | `waitlist_created` | User created a new waitlist | `app/(root-layout)/app/waitlist/launch/page.tsx` |
 | `waitlist_deleted` | User permanently deleted a waitlist (churn signal) | `app/(root-layout)/app/launch/waitlist/[id]/settings/page.tsx` |
 | `waitlist_status_toggled` | User toggled waitlist active/disabled status | `app/(root-layout)/app/waitlist/dashboard/page.tsx` |
-| `email_campaign_sent` | User sent an email campaign to waitlist users | `app/(root-layout)/app/launch/waitlist/[id]/email/campaign/page.tsx` |
-| `waitlist_user_removed` | User removed one or more users from a waitlist | `app/(root-layout)/app/launch/waitlist/[id]/email/campaign/page.tsx` |
-| `checkout_initiated` | User clicked a billing plan CTA to start checkout | `app/(root-layout)/app/billing/page.tsx` |
 | `oauth_login_completed` | User completed OAuth login (Google/GitHub) | `app/api/auth/callback/route.ts` |
 
 ## Next steps

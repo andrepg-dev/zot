@@ -14,12 +14,10 @@ import { RegisterWaitListUserDto } from "./dto/register-wait-list-user.dto";
 @Injectable()
 export class WaitListUserService {
   constructor(
-    @InjectModel(WaitListUser.name)
-    private WaitListUserModel: Model<WaitListUser>,
+    @InjectModel(WaitListUser.name) private WaitListUserModel: Model<WaitListUser>,
     @InjectModel(WaitList.name) private WaitListModel: Model<WaitList>,
     private readonly emailSecurityService: EmailSecurityService,
-    @InjectModel(WaitlistWebhookEvent.name)
-    private WaitlistWebhookEventModel: Model<WaitlistWebhookEvent>,
+    @InjectModel(WaitlistWebhookEvent.name) private WaitlistWebhookEventModel: Model<WaitlistWebhookEvent>,
     private readonly httpService: HttpService,
     private readonly userQuoteService: UserQuoteService,
     private readonly usersService: UsersService,
