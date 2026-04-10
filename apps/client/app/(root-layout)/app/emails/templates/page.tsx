@@ -7,13 +7,12 @@ import PageComponent from "@/components/layouts/page-component";
 import Type from "@/components/type";
 import Chip from "@/components/ui/chip";
 import { useHotkey } from "@/hooks/use-hotkey";
-import { formatDateTime } from "@/lib/format-date";
-import { EnvelopeIcon, SparklesIcon } from "@heroicons/react/24/outline";
-import { Card, CardBody } from "@heroui/card";
+import { SparklesIcon } from "@heroicons/react/24/outline";
 import { Kbd } from "@heroui/react";
 import { Spinner } from "@heroui/spinner";
 import type { EmailTemplate } from "@repo/packages/shared/schemas";
 import { useQuery } from "@tanstack/react-query";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -69,48 +68,36 @@ export default function EmailTemplatesPage() {
           </Type>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-6 gap-6">
           {templates.map((template) => (
-            <Card key={template._id} className="border bg-default-100/50" radius="none">
-              <CardBody className="p-5">
-                <div className="flex flex-col gap-3">
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="flex items-center gap-2 min-w-0">
-                      <EnvelopeIcon className="size-4 min-w-4 text-muted-foreground" />
-                      <Type variant="h6" className="truncate">
-                        {template.alias}
-                      </Type>
-                    </div>
-                    <Chip status={template.status === "published" ? "active" : "neutral"}>
-                      {template.status}
-                    </Chip>
-                  </div>
-
-                  <div className="flex flex-col gap-2">
-                    <div className="flex justify-between items-center gap-2">
-                      <Type variant="sm" className="text-muted-foreground">
-                        Subject
-                      </Type>
-                      <Type variant="sm" className="truncate">
-                        {template.subject || "—"}
-                      </Type>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <Type variant="sm" className="text-muted-foreground">
-                        Created
-                      </Type>
-                      <Type variant="sm">{formatDateTime(template.createdAt)}</Type>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <Type variant="sm" className="text-muted-foreground">
-                        Last updated
-                      </Type>
-                      <Type variant="sm">{formatDateTime(template.updatedAt)}</Type>
-                    </div>
-                  </div>
+            <div className="flex flex-col gap-2" key={template._id}>
+              <div className="bg-white rounded-sm w-full aspect-video flex justify-center relative">
+                <div className="w-3/4 h-3/4 bottom-0 absolute rounded-sm overflow-hidden">
+                  <Image
+                    src={template.preview}
+                    alt={`Preview of ${template.alias} template`}
+                    width={700}
+                    height={700}
+                    className="object-cover"
+                  />
                 </div>
-              </CardBody>
-            </Card>
+              </div>
+
+              <div className="flex justify-between">
+                <div className="flex flex-col">
+                  <Type variant="h6" className="text-medium">
+                    {template.alias}
+                  </Type>
+                  <Type className="text-muted-foreground">{template._id}</Type>
+                </div>
+
+                {template.status == "published" && (
+                  <Chip status="neutral" className="capitalize">
+                    {template.status}
+                  </Chip>
+                )}
+              </div>
+            </div>
           ))}
         </div>
       )}

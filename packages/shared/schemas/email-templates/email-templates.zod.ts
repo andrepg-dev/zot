@@ -16,6 +16,7 @@ export const emailTemplateSchema = createEmailTemplateSchema.extend({
   html: z.string().optional(),
   createdAt: z.string(),
   updatedAt: z.string(),
+  preview: z.string()
 });
 
 export type EmailTemplateStatus = z.infer<typeof emailTemplateStatusEnum>;
