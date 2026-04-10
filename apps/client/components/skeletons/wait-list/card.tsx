@@ -6,7 +6,7 @@ export default function WaitListCardSkeleton({ count = 3 }: { count?: number }) 
   return (
     <div className="relative col-span-full grid grid-cols-subgrid">
       {Array.from({ length: count }).map((_, i) => (
-        <Card key={i} className="border border-dashed bg-default-50/70" radius="none">
+        <Card key={i} className="border bg-default-50/70" radius="none">
           <CardBody className="p-5">
             <div className="flex flex-col gap-3">
               <div className="flex items-start justify-between">

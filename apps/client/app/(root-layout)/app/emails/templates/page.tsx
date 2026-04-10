@@ -4,12 +4,12 @@ import { getEmailTemplates } from "@/actions/email-templates/email-templates.act
 import PageActions from "@/components/global/page-actions";
 import Title from "@/components/global/title";
 import PageComponent from "@/components/layouts/page-component";
+import EmailTemplateCardSkeleton from "@/components/skeletons/email-template/card";
 import Type from "@/components/type";
 import Chip from "@/components/ui/chip";
 import { useHotkey } from "@/hooks/use-hotkey";
 import { SparklesIcon } from "@heroicons/react/24/outline";
 import { Kbd } from "@heroui/react";
-import { Spinner } from "@heroui/spinner";
 import type { EmailTemplate } from "@repo/packages/shared/schemas";
 import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
@@ -56,8 +56,8 @@ export default function EmailTemplatesPage() {
       />
 
       {isPending ? (
-        <div className="flex justify-center py-12">
-          <Spinner size="sm" />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-6 gap-6">
+          <EmailTemplateCardSkeleton />
         </div>
       ) : templates.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16 text-muted-foreground gap-2">
