@@ -28,6 +28,12 @@ export const emailPayloadSchema = z.object({
 
 export type EmailPayload = z.infer<typeof emailPayloadSchema>;
 
+export const sendEmailToUsersByIdSchema = z.object({
+  users: z.array(zMongoId).min(1),
+});
+
+export type SendEmailToUsersByIdValues = z.infer<typeof sendEmailToUsersByIdSchema>;
+
 export const emailSendRecordItemSchema = z.object({
   _id: z.string(),
   quantitySent: z.number(),

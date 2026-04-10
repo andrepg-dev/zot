@@ -1,6 +1,6 @@
 "use client";
 
-import { sendEmail } from "@/actions/emails/emails.actions";
+import { sendEmailToUsersById } from "@/actions/emails/emails.actions";
 import { getWaitListStats } from "@/actions/wait-list/stats.actions";
 import { deleteWaitListUser, getWaitListUsers } from "@/actions/wait-list/wait-list-user.actions";
 import GlobalButton from "@/components/global/button";
@@ -67,11 +67,16 @@ export default function AudiencePage({ params }: { params: Promise<{ id: string 
   const sendModal = useDisclosure();
   const queryClient = useQueryClient();
 
-  const [quantity, setQuantity] = useState("0");
   const [animationPhase, setAnimationPhase] = useState<"idle" | "list" | "result">("idle");
   const [sentEmails, setSentEmails] = useState<string[]>([]);
 
-  useHotkey({ key: "k", modifiers: ["meta"], onPress: sendModal.onOpen });
+  useHotkey({
+    key: "k",
+    modifiers: ["meta"],
+    onPress: () => {
+      if (selectedKeys.size > 0) sendModal.onOpen();
+    }
+  });
 
   const { data: users, isPending } = useQuery({
     queryKey: [id, "audience"],
@@ -82,10 +87,6 @@ export default function AudiencePage({ params }: { params: Promise<{ id: string 
     queryKey: [id],
     queryFn: () => getWaitListStats(id)
   });
-
-  useEffect(() => {
-    if (users?.length) setQuantity(String(users.length));
-  }, [users?.length]);
 
   const displayCount = Math.min(sentEmails.length, 50);
   const framesPerRow = getFramesPerRow(displayCount);
@@ -114,11 +115,11 @@ export default function AudiencePage({ params }: { params: Promise<{ id: string 
     error: sendError,
     reset: resetSend
   } = useMutation({
-    mutationFn: (qty: number) => sendEmail({ waitlistId: id, quantity: qty }),
-    onSuccess: (_data, qty) => {
+    mutationFn: (userIds: string[]) => sendEmailToUsersById(id, { users: userIds }),
+    onSuccess: (_data, userIds) => {
       queryClient.invalidateQueries({ queryKey: [id, "email-records"] });
       queryClient.invalidateQueries({ queryKey: [id, "email-records-list"] });
-      posthog.capture("email_campaign_sent", { waitlist_id: id, quantity: qty });
+      posthog.capture("email_campaign_sent", { waitlist_id: id, quantity: userIds.length });
     }
   });
 
@@ -228,23 +229,21 @@ export default function AudiencePage({ params }: { params: Promise<{ id: string 
 
   function handleRowDoubleClick(userId?: string) {
     if (selectedKeys.size > 0) {
-      setQuantity(String(selectedKeys.size));
       sendModal.onOpen();
       return;
     }
     if (userId) {
       setSelectedKeys(new Set([userId]));
-      setQuantity("1");
       sendModal.onOpen();
     }
   }
 
   function handleSend() {
-    const qty = Number(quantity);
-    const emails = (users ?? []).slice(0, qty).map((u) => u.email);
+    const ids = Array.from(selectedKeys);
+    const emails = (users ?? []).filter((u) => selectedKeys.has(u._id)).map((u) => u.email);
     setSentEmails(emails);
     setAnimationPhase("list");
-    sendCampaign(qty);
+    sendCampaign(ids);
   }
 
   return (
@@ -304,9 +303,10 @@ export default function AudiencePage({ params }: { params: Promise<{ id: string 
 
             <PrimaryActionButton
               startContent={<RocketLaunchIcon className="size-4" />}
+              isDisabled={selectedKeys.size === 0}
               onPress={sendModal.onOpen}
             >
-              Send campaign
+              Send campaign{selectedKeys.size > 0 ? ` (${selectedKeys.size})` : ""}
               <Kbd keys={["command"]} className="text-xs">
                 K
               </Kbd>
@@ -475,18 +475,10 @@ export default function AudiencePage({ params }: { params: Promise<{ id: string 
                 <ModalHeader>Send Email Campaign</ModalHeader>
                 <ModalBody>
                   <p className="text-sm text-muted-foreground">
-                    How many users do you want to send the email campaign to? There are currently{" "}
-                    <strong>{users?.length ?? 0}</strong> users in this waitlist.
+                    You are about to send an email campaign to <strong>{selectedKeys.size}</strong>{" "}
+                    selected user
+                    {selectedKeys.size !== 1 ? "s" : ""}. Do you want to continue?
                   </p>
-
-                  <InputComponent
-                    type="number"
-                    placeholder={`Max ${users?.length ?? 0}`}
-                    variant="bordered"
-                    value={quantity}
-                    onValueChange={setQuantity}
-                    classNames={{ inputWrapper: "border-1" }}
-                  />
                 </ModalBody>
                 <ModalFooter>
                   <GlobalButton variant="light" onPress={handleCloseModal}>
@@ -494,13 +486,11 @@ export default function AudiencePage({ params }: { params: Promise<{ id: string 
                   </GlobalButton>
                   <PrimaryActionButton
                     startContent={<RocketLaunchIcon className="size-4" />}
-                    isDisabled={
-                      !quantity || Number(quantity) < 1 || Number(quantity) > (users?.length ?? 0)
-                    }
+                    isDisabled={selectedKeys.size === 0}
                     isLoading={isSending}
                     onPress={handleSend}
                   >
-                    Send to {quantity || 0} users
+                    Send to {selectedKeys.size} user{selectedKeys.size !== 1 ? "s" : ""}
                   </PrimaryActionButton>
                 </ModalFooter>
               </>
