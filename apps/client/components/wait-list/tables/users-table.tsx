@@ -21,12 +21,12 @@ import type { EmailSendRecordItem } from "@repo/packages/shared/schemas";
 import { useQuery } from "@tanstack/react-query";
 import React, { useState } from "react";
 
-import CodeBlock from "@/components/ui/code-block";
 import InputComponent from "@/components/ui/input";
 import { formatDateTime } from "@/lib/format-date";
+import Image from "next/image";
 
 const columns = [
-  { key: "position", label: "#" },
+  { key: "createdAt", label: "Date" },
   { key: "template", label: "Template" },
   { key: "subject", label: "Subject" },
   { key: "from", label: "From" },
@@ -34,8 +34,7 @@ const columns = [
   { key: "quantitySent", label: "Sent" },
   { key: "status", label: "Status" },
   { key: "sentSuccessfully", label: "Successful" },
-  { key: "failedCount", label: "Failed" },
-  { key: "createdAt", label: "Date" }
+  { key: "failedCount", label: "Failed" }
 ];
 
 export default function UsersTable({ id }: { id: string }) {
@@ -219,26 +218,21 @@ export default function UsersTable({ id }: { id: string }) {
                     </div>
                   )}
 
-                  <div className="flex flex-col gap-1 max-w-[400px]">
-                    <Type variant="h6">HTML</Type>
-                    <CodeBlock code={selectedRecord.payload.options.html} lang="html" />
-                  </div>
-
-                  <div className="flex items-center gap-6 bg-default-100 p-2 border rounded-sm justify-around">
+                  <div className="flex items-center gap-6 bg-default-100 p-2 px-3 border justify-around mt-auto">
                     <div className="flex items-center gap-2">
-                      <Type variant="base">Emails Sent</Type>
+                      <Type>Sent</Type>
                       <Type>{String(selectedRecord.quantitySent)}</Type>
                     </div>
 
                     <div className="flex items-center gap-2">
-                      <Type variant="base">Successful</Type>
-                      <span className="font-mono text-sm">{selectedRecord.sentSuccessfully}</span>
+                      <Type>Successful</Type>
+                      <span className="text-sm">{selectedRecord.sentSuccessfully}</span>
                     </div>
 
                     <div className="flex items-center gap-2">
-                      <Type variant="base">Failed</Type>
+                      <Type>Failed</Type>
                       <span
-                        className={`font-mono text-sm ${selectedRecord.failedCount > 0 ? "" : "text-muted-foreground"}`}
+                        className={`text-sm ${selectedRecord.failedCount > 0 ? "" : "text-muted-foreground"}`}
                       >
                         {selectedRecord.failedCount}
                       </span>
@@ -249,17 +243,18 @@ export default function UsersTable({ id }: { id: string }) {
                 {selectedRecord.template?.preview && (
                   <div className="flex flex-col gap-1">
                     <Type variant="h6">Preview</Type>
-                    <img
+                    <Image
                       src={selectedRecord.template.preview}
                       alt="Email preview"
-                      className="max-h-80 w-max"
+                      className="max-h-80 w-full"
+                      width={300}
+                      height={800}
                     />
                   </div>
                 )}
               </div>
 
               <div className="flex flex-col gap-1">
-                <Type variant="h6">Recipients · {selectedRecord.recipientEmails.length}</Type>
                 <Table
                   aria-label="Recipients table"
                   radius="none"

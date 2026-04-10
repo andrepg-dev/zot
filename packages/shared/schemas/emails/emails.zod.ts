@@ -30,6 +30,7 @@ export type EmailPayload = z.infer<typeof emailPayloadSchema>;
 
 export const sendEmailToUsersByIdSchema = z.object({
   users: z.array(zMongoId).min(1),
+  templateId: z.string().optional()
 });
 
 export type SendEmailToUsersByIdValues = z.infer<typeof sendEmailToUsersByIdSchema>;

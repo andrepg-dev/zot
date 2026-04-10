@@ -1,5 +1,6 @@
 "use client";
 
+import { getEmailTemplates } from "@/actions/email-templates/email-templates.actions";
 import { sendEmailToUsersById } from "@/actions/emails/emails.actions";
 import { getWaitListStats } from "@/actions/wait-list/stats.actions";
 import { deleteWaitListUser, getWaitListUsers } from "@/actions/wait-list/wait-list-user.actions";
@@ -21,6 +22,7 @@ import {
   ArrowDownTrayIcon,
   ChevronDownIcon,
   MagnifyingGlassIcon,
+  PlusIcon,
   RocketLaunchIcon,
   TrashIcon
 } from "@heroicons/react/24/outline";
@@ -44,17 +46,19 @@ import {
   TableRow,
   useDisclosure
 } from "@heroui/react";
+import { Select, SelectItem, SelectSection } from "@heroui/select";
 import { addToast } from "@heroui/toast";
 import { Player } from "@remotion/player";
+import type { EmailTemplate } from "@repo/packages/shared/schemas";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import Image from "next/image";
 import posthog from "posthog-js";
 import React, { useEffect, useState } from "react";
 
 const baseColumns = [
-  { key: "position", label: "#" },
+  { key: "createdAt", label: "Joined" },  
   { key: "email", label: "Email" },
   { key: "referredBy", label: "Referred By" },
-  { key: "createdAt", label: "Joined" }
 ];
 
 export default function AudiencePage({ params }: { params: Promise<{ id: string }> }) {
@@ -88,6 +92,18 @@ export default function AudiencePage({ params }: { params: Promise<{ id: string 
     queryFn: () => getWaitListStats(id)
   });
 
+  const { data: templates } = useQuery({
+    queryKey: ["email-templates"],
+    queryFn: getEmailTemplates
+  });
+
+  const [selectedTemplateId, setSelectedTemplateId] = useState<string>("");
+
+  const selectedTemplate = React.useMemo(
+    () => ((templates ?? []) as EmailTemplate[]).find((t) => t._id === selectedTemplateId),
+    [templates, selectedTemplateId]
+  );
+
   const displayCount = Math.min(sentEmails.length, 50);
   const framesPerRow = getFramesPerRow(displayCount);
   const animationFrames = 10 + displayCount * framesPerRow + 40;
@@ -115,7 +131,7 @@ export default function AudiencePage({ params }: { params: Promise<{ id: string 
     error: sendError,
     reset: resetSend
   } = useMutation({
-    mutationFn: (userIds: string[]) => sendEmailToUsersById(id, { users: userIds }),
+    mutationFn: (userIds: string[]) => sendEmailToUsersById(id, { users: userIds,  templateId: selectedTemplate?._id }),
     onSuccess: (_data, userIds) => {
       queryClient.invalidateQueries({ queryKey: [id, "email-records"] });
       queryClient.invalidateQueries({ queryKey: [id, "email-records-list"] });
@@ -479,6 +495,45 @@ export default function AudiencePage({ params }: { params: Promise<{ id: string 
                     selected user
                     {selectedKeys.size !== 1 ? "s" : ""}. Do you want to continue?
                   </p>
+
+                  <Select
+                    label="Email template"
+                    placeholder="Select a template"
+                    radius="sm"
+                    size="sm"
+                    selectedKeys={selectedTemplateId ? [selectedTemplateId] : []}
+                    onSelectionChange={(keys) => {
+                      const key = Array.from(keys)[0] as string;
+                      if (key === "create-new") {
+                        window.open("/app/emails/templates", "_blank");
+                        return;
+                      }
+                      setSelectedTemplateId(key ?? "");
+                    }}
+                  >
+                    <SelectSection title="Templates">
+                      {((templates ?? []) as EmailTemplate[]).map((template) => (
+                        <SelectItem key={template._id}>{template.alias}</SelectItem>
+                      ))}
+                    </SelectSection>
+                    <SelectSection title="">
+                      <SelectItem key="create-new" startContent={<PlusIcon className="size-4" />}>
+                        Create new template
+                      </SelectItem>
+                    </SelectSection>
+                  </Select>
+
+                  {selectedTemplate?.preview && (
+                    <div className="rounded-sm border overflow-hidden bg-white">
+                      <Image
+                        src={selectedTemplate.preview}
+                        alt={selectedTemplate.alias}
+                        width={800}
+                        height={600}
+                        className="w-full h-auto object-contain"
+                      />
+                    </div>
+                  )}
                 </ModalBody>
                 <ModalFooter>
                   <GlobalButton variant="light" onPress={handleCloseModal}>
@@ -486,7 +541,7 @@ export default function AudiencePage({ params }: { params: Promise<{ id: string 
                   </GlobalButton>
                   <PrimaryActionButton
                     startContent={<RocketLaunchIcon className="size-4" />}
-                    isDisabled={selectedKeys.size === 0}
+                    isDisabled={selectedKeys.size === 0 || !selectedTemplateId}
                     isLoading={isSending}
                     onPress={handleSend}
                   >
