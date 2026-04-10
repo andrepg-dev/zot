@@ -1,7 +1,10 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
+import type { Document } from "mongoose";
 import { Model, Types } from "mongoose";
 import { EmailSendingService } from "../core/email-sending/email-sending.service";
+import { EmailTemplatesService } from "../email-templates/email-templates.service";
+import { EmailTemplate } from "../email-templates/schemas/email-template.schema";
 import { EmailParams, ResendEmail } from "../types/email-sending";
 import { UserQuoteService } from "../users/user-quote/user-quote.service";
 import { WaitListUser } from "../wait-list/schemas/wait-list-user.schema";
@@ -24,7 +27,7 @@ interface sendEmailByUserId {
   waitlistId: Types.ObjectId;
   users: Array<Types.ObjectId>;
   email?: Omit<ResendEmail, "provider">;
-  templateId?: Types.ObjectId;
+  templateId?: string;
 }
 
 @Injectable()
@@ -33,6 +36,7 @@ export class EmailsService {
     @InjectModel(EmailSendRecord.name)
     private readonly emailSendRecordModel: Model<EmailSendRecord>,
     private readonly emailService: EmailSendingService,
+    private readonly emailTemplateService: EmailTemplatesService,
     private readonly WaitListUserService: WaitListUserService,
     private readonly userquoteService: UserQuoteService,
     @InjectModel(WaitListUser.name) private readonly WaitListUserModel: Model<WaitListUser>,
@@ -169,8 +173,14 @@ export class EmailsService {
     }
   }
 
-  async sendEmailByUsersId({ userId, waitlistId, users }: sendEmailByUserId) {
+  async sendEmailByUsersId({ userId, waitlistId, users, email, templateId }: sendEmailByUserId) {
     await this.WaitListUserService.validateOwnership(waitlistId, userId);
+
+    let template: (EmailTemplate & Document) | undefined;
+
+    if (templateId) {
+      template = await this.emailTemplateService.findOne(new Types.ObjectId(templateId), userId);
+    }
 
     const usersIds = await this.WaitListUserModel.aggregate([
       {
@@ -198,11 +208,11 @@ export class EmailsService {
       from: "Zot WaitList <mail@zot.so>",
       to: userEmails,
       provider: "resend",
-      subject: "Testing if this works or not.",
+      subject: template?.subject ?? "Testing if this works or not.",
       options: {
-        html: "<bold>First email sending with zot.</bold>",
+        html: template?.html ?? "<bold>First email sending with zot.</bold>",
         replyTo: "reply@zot.so",
-        text: "<bold>First email sending with zot.</bold>",
+        // text: "<bold>First email sending with zot.</bold>",
       },
     };
 
@@ -220,6 +230,7 @@ export class EmailsService {
         failedCount: 0,
         failedEmails: [],
         payload: rest,
+        template: template ? template.toObject() : undefined,
       });
 
       await this.userquoteService.editUserQuote({
@@ -252,6 +263,7 @@ export class EmailsService {
         failedCount: totalUsersCount,
         failedEmails: userEmails,
         payload: rest,
+        template: template ? template.toObject() : undefined,
       });
 
       throw error;

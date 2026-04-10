@@ -14,5 +14,6 @@ import { EmailTemplate, EmailTemplateSchema } from "./schemas/email-template.sch
   ],
   providers: [EmailTemplatesService, ReactToHtmlService, S3Service],
   controllers: [EmailTemplatesController],
+  exports: [EmailTemplatesService],
 })
 export class EmailTemplatesModule {}

@@ -42,6 +42,14 @@ export const emailSendRecordItemSchema = z.object({
   failedCount: z.number(),
   failedEmails: z.array(z.string()),
   payload: emailPayloadSchema,
+  template: z.object({
+    preview: z.string(),
+    alias: z.string(),
+    subject: z.string().optional(),
+    code: z.string().optional(),
+    html: z.string().optional(),
+    status: z.string().optional(),
+  }).optional(),
   createdAt: z.string(),
   updatedAt: z.string(),
 });

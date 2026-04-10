@@ -53,6 +53,6 @@ export class EmailsController {
     @UserId() userId: Types.ObjectId,
     @Body() data: SendEmailToUsersById,
   ) {
-    return await this.emailsService.sendEmailByUsersId({ userId, waitlistId, users: data.users });
+    return await this.emailsService.sendEmailByUsersId({ userId, waitlistId, ...data });
   }
 }

@@ -21,6 +21,7 @@ import type { EmailSendRecordItem } from "@repo/packages/shared/schemas";
 import { useQuery } from "@tanstack/react-query";
 import React, { useState } from "react";
 
+import CodeBlock from "@/components/ui/code-block";
 import InputComponent from "@/components/ui/input";
 import { formatDateTime } from "@/lib/format-date";
 
@@ -229,11 +230,20 @@ export default function UsersTable({ id }: { id: string }) {
                 </div>
               )}
 
+              {selectedRecord.template?.preview && (
+                <div className="flex flex-col gap-1">
+                  <Type variant="h6">Preview</Type>
+                  <img
+                    src={selectedRecord.template.preview}
+                    alt="Email preview"
+                    className="rounded-sm border max-h-80 object-contain"
+                  />
+                </div>
+              )}
+
               <div className="flex flex-col gap-1">
                 <Type variant="h6">HTML</Type>
-                <pre className="text-xs font-mono bg-default-100 p-3 rounded-sm border overflow-auto max-h-60">
-                  {selectedRecord.payload.options.html}
-                </pre>
+                <CodeBlock code={selectedRecord.payload.options.html} lang="html" />
               </div>
 
               <div className="flex flex-col gap-1">
