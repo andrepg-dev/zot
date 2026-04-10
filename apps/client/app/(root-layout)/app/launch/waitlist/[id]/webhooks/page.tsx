@@ -172,6 +172,7 @@ export default function Webhooks({ params }: { params: Promise<{ id: string }> }
           items={events ?? []}
           isLoading={isEventsLoading}
           loadingContent={<Spinner size="sm" />}
+          className="cursor-pointer"
           emptyContent={
             <Type>
               {data?.webhook?.url
@@ -353,15 +354,6 @@ export default function Webhooks({ params }: { params: Promise<{ id: string }> }
                   code={JSON.stringify(selectedEvent.payload, null, 2)}
                 ></CodeBlock>
               </div>
-
-              {selectedEvent.responseBody && (
-                <div className="flex flex-col gap-1">
-                  <Type variant="h6">Response Body</Type>
-                  <pre className="text-xs font-mono bg-default-100 p-3 rounded-sm border overflow-auto max-h-60">
-                    {selectedEvent.responseBody}
-                  </pre>
-                </div>
-              )}
             </div>
           )}
         </DrawerBody>
