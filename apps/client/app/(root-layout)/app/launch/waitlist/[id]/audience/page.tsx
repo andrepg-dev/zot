@@ -1,20 +1,32 @@
 "use client";
 
+import { getEmailTemplates } from "@/actions/email-templates/email-templates.actions";
+import { sendEmailToUsersById } from "@/actions/emails/emails.actions";
 import { getWaitListStats } from "@/actions/wait-list/stats.actions";
 import { deleteWaitListUser, getWaitListUsers } from "@/actions/wait-list/wait-list-user.actions";
 import GlobalButton from "@/components/global/button";
+import PrimaryActionButton from "@/components/global/primary-action-button";
 import Title from "@/components/global/title";
 import PageComponent from "@/components/layouts/page-component";
 import Type from "@/components/type";
 import InputComponent from "@/components/ui/input";
+import CampaignResultAnimation from "@/components/wait-list/campaign-result-animation";
+import CampaignSentAnimation, {
+  getAnimationHeight,
+  getFramesPerRow
+} from "@/components/wait-list/campaign-sent-animation";
+import { useHotkey } from "@/hooks/use-hotkey";
 import { formatDate } from "@/lib/format-date";
 import { exportToCsv } from "@/lib/utils";
 import {
   ArrowDownTrayIcon,
   ChevronDownIcon,
   MagnifyingGlassIcon,
+  PlusIcon,
+  RocketLaunchIcon,
   TrashIcon
 } from "@heroicons/react/24/outline";
+import { Kbd } from "@heroui/kbd";
 import {
   Dropdown,
   DropdownItem,
@@ -34,15 +46,19 @@ import {
   TableRow,
   useDisclosure
 } from "@heroui/react";
+import { Select, SelectItem, SelectSection } from "@heroui/select";
 import { addToast } from "@heroui/toast";
+import { Player } from "@remotion/player";
+import type { EmailTemplate } from "@repo/packages/shared/schemas";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import React, { useState } from "react";
+import Image from "next/image";
+import posthog from "posthog-js";
+import React, { useEffect, useState } from "react";
 
 const baseColumns = [
-  { key: "position", label: "#" },
+  { key: "createdAt", label: "Joined" },
   { key: "email", label: "Email" },
-  { key: "referredBy", label: "Referred By" },
-  { key: "createdAt", label: "Joined" }
+  { key: "referredBy", label: "Referred By" }
 ];
 
 export default function AudiencePage({ params }: { params: Promise<{ id: string }> }) {
@@ -52,7 +68,19 @@ export default function AudiencePage({ params }: { params: Promise<{ id: string 
   const [emailsToDelete, setEmailsToDelete] = useState<string[]>([]);
   const confirmModal = useDisclosure();
   const exportModal = useDisclosure();
+  const sendModal = useDisclosure();
   const queryClient = useQueryClient();
+
+  const [animationPhase, setAnimationPhase] = useState<"idle" | "list" | "result">("idle");
+  const [sentEmails, setSentEmails] = useState<string[]>([]);
+
+  useHotkey({
+    key: "k",
+    modifiers: ["meta"],
+    onPress: () => {
+      if (selectedKeys.size > 0) sendModal.onOpen();
+    }
+  });
 
   const { data: users, isPending } = useQuery({
     queryKey: [id, "audience"],
@@ -62,6 +90,54 @@ export default function AudiencePage({ params }: { params: Promise<{ id: string 
   const { data: waitlistStats } = useQuery({
     queryKey: [id],
     queryFn: () => getWaitListStats(id)
+  });
+
+  const { data: templates } = useQuery({
+    queryKey: ["email-templates"],
+    queryFn: getEmailTemplates
+  });
+
+  const [selectedTemplateId, setSelectedTemplateId] = useState<string>("");
+
+  const selectedTemplate = React.useMemo(
+    () => ((templates ?? []) as EmailTemplate[]).find((t) => t._id === selectedTemplateId),
+    [templates, selectedTemplateId]
+  );
+
+  const displayCount = Math.min(sentEmails.length, 50);
+  const framesPerRow = getFramesPerRow(displayCount);
+  const animationFrames = 10 + displayCount * framesPerRow + 40;
+  const animationDurationMs = (animationFrames / 30) * 1000;
+
+  useEffect(() => {
+    if (animationPhase !== "list") return;
+    const timer = setTimeout(() => {
+      setAnimationPhase("result");
+    }, animationDurationMs);
+    return () => clearTimeout(timer);
+  }, [animationPhase, animationDurationMs]);
+
+  function handleCloseModal() {
+    setAnimationPhase("idle");
+    resetSend();
+    sendModal.onClose();
+  }
+
+  const {
+    mutate: sendCampaign,
+    isPending: isSending,
+    isSuccess: isSendSuccess,
+    isError: isSendError,
+    error: sendError,
+    reset: resetSend
+  } = useMutation({
+    mutationFn: (userIds: string[]) =>
+      sendEmailToUsersById(id, { users: userIds, templateId: selectedTemplate?._id }),
+    onSuccess: (_data, userIds) => {
+      queryClient.invalidateQueries({ queryKey: [id, "email-records"] });
+      queryClient.invalidateQueries({ queryKey: [id, "email-records-list"] });
+      posthog.capture("email_campaign_sent", { waitlist_id: id, quantity: userIds.length });
+    }
   });
 
   const deleteMutation = useMutation({
@@ -168,6 +244,25 @@ export default function AudiencePage({ params }: { params: Promise<{ id: string 
     });
   }
 
+  function handleRowDoubleClick(userId?: string) {
+    if (selectedKeys.size > 0) {
+      sendModal.onOpen();
+      return;
+    }
+    if (userId) {
+      setSelectedKeys(new Set([userId]));
+      sendModal.onOpen();
+    }
+  }
+
+  function handleSend() {
+    const ids = Array.from(selectedKeys);
+    const emails = (users ?? []).filter((u) => selectedKeys.has(u._id)).map((u) => u.email);
+    setSentEmails(emails);
+    setAnimationPhase("list");
+    sendCampaign(ids);
+  }
+
   return (
     <PageComponent>
       <Title description="All registered users in this waitlist">Audience</Title>
@@ -222,6 +317,17 @@ export default function AudiencePage({ params }: { params: Promise<{ id: string 
             >
               Export CSV
             </GlobalButton>
+
+            <PrimaryActionButton
+              startContent={<RocketLaunchIcon className="size-4" />}
+              isDisabled={selectedKeys.size === 0}
+              onPress={sendModal.onOpen}
+            >
+              Send campaign{selectedKeys.size > 0 ? ` (${selectedKeys.size})` : ""}
+              <Kbd keys={["command"]} className="text-xs">
+                K
+              </Kbd>
+            </PrimaryActionButton>
           </div>
         </div>
 
@@ -249,7 +355,7 @@ export default function AudiencePage({ params }: { params: Promise<{ id: string 
         >
           <TableHeader columns={columns}>
             {(column) => (
-              <TableColumn key={column.key} allowsSorting>
+              <TableColumn key={column.key} allowsSorting className="capitalize">
                 {column.label}
               </TableColumn>
             )}
@@ -262,7 +368,13 @@ export default function AudiencePage({ params }: { params: Promise<{ id: string 
             emptyContent={<Type>No users registered yet.</Type>}
           >
             {(item) => (
-              <TableRow key={item._id}>
+              <TableRow
+                key={item._id}
+                onDoubleClick={(e: React.MouseEvent) => {
+                  e.stopPropagation();
+                  handleRowDoubleClick(item._id);
+                }}
+              >
                 {(columnKey) => {
                   const key = String(columnKey);
 
@@ -279,14 +391,9 @@ export default function AudiencePage({ params }: { params: Promise<{ id: string 
                   }
 
                   const valueMap: Record<string, React.ReactNode> = {
-                    position: (
-                      <span className="text-muted-foreground font-mono truncate block max-w-[200px]">
-                        {item.position}
-                      </span>
-                    ),
                     email: (
                       <span className="font-mono truncate block max-w-[200px] text-xs">
-                        {item.email}
+                        <span className="text-muted-foreground">#{item.position}</span> {item.email}
                       </span>
                     ),
                     referredBy: item.referredBy ? (
@@ -311,6 +418,137 @@ export default function AudiencePage({ params }: { params: Promise<{ id: string 
           </TableBody>
         </Table>
       </div>
+
+      <Modal
+        isOpen={sendModal.isOpen}
+        onOpenChange={sendModal.onOpenChange}
+        radius="sm"
+        isDismissable={animationPhase === "idle"}
+        hideCloseButton={animationPhase !== "idle"}
+      >
+        <ModalContent>
+          {() => {
+            if (animationPhase === "list") {
+              return (
+                <ModalBody className="p-0 overflow-hidden">
+                  <Player
+                    component={CampaignSentAnimation}
+                    inputProps={{ emails: sentEmails }}
+                    durationInFrames={animationFrames}
+                    fps={30}
+                    compositionWidth={460}
+                    compositionHeight={getAnimationHeight(sentEmails.length)}
+                    autoPlay
+                    style={{ width: "100%", height: getAnimationHeight(sentEmails.length) }}
+                  />
+                </ModalBody>
+              );
+            }
+
+            if (animationPhase === "result") {
+              const status = isSendSuccess ? "success" : isSendError ? "error" : "pending";
+
+              return (
+                <>
+                  <ModalBody className="p-0 overflow-hidden">
+                    <Player
+                      key={status}
+                      component={CampaignResultAnimation}
+                      inputProps={{
+                        status,
+                        message: isSendSuccess
+                          ? `${sentEmails.length} emails dispatched`
+                          : isSendError
+                            ? (sendError?.message ?? "An error occurred")
+                            : "Waiting for server response..."
+                      }}
+                      durationInFrames={9000}
+                      fps={30}
+                      compositionWidth={460}
+                      compositionHeight={160}
+                      autoPlay
+                      loop={isSending}
+                      style={{ width: "100%", height: 160 }}
+                    />
+                  </ModalBody>
+                  {(isSendSuccess || isSendError) && (
+                    <ModalFooter className="justify-center">
+                      <GlobalButton variant="light" onPress={handleCloseModal}>
+                        Close
+                      </GlobalButton>
+                    </ModalFooter>
+                  )}
+                </>
+              );
+            }
+
+            return (
+              <>
+                <ModalHeader>Send Email Campaign</ModalHeader>
+                <ModalBody>
+                  <p className="text-sm text-muted-foreground">
+                    You are about to send an email campaign to <strong>{selectedKeys.size}</strong>{" "}
+                    selected user
+                    {selectedKeys.size !== 1 ? "s" : ""}. Do you want to continue?
+                  </p>
+
+                  <Select
+                    label="Email template"
+                    placeholder="Select a template"
+                    radius="sm"
+                    size="sm"
+                    selectedKeys={selectedTemplateId ? [selectedTemplateId] : []}
+                    onSelectionChange={(keys) => {
+                      const key = Array.from(keys)[0] as string;
+                      if (key === "create-new") {
+                        window.open("/app/emails/templates", "_blank");
+                        return;
+                      }
+                      setSelectedTemplateId(key ?? "");
+                    }}
+                  >
+                    <SelectSection title="Templates">
+                      {((templates ?? []) as EmailTemplate[]).map((template) => (
+                        <SelectItem key={template._id}>{template.alias}</SelectItem>
+                      ))}
+                    </SelectSection>
+                    <SelectSection title="">
+                      <SelectItem key="create-new" startContent={<PlusIcon className="size-4" />}>
+                        Create new template
+                      </SelectItem>
+                    </SelectSection>
+                  </Select>
+
+                  {selectedTemplate?.preview && (
+                    <div className="rounded-sm border overflow-hidden bg-white">
+                      <Image
+                        src={selectedTemplate.preview}
+                        alt={selectedTemplate.alias}
+                        width={800}
+                        height={600}
+                        className="w-full h-auto object-contain"
+                      />
+                    </div>
+                  )}
+                </ModalBody>
+                <ModalFooter>
+                  <GlobalButton variant="light" onPress={handleCloseModal}>
+                    Cancel
+                  </GlobalButton>
+                  <PrimaryActionButton
+                    startContent={<RocketLaunchIcon className="size-4" />}
+                    isDisabled={selectedKeys.size === 0 || !selectedTemplateId}
+                    isLoading={isSending}
+                    onPress={handleSend}
+                  >
+                    Send to {selectedKeys.size} user{selectedKeys.size !== 1 ? "s" : ""}
+                  </PrimaryActionButton>
+                </ModalFooter>
+              </>
+            );
+          }}
+        </ModalContent>
+      </Modal>
 
       <Modal isOpen={exportModal.isOpen} onOpenChange={exportModal.onOpenChange} radius="sm">
         <ModalContent>

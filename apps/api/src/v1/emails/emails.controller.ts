@@ -2,7 +2,7 @@ import { UserId } from "@api/src/common/decorators/user-id.decorator";
 import { Body, Controller, Get, HttpCode, Param, Post } from "@nestjs/common";
 import { ParseObjectIdPipe } from "@nestjs/mongoose";
 import { Types } from "mongoose";
-import { SendEmailDto } from "./dto/send-email.dto";
+import { SendEmailDto, SendEmailToUsersById } from "./dto/send-email.dto";
 import { EmailsService } from "./emails.service";
 
 @Controller("emails")
@@ -44,5 +44,15 @@ export class EmailsController {
       userId,
       waitlistId,
     });
+  }
+
+  @HttpCode(200)
+  @Post(":waitlistId/records/send-email")
+  async sendEmailToUsersById(
+    @Param("waitlistId", ParseObjectIdPipe) waitlistId: Types.ObjectId,
+    @UserId() userId: Types.ObjectId,
+    @Body() data: SendEmailToUsersById,
+  ) {
+    return await this.emailsService.sendEmailByUsersId({ userId, waitlistId, ...data });
   }
 }

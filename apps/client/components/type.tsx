@@ -24,7 +24,7 @@ const variants = {
   base: "text-sm",
   sm: "text-xs",
   link: "text-primary-400 hover:underline decoration-2 cursor-pointer",
-  code: "font-mono text-xs bg-default-100 px-1.5 py-0.5 rounded-sm border"
+  code: "font-mono text-xs bg-default-100 px-1.5 py-0.5 border"
 } as const;
 
 const elementMap: Record<VariantKey, React.ElementType> = {

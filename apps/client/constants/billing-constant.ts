@@ -4,7 +4,7 @@ export const plans = [
     price: "$0",
     frequency: "/ month",
     blurb: "Perfect to validate an idea and run simple launches.",
-    ctaLabel: "Current plan",
+    ctaLabel: "Free plan",
     ctaHref: "/app/waitlist/launch",
     popular: false,
     features: [

@@ -190,7 +190,7 @@ export default function GeneralSettingsPage() {
               <ModalHeader>Confirm Account Deletion</ModalHeader>
               <ModalBody>
                 <p className="text-sm text-muted-foreground">
-                  This action cannot be undone. Type <Type variant="code">{deletePhrase}</Type> to
+                  This action cannot be undone. Type <Type variant="code" showCopyButton>{deletePhrase}</Type> to
                   confirm.
                 </p>
                 <InputComponent

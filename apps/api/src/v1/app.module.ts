@@ -16,6 +16,7 @@ import { ReactToHtmlModule } from "./react-to-html/react-to-html.module";
 import { SubscriptionsModule } from "./subscriptions/subscriptions.module";
 import { UsersModule } from "./users/users.module";
 import { WaitListModule } from "./wait-list/wait-list.module";
+import { S3Service } from './core/aws/s3/s3.service';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { WaitListModule } from "./wait-list/wait-list.module";
     ReactToHtmlService,
     EmailSendingService,
     GeneralStatsService,
+    S3Service,
   ],
 })
 export class V1Module {}

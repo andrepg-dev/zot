@@ -53,7 +53,7 @@ export default function ChatMessage({ message }: ChatMessageProps) {
       >
         <div className="flex flex-col gap-1">
           {isUser ? (
-            <Type className="whitespace-pre-wrap">{content}</Type>
+            <Type className="whitespace-pre-wrap break-all">{content}</Type>
           ) : (
             <Streamdown>{content ?? ""}</Streamdown>
           )}

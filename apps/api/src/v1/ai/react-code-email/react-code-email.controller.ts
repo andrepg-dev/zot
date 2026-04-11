@@ -1,7 +1,8 @@
 import { UserId } from "@api/src/common/decorators/user-id.decorator";
-import { Body, Controller, Get, Param, Post } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Patch, Post } from "@nestjs/common";
+import { ParseObjectIdPipe } from "@nestjs/mongoose";
 import { Types } from "mongoose";
-import { AIMessageDto } from "./dto/ai-messages.dto";
+import { AIMessageDto, UpdateReactCodeEmailConversation } from "./dto/ai-messages.dto";
 import { AiServerConnectionService } from "./react-code-email.service";
 
 @Controller("ai/react-code-email")
@@ -24,5 +25,22 @@ export class AiServerConnectionController {
     @UserId() userId: Types.ObjectId,
   ) {
     return await this.aiService.getConversation(conversationId, userId.toString());
+  }
+
+  @Patch(":conversationId")
+  async updateConversation(
+    @Param("conversationId", ParseObjectIdPipe) conversationId: Types.ObjectId,
+    @UserId() userId: Types.ObjectId,
+    @Body() data: UpdateReactCodeEmailConversation,
+  ) {
+    return await this.aiService.editConversation(conversationId, userId, data);
+  }
+
+  @Delete(":conversationId")
+  async deleteConversation(
+    @Param("conversationId", ParseObjectIdPipe) conversationId: Types.ObjectId,
+    @UserId() userId: Types.ObjectId,
+  ) {
+    return await this.aiService.deleteConversation(conversationId, userId);
   }
 }

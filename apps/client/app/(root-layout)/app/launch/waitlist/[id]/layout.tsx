@@ -10,6 +10,7 @@ import {
   Cog6ToothIcon,
   EnvelopeIcon,
   HomeIcon,
+  LockClosedIcon,
   UsersIcon
 } from "@heroicons/react/24/outline";
 import { useQuery } from "@tanstack/react-query";
@@ -36,10 +37,23 @@ export default function WaitListLayout({ children }: { children: React.ReactNode
           }
         ]}
       >
-        <Chip status={isPending ? "skeleton" : data?.isAvailable ? "active" : "warning"}>
-          {isPending ? "Loading" : statusLabel}
-        </Chip>
+        <div className="flex gap-2 ml-2">
+          <Chip status={isPending ? "skeleton" : data?.isAvailable ? "active" : "warning"}>
+            {isPending ? "Loading" : statusLabel}
+          </Chip>
+
+          <Chip status={isPending ? "skeleton" : data?.isSecurityActive ? "purple" : "warning"}>
+            {data?.isSecurityActive ? (
+              <>
+                <LockClosedIcon className="size-2.5 mr-1" /> Security enabled
+              </>
+            ) : (
+              "Security disabled"
+            )}
+          </Chip>
+        </div>
       </HeaderNavigation>
+
       <SidebarNavigation
         navItems={[
           {
@@ -53,11 +67,7 @@ export default function WaitListLayout({ children }: { children: React.ReactNode
             icon: HomeIcon,
             label: "Overview"
           },
-          {
-            href: `/app/launch/waitlist/${id}/webhooks`,
-            icon: BoltIcon,
-            label: "Webhooks"
-          },
+
           {
             href: `/app/launch/waitlist/${id}/audience`,
             icon: UsersIcon,
@@ -69,14 +79,16 @@ export default function WaitListLayout({ children }: { children: React.ReactNode
             label: "Emails",
             subItem: [
               {
-                label: "Campaign",
-                href: `/app/launch/waitlist/${id}/email/campaign`
-              },
-              {
                 label: "History",
                 href: `/app/launch/waitlist/${id}/email/metrics`
               }
             ]
+          },
+
+          {
+            href: `/app/launch/waitlist/${id}/webhooks`,
+            icon: BoltIcon,
+            label: "Webhooks"
           },
 
           // {

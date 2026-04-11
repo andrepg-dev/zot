@@ -84,4 +84,12 @@ export class CreateWaitListDto {
   @IsBoolean()
   @IsOptional()
   isSecurityActive?: boolean;
+
+  @ApiPropertyOptional({
+    description: "Email template ID to send to new signups",
+    example: "507f1f77bcf86cd799439011",
+  })
+  @IsMongoId({ message: "Invalid mongoDB ObjectId" })
+  @IsOptional()
+  emailTemplateToNewSignUps?: string;
 }

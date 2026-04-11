@@ -403,7 +403,7 @@ export default function WaitListPage() {
               rows.map((item: any) => (
                 <Card
                   key={item._id}
-                  className="border bg-default-50 relative transition-colors group"
+                  className="border bg-default-50 hover:bg-default-50/80 relative duration-0 transition group"
                   radius="none"
                 >
                   {editingId !== item._id && (

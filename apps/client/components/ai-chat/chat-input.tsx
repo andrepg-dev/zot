@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronRightIcon, PlusIcon } from "@heroicons/react/24/outline";
+import { ChevronUpIcon, PlusIcon } from "@heroicons/react/24/outline";
 import { useRef, useState } from "react";
 
 interface ChatInputProps {
@@ -49,9 +49,9 @@ export default function ChatInput({ isPending, onSend }: ChatInputProps) {
           <button
             onClick={handleSubmit}
             disabled={!input.trim() || isPending}
-            className="disabled:opacity-60 bg-white p-1.5 rounded-full cursor-pointer hover:ring-2 ring-primary/30 text-black"
+            className="disabled:opacity-60 flex items-center gap-1.5 bg-zinc-200 px-2 py-2 rounded-sm cursor-pointer hover:ring-2 ring-primary/30 text-black"
           >
-            <ChevronRightIcon className="size-4" />
+            <ChevronUpIcon className="size-3.5" />
           </button>
         </div>
       </div>

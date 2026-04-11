@@ -2,7 +2,6 @@ import { BasedHiddenOwnerSchema } from "@api/src/common/schemas/based-owner.sche
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Types } from "mongoose";
 import * as emailSending from "../../types/email-sending";
-
 /**
  * Record of a bulk email send from a waitlist.
  * Stores: waitlist id, timestamp, quantity sent, list of recipients,
@@ -35,6 +34,9 @@ export class EmailSendRecord extends BasedHiddenOwnerSchema {
   // Payload
   @Prop({ type: Object, required: true })
   payload: Omit<emailSending.EmailParams, "to">;
+
+  @Prop({ type: Object })
+  template?: Record<string, any>;
 }
 
 export const EmailSendRecordSchema = SchemaFactory.createForClass(EmailSendRecord);

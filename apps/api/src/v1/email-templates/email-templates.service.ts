@@ -1,6 +1,13 @@
-import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  InternalServerErrorException,
+} from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, Types } from "mongoose";
+import puppeteer from "puppeteer";
+import { S3Service } from "../core/aws/s3/s3.service";
 import { ReactToHtmlService } from "../core/react-to-html/react-to-html.service";
 import { UserQuoteService } from "../users/user-quote/user-quote.service";
 import { CreateEmailTemplateDto } from "./dto/create-email-template.dto";
@@ -13,7 +20,28 @@ export class EmailTemplatesService {
     @InjectModel(EmailTemplate.name) private EmailTemplateModel: Model<EmailTemplate>,
     private readonly reactToHtmlService: ReactToHtmlService,
     private readonly userQuoteService: UserQuoteService,
+    private readonly s3Service: S3Service,
   ) {}
+
+  async screenshotHTML(html: string) {
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+
+    await page.setViewport({ width: 800, height: 600 });
+    await page.setContent(html, { waitUntil: "networkidle0" });
+
+    const element = await page.$("table");
+
+    if (!element) {
+      await browser.close();
+      throw new InternalServerErrorException();
+    }
+
+    const screenshot = await element.screenshot();
+    await browser.close();
+
+    return screenshot;
+  }
 
   async create(createEmailTemplateDto: CreateEmailTemplateDto, owner: Types.ObjectId) {
     try {
@@ -23,10 +51,21 @@ export class EmailTemplatesService {
         usage: 1,
       });
 
+      const compiledCode = await this.reactToHtmlService.compile(createEmailTemplateDto.code);
+      const imageBuffer = await this.screenshotHTML(compiledCode);
+
+      const { url } = await this.s3Service.uploadSingleFile({ file: imageBuffer });
+      const image = await url;
+
+      if (!image.url) {
+        throw new InternalServerErrorException("Cannot upload image to S3 service");
+      }
+
       return await this.EmailTemplateModel.create({
         ...createEmailTemplateDto,
-        html: await this.reactToHtmlService.compile(createEmailTemplateDto.code),
+        html: compiledCode,
         owner,
+        preview: image.url,
       });
     } catch (error) {
       if (error instanceof HttpException) throw error;
@@ -36,7 +75,7 @@ export class EmailTemplatesService {
 
   async findAll(owner: Types.ObjectId) {
     try {
-      return await this.EmailTemplateModel.find({ owner });
+      return await this.EmailTemplateModel.find({ owner }).sort({ createdAt: -1 });
     } catch (error) {
       if (error instanceof HttpException) throw error;
       throw new HttpException("Error fetching email templates.", HttpStatus.INTERNAL_SERVER_ERROR);

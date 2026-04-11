@@ -2,6 +2,7 @@
 
 import { createApiKey, getApiKeys } from "@/actions/api-key/api-key.actions";
 import { getProfile } from "@/actions/auth/profile";
+import { getEmailTemplates } from "@/actions/email-templates/email-templates.actions";
 import { createWaitList } from "@/actions/wait-list/wait-list.actions";
 import Form from "@/components/form";
 import FormField from "@/components/form-field";
@@ -11,10 +12,18 @@ import PageComponent from "@/components/layouts/page-component";
 import HeaderNavigation from "@/components/navigation/header.navigation";
 import SidebarNavigation from "@/components/navigation/sidebar.navigation";
 import Type from "@/components/type";
+import Chip from "@/components/ui/chip";
 import CodeBlock from "@/components/ui/code-block";
 import InputComponent from "@/components/ui/input";
 import { useHotkey } from "@/hooks/use-hotkey";
-import { BoltIcon, PlusIcon } from "@heroicons/react/24/outline";
+import { cn } from "@/lib/utils";
+import {
+  BoltIcon,
+  CheckCircleIcon,
+  LockClosedIcon,
+  PlusIcon,
+  SparklesIcon
+} from "@heroicons/react/24/outline";
 import {
   addToast,
   Button,
@@ -29,8 +38,10 @@ import {
   Tabs
 } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import type { EmailTemplate } from "@repo/packages/shared/schemas";
 import { submitWaitlistSchema, SubmitWaitListValues } from "@repo/packages/shared/schemas/index";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import posthog from "posthog-js";
@@ -51,11 +62,21 @@ export default function LaunchWaitList() {
     queryFn: getApiKeys
   });
 
+  const { data: templatesData, isPending: isTemplatesPending } = useQuery({
+    queryKey: ["email-templates"],
+    queryFn: getEmailTemplates
+  });
+
+  const templates = ((templatesData ?? []) as EmailTemplate[]).filter(
+    (t) => t.status === "published"
+  );
+
   const {
     register,
     handleSubmit,
     control,
     setValue,
+    watch,
     formState: { errors }
   } = useForm<SubmitWaitListValues>({
     resolver: zodResolver(submitWaitlistSchema),
@@ -121,7 +142,8 @@ export default function LaunchWaitList() {
       createWaitList({
         name: data.name,
         sendEmailToNewSignup: data.sendEmail,
-        isSecurityActive: data.addSecurity
+        isSecurityActive: data.addSecurity,
+        emailTemplateToNewSignUps: data.emailTemplateToNewSignUps
       }),
     onSuccess: (_data, variables) => {
       posthog.capture("waitlist_created", {
@@ -129,7 +151,44 @@ export default function LaunchWaitList() {
         send_email_to_new_signup: variables.sendEmail,
         security_active: variables.addSecurity
       });
-    }
+      addToast({
+        title: "Waitlist created",
+        description: (
+          <div className="flex flex-col gap-1 mt-1 w-full">
+            <div className="flex justify-between w-full">
+              <span className="text-muted-foreground">Name</span>
+              <span>{variables.name}</span>
+            </div>
+            <div className="flex justify-between w-full">
+              <span className="text-muted-foreground">Email sending</span>
+              <Type>{variables.sendEmail ? "Enabled" : "Disabled"}</Type>
+            </div>
+            <div className="flex justify-between w-full">
+              <span className="text-muted-foreground">Security</span>
+
+              <Chip status={variables.addSecurity ? "purple" : "warning"}>
+                {variables.addSecurity ? (
+                  <>
+                    <LockClosedIcon className="size-2.5 mr-1" /> Security enabled
+                  </>
+                ) : (
+                  "Security disabled"
+                )}
+              </Chip>
+            </div>
+          </div>
+        ),
+        color: "default",
+        hideIcon: true,
+        classNames: {
+          description: "text-sm w-full",
+          base: "rounded-none! border-l-8 border-l-primary",
+          wrapper: "w-full"
+        }
+      });
+      router.push("/app/waitlist/dashboard");
+    },
+    onError: (err) => addToast({ title: "Error", description: err.message, color: "danger" })
   });
 
   const onSubmit = (data: SubmitWaitListValues) => {
@@ -453,15 +512,111 @@ const res = await client.waitlist("wl_abc123").addUser({
 
       {step === 3 && (
         <div className="flex flex-col gap-4">
-          <Title description="Configure the emails sent to new signups">
+          <Title description="Choose the email template sent to new signups">
             Configure email sending
           </Title>
 
           <Card radius="sm" className="flex flex-col border">
-            <CardBody className="p-5">
-              <Type className="text-muted-foreground">
-                Email sending configuration coming soon.
-              </Type>
+            <CardBody className="p-5 flex flex-col gap-5">
+              <div className="flex flex-col gap-1">
+                <Type variant="h6">Default template</Type>
+                <Type className="text-muted-foreground">
+                  Select a published template to send automatically when someone joins your
+                  waitlist.
+                </Type>
+              </div>
+
+              {isTemplatesPending ? (
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                  {Array.from({ length: 4 }).map((_, i) => (
+                    <div
+                      key={i}
+                      className="aspect-[4/3] rounded-sm border bg-default-50 animate-pulse"
+                    />
+                  ))}
+                </div>
+              ) : templates.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-10 gap-2 rounded-sm bg-default-50">
+                  <SparklesIcon className="size-5 text-muted-foreground" />
+                  <Type className="text-muted-foreground">No published templates yet</Type>
+                  <Button
+                    as={Link}
+                    href="/app/new/email/template"
+                    target="_blank"
+                    size="sm"
+                    variant="flat"
+                    color="primary"
+                    radius="sm"
+                    className="mt-1"
+                  >
+                    <PlusIcon className="size-4" />
+                    Create your first template
+                  </Button>
+                </div>
+              ) : (
+                <Controller
+                  control={control}
+                  name="emailTemplateToNewSignUps"
+                  render={({ field }) => (
+                    <div className="flex flex-col gap-4">
+                      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                        {templates.map((template) => {
+                          const isSelected = field.value === template._id;
+
+                          return (
+                            <button
+                              key={template._id}
+                              type="button"
+                              onClick={() => field.onChange(isSelected ? undefined : template._id)}
+                              className={cn(
+                                "group relative flex flex-col gap-2 rounded-sm bg-default-50 p-0 text-left transition hover:border-primary",
+                                isSelected &&
+                                  "border-primary ring-1 ring-primary bg-primary/30 opacity-80"
+                              )}
+                            >
+                              <div className="relative w-full aspect-[4/3] overflow-hidden rounded-t-sm bg-white/90 flex justify-center">
+                                <div className="w-3/4 h-3/4 absolute bottom-0 rounded-sm overflow-hidden">
+                                  <Image
+                                    src={template.preview}
+                                    alt={template.alias}
+                                    width={400}
+                                    height={300}
+                                    className="object-cover group-hover:scale-[1.02] transition"
+                                  />
+                                </div>
+
+                                {isSelected && (
+                                  <div className="absolute top-2 right-2">
+                                    <CheckCircleIcon className="size-5 text-primary" />
+                                  </div>
+                                )}
+                              </div>
+
+                              <div className="px-3 pb-3">
+                                <Type variant="h6" className="truncate">
+                                  {template.alias}
+                                </Type>
+                                <Type className="text-muted-foreground truncate">
+                                  {template.subject || "No subject"}
+                                </Type>
+                              </div>
+                            </button>
+                          );
+                        })}
+
+                        <Link
+                          href="/app/new/email/template"
+                          target="_blank"
+                          className="flex flex-col items-center justify-center gap-2 rounded-sm border border-dashed bg-default-50/50 aspect-[4/3] transition-colors hover:border-primary/50 hover:bg-default-100/50"
+                        >
+                          <PlusIcon className="size-5 text-muted-foreground" />
+                          <Type className="text-muted-foreground">Create template</Type>
+                        </Link>
+                      </div>
+                    </div>
+                  )}
+                />
+              )}
             </CardBody>
 
             <CardFooter className="border-t flex justify-end py-4">
@@ -483,40 +638,130 @@ const res = await client.waitlist("wl_abc123").addUser({
         </div>
       )}
 
-      {step === 4 && (
-        <div className="flex flex-col gap-4">
-          <Title description="Review your waitlist configuration before launching">Review</Title>
+      {step === 4 &&
+        (() => {
+          const formValues = watch();
+          const selectedTemplate = templates.find(
+            (t) => t._id === formValues.emailTemplateToNewSignUps
+          );
 
-          <Card
-            radius="sm"
-            as={Form}
-            onSubmit={handleSubmit(onSubmit)}
-            className="flex flex-col border"
-            error={error}
-          >
-            <CardBody className="p-5">
-              <Type className="text-muted-foreground">Review your settings and launch.</Type>
-            </CardBody>
+          return (
+            <div className="flex flex-col gap-4">
+              <Title description="Review your waitlist configuration before launching">
+                Review
+              </Title>
 
-            <CardFooter className="border-t flex justify-end py-4">
-              <div className="flex gap-2 justify-end">
-                <Button className="w-fit" variant="bordered" size="sm" onPress={() => setStep(3)}>
-                  <Type variant="sm">Back</Type>
-                </Button>
-                <Button
-                  color="primary"
-                  className="w-fit border"
-                  isDisabled={isPending}
-                  type="submit"
-                  size="sm"
-                >
-                  <Type variant="sm">Launch</Type>
-                </Button>
-              </div>
-            </CardFooter>
-          </Card>
-        </div>
-      )}
+              <Card
+                radius="sm"
+                as={Form}
+                onSubmit={handleSubmit(onSubmit)}
+                className="flex flex-col border"
+                error={error}
+              >
+                <CardBody className="p-0 flex flex-col">
+                  <div className="flex justify-between items-center p-4">
+                    <div className="flex flex-col">
+                      <Type variant="h6">Waitlist name</Type>
+                      <Type className="text-muted-foreground">
+                        How your waitlist appears to users
+                      </Type>
+                    </div>
+                    <Type>{formValues.name || "—"}</Type>
+                  </div>
+
+                  <hr />
+
+                  <div className="flex justify-between items-center p-4">
+                    <div className="flex flex-col">
+                      <Type variant="h6">Email to new signups</Type>
+                      <Type className="text-muted-foreground">
+                        Send confirmation email on registration
+                      </Type>
+                    </div>
+                    <Chip status={formValues.sendEmail ? "active" : "neutral"}>
+                      {formValues.sendEmail ? "Enabled" : "Disabled"}
+                    </Chip>
+                  </div>
+
+                  <hr />
+
+                  <div className="flex justify-between items-center p-4">
+                    <div className="flex flex-col">
+                      <Type variant="h6">Security</Type>
+                      <Type className="text-muted-foreground">Dymo email verification</Type>
+                    </div>
+                    <Chip status={formValues.addSecurity ? "active" : "neutral"}>
+                      {formValues.addSecurity ? "Enabled" : "Disabled"}
+                    </Chip>
+                  </div>
+
+                  <hr />
+
+                  <div className="flex justify-between items-center p-4">
+                    <div className="flex flex-col">
+                      <Type variant="h6">Webhook</Type>
+                      <Type className="text-muted-foreground">Notify on new signups</Type>
+                    </div>
+                    {formValues.webhookUrl ? (
+                      <Type variant="code">{formValues.webhookUrl}</Type>
+                    ) : (
+                      <Type className="text-muted-foreground">Not configured</Type>
+                    )}
+                  </div>
+
+                  <hr />
+
+                  <div className="flex justify-between items-start p-4">
+                    <div className="flex flex-col">
+                      <Type variant="h6">Email template</Type>
+                      <Type className="text-muted-foreground">Template for new signup emails</Type>
+                    </div>
+                    {selectedTemplate ? (
+                      <div className="flex items-center gap-3">
+                        <div className="w-16 h-12 rounded-sm overflow-hidden bg-white/90 border flex justify-center relative">
+                          <div className="w-3/4 h-3/4 absolute bottom-0 overflow-hidden">
+                            <Image
+                              src={selectedTemplate.preview}
+                              alt={selectedTemplate.alias}
+                              width={100}
+                              height={75}
+                              className="object-cover"
+                            />
+                          </div>
+                        </div>
+                        <Type>{selectedTemplate.alias}</Type>
+                      </div>
+                    ) : (
+                      <Type className="text-muted-foreground">None selected</Type>
+                    )}
+                  </div>
+                </CardBody>
+
+                <CardFooter className="border-t flex justify-end py-4">
+                  <div className="flex gap-2 justify-end">
+                    <Button
+                      className="w-fit"
+                      variant="bordered"
+                      size="sm"
+                      onPress={() => setStep(3)}
+                    >
+                      <Type variant="sm">Back</Type>
+                    </Button>
+                    <Button
+                      color="primary"
+                      className="w-fit border"
+                      isLoading={isPending}
+                      type="submit"
+                      size="sm"
+                    >
+                      <Type variant="sm">Launch</Type>
+                    </Button>
+                  </div>
+                </CardFooter>
+              </Card>
+            </div>
+          );
+        })()}
     </PageComponent>
   );
 }

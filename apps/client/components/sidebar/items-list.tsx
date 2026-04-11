@@ -117,7 +117,7 @@ export default function ItemList({ navItems }: { navItems: NavItemOrDivider[] | 
                   {inDevelopment && (
                     <Chip
                       status="warning"
-                      className="py-0 border-transparent max-w-5 flex items-center justify-center"
+                      className="py-0 border-transparent max-w-5 flex items-center justify-center rounded-sm!"
                     >
                       <CodeBracketIcon className="size-4 min-w-3.5 min-h-3.5" />
                     </Chip>
