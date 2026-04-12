@@ -88,10 +88,13 @@ export class WaitListUserService {
       const position: number =
         (await this.WaitListUserModel.countDocuments({ waitlistId: waitlistId })) + 1;
 
+      const source = dto.referredBy && !dto.source ? "referral" : dto.source;
+
       const user = await this.WaitListUserModel.create({
         waitlistId: waitlistId,
         position,
         ...dto,
+        ...(source && { source }),
       });
 
       // <================== SEND WEBHOOK TO THE WEBHOOK URL ==================>

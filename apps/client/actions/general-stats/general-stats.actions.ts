@@ -2,18 +2,25 @@
 
 import { FetchWrapper } from "@/lib/api/fetch-wrapper";
 
-export interface DayCount {
-  date: string;
-  count: number;
+export interface DashboardStats {
+  totalSignups: { value: number; change: number };
+  activeWaitlists: { value: number; total: number; change: number };
+  conversionRate: { value: number; change: number };
+  avgWaitTime: { value: number; change: number };
+  signupsBySource: Array<{ source: string; count: number; percentage: number }>;
+  waitlistStatus: Array<{ status: string; count: number }>;
+  recentSignups: Array<{
+    _id: string;
+    name?: string;
+    email: string;
+    waitlistName: string;
+    position: number;
+    source: string;
+    status: string;
+    createdAt: string;
+  }>;
 }
 
-export interface GeneralStats {
-  signupsByDay: DayCount[];
-  emailsByDay: DayCount[];
-  blockedByDay: DayCount[];
-  webhooksByDay: DayCount[];
-}
-
-export async function getGeneralStats() {
-  return await FetchWrapper<GeneralStats>("/general-stats");
+export async function getDashboardStats() {
+  return await FetchWrapper<DashboardStats>("/general-stats");
 }

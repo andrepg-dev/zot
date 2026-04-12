@@ -144,17 +144,17 @@ Maintain these patterns for consistency across all pages and components:
 - Content grids: `grid grid-cols-1 md:grid-cols-2 lg:grid-cols-X gap-4`
 - Masonry: `columns-1 lg:columns-2 gap-6 space-y-6`
 
-**HeroUI components**: always use `radius="sm"` on every HeroUI component that accepts it (Table, Modal, Drawer, Card, Button, Input, etc.).
+**HeroUI components**: use `radius="none"` on Cards, Tables, Modals, and Drawers. Use `radius="sm"` on Buttons and Inputs only.
 
 **Cards and containers**:
-- `rounded-sm` (5px) everywhere — not `rounded-md` or `rounded-lg`
-- Chart cards: `flex flex-col rounded-sm border px-5 py-4.5 bg-background`
-- HeroUI cards: `<Card className="border" radius="sm">` with `<CardBody className="p-5">`
+- `rounded-none` on all cards and containers — no rounded corners
+- Chart cards: `flex flex-col border px-5 py-4.5 bg-background`
+- HeroUI cards: `<Card className="border" radius="none">` with `<CardBody className="p-5">`
 
 **Tables** (standard style for all tables):
 ```tsx
 <Table
-  radius="sm"
+  radius="none"
   selectionMode="multiple"
   checkboxesProps={{ size: "sm", classNames: { wrapper: "before:border-1" } }}
   classNames={{

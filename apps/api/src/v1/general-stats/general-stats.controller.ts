@@ -8,7 +8,7 @@ export class GeneralStatsController {
   constructor(private readonly generalStatsService: GeneralStatsService) {}
 
   @Get()
-  getGeneralStats(@UserId() userId: Types.ObjectId) {
-    return this.generalStatsService.getGeneralStats(userId);
+  getDashboardStats(@UserId() userId: Types.ObjectId) {
+    return this.generalStatsService.getDashboardStats(userId);
   }
 }
