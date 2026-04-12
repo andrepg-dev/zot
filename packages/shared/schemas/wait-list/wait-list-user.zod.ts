@@ -8,6 +8,13 @@ export const waitListUserSources = [
   "paid_ads",
 ] as const;
 
+/** Sources the user can explicitly set — organic/referral are auto-determined */
+export const waitListUserSelectableSources = [
+  "social",
+  "email",
+  "paid_ads",
+] as const;
+
 export const waitListUserStatuses = [
   "waiting",
   "invited",
@@ -19,7 +26,7 @@ export const registerWaitListUserSchema = z.object({
   email: z.string().email(),
   name: z.string().optional(),
   referredBy: z.string().optional(),
-  source: z.enum(waitListUserSources).optional(),
+  source: z.enum(waitListUserSelectableSources).optional(),
   metadata: z.record(z.string(), z.any()).optional(),
 });
 

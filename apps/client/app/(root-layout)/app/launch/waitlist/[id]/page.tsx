@@ -69,7 +69,7 @@ export default function LaunchedWaitList({ params }: { params: Promise<{ id: str
   const stats = [
     {
       id: 1,
-      title: "Total Sign Ups",
+      title: "Total Signups",
       value: data?.users?.total ?? 0,
       icon: UserPlusIcon,
       iconColor: "text-blue-500"
@@ -83,7 +83,7 @@ export default function LaunchedWaitList({ params }: { params: Promise<{ id: str
     },
     {
       id: 3,
-      title: "Sign Ups Today",
+      title: "Signups Today",
       value: data?.users?.signUpsToday ?? 0,
       icon: UserGroupIcon,
       iconColor: "text-yellow-500"

@@ -88,13 +88,13 @@ export class WaitListUserService {
       const position: number =
         (await this.WaitListUserModel.countDocuments({ waitlistId: waitlistId })) + 1;
 
-      const source = dto.referredBy && !dto.source ? "referral" : dto.source;
+      const source = dto.referredBy ? "referral" : dto.source || "organic";
 
       const user = await this.WaitListUserModel.create({
         waitlistId: waitlistId,
         position,
         ...dto,
-        ...(source && { source }),
+        source,
       });
 
       // <================== SEND WEBHOOK TO THE WEBHOOK URL ==================>
@@ -295,6 +295,38 @@ export class WaitListUserService {
       if (error instanceof HttpException) throw error;
       throw new HttpException(
         "Error counting referred users in waitlist.",
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  async updateStatus(
+    waitlistId: Types.ObjectId,
+    email: string,
+    status: string,
+    owner: Types.ObjectId,
+  ) {
+    try {
+      await this.validateOwnership(waitlistId, owner);
+
+      const user = await this.WaitListUserModel.findOneAndUpdate(
+        { waitlistId, email },
+        { $set: { status } },
+        { new: true },
+      );
+
+      if (!user) {
+        throw new HttpException(
+          `User with email "${email}" not found in this waitlist.`,
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
+      return user;
+    } catch (error) {
+      if (error instanceof HttpException) throw error;
+      throw new HttpException(
+        "Error updating user status.",
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }

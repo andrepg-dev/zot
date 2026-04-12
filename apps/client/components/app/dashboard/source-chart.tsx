@@ -14,22 +14,29 @@ const sourceLabels: Record<string, string> = {
   paid_ads: "Paid Ads"
 };
 
+const ALL_SOURCES = ["organic", "referral", "social", "email", "paid_ads"];
+
 export default function SourceChart({ data }: SourceChartProps) {
+  const dataMap = new Map(data.map((d) => [d.source, d]));
+  const fullData = ALL_SOURCES.map(
+    (source) => dataMap.get(source) ?? { source, count: 0, percentage: 0 }
+  );
+
   return (
     <div className="flex flex-col border px-5 py-4.5 bg-background">
       <Type variant="h6" className="mb-6">
         Signups by Source
       </Type>
 
-      <div className="flex flex-col gap-4">
-        {data.map((item) => (
+      <div className="flex flex-col gap-4 font-mono">
+        {fullData.map((item) => (
           <div key={item.source} className="flex items-center gap-3">
             <span className="text-sm text-muted-foreground w-20 shrink-0">
               {sourceLabels[item.source] || item.source}
             </span>
-            <div className="flex-1 h-5 bg-default-100 rounded-sm overflow-hidden">
+            <div className="flex-1 h-5 bg-default-100  overflow-hidden">
               <div
-                className="h-full rounded-sm bg-gradient-to-r from-primary to-primary/70"
+                className="h-full  bg-gradient-to-r from-primary to-primary/70"
                 style={{ width: `${item.percentage}%` }}
               />
             </div>
@@ -37,9 +44,6 @@ export default function SourceChart({ data }: SourceChartProps) {
           </div>
         ))}
 
-        {data.length === 0 && (
-          <Type className="text-muted-foreground py-8 text-center">No source data yet.</Type>
-        )}
       </div>
     </div>
   );

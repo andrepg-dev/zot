@@ -1,18 +1,11 @@
 "use client";
 
+import type { DashboardStats } from "@/actions/general-stats/general-stats.actions";
 import GlobalButton from "@/components/global/button";
 import Type from "@/components/type";
 import Chip from "@/components/ui/chip";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableColumn,
-  TableHeader,
-  TableRow
-} from "@heroui/react";
 import { ArrowDownIcon, ArrowUpIcon } from "@heroicons/react/24/outline";
-import type { DashboardStats } from "@/actions/general-stats/general-stats.actions";
+import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@heroui/react";
 
 type RecentSignup = DashboardStats["recentSignups"][number];
 
@@ -57,13 +50,13 @@ export default function RecentSignupsTable({ data }: RecentSignupsTableProps) {
       <Table
         aria-label="Recent signups"
         radius="none"
-        removeWrapper
         classNames={{
-          th: "!rounded-b-none bg-default-50",
-          td: "first:before:rounded-none last:before:rounded-e-none py-3"
+          td: "py-3 font-mono",
+          wrapper: "p-0 bg-transparent"
         }}
       >
         <TableHeader>
+          <TableColumn>Joined</TableColumn>
           <TableColumn>Name</TableColumn>
           <TableColumn>Email</TableColumn>
           <TableColumn>Waitlist</TableColumn>
@@ -75,43 +68,44 @@ export default function RecentSignupsTable({ data }: RecentSignupsTableProps) {
           {data.map((signup) => (
             <TableRow key={signup._id}>
               <TableCell>
-                <Type>{signup.name || "-"}</Type>
+                <Type variant="sm" className="text-muted-foreground">
+                  {new Date(signup.createdAt).toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "numeric",
+                    year: "numeric"
+                  })}
+                </Type>
               </TableCell>
               <TableCell>
-                <Type className="text-muted-foreground">{signup.email}</Type>
+                <Type variant="sm">{signup.name || "-"}</Type>
               </TableCell>
               <TableCell>
-                <Type>{signup.waitlistName || "-"}</Type>
+                <Type variant="sm" className="text-muted-foreground">{signup.email}</Type>
               </TableCell>
               <TableCell>
-                <PositionCell position={signup.position} />
+                <Type variant="sm">{signup.waitlistName || "-"}</Type>
               </TableCell>
               <TableCell>
-                <Type className="text-muted-foreground">
+                <Type variant="sm" as="span">
+                  <PositionCell position={signup.position} />
+                </Type>
+              </TableCell>
+              <TableCell>
+                <Type variant="sm" className="text-muted-foreground">
                   {sourceLabels[signup.source] || signup.source || "Organic"}
                 </Type>
               </TableCell>
               <TableCell>
-                {signup.status === "waiting" ? (
+                {!signup.status || signup.status === "waiting" ? (
                   <GlobalButton variant="bordered" className="text-xs">
                     Invite
                   </GlobalButton>
+                ) : signup.status === "invited" ? (
+                  <Chip status="primary">Pending</Chip>
+                ) : signup.status === "converted" ? (
+                  <Chip status="active">Converted</Chip>
                 ) : (
-                  <Chip
-                    status={
-                      signup.status === "invited"
-                        ? "primary"
-                        : signup.status === "converted"
-                          ? "active"
-                          : "warning"
-                    }
-                  >
-                    {signup.status === "invited"
-                      ? "Pending"
-                      : signup.status === "converted"
-                        ? "Converted"
-                        : signup.status}
-                  </Chip>
+                  <Chip status="danger">Churned</Chip>
                 )}
               </TableCell>
             </TableRow>

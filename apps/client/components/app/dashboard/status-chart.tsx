@@ -1,6 +1,8 @@
 "use client";
 
 import Type from "@/components/type";
+import GlobalTooltip from "@/components/global/tooltip";
+import { InformationCircleIcon } from "@heroicons/react/24/outline";
 import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts";
 
 interface StatusChartProps {
@@ -19,6 +21,13 @@ const STATUS_LABELS: Record<string, string> = {
   invited: "Invited",
   converted: "Converted",
   churned: "Churned"
+};
+
+const STATUS_DESCRIPTIONS: Record<string, string> = {
+  waiting: "Users waiting in the queue for an invite.",
+  invited: "Users who have been sent an invitation email.",
+  converted: "Users who signed up for your product after being invited.",
+  churned: "Users who were invited but never converted."
 };
 
 function formatCount(n: number): string {
@@ -40,7 +49,7 @@ export default function StatusChart({ data }: StatusChartProps) {
         Waitlist Status
       </Type>
 
-      <div className="flex items-center gap-6">
+      <div className="flex items-center gap-6 font-mono">
         <div className="relative w-40 h-40 shrink-0">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
@@ -71,7 +80,7 @@ export default function StatusChart({ data }: StatusChartProps) {
 
         <div className="flex flex-col gap-3">
           {data.map((item) => (
-            <div key={item.status} className="flex items-center gap-2">
+            <div key={item.status} className="flex items-center gap-2 group">
               <span
                 className="size-2.5 rounded-full shrink-0"
                 style={{ backgroundColor: STATUS_COLORS[item.status] }}
@@ -79,6 +88,9 @@ export default function StatusChart({ data }: StatusChartProps) {
               <span className="text-sm text-muted-foreground">
                 {STATUS_LABELS[item.status] || item.status}
               </span>
+              <GlobalTooltip content={STATUS_DESCRIPTIONS[item.status]}>
+                <InformationCircleIcon className="size-3.5 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity cursor-help" />
+              </GlobalTooltip>
               <span className="text-sm font-medium ml-auto">
                 {item.count.toLocaleString()}
               </span>

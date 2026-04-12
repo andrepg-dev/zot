@@ -125,16 +125,22 @@ export class EmailsService {
     try {
       const result = await this.emailService.send(payload);
 
-      await this.emailSendRecordModel.create({
-        owner: userId,
-        waitlistId,
-        quantitySent: emailUsageSending,
-        recipientEmails: usersList,
-        sentSuccessfully: usersList.length,
-        failedCount: 0,
-        failedEmails: [],
-        payload: rest,
-      });
+      await Promise.all([
+        this.emailSendRecordModel.create({
+          owner: userId,
+          waitlistId,
+          quantitySent: emailUsageSending,
+          recipientEmails: usersList,
+          sentSuccessfully: usersList.length,
+          failedCount: 0,
+          failedEmails: [],
+          payload: rest,
+        }),
+        this.WaitListUserModel.updateMany(
+          { waitlistId, email: { $in: usersList }, status: { $in: ["waiting", null] } },
+          { $set: { status: "invited" } },
+        ),
+      ]);
 
       const usage = await this.userquoteService.editUserQuote({
         ownerId: userId,
@@ -221,23 +227,32 @@ export class EmailsService {
     try {
       const result = await this.emailService.send(payload);
 
-      await this.emailSendRecordModel.create({
-        owner: userId,
-        waitlistId,
-        quantitySent: totalUsersCount,
-        recipientEmails: userEmails,
-        sentSuccessfully: totalUsersCount,
-        failedCount: 0,
-        failedEmails: [],
-        payload: rest,
-        template: template ? template.toObject() : undefined,
-      });
-
-      await this.userquoteService.editUserQuote({
-        ownerId: userId,
-        service: "emailsSent",
-        usage: totalUsersCount, // This is the users quantity that we sent the email
-      });
+      await Promise.all([
+        this.emailSendRecordModel.create({
+          owner: userId,
+          waitlistId,
+          quantitySent: totalUsersCount,
+          recipientEmails: userEmails,
+          sentSuccessfully: totalUsersCount,
+          failedCount: 0,
+          failedEmails: [],
+          payload: rest,
+          template: template ? template.toObject() : undefined,
+        }),
+        this.WaitListUserModel.updateMany(
+          {
+            _id: { $in: users.map((id) => new Types.ObjectId(id)) },
+            waitlistId: new Types.ObjectId(waitlistId),
+            status: { $in: ["waiting", null] },
+          },
+          { $set: { status: "invited" } },
+        ),
+        this.userquoteService.editUserQuote({
+          ownerId: userId,
+          service: "emailsSent",
+          usage: totalUsersCount,
+        }),
+      ]);
 
       return {
         ...result,
