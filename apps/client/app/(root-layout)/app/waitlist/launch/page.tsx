@@ -462,7 +462,9 @@ const client = new ZotSDK({
 
 const res = await client.waitlist("wl_abc123").addUser({
   email: "asponceg@gmail.com",
-  refferedBy: "user@gmail.com", // Optional
+  name: "Andre Ponce", // Optional
+  referredBy: "user@gmail.com", // Optional
+  source: "organic", // Optional — organic | referral | social | email | paid_ads
   metadata: {
     // Any relevant data for you
   },
@@ -478,7 +480,9 @@ const client = new ZotSDK({
 
 const res = await client.waitlist("wl_abc123").addUser({
   email: "asponceg@gmail.com",
-  refferedBy: "user@gmail.com", // Optional
+  name: "Andre Ponce", // Optional
+  referredBy: "user@gmail.com", // Optional
+  source: "organic", // Optional — organic | referral | social | email | paid_ads
   metadata: {
     // Any relevant data for you
   },
