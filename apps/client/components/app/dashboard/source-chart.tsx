@@ -34,16 +34,14 @@ export default function SourceChart({ data }: SourceChartProps) {
             <span className="text-sm text-muted-foreground w-20 shrink-0">
               {sourceLabels[item.source] || item.source}
             </span>
-            <div className="flex-1 h-5 bg-default-100  overflow-hidden">
-              <div
-                className="h-full  bg-gradient-to-r from-primary to-primary/70"
-                style={{ width: `${item.percentage}%` }}
-              />
+            <div className="flex-1 h-5 bg-default-100 overflow-hidden">
+              <div className="h-full bg-primary" style={{ width: `${item.percentage}%` }} />
             </div>
-            <span className="text-sm text-muted-foreground w-10 text-right">{item.percentage}%</span>
+            <span className="text-sm text-muted-foreground w-10 text-right">
+              {item.percentage}%
+            </span>
           </div>
         ))}
-
       </div>
     </div>
   );

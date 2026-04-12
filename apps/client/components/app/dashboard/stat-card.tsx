@@ -49,7 +49,7 @@ export default function StatCard({
 
             <span
               className={cn(
-                "text-[10px] font-mono px-1.5 py-0.5 rounded-sm",
+                "text-[10px] font-mono px-1.5 py-0.5 rounded-none",
                 isPositive ? "bg-success/20 text-success" : "bg-danger/20 text-danger"
               )}
             >

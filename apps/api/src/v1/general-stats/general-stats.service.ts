@@ -11,39 +11,42 @@ export class GeneralStatsService {
     @InjectModel(WaitListUser.name) private waitListUserModel: Model<WaitListUser>,
   ) {}
 
-  async getDashboardStats(userId: Types.ObjectId) {
+  async getDashboardStats(userId: Types.ObjectId, fromDate?: string, toDate?: string) {
     const now = new Date();
-    const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+    const to = toDate ? new Date(toDate) : now;
+    const from = fromDate ? new Date(fromDate) : new Date(to.getTime() - 30 * 24 * 60 * 60 * 1000);
+
+    const dateFilter = { $gte: from, $lte: to };
 
     const waitlists = await this.waitListModel.find({ owner: userId }).select("+owner").lean();
     const waitlistIds = waitlists.map((w) => w._id);
 
+    const baseMatch = { waitlistId: { $in: waitlistIds } };
+    const rangeMatch = { ...baseMatch, createdAt: dateFilter };
+
     const [
       totalSignups,
-      signupsLast30,
+      signupsInRange,
       statusCounts,
       sourceCounts,
       recentSignups,
       avgWaitDays,
     ] = await Promise.all([
-      // Total signups across all waitlists
-      this.waitListUserModel.countDocuments({ waitlistId: { $in: waitlistIds } }),
+      // Total signups across all waitlists (all time)
+      this.waitListUserModel.countDocuments(baseMatch),
 
-      // Signups in last 30 days
-      this.waitListUserModel.countDocuments({
-        waitlistId: { $in: waitlistIds },
-        createdAt: { $gte: thirtyDaysAgo },
-      }),
+      // Signups in selected range
+      this.waitListUserModel.countDocuments(rangeMatch),
 
       // Status breakdown (null/missing defaults to "waiting")
       this.waitListUserModel.aggregate([
-        { $match: { waitlistId: { $in: waitlistIds } } },
+        { $match: rangeMatch },
         { $group: { _id: { $ifNull: ["$status", "waiting"] }, count: { $sum: 1 } } },
       ]),
 
       // Source breakdown (null/missing defaults to "organic")
       this.waitListUserModel.aggregate([
-        { $match: { waitlistId: { $in: waitlistIds } } },
+        { $match: rangeMatch },
         {
           $group: {
             _id: { $ifNull: ["$source", "organic"] },
@@ -53,9 +56,9 @@ export class GeneralStatsService {
         { $sort: { count: -1 } },
       ]),
 
-      // Recent signups with waitlist name
+      // Recent signups with waitlist name (within range)
       this.waitListUserModel.aggregate([
-        { $match: { waitlistId: { $in: waitlistIds } } },
+        { $match: rangeMatch },
         { $sort: { createdAt: -1 } },
         { $limit: 10 },
         {
@@ -85,7 +88,7 @@ export class GeneralStatsService {
       this.waitListUserModel.aggregate([
         {
           $match: {
-            waitlistId: { $in: waitlistIds },
+            ...baseMatch,
             status: { $in: ["waiting", null, undefined] },
           },
         },
@@ -103,14 +106,18 @@ export class GeneralStatsService {
     // Calculate active waitlists
     const activeWaitlists = waitlists.filter((w) => w.isAvailable).length;
     const totalWaitlists = waitlists.length;
-    const newWaitlistsLast30 = waitlists.filter(
-      (w) => w.isAvailable && new Date((w as any).createdAt).getTime() >= thirtyDaysAgo.getTime(),
+    const newWaitlistsInRange = waitlists.filter(
+      (w) =>
+        w.isAvailable &&
+        new Date((w as any).createdAt).getTime() >= from.getTime() &&
+        new Date((w as any).createdAt).getTime() <= to.getTime(),
     ).length;
 
-    // Calculate conversion rate
+    // Calculate conversion rate (within range)
     const statusMap = Object.fromEntries(statusCounts.map((s) => [s._id, s.count]));
     const convertedCount = statusMap["converted"] || 0;
-    const conversionRate = totalSignups > 0 ? (convertedCount / totalSignups) * 100 : 0;
+    const rangeTotal = signupsInRange || 1;
+    const conversionRate = rangeTotal > 0 ? (convertedCount / rangeTotal) * 100 : 0;
 
     // Avg wait time
     const currentAvgWait = avgWaitDays[0]?.avgWait ?? 0;
@@ -134,12 +141,12 @@ export class GeneralStatsService {
     return {
       totalSignups: {
         value: totalSignups,
-        change: signupsLast30,
+        change: signupsInRange,
       },
       activeWaitlists: {
         value: activeWaitlists,
         total: totalWaitlists,
-        change: newWaitlistsLast30,
+        change: newWaitlistsInRange,
       },
       conversionRate: {
         value: Math.round(conversionRate * 10) / 10,

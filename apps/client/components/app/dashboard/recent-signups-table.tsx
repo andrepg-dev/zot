@@ -4,7 +4,6 @@ import type { DashboardStats } from "@/actions/general-stats/general-stats.actio
 import GlobalButton from "@/components/global/button";
 import Type from "@/components/type";
 import Chip from "@/components/ui/chip";
-import { ArrowDownIcon, ArrowUpIcon } from "@heroicons/react/24/outline";
 import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@heroui/react";
 
 type RecentSignup = DashboardStats["recentSignups"][number];
@@ -22,20 +21,9 @@ const sourceLabels: Record<string, string> = {
 };
 
 function PositionCell({ position }: { position: number }) {
-  const isLow = position <= 50;
-
   return (
     <div className="flex items-center gap-1">
-      {isLow ? (
-        <ArrowUpIcon className="size-3 text-success" />
-      ) : (
-        <ArrowDownIcon className="size-3 text-danger" />
-      )}
-      <span
-        className={`text-xs font-mono px-1.5 py-0.5 rounded-sm ${isLow ? "text-success" : "text-warning"}`}
-      >
-        #{position}
-      </span>
+      <span className={`text-xs font-mono px-1.5 py-0.5 rounded-sm`}>#{position}</span>
     </div>
   );
 }
@@ -62,7 +50,7 @@ export default function RecentSignupsTable({ data }: RecentSignupsTableProps) {
           <TableColumn>Waitlist</TableColumn>
           <TableColumn>Position</TableColumn>
           <TableColumn>Source</TableColumn>
-          <TableColumn>Action</TableColumn>
+          <TableColumn className="gap-2 w-[200px] text-end">Action</TableColumn>
         </TableHeader>
         <TableBody emptyContent={<Type>No signups yet.</Type>}>
           {data.map((signup) => (
@@ -80,7 +68,9 @@ export default function RecentSignupsTable({ data }: RecentSignupsTableProps) {
                 <Type variant="sm">{signup.name || "-"}</Type>
               </TableCell>
               <TableCell>
-                <Type variant="sm" className="text-muted-foreground">{signup.email}</Type>
+                <Type variant="sm" className="text-muted-foreground">
+                  {signup.email}
+                </Type>
               </TableCell>
               <TableCell>
                 <Type variant="sm">{signup.waitlistName || "-"}</Type>
@@ -95,7 +85,7 @@ export default function RecentSignupsTable({ data }: RecentSignupsTableProps) {
                   {sourceLabels[signup.source] || signup.source || "Organic"}
                 </Type>
               </TableCell>
-              <TableCell>
+              <TableCell className="flex justify-end max-w-[200px] gap-2">
                 {!signup.status || signup.status === "waiting" ? (
                   <GlobalButton variant="bordered" className="text-xs">
                     Invite
@@ -107,6 +97,10 @@ export default function RecentSignupsTable({ data }: RecentSignupsTableProps) {
                 ) : (
                   <Chip status="danger">Churned</Chip>
                 )}
+
+                <GlobalButton variant="bordered" className="text-xs">
+                  See details
+                </GlobalButton>
               </TableCell>
             </TableRow>
           ))}

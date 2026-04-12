@@ -21,6 +21,10 @@ export interface DashboardStats {
   }>;
 }
 
-export async function getDashboardStats() {
-  return await FetchWrapper<DashboardStats>("/general-stats");
+export async function getDashboardStats(from?: string, to?: string) {
+  const params = new URLSearchParams();
+  if (from) params.set("from", from);
+  if (to) params.set("to", to);
+  const query = params.toString();
+  return await FetchWrapper<DashboardStats>(`/general-stats${query ? `?${query}` : ""}`);
 }
