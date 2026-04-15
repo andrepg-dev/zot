@@ -60,7 +60,7 @@ function StatusChartSkeleton() {
         <Skeleton className="h-3.5 w-32 rounded-sm" />
       </div>
       <div className="flex items-center gap-6 px-5 pr-10 py-[13.5px]">
-        <Skeleton className="size-40 rounded-full shrink-0" />
+        <Skeleton className="size-36 rounded-full shrink-0 bg-transparent! border-[20px]" />
         <div className="flex flex-col gap-3 flex-1">
           {Array.from({ length: 4 }).map((_, i) => (
             <div key={i} className="flex items-center gap-2 h-5">
@@ -162,7 +162,7 @@ export default function Dashboard() {
               <div className="w-full">
                 <SourceChartSkeleton />
               </div>
-              <div className="w-max">
+              <div className="min-w-[377px]">
                 <StatusChartSkeleton />
               </div>
             </div>
