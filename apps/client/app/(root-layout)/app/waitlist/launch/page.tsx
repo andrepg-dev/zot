@@ -3,7 +3,8 @@
 import { createApiKey, getApiKeys } from "@/actions/api-key/api-key.actions";
 import { getProfile } from "@/actions/auth/profile";
 import { getEmailTemplates } from "@/actions/email-templates/email-templates.actions";
-import { createWaitList } from "@/actions/wait-list/wait-list.actions";
+import { registerWaitListUser } from "@/actions/wait-list/wait-list-user.actions";
+import { createWaitList, updateWaitList } from "@/actions/wait-list/wait-list.actions";
 import Form from "@/components/form";
 import FormField from "@/components/form-field";
 import Stepper from "@/components/global/stepper";
@@ -51,6 +52,7 @@ import { Controller, useForm } from "react-hook-form";
 export default function LaunchWaitList() {
   const [step, setStep] = useState(1);
   const [connectionTab, setConnectionTab] = useState<string>("sdk");
+  const [createdWaitlistId, setCreatedWaitlistId] = useState<string>("");
 
   const { data: userData } = useQuery({
     queryKey: ["user-profile"],
@@ -128,18 +130,49 @@ export default function LaunchWaitList() {
     enabled: step === 2
   });
 
+  const { isPending: isCreatingWaitlist, mutate: createWaitlistMutation } = useMutation({
+    mutationFn: (data: SubmitWaitListValues) =>
+      createWaitList({
+        name: data.name,
+        sendEmailToNewSignup: data.sendEmail,
+        isSecurityActive: data.addSecurity
+      }),
+    onSuccess: (response) => {
+      setCreatedWaitlistId(response._id);
+      setStep(2);
+      addToast({ description: "Waitlist created", color: "success" });
+    },
+    onError: (err) => addToast({ title: "Error", description: err.message, color: "danger" })
+  });
+
+  const { isPending: isTestingConnection, mutate: testConnection } = useMutation({
+    mutationFn: () =>
+      registerWaitListUser(createdWaitlistId, {
+        email: `test+${Date.now()}@zot.dev`,
+        name: "Test User"
+      }),
+    onSuccess: () => {
+      addToast({
+        title: "Connection successful",
+        description: "A test user was added to your waitlist.",
+        color: "success"
+      });
+    },
+    onError: (err) => addToast({ title: "Error", description: err.message, color: "danger" })
+  });
+
   useHotkey({
     key: "Enter",
     modifiers: ["meta"],
     onPress: () => {
-      // TODO: test connection logic
+      if (createdWaitlistId) testConnection();
     },
     enabled: step === 2
   });
 
   const { isPending, error, mutate } = useMutation({
     mutationFn: (data: SubmitWaitListValues) =>
-      createWaitList({
+      updateWaitList(createdWaitlistId, {
         name: data.name,
         sendEmailToNewSignup: data.sendEmail,
         isSecurityActive: data.addSecurity,
@@ -243,10 +276,13 @@ export default function LaunchWaitList() {
           <Card
             radius="sm"
             as="form"
-            onSubmit={(e: React.FormEvent) => {
-              e.preventDefault();
-              setStep(2);
-            }}
+            onSubmit={handleSubmit((data) => {
+              if (createdWaitlistId) {
+                setStep(2);
+                return;
+              }
+              createWaitlistMutation(data);
+            })}
             className="flex flex-col border"
           >
             <CardBody className="p-0 flex flex-col">
@@ -363,7 +399,8 @@ export default function LaunchWaitList() {
                   color="primary"
                   className="w-fit border"
                   size="sm"
-                  onPress={() => setStep(2)}
+                  type="submit"
+                  isLoading={isCreatingWaitlist}
                 >
                   <Type variant="sm">Next</Type>
                 </Button>
@@ -397,10 +434,71 @@ export default function LaunchWaitList() {
                 </div>
               }
             >
-              <div className="flex flex-col gap-3">
-                <Type className="text-muted-foreground">
-                  Use the REST API with your API key to connect your waitlist.
-                </Type>
+              <div className="flex flex-col gap-3 bg-default-50 border rounded-sm p-4">
+                <Select
+                  radius="sm"
+                  size="sm"
+                  className="border rounded-lg overflow-hidden"
+                  label="API Key"
+                  placeholder="Select or generate an API key"
+                  selectedKeys={selectedApiKey ? [selectedApiKey] : []}
+                  onSelectionChange={(keys) => {
+                    const key = Array.from(keys)[0] as string;
+
+                    if (key === "generate") {
+                      generateApiKey();
+                      return;
+                    }
+
+                    setSelectedApiKey(key || "");
+                  }}
+                  items={[
+                    ...(apiKeys || []).map((k) => ({
+                      key: k._id,
+                      label: k.name
+                    })),
+                    { key: "generate", label: "Generate new API key" }
+                  ]}
+                >
+                  {(item) => (
+                    <SelectItem
+                      key={item.key}
+                      startContent={
+                        item.key === "generate" ? <PlusIcon className="size-4" /> : undefined
+                      }
+                      className={item.key === "generate" ? "!text-primary" : ""}
+                    >
+                      {item.label}
+                    </SelectItem>
+                  )}
+                </Select>
+                <CodeBlock
+                  lang="bash"
+                  code={`curl -X POST http://localhost:3010/v1/wait-list/${createdWaitlistId || "wl_abc123"}/user \\
+  -H "Authorization: Bearer ${selectedApiKeyValue || "your-api-key"}" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "email": "asponceg@gmail.com",
+    "name": "Andre Ponce",
+    "referredBy": "user@gmail.com",
+    "source": "social",
+    "metadata": {}
+  }'`}
+                  displayCode={
+                    selectedApiKeyValue
+                      ? `curl -X POST http://localhost:3010/v1/wait-list/${createdWaitlistId || "wl_abc123"}/user \\
+  -H "Authorization: Bearer ${selectedApiKeyValue.slice(0, 8)}${"•".repeat(20)}" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "email": "asponceg@gmail.com",
+    "name": "Andre Ponce",
+    "referredBy": "user@gmail.com",
+    "source": "social",
+    "metadata": {}
+  }'`
+                      : undefined
+                  }
+                />
               </div>
             </Tab>
             <Tab
@@ -452,6 +550,7 @@ export default function LaunchWaitList() {
                     </SelectItem>
                   )}
                 </Select>
+                <CodeBlock lang="bash" code={`npm install @zot/sdk`} />
                 <CodeBlock
                   code={`import "dotenv/config";
 import { ZotSDK } from "@zot/sdk";
@@ -460,7 +559,7 @@ const client = new ZotSDK({
   apiKey: "${selectedApiKeyValue || "your-api-key"}",
 });
 
-const res = await client.waitlist("wl_abc123").addUser({
+const res = await client.waitlist("${createdWaitlistId || "wl_abc123"}").addUser({
   email: "asponceg@gmail.com",
   name: "Andre Ponce", // Optional
   referredBy: "user@gmail.com", // Optional — auto-sets source to "referral"
@@ -478,7 +577,7 @@ const client = new ZotSDK({
   apiKey: "${selectedApiKeyValue.slice(0, 8)}${"•".repeat(20)}",
 });
 
-const res = await client.waitlist("wl_abc123").addUser({
+const res = await client.waitlist("${createdWaitlistId || "wl_abc123"}").addUser({
   email: "asponceg@gmail.com",
   name: "Andre Ponce", // Optional
   referredBy: "user@gmail.com", // Optional — auto-sets source to "referral"
@@ -495,7 +594,15 @@ const res = await client.waitlist("wl_abc123").addUser({
           </Tabs>
 
           <div className="flex gap-2 justify-between bg-default-50 p-4 py-3 border rounded-sm">
-            <Button className="w-fit" variant="flat" color="success" size="sm">
+            <Button
+              className="w-fit"
+              variant="flat"
+              color="success"
+              size="sm"
+              isDisabled={!createdWaitlistId}
+              isLoading={isTestingConnection}
+              onPress={() => testConnection()}
+            >
               <BoltIcon className="size-4" />
               <Type variant="sm">Test Connection</Type>
               <Kbd className="text-xs" keys={["command"]}>
