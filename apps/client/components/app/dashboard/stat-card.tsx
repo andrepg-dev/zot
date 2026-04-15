@@ -11,6 +11,7 @@ interface StatCardProps {
   iconColor: string;
   animated: boolean;
   lastDays?: string;
+  totalValue: number;
 }
 
 export default function StatCard({
@@ -19,15 +20,23 @@ export default function StatCard({
   suffix,
   icon: Icon,
   iconColor,
-  animated
+  animated,
+  totalValue
 }: StatCardProps) {
   return (
     <div className="relative border bg-background">
       <div className="px-5 py-4.5">
+        <div className="absolute right-4 top-4 text-muted-foreground font-mono text-xs">
+          Recently{" "}
+          <NumberFlow
+            value={animated ? value : 0}
+            format={{ minimumFractionDigits: value % 1 !== 0 ? 1 : 0 }}
+          />
+        </div>
         <div className="flex flex-col gap-2">
           <div className="flex items-baseline gap-1">
             <NumberFlow
-              value={animated ? value : 0}
+              value={animated ? totalValue : 0}
               format={{ minimumFractionDigits: value % 1 !== 0 ? 1 : 0 }}
               className="text-2xl font-semibold"
             />

@@ -102,7 +102,7 @@ function toISODate(calendarDate: { year: number; month: number; day: number }): 
 
 export default function Dashboard() {
   const [animated, setAnimated] = React.useState(false);
-  const [selectedRange, setSelectedRange] = React.useState("90");
+  const [selectedRange, setSelectedRange] = React.useState("30");
   const tz = getLocalTimeZone();
 
   const defaultEnd = today(tz);
@@ -179,6 +179,7 @@ export default function Dashboard() {
               <StatCard
                 label="Total Signups"
                 value={data?.totalSignups.change ?? 0}
+                totalValue={data?.totalSignups.value ?? 0}
                 lastDays={`Last ${selectedRange} days`}
                 icon={UserPlusIcon}
                 iconColor="text-blue-500"
@@ -187,6 +188,7 @@ export default function Dashboard() {
               <StatCard
                 label="Active Waitlists"
                 value={data?.activeWaitlists.change ?? 0}
+                totalValue={data?.activeWaitlists.value ?? 0}
                 icon={ChartBarIcon}
                 iconColor="text-green-500"
                 animated={animated}
@@ -194,6 +196,7 @@ export default function Dashboard() {
               <StatCard
                 label="Conversion Rate"
                 value={data?.conversionRate.change ?? 0}
+                totalValue={data?.conversionRate.value ?? 0}
                 suffix="%"
                 icon={ArrowTrendingUpIcon}
                 iconColor="text-yellow-500"
@@ -202,6 +205,7 @@ export default function Dashboard() {
               <StatCard
                 label="Avg Wait Time"
                 value={data?.avgWaitTime.change ?? 0}
+                totalValue={data?.avgWaitTime.value ?? 0}
                 suffix="d"
                 icon={ClockIcon}
                 iconColor="text-purple-500"
