@@ -10,6 +10,7 @@ import Type from "@/components/type";
 import Chip from "@/components/ui/chip";
 import InputComponent from "@/components/ui/input";
 import SendCampaignModal from "@/components/wait-list/send-campaign-modal";
+import UserDetailsDrawer from "@/components/wait-list/user-details-drawer";
 import { useHotkey } from "@/hooks/use-hotkey";
 import { formatDate } from "@/lib/format-date";
 import { exportToCsv } from "@/lib/utils";
@@ -48,8 +49,17 @@ const baseColumns = [
   { key: "createdAt", label: "Joined" },
   { key: "email", label: "Email" },
   { key: "referredBy", label: "Referred By" },
+  { key: "position", label: "Position" },
   { key: "status", label: "Status" }
 ];
+
+function PositionCell({ position }: { position: number }) {
+  return (
+    <div className="flex items-center gap-1 border bg-default-100/70 w-min">
+      <span className="text-xs font-mono px-1.5 py-0.5 rounded-sm">#{position}</span>
+    </div>
+  );
+}
 
 const STATUS_CHIP: Record<string, "warning" | "primary" | "active" | "neutral"> = {
   waiting: "neutral",
@@ -63,9 +73,11 @@ export default function AudiencePage({ params }: { params: Promise<{ id: string 
   const [search, setSearch] = useState("");
   const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set());
   const [emailsToDelete, setEmailsToDelete] = useState<string[]>([]);
+  const [activeUserId, setActiveUserId] = useState<string | null>(null);
   const confirmModal = useDisclosure();
   const exportModal = useDisclosure();
   const sendModal = useDisclosure();
+  const detailsDrawer = useDisclosure();
   const queryClient = useQueryClient();
 
   useHotkey({
@@ -119,7 +131,7 @@ export default function AudiencePage({ params }: { params: Promise<{ id: string 
 
   const columns = React.useMemo(() => {
     const metaCols = metadataKeys.map((k) => ({ key: `meta_${k}`, label: k }));
-    return [...baseColumns, ...metaCols];
+    return [...baseColumns, ...metaCols, { key: "action", label: "Action" }];
   }, [metadataKeys]);
 
   const referralCodeToEmail = React.useMemo(() => {
@@ -189,6 +201,36 @@ export default function AudiencePage({ params }: { params: Promise<{ id: string 
       onSettled: () => onClose()
     });
   }
+
+  function handleSeeDetails(userId: string) {
+    setActiveUserId(userId);
+    detailsDrawer.onOpen();
+  }
+
+  function handleInvite(userId: string) {
+    setSelectedKeys(new Set([userId]));
+    sendModal.onOpen();
+  }
+
+  const activeUser = React.useMemo(() => {
+    if (!activeUserId || !users) return null;
+    const user = users.find((u) => u._id === activeUserId);
+    if (!user) return null;
+    return {
+      _id: user._id,
+      email: user.email,
+      name: user.name,
+      position: user.position ?? 0,
+      source: user.source,
+      status: user.status,
+      createdAt: String(user.createdAt),
+      waitlistName: waitlistStats?.name,
+      referredBy: user.referredBy
+        ? (referralCodeToEmail.get(user.referredBy) ?? user.referredBy)
+        : undefined,
+      metadata: user.metadata
+    };
+  }, [activeUserId, users, waitlistStats?.name, referralCodeToEmail]);
 
   function handleRowDoubleClick(userId?: string) {
     if (selectedKeys.size > 0) {
@@ -277,103 +319,155 @@ export default function AudiencePage({ params }: { params: Promise<{ id: string 
           </div>
         </div>
 
-        <Table
-          aria-label="Audience Table"
-          selectionMode="multiple"
-          selectedKeys={selectedKeys}
-          onSelectionChange={(keys) => {
-            if (keys === "all") {
-              setSelectedKeys(new Set(filteredUsers.map((u) => u._id)));
-            } else {
-              setSelectedKeys(new Set(keys as Set<string>));
-            }
-          }}
-          checkboxesProps={{
-            size: "sm",
-            classNames: { wrapper: "before:border-1" }
-          }}
-          radius="none"
-          className="bg-default-50 border"
-          classNames={{
-            td: "py-3",
-            wrapper: "p-0"
-          }}
-        >
-          <TableHeader columns={columns}>
-            {(column) => (
-              <TableColumn key={column.key} allowsSorting className="capitalize">
-                {column.label}
-              </TableColumn>
-            )}
-          </TableHeader>
-
-          <TableBody
-            items={filteredUsers}
-            isLoading={isPending}
-            loadingContent={<Spinner size="sm" />}
-            emptyContent={<Type>No users registered yet.</Type>}
+        <div className="flex flex-col border bg-background">
+          <Table
+            aria-label="Audience Table"
+            selectionMode="multiple"
+            selectedKeys={selectedKeys}
+            onSelectionChange={(keys) => {
+              if (keys === "all") {
+                setSelectedKeys(new Set(filteredUsers.map((u) => u._id)));
+              } else {
+                setSelectedKeys(new Set(keys as Set<string>));
+              }
+            }}
+            checkboxesProps={{
+              size: "sm",
+              classNames: { wrapper: "before:border-1" }
+            }}
+            radius="none"
+            classNames={{
+              td: "py-3 font-mono",
+              wrapper: "p-0 bg-transparent"
+            }}
           >
-            {(item) => (
-              <TableRow
-                key={item._id}
-                onDoubleClick={(e: React.MouseEvent) => {
-                  e.stopPropagation();
-                  handleRowDoubleClick(item._id);
-                }}
-              >
-                {(columnKey) => {
-                  const key = String(columnKey);
+            <TableHeader columns={columns}>
+              {(column) => (
+                <TableColumn
+                  key={column.key}
+                  allowsSorting={column.key !== "action"}
+                  className={column.key === "action" ? "text-end" : "capitalize"}
+                >
+                  {column.label}
+                </TableColumn>
+              )}
+            </TableHeader>
 
-                  if (key.startsWith("meta_")) {
-                    const metaKey = key.replace("meta_", "");
-                    const value = item.metadata?.[metaKey];
-                    return (
-                      <TableCell>
-                        <span className="font-mono text-xs text-muted-foreground truncate block max-w-[200px]">
-                          {value != null ? String(value) : "—"}
-                        </span>
-                      </TableCell>
-                    );
-                  }
+            <TableBody
+              items={filteredUsers}
+              isLoading={isPending}
+              loadingContent={<Spinner size="sm" />}
+              emptyContent={<Type>No users registered yet.</Type>}
+            >
+              {(item) => (
+                <TableRow
+                  key={item._id}
+                  onDoubleClick={(e: React.MouseEvent) => {
+                    e.stopPropagation();
+                    handleRowDoubleClick(item._id);
+                  }}
+                >
+                  {(columnKey) => {
+                    const key = String(columnKey);
 
-                  const valueMap: Record<string, React.ReactNode> = {
-                    email: (
-                      <span className="font-mono truncate block max-w-[200px] text-xs">
-                        <span className="text-muted-foreground">#{item.position}</span> {item.email}
-                      </span>
-                    ),
-                    referredBy: item.referredBy ? (
-                      <span className="font-mono text-xs truncate block max-w-[200px]">
-                        {referralCodeToEmail.get(item.referredBy) ?? item.referredBy}
-                      </span>
-                    ) : (
-                      <span className="text-muted-foreground text-xs truncate block max-w-[200px]">
-                        —
-                      </span>
-                    ),
-                    createdAt: (
-                      <span className="text-muted-foreground font-mono text-xs truncate block max-w-[200px]">
-                        {formatDate(item.createdAt)}
-                      </span>
-                    ),
-                    status: (() => {
+                    if (key === "action") {
                       const status = item.status ?? "waiting";
                       return (
-                        <Chip
-                          status={STATUS_CHIP[status] ?? "neutral"}
-                          className="!rounded-sm"
-                        >
-                          {status}
-                        </Chip>
+                        <TableCell className="flex justify-end items-center gap-2">
+                          {status === "waiting" ? (
+                            <GlobalButton
+                              variant="bordered"
+                              className="text-xs"
+                              onPress={() => handleInvite(item._id)}
+                            >
+                              Invite
+                            </GlobalButton>
+                          ) : status === "invited" ? (
+                            <Chip status="primary" className="rounded-sm!">
+                              Invited
+                            </Chip>
+                          ) : status === "converted" ? (
+                            <Chip status="active">Converted</Chip>
+                          ) : (
+                            <Chip status="danger">Churned</Chip>
+                          )}
+
+                          <GlobalButton
+                            variant="bordered"
+                            className="text-xs"
+                            onPress={() => handleSeeDetails(item._id)}
+                          >
+                            See details
+                          </GlobalButton>
+                        </TableCell>
                       );
-                    })()
-                  };
-                  return <TableCell>{valueMap[key]}</TableCell>;
-                }}
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+                    }
+
+                    if (key.startsWith("meta_")) {
+                      const metaKey = key.replace("meta_", "");
+                      const value = item.metadata?.[metaKey];
+                      return (
+                        <TableCell>
+                          <Type
+                            variant="sm"
+                            className="text-muted-foreground truncate block max-w-[200px]"
+                          >
+                            {value != null ? String(value) : "—"}
+                          </Type>
+                        </TableCell>
+                      );
+                    }
+
+                    const valueMap: Record<string, React.ReactNode> = {
+                      email: (
+                        <Type variant="sm" as="span" className="truncate block max-w-[200px]">
+                          {item.email}
+                        </Type>
+                      ),
+                      position: (
+                        <Type variant="sm" as="span">
+                          <PositionCell position={item.position ?? 0} />
+                        </Type>
+                      ),
+                      referredBy: item.referredBy ? (
+                        <Type variant="sm" className="truncate block max-w-[200px]">
+                          {referralCodeToEmail.get(item.referredBy) ?? item.referredBy}
+                        </Type>
+                      ) : (
+                        <Type
+                          variant="sm"
+                          className="text-muted-foreground truncate block max-w-[200px]"
+                        >
+                          —
+                        </Type>
+                      ),
+                      createdAt: (
+                        <Type
+                          variant="sm"
+                          className="text-muted-foreground truncate block max-w-[200px]"
+                        >
+                          {formatDate(item.createdAt)}
+                        </Type>
+                      ),
+                      status: (() => {
+                        const status = item.status ?? "waiting";
+                        return (
+                          <Chip
+                            status={STATUS_CHIP[status] ?? "neutral"}
+                            className="!rounded-sm"
+                          >
+                            {status}
+                          </Chip>
+                        );
+                      })()
+                    };
+                    return <TableCell>{valueMap[key]}</TableCell>;
+                  }}
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
       </div>
 
       <SendCampaignModal
@@ -381,6 +475,12 @@ export default function AudiencePage({ params }: { params: Promise<{ id: string 
         onOpenChange={sendModal.onOpenChange}
         waitlistId={id}
         users={campaignUsers}
+      />
+
+      <UserDetailsDrawer
+        isOpen={detailsDrawer.isOpen}
+        onOpenChange={detailsDrawer.onOpenChange}
+        user={activeUser}
       />
 
       <Modal isOpen={exportModal.isOpen} onOpenChange={exportModal.onOpenChange} radius="sm">
