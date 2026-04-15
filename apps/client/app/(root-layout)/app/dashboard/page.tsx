@@ -36,14 +36,16 @@ function StatCardSkeleton() {
 
 function SourceChartSkeleton() {
   return (
-    <div className="flex flex-col border px-5 py-4.5 bg-background">
-      <Skeleton className="h-5 w-32 rounded-sm mb-6" />
-      <div className="flex flex-col gap-4">
+    <div className="flex flex-col border bg-background h-full">
+      <div className="px-5 pr-10 py-3.5 border-b flex items-center h-[49px]">
+        <Skeleton className="h-3.5 w-32 rounded-sm" />
+      </div>
+      <div className="flex flex-col gap-4 px-5 pr-10 py-[13.5px]">
         {Array.from({ length: 5 }).map((_, i) => (
-          <div key={i} className="flex items-center gap-3">
-            <Skeleton className="h-4 w-20 rounded-sm shrink-0" />
+          <div key={i} className="flex items-center gap-3 h-5">
+            <Skeleton className="h-3.5 w-20 rounded-sm shrink-0" />
             <Skeleton className="h-5 flex-1 rounded-sm" />
-            <Skeleton className="h-4 w-10 rounded-sm shrink-0" />
+            <Skeleton className="h-3.5 w-10 rounded-sm shrink-0" />
           </div>
         ))}
       </div>
@@ -53,16 +55,18 @@ function SourceChartSkeleton() {
 
 function StatusChartSkeleton() {
   return (
-    <div className="flex flex-col border px-5 py-4.5 bg-background">
-      <Skeleton className="h-5 w-32 rounded-sm mb-6" />
-      <div className="flex items-center gap-6">
+    <div className="flex flex-col border bg-background h-full">
+      <div className="px-5 pr-10 py-3.5 border-b flex items-center h-[49px]">
+        <Skeleton className="h-3.5 w-32 rounded-sm" />
+      </div>
+      <div className="flex items-center gap-6 px-5 pr-10 py-[13.5px]">
         <Skeleton className="size-40 rounded-full shrink-0" />
         <div className="flex flex-col gap-3 flex-1">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="flex items-center gap-2">
+            <div key={i} className="flex items-center gap-2 h-5">
               <Skeleton className="size-2.5 rounded-full shrink-0" />
-              <Skeleton className="h-4 w-16 rounded-sm" />
-              <Skeleton className="h-4 w-8 rounded-sm ml-auto" />
+              <Skeleton className="h-3.5 w-16 rounded-sm" />
+              <Skeleton className="h-3.5 w-8 rounded-sm ml-auto" />
             </div>
           ))}
         </div>
@@ -154,11 +158,11 @@ export default function Dashboard() {
               <StatCardSkeleton />
               <StatCardSkeleton />
             </div>
-            <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
-              <div className="lg:col-span-3">
+            <div className="flex gap-4">
+              <div className="w-full">
                 <SourceChartSkeleton />
               </div>
-              <div className="lg:col-span-2">
+              <div className="w-max">
                 <StatusChartSkeleton />
               </div>
             </div>
@@ -176,6 +180,7 @@ export default function Dashboard() {
                 label="Total Signups"
                 value={data?.totalSignups.value ?? 0}
                 change={data?.totalSignups.change ?? 0}
+                lastDays={`Last ${selectedRange} days`}
                 changeSuffix=""
                 icon={UserPlusIcon}
                 iconColor="text-blue-500"
@@ -184,7 +189,6 @@ export default function Dashboard() {
               <StatCard
                 label="Active Waitlists"
                 value={data?.activeWaitlists.value ?? 0}
-                change={data?.activeWaitlists.change ?? 0}
                 changeSuffix=""
                 icon={ChartBarIcon}
                 iconColor="text-green-500"
@@ -194,7 +198,6 @@ export default function Dashboard() {
                 label="Conversion Rate"
                 value={data?.conversionRate.value ?? 0}
                 suffix="%"
-                change={data?.conversionRate.change ?? 0}
                 changeSuffix=""
                 icon={ArrowTrendingUpIcon}
                 iconColor="text-yellow-500"
@@ -204,7 +207,6 @@ export default function Dashboard() {
                 label="Avg Wait Time"
                 value={data?.avgWaitTime.value ?? 0}
                 suffix="d"
-                change={data?.avgWaitTime.change ?? 0}
                 changeSuffix=""
                 icon={ClockIcon}
                 iconColor="text-purple-500"
@@ -212,11 +214,11 @@ export default function Dashboard() {
               />
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
-              <div className="lg:col-span-3">
+            <div className="flex gap-4">
+              <div className="w-full">
                 <SourceChart data={data?.signupsBySource ?? []} />
               </div>
-              <div className="lg:col-span-2">
+              <div className="w-max">
                 <StatusChart data={data?.waitlistStatus ?? []} />
               </div>
             </div>

@@ -26,10 +26,19 @@ export class ResendProvider extends EmailSendingService implements EmailSending 
   /**
    * Function to send emails using resend services
    */
-  async send(options: ResendEmail): Promise<CreateEmailResponse> {
+  async send(data: ResendEmail): Promise<CreateEmailResponse> {
+    const { to, from, subject, options } = data;
+
+    if (!options.html) {
+      throw new InternalServerErrorException("HTML is required, please provide it.");
+    }
+
     const response = await this.resendService.send({
       ...options,
-      text: options.options.text ?? "",
+      to,
+      from,
+      subject,
+      html: options.html,
     });
 
     if (response.error) {

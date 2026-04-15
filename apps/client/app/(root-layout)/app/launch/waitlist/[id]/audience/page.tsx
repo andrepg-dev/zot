@@ -9,6 +9,7 @@ import PrimaryActionButton from "@/components/global/primary-action-button";
 import Title from "@/components/global/title";
 import PageComponent from "@/components/layouts/page-component";
 import Type from "@/components/type";
+import Chip from "@/components/ui/chip";
 import InputComponent from "@/components/ui/input";
 import CampaignResultAnimation from "@/components/wait-list/campaign-result-animation";
 import CampaignSentAnimation, {
@@ -58,8 +59,16 @@ import React, { useEffect, useState } from "react";
 const baseColumns = [
   { key: "createdAt", label: "Joined" },
   { key: "email", label: "Email" },
-  { key: "referredBy", label: "Referred By" }
+  { key: "referredBy", label: "Referred By" },
+  { key: "status", label: "Status" }
 ];
+
+const STATUS_CHIP: Record<string, "warning" | "primary" | "active" | "neutral"> = {
+  waiting: "neutral",
+  invited: "active",
+  converted: "active",
+  churned: "warning"
+};
 
 export default function AudiencePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = React.use(params);
@@ -409,7 +418,18 @@ export default function AudiencePage({ params }: { params: Promise<{ id: string 
                       <span className="text-muted-foreground font-mono text-xs truncate block max-w-[200px]">
                         {formatDate(item.createdAt)}
                       </span>
-                    )
+                    ),
+                    status: (() => {
+                      const status = item.status ?? "waiting";
+                      return (
+                        <Chip
+                          status={STATUS_CHIP[status] ?? "neutral"}
+                          className="!rounded-sm"
+                        >
+                          {status}
+                        </Chip>
+                      );
+                    })()
                   };
                   return <TableCell>{valueMap[key]}</TableCell>;
                 }}

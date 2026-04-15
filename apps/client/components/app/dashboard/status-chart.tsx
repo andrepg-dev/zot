@@ -1,7 +1,7 @@
 "use client";
 
-import Type from "@/components/type";
 import GlobalTooltip from "@/components/global/tooltip";
+import Type from "@/components/type";
 import { InformationCircleIcon } from "@heroicons/react/24/outline";
 import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts";
 
@@ -39,17 +39,15 @@ export default function StatusChart({ data }: StatusChartProps) {
   const total = data.reduce((sum, item) => sum + item.count, 0);
   const hasData = total > 0;
 
-  const chartData = hasData
-    ? data.filter((d) => d.count > 0)
-    : [{ status: "empty", count: 1 }];
+  const chartData = hasData ? data.filter((d) => d.count > 0) : [{ status: "empty", count: 1 }];
 
   return (
-    <div className="flex flex-col border px-5 py-4.5 bg-background">
-      <Type variant="h6" className="mb-6">
-        Waitlist Status
+    <div className="flex flex-col border bg-background h-full">
+      <Type variant="h6" className="px-5 pr-10 py-3.5 border-b">
+        WaitList Status
       </Type>
 
-      <div className="flex items-center gap-6 font-mono">
+      <div className="flex items-center gap-6 font-mono px-5 pr-10 py-[13.5px]">
         <div className="relative w-40 h-40 shrink-0">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
@@ -91,9 +89,7 @@ export default function StatusChart({ data }: StatusChartProps) {
               <GlobalTooltip content={STATUS_DESCRIPTIONS[item.status]}>
                 <InformationCircleIcon className="size-3.5 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity cursor-help" />
               </GlobalTooltip>
-              <span className="text-sm font-medium ml-auto">
-                {item.count.toLocaleString()}
-              </span>
+              <span className="text-sm font-medium ml-auto">{item.count.toLocaleString()}</span>
             </div>
           ))}
         </div>

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import type { Document } from "mongoose";
 import { Model, Types } from "mongoose";
@@ -188,6 +188,10 @@ export class EmailsService {
       template = await this.emailTemplateService.findOne(new Types.ObjectId(templateId), userId);
     }
 
+    if (!template) {
+      throw new BadRequestException("Template not found.");
+    }
+
     const usersIds = await this.WaitListUserModel.aggregate([
       {
         $match: {
@@ -214,10 +218,10 @@ export class EmailsService {
       from: "Zot WaitList <mail@zot.so>",
       to: userEmails,
       provider: "resend",
-      subject: template?.subject ?? "Testing if this works or not.",
+      subject: template.subject,
       options: {
-        html: template?.html ?? "<bold>First email sending with zot.</bold>",
-        replyTo: "reply@zot.so",
+        html: template.html,
+        replyTo: "mail@zot.so",
         // text: "<bold>First email sending with zot.</bold>",
       },
     };

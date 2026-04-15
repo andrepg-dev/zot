@@ -7,11 +7,12 @@ interface StatCardProps {
   label: string;
   value: number;
   suffix?: string;
-  change: number;
+  change?: number;
   changeSuffix?: string;
   icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
   iconColor: string;
   animated: boolean;
+  lastDays?: string;
 }
 
 export default function StatCard({
@@ -22,9 +23,10 @@ export default function StatCard({
   changeSuffix = "%",
   icon: Icon,
   iconColor,
-  animated
+  animated,
+  lastDays
 }: StatCardProps) {
-  const isPositive = change >= 0;
+  const isPositive = change && change >= 0;
 
   return (
     <div className="relative border bg-background">
@@ -41,23 +43,25 @@ export default function StatCard({
             )}
           </div>
 
-          <div className="flex items-center justify-between">
+          <div className="flex justify-between">
             <div className="flex gap-2 items-center">
               <Icon className={cn("size-4", iconColor)} />
               <p className="text-xs text-muted-foreground font-mono">{label}</p>
             </div>
+          </div>
 
+          {change && (
             <span
               className={cn(
-                "text-[10px] font-mono px-1.5 py-0.5 rounded-none",
-                isPositive ? "bg-success/20 text-success" : "bg-danger/20 text-danger"
+                "text-[10px] font-mono px-1.5 py-0.5 rounded-none absolute top-2 right-2",
+                isPositive ? "bg-default-900/20 text-white" : "bg-danger/20 text-danger"
               )}
             >
-              {isPositive ? "+" : ""}
-              {change}
+              {/* {isPositive ? "+" : ""} */}
+              {change} {lastDays}
               {changeSuffix}
             </span>
-          </div>
+          )}
         </div>
       </div>
     </div>

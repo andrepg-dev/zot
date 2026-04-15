@@ -85,15 +85,18 @@ export class WaitListUserService {
         usage: 1,
       });
 
-      const position: number =
-        (await this.WaitListUserModel.countDocuments({ waitlistId: waitlistId })) + 1;
+      const lastUser = await this.WaitListUserModel.findOne({ waitlistId: waitlistId })
+        .sort({ position: -1 })
+        .select("position")
+        .lean();
 
+      const position = lastUser?.position ?? 0 + 1;
       const source = dto.referredBy ? "referral" : dto.source || "organic";
 
       const user = await this.WaitListUserModel.create({
-        waitlistId: waitlistId,
-        position,
         ...dto,
+        waitlistId,
+        position,
         source,
       });
 
@@ -325,10 +328,7 @@ export class WaitListUserService {
       return user;
     } catch (error) {
       if (error instanceof HttpException) throw error;
-      throw new HttpException(
-        "Error updating user status.",
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new HttpException("Error updating user status.", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }

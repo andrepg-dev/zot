@@ -13,8 +13,10 @@ export class GeneralStatsService {
 
   async getDashboardStats(userId: Types.ObjectId, fromDate?: string, toDate?: string) {
     const now = new Date();
-    const to = toDate ? new Date(toDate) : now;
-    const from = fromDate ? new Date(fromDate) : new Date(to.getTime() - 30 * 24 * 60 * 60 * 1000);
+    const to = toDate ? new Date(`${toDate}T23:59:59.999Z`) : now;
+    const from = fromDate
+      ? new Date(`${fromDate}T00:00:00.000Z`)
+      : new Date(to.getTime() - 30 * 24 * 60 * 60 * 1000);
 
     const dateFilter = { $gte: from, $lte: to };
 
@@ -24,84 +26,78 @@ export class GeneralStatsService {
     const baseMatch = { waitlistId: { $in: waitlistIds } };
     const rangeMatch = { ...baseMatch, createdAt: dateFilter };
 
-    const [
-      totalSignups,
-      signupsInRange,
-      statusCounts,
-      sourceCounts,
-      recentSignups,
-      avgWaitDays,
-    ] = await Promise.all([
-      // Total signups across all waitlists (all time)
-      this.waitListUserModel.countDocuments(baseMatch),
+    const [totalSignups, signupsInRange, statusCounts, sourceCounts, recentSignups, avgWaitDays] =
+      await Promise.all([
+        // Total signups across all waitlists (all time)
+        this.waitListUserModel.countDocuments(baseMatch),
 
-      // Signups in selected range
-      this.waitListUserModel.countDocuments(rangeMatch),
+        // Signups in selected range
+        this.waitListUserModel.countDocuments(rangeMatch),
 
-      // Status breakdown (null/missing defaults to "waiting")
-      this.waitListUserModel.aggregate([
-        { $match: rangeMatch },
-        { $group: { _id: { $ifNull: ["$status", "waiting"] }, count: { $sum: 1 } } },
-      ]),
+        // Status breakdown (null/missing defaults to "waiting")
+        this.waitListUserModel.aggregate([
+          { $match: rangeMatch },
+          { $group: { _id: { $ifNull: ["$status", "waiting"] }, count: { $sum: 1 } } },
+        ]),
 
-      // Source breakdown (null/missing defaults to "organic")
-      this.waitListUserModel.aggregate([
-        { $match: rangeMatch },
-        {
-          $group: {
-            _id: { $ifNull: ["$source", "organic"] },
-            count: { $sum: 1 },
-          },
-        },
-        { $sort: { count: -1 } },
-      ]),
-
-      // Recent signups with waitlist name (within range)
-      this.waitListUserModel.aggregate([
-        { $match: rangeMatch },
-        { $sort: { createdAt: -1 } },
-        { $limit: 10 },
-        {
-          $lookup: {
-            from: "waitlists",
-            localField: "waitlistId",
-            foreignField: "_id",
-            as: "waitlist",
-          },
-        },
-        { $unwind: { path: "$waitlist", preserveNullAndEmptyArrays: true } },
-        {
-          $project: {
-            _id: 1,
-            name: 1,
-            email: 1,
-            waitlistName: "$waitlist.name",
-            position: 1,
-            source: 1,
-            status: 1,
-            createdAt: 1,
-          },
-        },
-      ]),
-
-      // Average wait time for "waiting" users (in days)
-      this.waitListUserModel.aggregate([
-        {
-          $match: {
-            ...baseMatch,
-            status: { $in: ["waiting", null, undefined] },
-          },
-        },
-        {
-          $group: {
-            _id: null,
-            avgWait: {
-              $avg: { $divide: [{ $subtract: [now, "$createdAt"] }, 1000 * 60 * 60 * 24] },
+        // Source breakdown (null/missing defaults to "organic")
+        this.waitListUserModel.aggregate([
+          { $match: rangeMatch },
+          {
+            $group: {
+              _id: { $ifNull: ["$source", "organic"] },
+              count: { $sum: 1 },
             },
           },
-        },
-      ]),
-    ]);
+          { $sort: { count: -1 } },
+        ]),
+
+        // Recent signups with waitlist name (within range)
+        this.waitListUserModel.aggregate([
+          { $match: rangeMatch },
+          { $sort: { createdAt: -1 } },
+          { $limit: 10 },
+          {
+            $lookup: {
+              from: "waitlists",
+              localField: "waitlistId",
+              foreignField: "_id",
+              as: "waitlist",
+            },
+          },
+          { $unwind: { path: "$waitlist", preserveNullAndEmptyArrays: true } },
+          {
+            $project: {
+              _id: 1,
+              name: 1,
+              email: 1,
+              waitlistName: "$waitlist.name",
+              position: 1,
+              source: 1,
+              status: 1,
+              createdAt: 1,
+            },
+          },
+        ]),
+
+        // Average wait time for "waiting" users (in days)
+        this.waitListUserModel.aggregate([
+          {
+            $match: {
+              ...baseMatch,
+              status: { $in: ["waiting", null, undefined] },
+            },
+          },
+          {
+            $group: {
+              _id: null,
+              avgWait: {
+                $avg: { $divide: [{ $subtract: [now, "$createdAt"] }, 1000 * 60 * 60 * 24] },
+              },
+            },
+          },
+        ]),
+      ]);
 
     // Calculate active waitlists
     const activeWaitlists = waitlists.filter((w) => w.isAvailable).length;

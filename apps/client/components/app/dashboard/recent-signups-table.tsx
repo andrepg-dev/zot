@@ -22,7 +22,7 @@ const sourceLabels: Record<string, string> = {
 
 function PositionCell({ position }: { position: number }) {
   return (
-    <div className="flex items-center gap-1">
+    <div className="flex items-center gap-1 border bg-default-100/70 w-min">
       <span className={`text-xs font-mono px-1.5 py-0.5 rounded-sm`}>#{position}</span>
     </div>
   );
@@ -48,7 +48,7 @@ export default function RecentSignupsTable({ data }: RecentSignupsTableProps) {
           <TableColumn>Name</TableColumn>
           <TableColumn>Email</TableColumn>
           <TableColumn>Waitlist</TableColumn>
-          <TableColumn>Position</TableColumn>
+          <TableColumn className="w-min">Position</TableColumn>
           <TableColumn>Source</TableColumn>
           <TableColumn className="gap-2 w-[200px] text-end">Action</TableColumn>
         </TableHeader>
@@ -85,13 +85,15 @@ export default function RecentSignupsTable({ data }: RecentSignupsTableProps) {
                   {sourceLabels[signup.source] || signup.source || "Organic"}
                 </Type>
               </TableCell>
-              <TableCell className="flex justify-end max-w-[200px] gap-2">
+              <TableCell className="flex justify-end items-center max-w-[200px] gap-2">
                 {!signup.status || signup.status === "waiting" ? (
                   <GlobalButton variant="bordered" className="text-xs">
                     Invite
                   </GlobalButton>
                 ) : signup.status === "invited" ? (
-                  <Chip status="primary">Pending</Chip>
+                  <Chip status="primary" className="rounded-sm!">
+                    Invited
+                  </Chip>
                 ) : signup.status === "converted" ? (
                   <Chip status="active">Converted</Chip>
                 ) : (
