@@ -102,7 +102,7 @@ function toISODate(calendarDate: { year: number; month: number; day: number }): 
 
 export default function Dashboard() {
   const [animated, setAnimated] = React.useState(false);
-  const [selectedRange, setSelectedRange] = React.useState("30");
+  const [selectedRange, setSelectedRange] = React.useState("90");
   const tz = getLocalTimeZone();
 
   const defaultEnd = today(tz);
@@ -178,36 +178,31 @@ export default function Dashboard() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <StatCard
                 label="Total Signups"
-                value={data?.totalSignups.value ?? 0}
-                change={data?.totalSignups.change ?? 0}
+                value={data?.totalSignups.change ?? 0}
                 lastDays={`Last ${selectedRange} days`}
-                changeSuffix=""
                 icon={UserPlusIcon}
                 iconColor="text-blue-500"
                 animated={animated}
               />
               <StatCard
                 label="Active Waitlists"
-                value={data?.activeWaitlists.value ?? 0}
-                changeSuffix=""
+                value={data?.activeWaitlists.change ?? 0}
                 icon={ChartBarIcon}
                 iconColor="text-green-500"
                 animated={animated}
               />
               <StatCard
                 label="Conversion Rate"
-                value={data?.conversionRate.value ?? 0}
+                value={data?.conversionRate.change ?? 0}
                 suffix="%"
-                changeSuffix=""
                 icon={ArrowTrendingUpIcon}
                 iconColor="text-yellow-500"
                 animated={animated}
               />
               <StatCard
                 label="Avg Wait Time"
-                value={data?.avgWaitTime.value ?? 0}
+                value={data?.avgWaitTime.change ?? 0}
                 suffix="d"
-                changeSuffix=""
                 icon={ClockIcon}
                 iconColor="text-purple-500"
                 animated={animated}

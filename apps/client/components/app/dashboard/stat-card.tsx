@@ -7,8 +7,6 @@ interface StatCardProps {
   label: string;
   value: number;
   suffix?: string;
-  change?: number;
-  changeSuffix?: string;
   icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
   iconColor: string;
   animated: boolean;
@@ -19,15 +17,10 @@ export default function StatCard({
   label,
   value,
   suffix,
-  change,
-  changeSuffix = "%",
   icon: Icon,
   iconColor,
-  animated,
-  lastDays
+  animated
 }: StatCardProps) {
-  const isPositive = change && change >= 0;
-
   return (
     <div className="relative border bg-background">
       <div className="px-5 py-4.5">
@@ -49,19 +42,6 @@ export default function StatCard({
               <p className="text-xs text-muted-foreground font-mono">{label}</p>
             </div>
           </div>
-
-          {change && (
-            <span
-              className={cn(
-                "text-[10px] font-mono px-1.5 py-0.5 rounded-none absolute top-2 right-2",
-                isPositive ? "bg-default-900/20 text-white" : "bg-danger/20 text-danger"
-              )}
-            >
-              {/* {isPositive ? "+" : ""} */}
-              {change} {lastDays}
-              {changeSuffix}
-            </span>
-          )}
         </div>
       </div>
     </div>

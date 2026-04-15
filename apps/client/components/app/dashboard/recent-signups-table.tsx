@@ -4,7 +4,18 @@ import type { DashboardStats } from "@/actions/general-stats/general-stats.actio
 import GlobalButton from "@/components/global/button";
 import Type from "@/components/type";
 import Chip from "@/components/ui/chip";
-import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@heroui/react";
+import SendCampaignModal from "@/components/wait-list/send-campaign-modal";
+import UserDetailsDrawer from "@/components/wait-list/user-details-drawer";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableColumn,
+  TableHeader,
+  TableRow,
+  useDisclosure
+} from "@heroui/react";
+import { useState } from "react";
 
 type RecentSignup = DashboardStats["recentSignups"][number];
 
@@ -29,6 +40,20 @@ function PositionCell({ position }: { position: number }) {
 }
 
 export default function RecentSignupsTable({ data }: RecentSignupsTableProps) {
+  const sendModal = useDisclosure();
+  const detailsDrawer = useDisclosure();
+  const [activeSignup, setActiveSignup] = useState<RecentSignup | null>(null);
+
+  function handleInvite(signup: RecentSignup) {
+    setActiveSignup(signup);
+    sendModal.onOpen();
+  }
+
+  function handleSeeDetails(signup: RecentSignup) {
+    setActiveSignup(signup);
+    detailsDrawer.onOpen();
+  }
+
   return (
     <div className="flex flex-col border bg-background">
       <div className="px-5 py-4.5">
@@ -87,7 +112,11 @@ export default function RecentSignupsTable({ data }: RecentSignupsTableProps) {
               </TableCell>
               <TableCell className="flex justify-end items-center max-w-[200px] gap-2">
                 {!signup.status || signup.status === "waiting" ? (
-                  <GlobalButton variant="bordered" className="text-xs">
+                  <GlobalButton
+                    variant="bordered"
+                    className="text-xs"
+                    onPress={() => handleInvite(signup)}
+                  >
                     Invite
                   </GlobalButton>
                 ) : signup.status === "invited" ? (
@@ -100,7 +129,11 @@ export default function RecentSignupsTable({ data }: RecentSignupsTableProps) {
                   <Chip status="danger">Churned</Chip>
                 )}
 
-                <GlobalButton variant="bordered" className="text-xs">
+                <GlobalButton
+                  variant="bordered"
+                  className="text-xs"
+                  onPress={() => handleSeeDetails(signup)}
+                >
                   See details
                 </GlobalButton>
               </TableCell>
@@ -108,6 +141,19 @@ export default function RecentSignupsTable({ data }: RecentSignupsTableProps) {
           ))}
         </TableBody>
       </Table>
+
+      <SendCampaignModal
+        isOpen={sendModal.isOpen}
+        onOpenChange={sendModal.onOpenChange}
+        waitlistId={activeSignup?.waitlistId ?? ""}
+        users={activeSignup ? [{ _id: activeSignup._id, email: activeSignup.email }] : []}
+      />
+
+      <UserDetailsDrawer
+        isOpen={detailsDrawer.isOpen}
+        onOpenChange={detailsDrawer.onOpenChange}
+        user={activeSignup}
+      />
     </div>
   );
 }

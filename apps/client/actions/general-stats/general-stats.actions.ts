@@ -13,11 +13,14 @@ export interface DashboardStats {
     _id: string;
     name?: string;
     email: string;
+    waitlistId: string;
     waitlistName: string;
     position: number;
     source: string;
     status: string;
     createdAt: string;
+    metadata?: Record<string, unknown>;
+    referredBy?: string;
   }>;
 }
 
