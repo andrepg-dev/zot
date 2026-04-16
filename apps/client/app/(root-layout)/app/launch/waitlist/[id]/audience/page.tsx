@@ -10,9 +10,8 @@ import Type from "@/components/type";
 import Chip from "@/components/ui/chip";
 import InputComponent from "@/components/ui/input";
 import SendCampaignModal from "@/components/wait-list/send-campaign-modal";
-import UserDetailsDrawer from "@/components/wait-list/user-details-drawer";
 import { useHotkey } from "@/hooks/use-hotkey";
-import { formatDate } from "@/lib/format-date";
+import { formatDate, formatDateTime } from "@/lib/format-date";
 import { exportToCsv } from "@/lib/utils";
 import {
   ArrowDownTrayIcon,
@@ -73,11 +72,9 @@ export default function AudiencePage({ params }: { params: Promise<{ id: string 
   const [search, setSearch] = useState("");
   const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set());
   const [emailsToDelete, setEmailsToDelete] = useState<string[]>([]);
-  const [activeUserId, setActiveUserId] = useState<string | null>(null);
   const confirmModal = useDisclosure();
   const exportModal = useDisclosure();
   const sendModal = useDisclosure();
-  const detailsDrawer = useDisclosure();
   const queryClient = useQueryClient();
 
   useHotkey({
@@ -202,35 +199,10 @@ export default function AudiencePage({ params }: { params: Promise<{ id: string 
     });
   }
 
-  function handleSeeDetails(userId: string) {
-    setActiveUserId(userId);
-    detailsDrawer.onOpen();
-  }
-
   function handleInvite(userId: string) {
     setSelectedKeys(new Set([userId]));
     sendModal.onOpen();
   }
-
-  const activeUser = React.useMemo(() => {
-    if (!activeUserId || !users) return null;
-    const user = users.find((u) => u._id === activeUserId);
-    if (!user) return null;
-    return {
-      _id: user._id,
-      email: user.email,
-      name: user.name,
-      position: user.position ?? 0,
-      source: user.source,
-      status: user.status,
-      createdAt: String(user.createdAt),
-      waitlistName: waitlistStats?.name,
-      referredBy: user.referredBy
-        ? (referralCodeToEmail.get(user.referredBy) ?? user.referredBy)
-        : undefined,
-      metadata: user.metadata
-    };
-  }, [activeUserId, users, waitlistStats?.name, referralCodeToEmail]);
 
   function handleRowDoubleClick(userId?: string) {
     if (selectedKeys.size > 0) {
@@ -335,10 +307,13 @@ export default function AudiencePage({ params }: { params: Promise<{ id: string 
               size: "sm",
               classNames: { wrapper: "before:border-1" }
             }}
+            isCompact
             radius="none"
+            className="bg-default-50 border cursor-pointer"
             classNames={{
-              td: "py-3 font-mono",
-              wrapper: "p-0 bg-transparent"
+              td: "py-3",
+              wrapper: "p-0",
+              tbody: "font-mono"
             }}
           >
             <TableHeader columns={columns}>
@@ -374,7 +349,7 @@ export default function AudiencePage({ params }: { params: Promise<{ id: string 
                       const status = item.status ?? "waiting";
                       return (
                         <TableCell className="flex justify-end items-center gap-2">
-                          {status === "waiting" ? (
+                          {status === "waiting" && (
                             <GlobalButton
                               variant="bordered"
                               className="text-xs"
@@ -382,23 +357,9 @@ export default function AudiencePage({ params }: { params: Promise<{ id: string 
                             >
                               Invite
                             </GlobalButton>
-                          ) : status === "invited" ? (
-                            <Chip status="primary" className="rounded-sm!">
-                              Invited
-                            </Chip>
-                          ) : status === "converted" ? (
-                            <Chip status="active">Converted</Chip>
-                          ) : (
-                            <Chip status="danger">Churned</Chip>
                           )}
 
-                          <GlobalButton
-                            variant="bordered"
-                            className="text-xs"
-                            onPress={() => handleSeeDetails(item._id)}
-                          >
-                            See details
-                          </GlobalButton>
+                          {status != "waiting" && "-"}
                         </TableCell>
                       );
                     }
@@ -446,16 +407,13 @@ export default function AudiencePage({ params }: { params: Promise<{ id: string 
                           variant="sm"
                           className="text-muted-foreground truncate block max-w-[200px]"
                         >
-                          {formatDate(item.createdAt)}
+                          {formatDateTime(item.createdAt)}
                         </Type>
                       ),
                       status: (() => {
                         const status = item.status ?? "waiting";
                         return (
-                          <Chip
-                            status={STATUS_CHIP[status] ?? "neutral"}
-                            className="!rounded-sm"
-                          >
+                          <Chip status={STATUS_CHIP[status] ?? "neutral"} className="!rounded-sm">
                             {status}
                           </Chip>
                         );
@@ -475,12 +433,6 @@ export default function AudiencePage({ params }: { params: Promise<{ id: string 
         onOpenChange={sendModal.onOpenChange}
         waitlistId={id}
         users={campaignUsers}
-      />
-
-      <UserDetailsDrawer
-        isOpen={detailsDrawer.isOpen}
-        onOpenChange={detailsDrawer.onOpenChange}
-        user={activeUser}
       />
 
       <Modal isOpen={exportModal.isOpen} onOpenChange={exportModal.onOpenChange} radius="sm">

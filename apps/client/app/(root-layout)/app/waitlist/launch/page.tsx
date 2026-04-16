@@ -140,7 +140,6 @@ export default function LaunchWaitList() {
     onSuccess: (response) => {
       setCreatedWaitlistId(response._id);
       setStep(2);
-      addToast({ description: "Waitlist created", color: "success" });
     },
     onError: (err) => addToast({ title: "Error", description: err.message, color: "danger" })
   });
