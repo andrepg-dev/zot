@@ -18,7 +18,6 @@ import {
   UserPlusIcon
 } from "@heroicons/react/24/outline";
 import { Select, SelectItem, Skeleton } from "@heroui/react";
-import { getLocalTimeZone, today } from "@internationalized/date";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import React from "react";
 
@@ -96,20 +95,15 @@ const DATE_RANGE_OPTIONS = [
   { key: "90", label: "Last 90 days" }
 ];
 
-function toISODate(calendarDate: { year: number; month: number; day: number }): string {
-  return `${calendarDate.year}-${String(calendarDate.month).padStart(2, "0")}-${String(calendarDate.day).padStart(2, "0")}`;
-}
-
 export default function Dashboard() {
   const [animated, setAnimated] = React.useState(false);
   const [selectedRange, setSelectedRange] = React.useState("30");
-  const tz = getLocalTimeZone();
 
-  const defaultEnd = today(tz);
-  const defaultStart = defaultEnd.subtract({ days: Number(selectedRange) });
-
-  const fromStr = toISODate(defaultStart);
-  const toStr = toISODate(defaultEnd);
+  const { fromStr, toStr } = React.useMemo(() => {
+    const now = new Date();
+    const from = new Date(now.getTime() - Number(selectedRange) * 24 * 60 * 60 * 1000);
+    return { fromStr: from.toISOString(), toStr: now.toISOString() };
+  }, [selectedRange]);
 
   const { data, isPending, isFetching } = useQuery<DashboardStats>({
     queryKey: ["dashboard-stats", fromStr, toStr],

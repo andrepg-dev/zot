@@ -4,6 +4,12 @@ import { Model, Types } from "mongoose";
 import { WaitListUser } from "../wait-list/schemas/wait-list-user.schema";
 import { WaitList } from "../wait-list/schemas/wait-list.schema";
 
+function parseRangeBoundary(value: string, boundary: "start" | "end"): Date {
+  if (value.includes("T")) return new Date(value);
+  const suffix = boundary === "end" ? "T23:59:59.999Z" : "T00:00:00.000Z";
+  return new Date(`${value}${suffix}`);
+}
+
 @Injectable()
 export class GeneralStatsService {
   constructor(
@@ -13,9 +19,9 @@ export class GeneralStatsService {
 
   async getDashboardStats(userId: Types.ObjectId, fromDate?: string, toDate?: string) {
     const now = new Date();
-    const to = toDate ? new Date(`${toDate}T23:59:59.999Z`) : now;
+    const to = toDate ? parseRangeBoundary(toDate, "end") : now;
     const from = fromDate
-      ? new Date(`${fromDate}T00:00:00.000Z`)
+      ? parseRangeBoundary(fromDate, "start")
       : new Date(to.getTime() - 30 * 24 * 60 * 60 * 1000);
 
     const dateFilter = { $gte: from, $lte: to };
