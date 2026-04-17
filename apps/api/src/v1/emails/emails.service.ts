@@ -1,8 +1,11 @@
-import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import type { Document } from "mongoose";
 import { Model, Types } from "mongoose";
+import pLimit from "p-limit";
+import type { ComponentType } from "react";
 import { EmailSendingService } from "../core/email-sending/email-sending.service";
+import { ReactToHtmlService } from "../core/react-to-html/react-to-html.service";
 import { EmailTemplatesService } from "../email-templates/email-templates.service";
 import { EmailTemplate } from "../email-templates/schemas/email-template.schema";
 import { EmailParams, ResendEmail } from "../types/email-sending";
@@ -10,6 +13,9 @@ import { UserQuoteService } from "../users/user-quote/user-quote.service";
 import { WaitListUser } from "../wait-list/schemas/wait-list-user.schema";
 import { WaitListUserService } from "../wait-list/wait-list-user/wait-list-user.service";
 import { EmailSendRecord } from "./schemas/email-send-record.schema";
+
+const RESEND_BATCH_SIZE = 100;
+const BATCH_CONCURRENCY = 3;
 
 interface SendEmailParams {
   waitlistId: Types.ObjectId;
@@ -28,10 +34,21 @@ interface sendEmailByUserId {
   users: Array<Types.ObjectId>;
   email?: Omit<ResendEmail, "provider">;
   templateId?: string;
+  variables?: Record<string, unknown>;
 }
+
+type RecipientRow = {
+  _id: Types.ObjectId;
+  email: string;
+  name?: string;
+  position?: number;
+  referredBy?: string;
+};
 
 @Injectable()
 export class EmailsService {
+  private readonly logger = new Logger(EmailsService.name);
+
   constructor(
     @InjectModel(EmailSendRecord.name)
     private readonly emailSendRecordModel: Model<EmailSendRecord>,
@@ -39,8 +56,76 @@ export class EmailsService {
     private readonly emailTemplateService: EmailTemplatesService,
     private readonly WaitListUserService: WaitListUserService,
     private readonly userquoteService: UserQuoteService,
+    private readonly reactToHtmlService: ReactToHtmlService,
     @InjectModel(WaitListUser.name) private readonly WaitListUserModel: Model<WaitListUser>,
   ) {}
+
+  private buildRecipientVariables(
+    recipient: RecipientRow,
+    extra: Record<string, unknown> = {},
+  ): Record<string, unknown> {
+    return {
+      recipientName: recipient.name ?? "",
+      recipientEmail: recipient.email,
+      position: recipient.position,
+      referredBy: recipient.referredBy,
+      ...extra,
+    };
+  }
+
+  private async processBatch(
+    chunk: RecipientRow[],
+    Component: ComponentType<Record<string, unknown>>,
+    basePayload: Omit<EmailParams, "to" | "options"> & {
+      options: Omit<ResendEmail["options"], "html">;
+    },
+    variables: Record<string, unknown> | undefined,
+  ): Promise<{ sent: string[]; failed: string[] }> {
+    const rendered: Array<{ recipient: RecipientRow; html: string }> = [];
+    const failed: string[] = [];
+
+    await Promise.all(
+      chunk.map(async (recipient) => {
+        try {
+          const html = await this.reactToHtmlService.renderComponent(
+            Component,
+            this.buildRecipientVariables(recipient, variables),
+          );
+          rendered.push({ recipient, html });
+        } catch (err) {
+          this.logger.warn(`Render failed for ${recipient.email}: ${(err as Error).message}`);
+          failed.push(recipient.email);
+        }
+      }),
+    );
+
+    if (rendered.length === 0) {
+      return { sent: [], failed };
+    }
+
+    try {
+      await this.emailService.sendBatch(
+        rendered.map(({ recipient, html }) => ({
+          ...basePayload,
+          to: recipient.email,
+          options: { ...basePayload.options, html },
+        })),
+      );
+
+      return {
+        sent: rendered.map((r) => r.recipient.email),
+        failed,
+      };
+    } catch (err) {
+      this.logger.warn(
+        `Batch send failed for ${rendered.length} emails: ${(err as Error).message}`,
+      );
+      return {
+        sent: [],
+        failed: [...failed, ...rendered.map((r) => r.recipient.email)],
+      };
+    }
+  }
 
   /**
    *In this function, i need to see the user who is sending the template, and limit him to send emails.
@@ -179,7 +264,13 @@ export class EmailsService {
     }
   }
 
-  async sendEmailByUsersId({ userId, waitlistId, users, email, templateId }: sendEmailByUserId) {
+  async sendEmailByUsersId({
+    userId,
+    waitlistId,
+    users,
+    templateId,
+    variables,
+  }: sendEmailByUserId) {
     await this.WaitListUserService.validateOwnership(waitlistId, userId);
 
     let template: (EmailTemplate & Document) | undefined;
@@ -192,7 +283,11 @@ export class EmailsService {
       throw new BadRequestException("Template not found.");
     }
 
-    const usersIds = await this.WaitListUserModel.aggregate([
+    if (!template.code) {
+      throw new BadRequestException("Template is missing source code to render.");
+    }
+
+    const recipients: RecipientRow[] = await this.WaitListUserModel.aggregate([
       {
         $match: {
           _id: { $in: users.map((id) => new Types.ObjectId(id)) },
@@ -201,52 +296,76 @@ export class EmailsService {
       },
       {
         $project: {
+          _id: 1,
           email: 1,
-          _id: 0,
+          name: 1,
+          position: 1,
+          referredBy: 1,
         },
       },
     ]);
 
-    const totalUsersCount = usersIds?.length;
-    const userEmails = usersIds.map((user) => user?.email);
+    const totalUsersCount = recipients.length;
+    const userEmails = recipients.map((user) => user.email);
 
     if (totalUsersCount === 0) {
       throw new NotFoundException("Users not found in waitlist ID ");
     }
 
-    const payload: EmailParams = {
+    const Component = this.reactToHtmlService.compileComponent(template.code);
+
+    const basePayload: Omit<EmailParams, "to" | "options"> & {
+      options: Omit<ResendEmail["options"], "html">;
+    } = {
       from: "Zot WaitList <mail@zot.so>",
-      to: userEmails,
       provider: "resend",
       subject: template.subject,
       options: {
-        html: template.html,
         replyTo: "mail@zot.so",
-        // text: "<bold>First email sending with zot.</bold>",
       },
     };
 
-    const { to: _, provider, ...rest } = payload;
+    const chunks: RecipientRow[][] = [];
+    for (let i = 0; i < recipients.length; i += RESEND_BATCH_SIZE) {
+      chunks.push(recipients.slice(i, i + RESEND_BATCH_SIZE));
+    }
 
-    try {
-      const result = await this.emailService.send(payload);
+    const limit = pLimit(BATCH_CONCURRENCY);
 
+    const chunkResults = await Promise.all(
+      chunks.map((chunk) =>
+        limit(async () => this.processBatch(chunk, Component, basePayload, variables)),
+      ),
+    );
+
+    const sentEmails: string[] = [];
+    const failedEmails: string[] = [];
+    for (const result of chunkResults) {
+      sentEmails.push(...result.sent);
+      failedEmails.push(...result.failed);
+    }
+
+    const sentSuccessfully = sentEmails.length;
+    const failedCount = failedEmails.length;
+
+    await this.emailSendRecordModel.create({
+      owner: userId,
+      waitlistId,
+      quantitySent: totalUsersCount,
+      recipientEmails: userEmails,
+      sentSuccessfully,
+      failedCount,
+      failedEmails,
+      payload: basePayload,
+      template: template.toObject(),
+    });
+
+    if (sentSuccessfully > 0) {
       await Promise.all([
-        this.emailSendRecordModel.create({
-          owner: userId,
-          waitlistId,
-          quantitySent: totalUsersCount,
-          recipientEmails: userEmails,
-          sentSuccessfully: totalUsersCount,
-          failedCount: 0,
-          failedEmails: [],
-          payload: rest,
-          template: template ? template.toObject() : undefined,
-        }),
         this.WaitListUserModel.updateMany(
           {
-            _id: { $in: users.map((id) => new Types.ObjectId(id)) },
             waitlistId: new Types.ObjectId(waitlistId),
+            email: { $in: sentEmails },
             status: { $in: ["waiting", null] },
           },
           { $set: { status: "invited" } },
@@ -254,39 +373,20 @@ export class EmailsService {
         this.userquoteService.editUserQuote({
           ownerId: userId,
           service: "emailsSent",
-          usage: totalUsersCount,
+          usage: sentSuccessfully,
         }),
       ]);
-
-      return {
-        ...result,
-        quantity: totalUsersCount,
-      };
-    } catch (error) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      if ((error as any)?.status != 500) {
-        // If the problem is from the server, should not be in the user quote
-        await this.userquoteService.editUserQuote({
-          ownerId: userId,
-          service: "emailsSent",
-          usage: totalUsersCount,
-        });
-      }
-
-      await this.emailSendRecordModel.create({
-        owner: userId,
-        waitlistId,
-        quantitySent: totalUsersCount,
-        recipientEmails: userEmails,
-        sentSuccessfully: 0,
-        failedCount: totalUsersCount,
-        failedEmails: userEmails,
-        payload: rest,
-        template: template ? template.toObject() : undefined,
-      });
-
-      throw error;
     }
+
+    if (failedCount === totalUsersCount) {
+      throw new BadRequestException("All email sends failed.");
+    }
+
+    return {
+      quantity: sentSuccessfully,
+      failedCount,
+      failedEmails,
+    };
   }
 
   async getEmailsRecord({ userId, waitlistId }: GetEmailsRecord) {

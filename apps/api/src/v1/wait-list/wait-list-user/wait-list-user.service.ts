@@ -9,7 +9,6 @@ import { EmailTemplate } from "../../email-templates/schemas/email-template.sche
 import { EmailSendRecord } from "../../emails/schemas/email-send-record.schema";
 import { EmailParams } from "../../types/email-sending";
 import { UserQuoteService } from "../../users/user-quote/user-quote.service";
-import { UsersService } from "../../users/users.service";
 import { WaitListUser } from "../schemas/wait-list-user.schema";
 import { WaitList } from "../schemas/wait-list.schema";
 import { WaitlistWebhookEvent } from "../schemas/waitlist-webhooks-events.schema";
@@ -25,7 +24,6 @@ export class WaitListUserService {
     private WaitlistWebhookEventModel: Model<WaitlistWebhookEvent>,
     private readonly httpService: HttpService,
     private readonly userQuoteService: UserQuoteService,
-    private readonly usersService: UsersService,
     @InjectModel(EmailTemplate.name) private EmailTemplateModel: Model<EmailTemplate>,
     private readonly emailService: EmailSendingService,
     @InjectModel(EmailSendRecord.name)

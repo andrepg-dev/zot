@@ -1,5 +1,5 @@
 import { BasedHiddenOwnerSchema } from "@api/src/common/schemas/based-owner.schema";
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { Prop, Schema, SchemaFactory, Virtual } from "@nestjs/mongoose";
 import { EmailTemplateStatus } from "../types/email-template";
 
 @Schema({ timestamps: true, versionKey: false })
@@ -18,6 +18,9 @@ export class EmailTemplate extends BasedHiddenOwnerSchema {
 
   @Prop({ required: true })
   preview: string;
+
+  @Prop()
+  variables: Array<string>;
 
   @Prop({
     type: String,
