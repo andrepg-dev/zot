@@ -7,6 +7,7 @@ import { AuthModule } from "./auth/auth.module";
 import { ApiKeyGuard } from "./auth/guards/api-key.guard";
 import { CompositeAuthGuard } from "./auth/guards/composite-auth.guard";
 import { JwtAuthGuard } from "./auth/guards/jwt.guard";
+import { S3Service } from "./core/aws/s3/s3.service";
 import { EmailSendingService } from "./core/email-sending/email-sending.service";
 import { EmailTemplatesModule } from "./email-templates/email-templates.module";
 import { EmailsModule } from "./emails/emails.module";
@@ -16,7 +17,6 @@ import { ReactToHtmlModule } from "./react-to-html/react-to-html.module";
 import { SubscriptionsModule } from "./subscriptions/subscriptions.module";
 import { UsersModule } from "./users/users.module";
 import { WaitListModule } from "./wait-list/wait-list.module";
-import { S3Service } from './core/aws/s3/s3.service';
 
 @Module({
   imports: [

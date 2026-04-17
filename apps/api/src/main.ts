@@ -2,7 +2,7 @@ import { Logger, ValidationPipe, VersioningType } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import cookieParser from "cookie-parser";
-
+import * as fs from "fs";
 import { AppModule } from "./app.module";
 
 const processLogger = new Logger("Process");
@@ -66,9 +66,8 @@ API requests are subject to rate limiting. Please handle 429 responses appropria
     .addTag("React to HTML", "React component to HTML conversion")
     .build();
 
-  const document = SwaggerModule.createDocument(app, config, {
-    operationIdFactory: (controllerKey: string, methodKey: string) => methodKey,
-  });
+  const document = SwaggerModule.createDocument(app, config);
+  fs.writeFileSync("./openapi.json", JSON.stringify(document, null, 2));
 
   SwaggerModule.setup("docs", app, document, {
     swaggerOptions: {
