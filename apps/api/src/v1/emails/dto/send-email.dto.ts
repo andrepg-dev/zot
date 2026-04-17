@@ -31,5 +31,9 @@ export class SendEmailToUsersById {
 
   @IsObject()
   @IsOptional()
+  mapping?: Record<string, string>;
+
+  @IsObject()
+  @IsOptional()
   variables?: Record<string, unknown>;
 }

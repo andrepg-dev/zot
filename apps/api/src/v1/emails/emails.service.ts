@@ -34,6 +34,7 @@ interface sendEmailByUserId {
   users: Array<Types.ObjectId>;
   email?: Omit<ResendEmail, "provider">;
   templateId?: string;
+  mapping?: Record<string, string>;
   variables?: Record<string, unknown>;
 }
 
@@ -43,6 +44,8 @@ type RecipientRow = {
   name?: string;
   position?: number;
   referredBy?: string;
+  createdAt?: Date;
+  metadata?: Record<string, unknown>;
 };
 
 @Injectable()
@@ -60,17 +63,44 @@ export class EmailsService {
     @InjectModel(WaitListUser.name) private readonly WaitListUserModel: Model<WaitListUser>,
   ) {}
 
+  private resolveFieldPath(recipient: RecipientRow, path: string): unknown {
+    if (!path) return undefined;
+
+    const [root, ...rest] = path.split(".");
+
+    if (root === "metadata") {
+      if (rest.length === 0) return recipient.metadata;
+      let current: unknown = recipient.metadata;
+      for (const segment of rest) {
+        if (current == null || typeof current !== "object") return undefined;
+        current = (current as Record<string, unknown>)[segment];
+      }
+      return current;
+    }
+
+    return (recipient as unknown as Record<string, unknown>)[root];
+  }
+
   private buildRecipientVariables(
     recipient: RecipientRow,
+    mapping: Record<string, string> | undefined,
     extra: Record<string, unknown> = {},
   ): Record<string, unknown> {
-    return {
-      recipientName: recipient.name ?? "",
-      recipientEmail: recipient.email,
-      position: recipient.position,
-      referredBy: recipient.referredBy,
-      ...extra,
-    };
+    const resolved: Record<string, unknown> = mapping
+      ? Object.fromEntries(
+          Object.entries(mapping).map(([variable, path]) => [
+            variable,
+            this.resolveFieldPath(recipient, path),
+          ]),
+        )
+      : {
+          recipientName: recipient.name ?? "",
+          recipientEmail: recipient.email,
+          position: recipient.position,
+          referredBy: recipient.referredBy,
+        };
+
+    return { ...resolved, ...extra };
   }
 
   private async processBatch(
@@ -79,6 +109,7 @@ export class EmailsService {
     basePayload: Omit<EmailParams, "to" | "options"> & {
       options: Omit<ResendEmail["options"], "html">;
     },
+    mapping: Record<string, string> | undefined,
     variables: Record<string, unknown> | undefined,
   ): Promise<{ sent: string[]; failed: string[] }> {
     const rendered: Array<{ recipient: RecipientRow; html: string }> = [];
@@ -89,7 +120,7 @@ export class EmailsService {
         try {
           const html = await this.reactToHtmlService.renderComponent(
             Component,
-            this.buildRecipientVariables(recipient, variables),
+            this.buildRecipientVariables(recipient, mapping, variables),
           );
           rendered.push({ recipient, html });
         } catch (err) {
@@ -269,6 +300,7 @@ export class EmailsService {
     waitlistId,
     users,
     templateId,
+    mapping,
     variables,
   }: sendEmailByUserId) {
     await this.WaitListUserService.validateOwnership(waitlistId, userId);
@@ -301,6 +333,8 @@ export class EmailsService {
           name: 1,
           position: 1,
           referredBy: 1,
+          createdAt: 1,
+          metadata: 1,
         },
       },
     ]);
@@ -334,7 +368,7 @@ export class EmailsService {
 
     const chunkResults = await Promise.all(
       chunks.map((chunk) =>
-        limit(async () => this.processBatch(chunk, Component, basePayload, variables)),
+        limit(async () => this.processBatch(chunk, Component, basePayload, mapping, variables)),
       ),
     );
 

@@ -11,7 +11,7 @@ import Chip from "@/components/ui/chip";
 import InputComponent from "@/components/ui/input";
 import SendCampaignModal from "@/components/wait-list/send-campaign-modal";
 import { useHotkey } from "@/hooks/use-hotkey";
-import { formatDate, formatDateTime } from "@/lib/format-date";
+import { formatDateTime } from "@/lib/format-date";
 import { exportToCsv } from "@/lib/utils";
 import {
   ArrowDownTrayIcon,
@@ -219,7 +219,14 @@ export default function AudiencePage({ params }: { params: Promise<{ id: string 
     () =>
       (users ?? [])
         .filter((u) => selectedKeys.has(u._id))
-        .map((u) => ({ _id: u._id, email: u.email })),
+        .map((u) => ({
+          _id: u._id,
+          email: u.email,
+          name: u.name,
+          position: u.position,
+          referredBy: u.referredBy,
+          metadata: u.metadata
+        })),
     [users, selectedKeys]
   );
 

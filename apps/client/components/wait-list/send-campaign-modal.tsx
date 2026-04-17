@@ -4,11 +4,13 @@ import { getEmailTemplates } from "@/actions/email-templates/email-templates.act
 import { sendEmailToUsersById } from "@/actions/emails/emails.actions";
 import GlobalButton from "@/components/global/button";
 import PrimaryActionButton from "@/components/global/primary-action-button";
+import Type from "@/components/type";
 import CampaignResultAnimation from "@/components/wait-list/campaign-result-animation";
 import CampaignSentAnimation, {
   getAnimationHeight,
   getFramesPerRow
 } from "@/components/wait-list/campaign-sent-animation";
+import { extractTemplateVariables } from "@/lib/extract-template-variables";
 import { PlusIcon, RocketLaunchIcon } from "@heroicons/react/24/outline";
 import {
   Modal,
@@ -23,11 +25,36 @@ import type { EmailTemplate } from "@repo/packages/shared/schemas";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
 import posthog from "posthog-js";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 export interface CampaignUser {
   _id: string;
   email: string;
+  name?: string;
+  position?: number;
+  referredBy?: string;
+  metadata?: Record<string, unknown>;
+}
+
+const BASE_FIELDS: Array<{ value: string; label: string }> = [
+  { value: "name", label: "Name" },
+  { value: "email", label: "Email" },
+  { value: "position", label: "Position" },
+  { value: "referredBy", label: "Referred by" },
+  { value: "createdAt", label: "Joined at" }
+];
+
+function suggestFieldForVariable(
+  variableName: string,
+  availableValues: string[]
+): string | undefined {
+  const lower = variableName.toLowerCase();
+  if (availableValues.includes(variableName)) return variableName;
+  if (lower.includes("name") && availableValues.includes("name")) return "name";
+  if (lower.includes("email") && availableValues.includes("email")) return "email";
+  if (lower.includes("position") && availableValues.includes("position")) return "position";
+  if (lower.includes("referr") && availableValues.includes("referredBy")) return "referredBy";
+  return undefined;
 }
 
 interface SendCampaignModalProps {
@@ -61,6 +88,41 @@ export default function SendCampaignModal({
     [templates, selectedTemplateId]
   );
 
+  const availableFields = useMemo(() => {
+    const metaKeys = new Set<string>();
+    users.forEach((u) => {
+      if (u.metadata) Object.keys(u.metadata).forEach((k) => metaKeys.add(k));
+    });
+    return [
+      ...BASE_FIELDS,
+      ...Array.from(metaKeys).map((k) => ({
+        value: `metadata.${k}`,
+        label: `metadata.${k}`
+      }))
+    ];
+  }, [users]);
+
+  const detectedVariables = useMemo(
+    () => (selectedTemplate?.code ? extractTemplateVariables(selectedTemplate.code) : []),
+    [selectedTemplate?.code]
+  );
+
+  const [mapping, setMapping] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    if (detectedVariables.length === 0) {
+      setMapping({});
+      return;
+    }
+    const availableValues = availableFields.map((f) => f.value);
+    const suggestion: Record<string, string> = {};
+    detectedVariables.forEach((v) => {
+      const match = suggestFieldForVariable(v.name, availableValues);
+      if (match) suggestion[v.name] = match;
+    });
+    setMapping(suggestion);
+  }, [detectedVariables, availableFields]);
+
   const displayCount = Math.min(sentEmails.length, 50);
   const framesPerRow = getFramesPerRow(displayCount);
   const animationFrames = 10 + displayCount * framesPerRow + 40;
@@ -83,7 +145,11 @@ export default function SendCampaignModal({
     reset: resetSend
   } = useMutation({
     mutationFn: (userIds: string[]) =>
-      sendEmailToUsersById(waitlistId, { users: userIds, templateId: selectedTemplate?._id }),
+      sendEmailToUsersById(waitlistId, {
+        users: userIds,
+        templateId: selectedTemplate?._id,
+        mapping: Object.keys(mapping).length > 0 ? mapping : undefined
+      }),
     onSuccess: (_data, userIds) => {
       queryClient.invalidateQueries({ queryKey: [waitlistId, "email-records"] });
       queryClient.invalidateQueries({ queryKey: [waitlistId, "email-records-list"] });
@@ -206,6 +272,51 @@ export default function SendCampaignModal({
                     </SelectItem>
                   </SelectSection>
                 </Select>
+
+                {detectedVariables.length > 0 && (
+                  <div className="flex flex-col gap-2 border rounded-sm p-3">
+                    <div className="flex flex-col">
+                      <Type variant="sm">Variable mapping</Type>
+                      <Type variant="sm" className="text-muted-foreground font-normal">
+                        Pick the field each variable should read from for every recipient.
+                      </Type>
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                      {detectedVariables.map((variable) => (
+                        <div
+                          key={variable.name}
+                          className="flex items-center justify-between gap-3"
+                        >
+                          <Type variant="sm" className="font-mono">
+                            {variable.name}
+                          </Type>
+                          <Select
+                            aria-label={`Field for ${variable.name}`}
+                            placeholder="Select field"
+                            radius="sm"
+                            size="sm"
+                            className="max-w-[220px]"
+                            selectedKeys={mapping[variable.name] ? [mapping[variable.name]] : []}
+                            onSelectionChange={(keys) => {
+                              const key = Array.from(keys)[0] as string | undefined;
+                              setMapping((prev) => {
+                                const next = { ...prev };
+                                if (key) next[variable.name] = key;
+                                else delete next[variable.name];
+                                return next;
+                              });
+                            }}
+                          >
+                            {availableFields.map((field) => (
+                              <SelectItem key={field.value}>{field.label}</SelectItem>
+                            ))}
+                          </Select>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
                 {selectedTemplate?.preview && (
                   <div className="rounded-sm border overflow-hidden bg-white">

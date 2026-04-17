@@ -4,12 +4,12 @@ import { getEmailSendRecords } from "@/actions/emails/emails.actions";
 import { getWaitListStats } from "@/actions/wait-list/stats.actions";
 import Title from "@/components/global/title";
 import PageComponent from "@/components/layouts/page-component";
+import Type from "@/components/type";
 import ConversionRateChart from "@/components/wait-list/charts/conversion-rate-chart";
 import DailyRegistrationsChart from "@/components/wait-list/charts/daily-registrations-chart";
 import EmailsSentChart from "@/components/wait-list/charts/emails-sent-chart";
 import FakeUsersBlockedChart from "@/components/wait-list/charts/fake-users-blocked-chart";
 import TopReferrersChart from "@/components/wait-list/charts/top-referrers-chart";
-import Type from "@/components/type";
 import { cn } from "@/lib/utils";
 import {
   ArrowTopRightOnSquareIcon,
@@ -157,28 +157,13 @@ export default function LaunchedWaitList({ params }: { params: Promise<{ id: str
 
   return (
     <PageComponent>
-      <div className="flex items-start gap-2">
-        <Title description={`ID: ${id}`} classNames={{ description: "mt-1" }}>
-          <span>{isPending ? "Loading..." : data?.name}</span>
-          {/* <Chip status="primary" className="ml-2 relative">Bernay Landing page</Chip> */}
-        </Title>
-      </div>
-
       {data?.sendEmailToNewSignup && !data?.emailTemplateToNewSignUps && (
-        <Alert
-          color="warning"
-          variant="faded"
-          icon={<ExclamationTriangleIcon className="size-5" />}
-          classNames={{ base: "mt-4" }}
-        >
+        <Alert color="danger" variant="faded" radius="sm" classNames={{ base: "mb-4" }}>
           <div className="flex items-center gap-2">
             <Type>
               You have enabled &quot;Send email to new signups&quot; but no email template is
               configured.{" "}
-              <Link
-                href={`/app/launch/waitlist/${id}/settings`}
-                className="underline font-medium"
-              >
+              <Link href={`/app/launch/waitlist/${id}/settings`} className="underline font-medium">
                 Go to Settings
               </Link>{" "}
               to select a template.
@@ -186,6 +171,13 @@ export default function LaunchedWaitList({ params }: { params: Promise<{ id: str
           </div>
         </Alert>
       )}
+
+      <div className="flex items-start gap-2">
+        <Title description={`ID: ${id}`} classNames={{ description: "mt-1" }}>
+          <span>{isPending ? "Loading..." : data?.name}</span>
+          {/* <Chip status="primary" className="ml-2 relative">Bernay Landing page</Chip> */}
+        </Title>
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mt-4 rounded-default">
         {stats.map((stat) => (

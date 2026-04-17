@@ -1,9 +1,17 @@
-import { ValidationPipe, VersioningType } from "@nestjs/common";
+import { Logger, ValidationPipe, VersioningType } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import cookieParser from "cookie-parser";
 
 import { AppModule } from "./app.module";
+
+const processLogger = new Logger("Process");
+process.on("uncaughtException", (error) => {
+  processLogger.error(`Uncaught exception: ${error.message}`, error.stack);
+});
+process.on("unhandledRejection", (reason) => {
+  processLogger.error(`Unhandled rejection: ${String(reason)}`);
+});
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true, rawBody: true });
