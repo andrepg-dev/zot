@@ -92,12 +92,12 @@ export class WaitListUserService {
         usage: 1,
       });
 
-      const lastUser = await this.WaitListUserModel.findOne({ waitlistId: waitlistId })
+      const lastUser = await this.WaitListUserModel.findOne({ waitlistId })
         .sort({ position: -1 })
         .select("position")
         .lean();
 
-      const position = lastUser?.position ?? 0 + 1;
+      const position = (lastUser?.position ?? 0) + 1;
       const source = dto.referredBy ? "referral" : dto.source || "organic";
 
       const user = await this.WaitListUserModel.create({
@@ -182,12 +182,12 @@ export class WaitListUserService {
           },
         };
 
-        const { to: _, provider, ...rest } = payload;
+        const { to, provider, ...rest } = payload;
 
         try {
           await this.emailService.send(payload);
 
-          this.emailSendRecordModel.create({
+          await this.emailSendRecordModel.create({
             owner: waitlist.owner,
             waitlistId,
             quantitySent: 1,
@@ -205,7 +205,7 @@ export class WaitListUserService {
           });
         } catch (err) {
           // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-          if ((err as any)?.status != 500) {
+          if (err?.status != 500) {
             // If the problem is from the server, should not be in the user quote
             await this.userquoteService.editUserQuote({
               ownerId: waitlist.owner,

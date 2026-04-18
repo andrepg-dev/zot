@@ -14,7 +14,7 @@ process.on("unhandledRejection", (reason) => {
 });
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { cors: true, rawBody: true });
+  const app = await NestFactory.create(AppModule, { rawBody: true });
 
   // Class validator activation
   app.useGlobalPipes(
@@ -87,8 +87,10 @@ API requests are subject to rate limiting. Please handle 429 responses appropria
     `,
   });
 
+  const frontendUrl = "http://localhost:3002";
   app.enableCors({
-    origin: "https://zot.so",
+    origin: [frontendUrl, "https://zot.so"],
+    credentials: true,
   });
 
   await app.listen(process.env.PORT ?? 3010);

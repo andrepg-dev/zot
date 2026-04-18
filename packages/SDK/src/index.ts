@@ -6,7 +6,6 @@ const DEFAULT_BASE_URL = "http://localhost:3010";
 
 export class ZotSDK {
   private readonly http: HttpClient;
-
   readonly waitlists: WaitlistsResource;
 
   constructor(config: ZotSDKConfig) {
@@ -27,15 +26,16 @@ export class ZotSDK {
 
 export { ZotAPIError } from "./types";
 export type {
-  ZotSDKConfig,
-  CreateWaitlistParams,
-  UpdateWaitlistParams,
-  WaitlistResponse,
   AddUserParams,
-  WaitlistUserResponse,
-  UserCountResponse,
+  CreateWaitlistParams,
   UpdateUserStatusParams,
+  UpdateWaitlistParams,
+  UserCountResponse,
   UserSource,
   UserStatus,
+  WaitlistResponse,
+  WaitlistUserResponse,
   WebhookConfig,
+  ZotSDKConfig
 } from "./types";
+
