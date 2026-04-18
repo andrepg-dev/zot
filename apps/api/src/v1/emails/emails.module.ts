@@ -4,6 +4,7 @@ import { MongooseModule } from "@nestjs/mongoose";
 import { ResendModule } from "nestjs-resend";
 import { EmailSendingService } from "../core/email-sending/email-sending.service";
 import { EmailTemplatesModule } from "../email-templates/email-templates.module";
+import { ReactToHtmlModule } from "../react-to-html/react-to-html.module";
 import { UserQuoteModule } from "../users/user-quote/user-quote.module";
 import { WaitListModule } from "../wait-list/wait-list.module";
 import { EmailsController } from "./emails.controller";
@@ -20,7 +21,8 @@ import { EmailSchema } from "./schemas/email.schema";
     ResendModule.forRoot({ apiKey: RESEND.API_KEY }),
     WaitListModule,
     UserQuoteModule,
-    EmailTemplatesModule
+    EmailTemplatesModule,
+    ReactToHtmlModule,
   ],
   controllers: [EmailsController],
   providers: [EmailsService, EmailSendingService],

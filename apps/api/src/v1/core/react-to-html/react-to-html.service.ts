@@ -1,93 +1,101 @@
 import * as Babel from "@babel/core";
-import { HttpException, Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable, Logger } from "@nestjs/common";
 import * as ReactEmail from "@react-email/components";
-import { render } from "@react-email/render";
 import React from "react";
+import { renderToStaticMarkup } from "react-dom/server";
 import * as vm from "vm";
+
+const DOCTYPE =
+  '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">';
 
 /**
  * Servicio para compilar código React (pensado para plantillas de @react-email/components)
  * a HTML plano de forma segura.
  *
- * Uso:
- * - Recibe una cadena de texto con código React (JSX) en el parámetro `code`.
- * - El código debe definir un componente llamado `EmailComponent` o `Default`.
- * - Los componentes de `@react-email/components` están disponibles vía objeto `Components`
- *   (no se deben usar imports dentro del string).
+ * Flujo:
+ * 1. `compileComponent(code)` transpila el JSX con Babel y lo evalúa en un sandbox `vm`
+ *    una sola vez, devolviendo el componente React listo para renderizar.
+ * 2. `renderComponent(Component, variables)` invoca el componente con las props dadas
+ *    y devuelve el HTML. Se puede llamar N veces con variables distintas sin re-transpilar.
+ * 3. `compile(code, variables?)` es un atajo que hace ambas cosas en una sola llamada.
  *
- * Seguridad:
- * - Antes de ejecutar el código se valida que no contenga patrones peligrosos
- *   (process, require, import dinámico, eval, child_process, fs, etc.).
- * - El código se ejecuta en un sandbox de Node `vm` con timeout para evitar bloqueos.
- *
- * Ejemplo de código válido:
- * const EmailComponent = () => (
- *   <Html>
- *     <Body>
- *       <Text>Hola desde mi email</Text>
- *     </Body>
- *   </Html>
- * );
- *
- * La respuesta del método `compile` es una cadena con el HTML renderizado listo
- * para usarse, por ejemplo, en un email o en un iframe mediante `srcDoc`.
+ * El patrón recomendado para las plantillas es:
+ *   const Email = ({ recipientName = "there", ... } = {}) => (...)
+ * Así el componente siempre tiene defaults y nunca explota si faltan props.
  */
 @Injectable()
 export class ReactToHtmlService {
-  async compile(code: string): Promise<string> {
+  private readonly logger = new Logger(ReactToHtmlService.name);
+
+  private readonly componentNames = Object.keys(ReactEmail)
+    .filter((key) => key !== "default")
+    .join(", ");
+
+  compileComponent(code: string): React.ComponentType<Record<string, unknown>> {
     this.validateCode(code);
 
-    try {
-      const transpiled = Babel.transformSync(code, {
-        presets: ["@babel/preset-react"],
-      });
+    const transpiled = Babel.transformSync(code, {
+      presets: ["@babel/preset-react"],
+    });
 
-      if (!transpiled?.code) {
-        throw new Error("Transpilation failed");
-      }
+    if (!transpiled?.code) {
+      throw new BadRequestException("Transpilation failed");
+    }
 
-      const sandbox = {
-        React,
-        Components: ReactEmail,
-        exports: {} as { default?: React.ComponentType },
-      };
+    const sandbox = {
+      React,
+      Components: ReactEmail,
+      exports: {} as { default?: React.ComponentType<Record<string, unknown>> },
+    };
 
-      vm.createContext(sandbox);
+    vm.createContext(sandbox);
 
-      const componentNames = Object.keys(ReactEmail)
-        .filter((key) => key !== "default")
-        .join(", ");
-
-      const wrappedCode = `
-      const { ${componentNames} } = Components;
-      ${transpiled?.code}
-      exports.default = typeof Email !== "undefined" ? Email : (typeof Default !== 'undefined' ? Default : null);
+    const wrappedCode = `
+      const { ${this.componentNames} } = Components;
+      ${transpiled.code}
+      exports.default = typeof Email !== "undefined" ? Email : (typeof Default !== "undefined" ? Default : null);
     `;
 
+    try {
       vm.runInContext(wrappedCode, sandbox, {
         timeout: 3000,
         displayErrors: true,
       });
-
-      const EmailComponent = sandbox.exports.default;
-
-      if (!EmailComponent) {
-        throw new Error("No email component found. Export as Email or Default");
-      }
-
-      const html = await render(React.createElement(EmailComponent));
-      return html;
     } catch (error) {
-      throw new HttpException(`Bad request ${error}`, 400);
+      throw new BadRequestException(`Invalid email code: ${(error as Error).message}`);
+    }
+
+    const Component = sandbox.exports.default;
+    if (!Component) {
+      throw new BadRequestException("No email component found. Export as Email or Default.");
+    }
+
+    return Component;
+  }
+
+  async renderComponent(
+    Component: React.ComponentType<Record<string, unknown>>,
+    variables: Record<string, unknown> = {},
+  ): Promise<string> {
+    try {
+      const html = renderToStaticMarkup(React.createElement(Component, variables));
+      return `${DOCTYPE}${html.replace(/<!DOCTYPE.*?>/, "")}`;
+    } catch (error) {
+      this.logger.warn(`Failed to render email component: ${(error as Error).message}`);
+      throw new BadRequestException(`Render failed: ${(error as Error).message}`);
     }
   }
 
+  async compile(code: string, variables: Record<string, unknown> = {}): Promise<string> {
+    const Component = this.compileComponent(code);
+    return this.renderComponent(Component, variables);
+  }
+
   private validateCode(code: string): void {
-    // Lista de patrones peligrosos
     const dangerousPatterns = [
       /process\./gi,
       /require\s*\(/gi,
-      /import\s*\(/gi, // dynamic imports
+      /import\s*\(/gi,
       /eval\s*\(/gi,
       /Function\s*\(/gi,
       /globalThis/gi,
@@ -102,7 +110,7 @@ export class ReactToHtmlService {
 
     for (const pattern of dangerousPatterns) {
       if (pattern.test(code)) {
-        throw new Error(`Code not allowed.`);
+        throw new BadRequestException("Code not allowed.");
       }
     }
   }

@@ -106,6 +106,8 @@ export default function EmailTemplatesPage() {
         }}
       />
 
+      <span className="text-default-400 text-small">Total {templates.length} templates</span>
+
       {isPending ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-6 gap-6">
           <EmailTemplateCardSkeleton />
@@ -119,10 +121,10 @@ export default function EmailTemplatesPage() {
           </Type>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-6 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6 mt-4">
           {templates.map((template) => (
             <div className="flex flex-col gap-2 relative group" key={template._id}>
-              <div className="bg-white/90 rounded-sm w-full aspect-video flex justify-center relative overflow-hidden cursor-pointer">
+              <div className="bg-white/90 w-full aspect-video flex justify-center relative overflow-hidden cursor-pointer">
                 <div className="group-hover:scale-[1.02] w-3/4 h-3/4 bottom-0 absolute rounded-sm overflow-hidden transition">
                   <Image
                     src={template.preview}

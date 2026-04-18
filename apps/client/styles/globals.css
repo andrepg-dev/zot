@@ -19,6 +19,11 @@
   --sidebar: #040404;
 }
 
+*::selection {
+  background: #006FEE;
+  color: white !important
+}
+
 * {
   border-color: var(--border);
 }

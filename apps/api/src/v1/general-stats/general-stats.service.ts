@@ -1,78 +1,169 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, Types } from "mongoose";
-import { EmailSecurity } from "../core/email-security/schemas/email-security.schema";
-import { EmailSendRecord } from "../emails/schemas/email-send-record.schema";
+import { WaitListUser } from "../wait-list/schemas/wait-list-user.schema";
 import { WaitList } from "../wait-list/schemas/wait-list.schema";
-import { WaitlistWebhookEvent } from "../wait-list/schemas/waitlist-webhooks-events.schema";
-import { WaitListUserService } from "../wait-list/wait-list-user/wait-list-user.service";
+
+function parseRangeBoundary(value: string, boundary: "start" | "end"): Date {
+  if (value.includes("T")) return new Date(value);
+  const suffix = boundary === "end" ? "T23:59:59.999Z" : "T00:00:00.000Z";
+  return new Date(`${value}${suffix}`);
+}
 
 @Injectable()
 export class GeneralStatsService {
   constructor(
-    private readonly waitlist: WaitListUserService,
     @InjectModel(WaitList.name) private waitListModel: Model<WaitList>,
-    @InjectModel(EmailSendRecord.name) private emailSendRecordModel: Model<EmailSendRecord>,
-    @InjectModel(EmailSecurity.name) private emailSecurityModel: Model<EmailSecurity>,
-    @InjectModel(WaitlistWebhookEvent.name)
-    private webhookEventModel: Model<WaitlistWebhookEvent>,
+    @InjectModel(WaitListUser.name) private waitListUserModel: Model<WaitListUser>,
   ) {}
 
-  async getGeneralStats(userId: Types.ObjectId) {
-    const waitlistIds = await this.waitListModel.find({ owner: userId }).select("_id").lean();
-    const ids = waitlistIds.map((w) => w._id);
+  async getDashboardStats(userId: Types.ObjectId, fromDate?: string, toDate?: string) {
+    const now = new Date();
+    const to = toDate ? parseRangeBoundary(toDate, "end") : now;
+    const from = fromDate
+      ? parseRangeBoundary(fromDate, "start")
+      : new Date(to.getTime() - 30 * 24 * 60 * 60 * 1000);
 
-    const [signupsByDay, emailsByDay, blockedByDay, webhooksByDay] = await Promise.all([
-      this.waitlist.getAllUsersBasedOnOwner(userId, [
-        {
-          $group: {
-            _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
-            count: { $sum: 1 },
+    const dateFilter = { $gte: from, $lte: to };
+
+    const waitlists = await this.waitListModel.find({ owner: userId }).select("+owner").lean();
+    const waitlistIds = waitlists.map((w) => w._id);
+
+    const baseMatch = { waitlistId: { $in: waitlistIds } };
+    const rangeMatch = { ...baseMatch, createdAt: dateFilter };
+
+    const [totalSignups, signupsInRange, statusCounts, sourceCounts, recentSignups, avgWaitDays] =
+      await Promise.all([
+        // Total signups across all waitlists (all time)
+        this.waitListUserModel.countDocuments(baseMatch),
+
+        // Signups in selected range
+        this.waitListUserModel.countDocuments(rangeMatch),
+
+        // Status breakdown (null/missing defaults to "waiting")
+        this.waitListUserModel.aggregate([
+          { $match: rangeMatch },
+          { $group: { _id: { $ifNull: ["$status", "waiting"] }, count: { $sum: 1 } } },
+        ]),
+
+        // Source breakdown (null/missing defaults to "organic")
+        this.waitListUserModel.aggregate([
+          { $match: rangeMatch },
+          {
+            $group: {
+              _id: { $ifNull: ["$source", "organic"] },
+              count: { $sum: 1 },
+            },
           },
-        },
-        { $sort: { _id: 1 } },
-        { $project: { _id: 0, date: "$_id", count: 1 } },
-      ]),
-      this.emailSendRecordModel.aggregate([
-        { $match: { waitlistId: { $in: ids } } },
-        {
-          $group: {
-            _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
-            count: { $sum: "$quantitySent" },
+          { $sort: { count: -1 } },
+        ]),
+
+        // Recent signups with waitlist name (within range)
+        this.waitListUserModel.aggregate([
+          { $match: rangeMatch },
+          { $sort: { createdAt: -1 } },
+          { $limit: 10 },
+          {
+            $lookup: {
+              from: "waitlists",
+              localField: "waitlistId",
+              foreignField: "_id",
+              as: "waitlist",
+            },
           },
-        },
-        { $sort: { _id: 1 } },
-        { $project: { _id: 0, date: "$_id", count: 1 } },
-      ]),
-      this.emailSecurityModel.aggregate([
-        { $match: { waitlistId: { $in: ids }, isBlocked: true } },
-        {
-          $group: {
-            _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
-            count: { $sum: 1 },
+          { $unwind: { path: "$waitlist", preserveNullAndEmptyArrays: true } },
+          {
+            $project: {
+              _id: 1,
+              name: 1,
+              email: 1,
+              waitlistId: 1,
+              waitlistName: "$waitlist.name",
+              position: 1,
+              source: 1,
+              status: 1,
+              createdAt: 1,
+              metadata: 1,
+              referredBy: 1,
+            },
           },
-        },
-        { $sort: { _id: 1 } },
-        { $project: { _id: 0, date: "$_id", count: 1 } },
-      ]),
-      this.webhookEventModel.aggregate([
-        { $match: { waitlistId: { $in: ids } } },
-        {
-          $group: {
-            _id: { $dateToString: { format: "%Y-%m-%d", date: "$sentAt" } },
-            count: { $sum: 1 },
+        ]),
+
+        // Average wait time for "waiting" users (in days)
+        this.waitListUserModel.aggregate([
+          {
+            $match: {
+              ...baseMatch,
+              status: { $in: ["waiting", null, undefined] },
+            },
           },
-        },
-        { $sort: { _id: 1 } },
-        { $project: { _id: 0, date: "$_id", count: 1 } },
-      ]),
-    ]);
+          {
+            $group: {
+              _id: null,
+              avgWait: {
+                $avg: { $divide: [{ $subtract: [now, "$createdAt"] }, 1000 * 60 * 60 * 24] },
+              },
+            },
+          },
+        ]),
+      ]);
+
+    // Calculate active waitlists
+    const activeWaitlists = waitlists.filter((w) => w.isAvailable).length;
+    const totalWaitlists = waitlists.length;
+    const newWaitlistsInRange = waitlists.filter(
+      (w) =>
+        w.isAvailable &&
+        new Date((w as any).createdAt).getTime() >= from.getTime() &&
+        new Date((w as any).createdAt).getTime() <= to.getTime(),
+    ).length;
+
+    // Calculate conversion rate (within range)
+    const statusMap = Object.fromEntries(statusCounts.map((s) => [s._id, s.count]));
+    const convertedCount = statusMap["converted"] || 0;
+    const rangeTotal = signupsInRange || 1;
+    const conversionRate = rangeTotal > 0 ? (convertedCount / rangeTotal) * 100 : 0;
+
+    // Avg wait time
+    const currentAvgWait = avgWaitDays[0]?.avgWait ?? 0;
+
+    // Source percentages
+    const maxSourceCount = sourceCounts.length > 0 ? sourceCounts[0].count : 1;
+    const signupsBySource = sourceCounts.map((s) => ({
+      source: s._id,
+      count: s.count,
+      percentage: Math.round((s.count / maxSourceCount) * 100),
+    }));
+
+    // Waitlist status breakdown
+    const waitlistStatus = [
+      { status: "waiting", count: statusMap["waiting"] || 0 },
+      { status: "invited", count: statusMap["invited"] || 0 },
+      { status: "converted", count: statusMap["converted"] || 0 },
+      { status: "churned", count: statusMap["churned"] || 0 },
+    ];
 
     return {
-      signupsByDay,
-      emailsByDay,
-      blockedByDay,
-      webhooksByDay,
+      totalSignups: {
+        value: totalSignups,
+        change: signupsInRange,
+      },
+      activeWaitlists: {
+        value: activeWaitlists,
+        total: totalWaitlists,
+        change: newWaitlistsInRange,
+      },
+      conversionRate: {
+        value: Math.round(conversionRate * 10) / 10,
+        change: convertedCount,
+      },
+      avgWaitTime: {
+        value: Math.round(currentAvgWait * 10) / 10,
+        change: Math.round(currentAvgWait * 10) / 10,
+      },
+      signupsBySource,
+      waitlistStatus,
+      recentSignups,
     };
   }
 }

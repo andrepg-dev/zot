@@ -28,7 +28,7 @@ export default function PageActions({
   className
 }: PageActionsProps) {
   return (
-    <div className={cn("flex justify-between my-6", className)}>
+    <div className={cn("flex justify-between my-6 mb-4", className)}>
       <div className="flex gap-2">
         <InputComponent
           placeholder={searchPlaceholder}

@@ -1,67 +1,225 @@
 "use client";
 
-import { getGeneralStats, type GeneralStats } from "@/actions/general-stats/general-stats.actions";
-import AreaChartComponent from "@/components/app/dashboard/area-chart";
-import BarChartComponent from "@/components/app/dashboard/bar-chart";
-import TaskCards from "@/components/app/dashboard/task-cards";
+import {
+  getDashboardStats,
+  type DashboardStats
+} from "@/actions/general-stats/general-stats.actions";
+import RecentSignupsTable from "@/components/app/dashboard/recent-signups-table";
+import SourceChart from "@/components/app/dashboard/source-chart";
+import StatCard from "@/components/app/dashboard/stat-card";
+import StatusChart from "@/components/app/dashboard/status-chart";
 import Title from "@/components/global/title";
 import PageComponent from "@/components/layouts/page-component";
-import { Alert, Button } from "@heroui/react";
-import { useQuery } from "@tanstack/react-query";
-import Link from "next/link";
+import { cn } from "@/lib/utils";
+import {
+  ArrowTrendingUpIcon,
+  ChartBarIcon,
+  ClockIcon,
+  UserPlusIcon
+} from "@heroicons/react/24/outline";
+import { Select, SelectItem, Skeleton } from "@heroui/react";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import React from "react";
+
+function StatCardSkeleton() {
+  return (
+    <div className="flex flex-col gap-3 border px-5 py-4.5 bg-background">
+      <Skeleton className="h-8 w-20 rounded-sm" />
+      <div className="flex items-center justify-between">
+        <Skeleton className="h-4 w-28 rounded-sm" />
+        <Skeleton className="h-4 w-10 rounded-sm" />
+      </div>
+    </div>
+  );
+}
+
+function SourceChartSkeleton() {
+  return (
+    <div className="flex flex-col border bg-background h-full">
+      <div className="px-5 pr-10 py-3.5 border-b flex items-center h-[49px]">
+        <Skeleton className="h-3.5 w-32 rounded-sm" />
+      </div>
+      <div className="flex flex-col gap-4 px-5 pr-10 py-[13.5px]">
+        {Array.from({ length: 5 }).map((_, i) => (
+          <div key={i} className="flex items-center gap-3 h-5">
+            <Skeleton className="h-3.5 w-20 rounded-sm shrink-0" />
+            <Skeleton className="h-5 flex-1 rounded-sm" />
+            <Skeleton className="h-3.5 w-10 rounded-sm shrink-0" />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function StatusChartSkeleton() {
+  return (
+    <div className="flex flex-col border bg-background h-full">
+      <div className="px-5 pr-10 py-3.5 border-b flex items-center h-[49px]">
+        <Skeleton className="h-3.5 w-32 rounded-sm" />
+      </div>
+      <div className="flex items-center gap-6 px-5 pr-10 py-[13.5px]">
+        <Skeleton className="size-36 rounded-full shrink-0 bg-transparent! border-[20px]" />
+        <div className="flex flex-col gap-3 flex-1">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="flex items-center gap-2 h-5">
+              <Skeleton className="size-2.5 rounded-full shrink-0" />
+              <Skeleton className="h-3.5 w-16 rounded-sm" />
+              <Skeleton className="h-3.5 w-8 rounded-sm ml-auto" />
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function TableSkeleton() {
+  return (
+    <div className="flex flex-col gap-4 border px-5 py-4.5 bg-background">
+      <Skeleton className="h-5 w-32 rounded-sm" />
+      <div className="flex flex-col gap-3">
+        {Array.from({ length: 5 }).map((_, i) => (
+          <Skeleton key={i} className="h-10 w-full rounded-sm" />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+const DATE_RANGE_OPTIONS = [
+  { key: "7", label: "Last 7 days" },
+  { key: "14", label: "Last 14 days" },
+  { key: "30", label: "Last 30 days" },
+  { key: "60", label: "Last 60 days" },
+  { key: "90", label: "Last 90 days" }
+];
 
 export default function Dashboard() {
-  const { data, isPending } = useQuery<GeneralStats>({
-    queryKey: ["general-stats"],
-    queryFn: getGeneralStats
+  const [animated, setAnimated] = React.useState(false);
+  const [selectedRange, setSelectedRange] = React.useState("30");
+
+  const { fromStr, toStr } = React.useMemo(() => {
+    const now = new Date();
+    const from = new Date(now.getTime() - Number(selectedRange) * 24 * 60 * 60 * 1000);
+    return { fromStr: from.toISOString(), toStr: now.toISOString() };
+  }, [selectedRange]);
+
+  const { data, isPending, isFetching } = useQuery<DashboardStats>({
+    queryKey: ["dashboard-stats", fromStr, toStr],
+    queryFn: () => getDashboardStats(fromStr, toStr),
+    placeholderData: keepPreviousData,
+    refetchOnWindowFocus: false
   });
 
+  React.useEffect(() => {
+    setAnimated(true);
+  }, []);
+
   return (
-    <>
-      <PageComponent className="!py-0 text-sm">
-        <div className="flex flex-col gap-4">
-          {/* <Alert
-            color="primary"
-            title={"Trial expired"}
-            description={
-              "Your trial has expired. Upgrade to continue accessing dashboard features. Waiter signups will continue to work normally."
-            }
-            variant="faded"
-            isClosable
-            radius="sm"
-            endContent={
-              <Button
-                as={Link}
-                href="/app/billing"
-                size="sm"
-                className="mx-4 border bg-default-50"
-                variant="bordered"
-                radius="sm"
-              >
-                Upgrade now
-              </Button>
-            }
-            className="mt-6"
-          /> */}
-        </div>
+    <PageComponent>
+      <Title
+        description="Track signups, referrals, and conversion rates."
+        rightChildren={
+          <Select
+            aria-label="Date range"
+            size="sm"
+            radius="none"
+            variant="bordered"
+            selectedKeys={[selectedRange]}
+            onSelectionChange={(keys) => {
+              const key = Array.from(keys)[0] as string;
 
-        <Title description="Below are some tasks to get you started." className="mt-8">
-          Dashboard
-        </Title>
+              if (key) setSelectedRange(key);
+            }}
+            className="w-40"
+          >
+            {DATE_RANGE_OPTIONS.map((option) => (
+              <SelectItem key={option.key}>{option.label}</SelectItem>
+            ))}
+          </Select>
+        }
+      >
+        Waitlist Dashboard
+      </Title>
 
-        <div className="grid grid-cols-3 gap-4 my-6">
-          <TaskCards />
-        </div>
-      </PageComponent>
+      <div className="flex flex-col gap-6 mt-6">
+        {isPending ? (
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <StatCardSkeleton />
+              <StatCardSkeleton />
+              <StatCardSkeleton />
+              <StatCardSkeleton />
+            </div>
+            <div className="flex gap-4">
+              <div className="w-full">
+                <SourceChartSkeleton />
+              </div>
+              <div className="min-w-[377px]">
+                <StatusChartSkeleton />
+              </div>
+            </div>
+            <TableSkeleton />
+          </>
+        ) : (
+          <div
+            className={cn(
+              "flex flex-col gap-6 transition-opacity duration-300",
+              isFetching ? "opacity-50 pointer-events-none" : "opacity-100"
+            )}
+          >
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <StatCard
+                label="Total Signups"
+                value={data?.totalSignups.change ?? 0}
+                totalValue={data?.totalSignups.value ?? 0}
+                lastDays={`Last ${selectedRange} days`}
+                icon={UserPlusIcon}
+                iconColor="text-blue-500"
+                animated={animated}
+              />
+              <StatCard
+                label="Active Waitlists"
+                value={data?.activeWaitlists.change ?? 0}
+                totalValue={data?.activeWaitlists.value ?? 0}
+                icon={ChartBarIcon}
+                iconColor="text-green-500"
+                animated={animated}
+              />
+              <StatCard
+                label="Conversion Rate"
+                value={data?.conversionRate.change ?? 0}
+                totalValue={data?.conversionRate.value ?? 0}
+                suffix="%"
+                icon={ArrowTrendingUpIcon}
+                iconColor="text-yellow-500"
+                animated={animated}
+              />
+              <StatCard
+                label="Avg Wait Time"
+                value={data?.avgWaitTime.change ?? 0}
+                totalValue={data?.avgWaitTime.value ?? 0}
+                suffix="d"
+                icon={ClockIcon}
+                iconColor="text-purple-500"
+                animated={animated}
+              />
+            </div>
 
-      <PageComponent className="pt-0">
-        <div className="flex flex-col gap-8">
-          <div className="grid grid-cols-5 gap-4">
-            <AreaChartComponent data={data} isPending={isPending} />
-            <BarChartComponent data={data?.signupsByDay} isPending={isPending} />
+            <div className="flex gap-4">
+              <div className="w-full">
+                <SourceChart data={data?.signupsBySource ?? []} />
+              </div>
+              <div className="w-max">
+                <StatusChart data={data?.waitlistStatus ?? []} />
+              </div>
+            </div>
+
+            <RecentSignupsTable data={data?.recentSignups ?? []} />
           </div>
-        </div>
-      </PageComponent>
-    </>
+        )}
+      </div>
+    </PageComponent>
   );
 }

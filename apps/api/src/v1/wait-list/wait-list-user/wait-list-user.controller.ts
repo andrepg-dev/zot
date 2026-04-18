@@ -1,5 +1,5 @@
 import { UserId } from "@api/src/common/decorators/user-id.decorator";
-import { Body, Controller, Get, Param, Post, Query } from "@nestjs/common";
+import { Body, Controller, Get, Param, Patch, Post, Query } from "@nestjs/common";
 import { ParseObjectIdPipe } from "@nestjs/mongoose";
 import {
   ApiBearerAuth,
@@ -16,6 +16,7 @@ import { Types } from "mongoose";
 import { Public } from "../../auth/decorators/skip-auth.decorator";
 import { EmailSecurityService } from "../../core/email-security/email-security.service";
 import { RegisterWaitListUserDto } from "./dto/register-wait-list-user.dto";
+import { UpdateWaitListUserStatusDto } from "./dto/update-wait-list-user-status.dto";
 import {
   WaitListUserCountResponseDto,
   WaitListUserResponseDto,
@@ -152,6 +153,24 @@ export class WaitListUserController {
     @UserId() userId: Types.ObjectId,
   ) {
     return await this.waitListUserService.findByEmail(waitlistId, email, userId);
+  }
+
+  @Patch("status")
+  @ApiBearerAuth("JWT-auth")
+  @ApiOperation({
+    summary: "Update user status",
+    description:
+      "Updates the status of a waitlist user (waiting, invited, converted, churned). Use this to track user progression through the waitlist funnel.",
+  })
+  @ApiOkResponse({ description: "User status updated successfully" })
+  @ApiNotFoundResponse({ description: "User not found in waitlist" })
+  @ApiUnauthorizedResponse({ description: "Not authenticated or not the waitlist owner" })
+  async updateStatus(
+    @Param("waitlistId", ParseObjectIdPipe) waitlistId: Types.ObjectId,
+    @UserId() userId: Types.ObjectId,
+    @Body() dto: UpdateWaitListUserStatusDto,
+  ) {
+    return await this.waitListUserService.updateStatus(waitlistId, dto.email, dto.status, userId);
   }
 
   @Post("bulk-delete")

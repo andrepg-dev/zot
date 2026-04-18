@@ -1,6 +1,7 @@
 "use client";
 
 import { getProfile } from "@/actions/auth/profile";
+import { getEmailTemplates } from "@/actions/email-templates/email-templates.actions";
 import { getWaitListStats } from "@/actions/wait-list/stats.actions";
 import { deleteWaitList, updateWaitList } from "@/actions/wait-list/wait-list.actions";
 import FormField from "@/components/form-field";
@@ -9,7 +10,7 @@ import Title from "@/components/global/title";
 import PageComponent from "@/components/layouts/page-component";
 import Type from "@/components/type";
 import InputComponent from "@/components/ui/input";
-import { EnvelopeIcon } from "@heroicons/react/24/outline";
+import { DocumentTextIcon, EnvelopeIcon, PlusIcon } from "@heroicons/react/24/outline";
 import { Alert } from "@heroui/alert";
 import { Button } from "@heroui/button";
 import { Card, CardBody, CardFooter } from "@heroui/card";
@@ -21,14 +22,16 @@ import {
   ModalHeader,
   useDisclosure
 } from "@heroui/react";
+import { Select, SelectItem, SelectSection } from "@heroui/select";
 import { Switch } from "@heroui/switch";
 import { addToast } from "@heroui/toast";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { type UpdateWaitListValues } from "@repo/packages/shared/schemas";
+import { type EmailTemplate, type UpdateWaitListValues } from "@repo/packages/shared/schemas";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import posthog from "posthog-js";
-import { use, useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
 
@@ -39,7 +42,8 @@ const generalFormSchema = z.object({
 });
 
 const emailFormSchema = z.object({
-  sendEmailToNewSignup: z.boolean().optional()
+  sendEmailToNewSignup: z.boolean().optional(),
+  emailTemplateToNewSignUps: z.string().optional()
 });
 
 type GeneralFormValues = z.infer<typeof generalFormSchema>;
@@ -63,6 +67,11 @@ export default function SettingsPage({ params }: { params: Promise<{ id: string 
   });
 
   const isPremium = profile?.suscriptionPlan === "PREMIUM" || profile?.suscriptionPlan === "SCALE";
+
+  const { data: templates } = useQuery({
+    queryKey: ["email-templates"],
+    queryFn: getEmailTemplates
+  });
 
   const generalMutation = useMutation({
     mutationFn: (values: UpdateWaitListValues) => updateWaitList(id, values),
@@ -121,18 +130,37 @@ export default function SettingsPage({ params }: { params: Promise<{ id: string 
   const { control: emailControl } = useForm<EmailFormValues>({
     resolver: zodResolver(emailFormSchema),
     values: {
-      sendEmailToNewSignup: data?.sendEmailToNewSignup ?? false
+      sendEmailToNewSignup: data?.sendEmailToNewSignup ?? false,
+      emailTemplateToNewSignUps: data?.emailTemplateToNewSignUps ?? ""
     }
   });
 
   const sendEmailValue = useWatch({ control: emailControl, name: "sendEmailToNewSignup" });
+  const templateValue = useWatch({ control: emailControl, name: "emailTemplateToNewSignUps" });
+
+  const selectedTemplate = React.useMemo(
+    () => ((templates ?? []) as EmailTemplate[]).find((t) => t._id === templateValue),
+    [templates, templateValue]
+  );
 
   useEffect(() => {
     if (data === undefined) return;
     if (sendEmailValue === data.sendEmailToNewSignup) return;
 
+    if (sendEmailValue && !templateValue) return;
+
     emailMutation.mutate({ sendEmailToNewSignup: sendEmailValue });
   }, [sendEmailValue]);
+
+  useEffect(() => {
+    if (data === undefined) return;
+    if (templateValue === (data.emailTemplateToNewSignUps ?? "")) return;
+
+    emailMutation.mutate({
+      sendEmailToNewSignup: sendEmailValue,
+      emailTemplateToNewSignUps: templateValue || undefined
+    });
+  }, [templateValue]);
 
   const deletePhrase = `delete ${data?.name}`;
 
@@ -258,6 +286,72 @@ export default function SettingsPage({ params }: { params: Promise<{ id: string 
                 )}
               />
             </FormField>
+
+            {sendEmailValue && (
+              <>
+                <hr />
+
+                <FormField
+                  title="Email template"
+                  description="Choose which template to send when a new user signs up."
+                  className="p-4"
+                  icon={<DocumentTextIcon className="size-4" />}
+                  isRequired
+                >
+                  <Controller
+                    control={emailControl}
+                    name="emailTemplateToNewSignUps"
+                    render={({ field }) => (
+                      <div className="flex flex-col gap-4">
+                        <Select
+                          label="Email template"
+                          placeholder="Select a template"
+                          radius="sm"
+                          size="sm"
+                          isRequired
+                          selectedKeys={field.value ? [field.value] : []}
+                          onSelectionChange={(keys) => {
+                            const key = Array.from(keys)[0] as string;
+                            if (key === "create-new") {
+                              window.open("/app/emails/templates", "_blank");
+                              return;
+                            }
+                            field.onChange(key ?? "");
+                          }}
+                        >
+                          <SelectSection title="Templates">
+                            {((templates ?? []) as EmailTemplate[]).map((template) => (
+                              <SelectItem key={template._id}>{template.alias}</SelectItem>
+                            ))}
+                          </SelectSection>
+                          <SelectSection title="">
+                            <SelectItem
+                              key="create-new"
+                              startContent={<PlusIcon className="size-4" />}
+                            >
+                              Create new template
+                            </SelectItem>
+                          </SelectSection>
+                        </Select>
+
+                        {selectedTemplate?.preview && (
+                          <div className="relative rounded-sm border overflow-hidden bg-white max-h-64">
+                            <Image
+                              src={selectedTemplate.preview}
+                              alt={selectedTemplate.alias}
+                              width={800}
+                              height={600}
+                              className="w-full h-auto object-contain"
+                            />
+                            <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white to-transparent" />
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  />
+                </FormField>
+              </>
+            )}
           </CardBody>
         </Card>
       </div>
@@ -312,8 +406,11 @@ export default function SettingsPage({ params }: { params: Promise<{ id: string 
               <ModalHeader>Confirm Deletion</ModalHeader>
               <ModalBody>
                 <p className="text-sm text-muted-foreground">
-                  This action cannot be undone. Type <Type variant="code" showCopyButton>{deletePhrase}</Type> to
-                  confirm.
+                  This action cannot be undone. Type{" "}
+                  <Type variant="code" showCopyButton>
+                    {deletePhrase}
+                  </Type>{" "}
+                  to confirm.
                 </p>
                 <InputComponent
                   placeholder={deletePhrase}

@@ -6,6 +6,7 @@ export interface WaitListStats {
   _id: string;
   name: string;
   sendEmailToNewSignup: boolean;
+  emailTemplateToNewSignUps?: string;
   isSecurityActive: boolean;
   isAvailable: boolean;
   webhook: {

@@ -1,11 +1,14 @@
 import { HttpService } from "@nestjs/axios";
-import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import mongoose, { Model, Types } from "mongoose";
 import { firstValueFrom } from "rxjs";
 import { EmailSecurityService } from "../../core/email-security/email-security.service";
+import { EmailSendingService } from "../../core/email-sending/email-sending.service";
+import { EmailTemplate } from "../../email-templates/schemas/email-template.schema";
+import { EmailSendRecord } from "../../emails/schemas/email-send-record.schema";
+import { EmailParams } from "../../types/email-sending";
 import { UserQuoteService } from "../../users/user-quote/user-quote.service";
-import { UsersService } from "../../users/users.service";
 import { WaitListUser } from "../schemas/wait-list-user.schema";
 import { WaitList } from "../schemas/wait-list.schema";
 import { WaitlistWebhookEvent } from "../schemas/waitlist-webhooks-events.schema";
@@ -21,7 +24,11 @@ export class WaitListUserService {
     private WaitlistWebhookEventModel: Model<WaitlistWebhookEvent>,
     private readonly httpService: HttpService,
     private readonly userQuoteService: UserQuoteService,
-    private readonly usersService: UsersService,
+    @InjectModel(EmailTemplate.name) private EmailTemplateModel: Model<EmailTemplate>,
+    private readonly emailService: EmailSendingService,
+    @InjectModel(EmailSendRecord.name)
+    private readonly emailSendRecordModel: Model<EmailSendRecord>,
+    private readonly userquoteService: UserQuoteService,
   ) {}
 
   async validateOwnership(waitlistId: Types.ObjectId, owner: Types.ObjectId): Promise<void> {
@@ -85,13 +92,19 @@ export class WaitListUserService {
         usage: 1,
       });
 
-      const position: number =
-        (await this.WaitListUserModel.countDocuments({ waitlistId: waitlistId })) + 1;
+      const lastUser = await this.WaitListUserModel.findOne({ waitlistId })
+        .sort({ position: -1 })
+        .select("position")
+        .lean();
+
+      const position = (lastUser?.position ?? 0) + 1;
+      const source = dto.referredBy ? "referral" : dto.source || "organic";
 
       const user = await this.WaitListUserModel.create({
-        waitlistId: waitlistId,
-        position,
         ...dto,
+        waitlistId,
+        position,
+        source,
       });
 
       // <================== SEND WEBHOOK TO THE WEBHOOK URL ==================>
@@ -145,6 +158,74 @@ export class WaitListUserService {
               sentAt: new Date(),
             }).catch(() => undefined);
           }
+        }
+      }
+
+      // <================== SEND EMAIL TO NEW SIGN-UP ==================>
+      if (waitlist.sendEmailToNewSignup === true && waitlist.emailTemplateToNewSignUps) {
+        const template = await this.EmailTemplateModel.findOne({
+          _id: waitlist.emailTemplateToNewSignUps,
+        });
+
+        if (!template) {
+          throw new NotFoundException("Default email not found, please provide one.");
+        }
+
+        const payload: EmailParams = {
+          from: "Zot WaitList <mail@zot.so>",
+          to: dto.email,
+          provider: "resend",
+          subject: template.subject,
+          options: {
+            html: template.html,
+            replyTo: "mail@zot.so",
+          },
+        };
+
+        const { to, provider, ...rest } = payload;
+
+        try {
+          await this.emailService.send(payload);
+
+          await this.emailSendRecordModel.create({
+            owner: waitlist.owner,
+            waitlistId,
+            quantitySent: 1,
+            recipientEmails: [user.email],
+            sentSuccessfully: 1,
+            failedCount: 0,
+            failedEmails: [],
+            payload: rest,
+          });
+
+          await this.userquoteService.editUserQuote({
+            ownerId: waitlist.owner,
+            service: "emailsSent",
+            usage: 1,
+          });
+        } catch (err) {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+          if (err?.status != 500) {
+            // If the problem is from the server, should not be in the user quote
+            await this.userquoteService.editUserQuote({
+              ownerId: waitlist.owner,
+              service: "emailsSent",
+              usage: 1,
+            });
+          }
+
+          await this.emailSendRecordModel.create({
+            owner: waitlist.owner,
+            waitlistId,
+            quantitySent: 1,
+            recipientEmails: [user.email],
+            sentSuccessfully: 0,
+            failedCount: 1,
+            failedEmails: [user.email],
+            payload: rest,
+          });
+
+          throw err;
         }
       }
 
@@ -294,6 +375,35 @@ export class WaitListUserService {
         "Error counting referred users in waitlist.",
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
+    }
+  }
+
+  async updateStatus(
+    waitlistId: Types.ObjectId,
+    email: string,
+    status: string,
+    owner: Types.ObjectId,
+  ) {
+    try {
+      await this.validateOwnership(waitlistId, owner);
+
+      const user = await this.WaitListUserModel.findOneAndUpdate(
+        { waitlistId, email },
+        { $set: { status } },
+        { new: true },
+      );
+
+      if (!user) {
+        throw new HttpException(
+          `User with email "${email}" not found in this waitlist.`,
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
+      return user;
+    } catch (error) {
+      if (error instanceof HttpException) throw error;
+      throw new HttpException("Error updating user status.", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }

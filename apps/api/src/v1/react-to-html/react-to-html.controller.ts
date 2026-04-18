@@ -28,8 +28,7 @@ The input should be valid React/JSX code that exports a default component.
     description: "Invalid React code or compilation error",
   })
   async compile(@Body() body: ReactToHtmlDto) {
-    const code = body.code;
-    const result = await this.react2html.compile(code);
+    const result = await this.react2html.compile(body.code, body.variables);
 
     return { html: result };
   }

@@ -1,17 +1,4 @@
 services:
-  # postgreSQL:
-  #   container_name: postgres_db
-  #   image: postgres:16.2
-  #   restart: always
-  #   volumes:
-  #     - ./postgres_data:/var/lib/postgresql/data
-  #   ports:
-  #     - 5432:5432
-  #   environment:
-  #     - POSTGRES_USER=blaze
-  #     - POSTGRES_PASSWORD=blaze_password
-  #     - POSTGRES_DB=blaze_database
-
   mongodb:
     container_name: mongodb_db
     image: mongo:latest

@@ -4,6 +4,7 @@ import { getEmailSendRecords } from "@/actions/emails/emails.actions";
 import { getWaitListStats } from "@/actions/wait-list/stats.actions";
 import Title from "@/components/global/title";
 import PageComponent from "@/components/layouts/page-component";
+import Type from "@/components/type";
 import ConversionRateChart from "@/components/wait-list/charts/conversion-rate-chart";
 import DailyRegistrationsChart from "@/components/wait-list/charts/daily-registrations-chart";
 import EmailsSentChart from "@/components/wait-list/charts/emails-sent-chart";
@@ -13,11 +14,13 @@ import { cn } from "@/lib/utils";
 import {
   ArrowTopRightOnSquareIcon,
   EnvelopeIcon,
+  ExclamationTriangleIcon,
   HandRaisedIcon,
   ShareIcon,
   UserGroupIcon,
   UserPlusIcon
 } from "@heroicons/react/24/outline";
+import { Alert } from "@heroui/alert";
 import NumberFlow from "@number-flow/react";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
@@ -69,7 +72,7 @@ export default function LaunchedWaitList({ params }: { params: Promise<{ id: str
   const stats = [
     {
       id: 1,
-      title: "Total Sign Ups",
+      title: "Total Signups",
       value: data?.users?.total ?? 0,
       icon: UserPlusIcon,
       iconColor: "text-blue-500"
@@ -83,7 +86,7 @@ export default function LaunchedWaitList({ params }: { params: Promise<{ id: str
     },
     {
       id: 3,
-      title: "Sign Ups Today",
+      title: "Signups Today",
       value: data?.users?.signUpsToday ?? 0,
       icon: UserGroupIcon,
       iconColor: "text-yellow-500"
@@ -154,6 +157,21 @@ export default function LaunchedWaitList({ params }: { params: Promise<{ id: str
 
   return (
     <PageComponent>
+      {data?.sendEmailToNewSignup && !data?.emailTemplateToNewSignUps && (
+        <Alert color="danger" variant="faded" radius="sm" classNames={{ base: "mb-4" }}>
+          <div className="flex items-center gap-2">
+            <Type>
+              You have enabled &quot;Send email to new signups&quot; but no email template is
+              configured.{" "}
+              <Link href={`/app/launch/waitlist/${id}/settings`} className="underline font-medium">
+                Go to Settings
+              </Link>{" "}
+              to select a template.
+            </Type>
+          </div>
+        </Alert>
+      )}
+
       <div className="flex items-start gap-2">
         <Title description={`ID: ${id}`} classNames={{ description: "mt-1" }}>
           <span>{isPending ? "Loading..." : data?.name}</span>

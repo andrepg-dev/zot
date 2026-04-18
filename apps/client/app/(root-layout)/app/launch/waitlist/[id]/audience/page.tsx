@@ -1,7 +1,5 @@
 "use client";
 
-import { getEmailTemplates } from "@/actions/email-templates/email-templates.actions";
-import { sendEmailToUsersById } from "@/actions/emails/emails.actions";
 import { getWaitListStats } from "@/actions/wait-list/stats.actions";
 import { deleteWaitListUser, getWaitListUsers } from "@/actions/wait-list/wait-list-user.actions";
 import GlobalButton from "@/components/global/button";
@@ -9,20 +7,16 @@ import PrimaryActionButton from "@/components/global/primary-action-button";
 import Title from "@/components/global/title";
 import PageComponent from "@/components/layouts/page-component";
 import Type from "@/components/type";
+import Chip from "@/components/ui/chip";
 import InputComponent from "@/components/ui/input";
-import CampaignResultAnimation from "@/components/wait-list/campaign-result-animation";
-import CampaignSentAnimation, {
-  getAnimationHeight,
-  getFramesPerRow
-} from "@/components/wait-list/campaign-sent-animation";
+import SendCampaignModal from "@/components/wait-list/send-campaign-modal";
 import { useHotkey } from "@/hooks/use-hotkey";
-import { formatDate } from "@/lib/format-date";
+import { formatDateTime } from "@/lib/format-date";
 import { exportToCsv } from "@/lib/utils";
 import {
   ArrowDownTrayIcon,
   ChevronDownIcon,
   MagnifyingGlassIcon,
-  PlusIcon,
   RocketLaunchIcon,
   TrashIcon
 } from "@heroicons/react/24/outline";
@@ -46,20 +40,32 @@ import {
   TableRow,
   useDisclosure
 } from "@heroui/react";
-import { Select, SelectItem, SelectSection } from "@heroui/select";
 import { addToast } from "@heroui/toast";
-import { Player } from "@remotion/player";
-import type { EmailTemplate } from "@repo/packages/shared/schemas";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import Image from "next/image";
-import posthog from "posthog-js";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 const baseColumns = [
   { key: "createdAt", label: "Joined" },
   { key: "email", label: "Email" },
-  { key: "referredBy", label: "Referred By" }
+  { key: "referredBy", label: "Referred By" },
+  { key: "position", label: "Position" },
+  { key: "status", label: "Status" }
 ];
+
+function PositionCell({ position }: { position: number }) {
+  return (
+    <div className="flex items-center gap-1 border bg-default-100/70 w-min">
+      <span className="text-xs font-mono px-1.5 py-0.5 rounded-sm">#{position}</span>
+    </div>
+  );
+}
+
+const STATUS_CHIP: Record<string, "warning" | "primary" | "active" | "neutral"> = {
+  waiting: "neutral",
+  invited: "active",
+  converted: "active",
+  churned: "warning"
+};
 
 export default function AudiencePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = React.use(params);
@@ -70,9 +76,6 @@ export default function AudiencePage({ params }: { params: Promise<{ id: string 
   const exportModal = useDisclosure();
   const sendModal = useDisclosure();
   const queryClient = useQueryClient();
-
-  const [animationPhase, setAnimationPhase] = useState<"idle" | "list" | "result">("idle");
-  const [sentEmails, setSentEmails] = useState<string[]>([]);
 
   useHotkey({
     key: "k",
@@ -90,54 +93,6 @@ export default function AudiencePage({ params }: { params: Promise<{ id: string 
   const { data: waitlistStats } = useQuery({
     queryKey: [id],
     queryFn: () => getWaitListStats(id)
-  });
-
-  const { data: templates } = useQuery({
-    queryKey: ["email-templates"],
-    queryFn: getEmailTemplates
-  });
-
-  const [selectedTemplateId, setSelectedTemplateId] = useState<string>("");
-
-  const selectedTemplate = React.useMemo(
-    () => ((templates ?? []) as EmailTemplate[]).find((t) => t._id === selectedTemplateId),
-    [templates, selectedTemplateId]
-  );
-
-  const displayCount = Math.min(sentEmails.length, 50);
-  const framesPerRow = getFramesPerRow(displayCount);
-  const animationFrames = 10 + displayCount * framesPerRow + 40;
-  const animationDurationMs = (animationFrames / 30) * 1000;
-
-  useEffect(() => {
-    if (animationPhase !== "list") return;
-    const timer = setTimeout(() => {
-      setAnimationPhase("result");
-    }, animationDurationMs);
-    return () => clearTimeout(timer);
-  }, [animationPhase, animationDurationMs]);
-
-  function handleCloseModal() {
-    setAnimationPhase("idle");
-    resetSend();
-    sendModal.onClose();
-  }
-
-  const {
-    mutate: sendCampaign,
-    isPending: isSending,
-    isSuccess: isSendSuccess,
-    isError: isSendError,
-    error: sendError,
-    reset: resetSend
-  } = useMutation({
-    mutationFn: (userIds: string[]) =>
-      sendEmailToUsersById(id, { users: userIds, templateId: selectedTemplate?._id }),
-    onSuccess: (_data, userIds) => {
-      queryClient.invalidateQueries({ queryKey: [id, "email-records"] });
-      queryClient.invalidateQueries({ queryKey: [id, "email-records-list"] });
-      posthog.capture("email_campaign_sent", { waitlist_id: id, quantity: userIds.length });
-    }
   });
 
   const deleteMutation = useMutation({
@@ -173,7 +128,7 @@ export default function AudiencePage({ params }: { params: Promise<{ id: string 
 
   const columns = React.useMemo(() => {
     const metaCols = metadataKeys.map((k) => ({ key: `meta_${k}`, label: k }));
-    return [...baseColumns, ...metaCols];
+    return [...baseColumns, ...metaCols, { key: "action", label: "Action" }];
   }, [metadataKeys]);
 
   const referralCodeToEmail = React.useMemo(() => {
@@ -244,6 +199,11 @@ export default function AudiencePage({ params }: { params: Promise<{ id: string 
     });
   }
 
+  function handleInvite(userId: string) {
+    setSelectedKeys(new Set([userId]));
+    sendModal.onOpen();
+  }
+
   function handleRowDoubleClick(userId?: string) {
     if (selectedKeys.size > 0) {
       sendModal.onOpen();
@@ -255,13 +215,20 @@ export default function AudiencePage({ params }: { params: Promise<{ id: string 
     }
   }
 
-  function handleSend() {
-    const ids = Array.from(selectedKeys);
-    const emails = (users ?? []).filter((u) => selectedKeys.has(u._id)).map((u) => u.email);
-    setSentEmails(emails);
-    setAnimationPhase("list");
-    sendCampaign(ids);
-  }
+  const campaignUsers = React.useMemo(
+    () =>
+      (users ?? [])
+        .filter((u) => selectedKeys.has(u._id))
+        .map((u) => ({
+          _id: u._id,
+          email: u.email,
+          name: u.name,
+          position: u.position,
+          referredBy: u.referredBy,
+          metadata: u.metadata
+        })),
+    [users, selectedKeys]
+  );
 
   return (
     <PageComponent>
@@ -331,224 +298,149 @@ export default function AudiencePage({ params }: { params: Promise<{ id: string 
           </div>
         </div>
 
-        <Table
-          aria-label="Audience Table"
-          selectionMode="multiple"
-          selectedKeys={selectedKeys}
-          onSelectionChange={(keys) => {
-            if (keys === "all") {
-              setSelectedKeys(new Set(filteredUsers.map((u) => u._id)));
-            } else {
-              setSelectedKeys(new Set(keys as Set<string>));
-            }
-          }}
-          checkboxesProps={{
-            size: "sm",
-            classNames: { wrapper: "before:border-1" }
-          }}
-          radius="none"
-          className="bg-default-50 border"
-          classNames={{
-            td: "py-3",
-            wrapper: "p-0"
-          }}
-        >
-          <TableHeader columns={columns}>
-            {(column) => (
-              <TableColumn key={column.key} allowsSorting className="capitalize">
-                {column.label}
-              </TableColumn>
-            )}
-          </TableHeader>
-
-          <TableBody
-            items={filteredUsers}
-            isLoading={isPending}
-            loadingContent={<Spinner size="sm" />}
-            emptyContent={<Type>No users registered yet.</Type>}
+        <div className="flex flex-col border bg-background">
+          <Table
+            aria-label="Audience Table"
+            selectionMode="multiple"
+            selectedKeys={selectedKeys}
+            onSelectionChange={(keys) => {
+              if (keys === "all") {
+                setSelectedKeys(new Set(filteredUsers.map((u) => u._id)));
+              } else {
+                setSelectedKeys(new Set(keys as Set<string>));
+              }
+            }}
+            checkboxesProps={{
+              size: "sm",
+              classNames: { wrapper: "before:border-1" }
+            }}
+            isCompact
+            radius="none"
+            className="bg-default-50 border cursor-pointer"
+            classNames={{
+              td: "py-3",
+              wrapper: "p-0",
+              tbody: "font-mono"
+            }}
           >
-            {(item) => (
-              <TableRow
-                key={item._id}
-                onDoubleClick={(e: React.MouseEvent) => {
-                  e.stopPropagation();
-                  handleRowDoubleClick(item._id);
-                }}
-              >
-                {(columnKey) => {
-                  const key = String(columnKey);
+            <TableHeader columns={columns}>
+              {(column) => (
+                <TableColumn
+                  key={column.key}
+                  allowsSorting={column.key !== "action"}
+                  className={column.key === "action" ? "text-end" : "capitalize"}
+                >
+                  {column.label}
+                </TableColumn>
+              )}
+            </TableHeader>
 
-                  if (key.startsWith("meta_")) {
-                    const metaKey = key.replace("meta_", "");
-                    const value = item.metadata?.[metaKey];
-                    return (
-                      <TableCell>
-                        <span className="font-mono text-xs text-muted-foreground truncate block max-w-[200px]">
-                          {value != null ? String(value) : "—"}
-                        </span>
-                      </TableCell>
-                    );
-                  }
+            <TableBody
+              items={filteredUsers}
+              isLoading={isPending}
+              loadingContent={<Spinner size="sm" />}
+              emptyContent={<Type>No users registered yet.</Type>}
+            >
+              {(item) => (
+                <TableRow
+                  key={item._id}
+                  onDoubleClick={(e: React.MouseEvent) => {
+                    e.stopPropagation();
+                    handleRowDoubleClick(item._id);
+                  }}
+                >
+                  {(columnKey) => {
+                    const key = String(columnKey);
 
-                  const valueMap: Record<string, React.ReactNode> = {
-                    email: (
-                      <span className="font-mono truncate block max-w-[200px] text-xs">
-                        <span className="text-muted-foreground">#{item.position}</span> {item.email}
-                      </span>
-                    ),
-                    referredBy: item.referredBy ? (
-                      <span className="font-mono text-xs truncate block max-w-[200px]">
-                        {referralCodeToEmail.get(item.referredBy) ?? item.referredBy}
-                      </span>
-                    ) : (
-                      <span className="text-muted-foreground text-xs truncate block max-w-[200px]">
-                        —
-                      </span>
-                    ),
-                    createdAt: (
-                      <span className="text-muted-foreground font-mono text-xs truncate block max-w-[200px]">
-                        {formatDate(item.createdAt)}
-                      </span>
-                    )
-                  };
-                  return <TableCell>{valueMap[key]}</TableCell>;
-                }}
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+                    if (key === "action") {
+                      const status = item.status ?? "waiting";
+                      return (
+                        <TableCell className="flex justify-end items-center gap-2">
+                          {status === "waiting" && (
+                            <GlobalButton
+                              variant="bordered"
+                              className="text-xs"
+                              onPress={() => handleInvite(item._id)}
+                            >
+                              Invite
+                            </GlobalButton>
+                          )}
+
+                          {status != "waiting" && "-"}
+                        </TableCell>
+                      );
+                    }
+
+                    if (key.startsWith("meta_")) {
+                      const metaKey = key.replace("meta_", "");
+                      const value = item.metadata?.[metaKey];
+                      return (
+                        <TableCell>
+                          <Type
+                            variant="sm"
+                            className="text-muted-foreground truncate block max-w-[200px]"
+                          >
+                            {value != null ? String(value) : "—"}
+                          </Type>
+                        </TableCell>
+                      );
+                    }
+
+                    const valueMap: Record<string, React.ReactNode> = {
+                      email: (
+                        <Type variant="sm" as="span" className="truncate block max-w-[200px]">
+                          {item.email}
+                        </Type>
+                      ),
+                      position: (
+                        <Type variant="sm" as="span">
+                          <PositionCell position={item.position ?? 0} />
+                        </Type>
+                      ),
+                      referredBy: item.referredBy ? (
+                        <Type variant="sm" className="truncate block max-w-[200px]">
+                          {referralCodeToEmail.get(item.referredBy) ?? item.referredBy}
+                        </Type>
+                      ) : (
+                        <Type
+                          variant="sm"
+                          className="text-muted-foreground truncate block max-w-[200px]"
+                        >
+                          —
+                        </Type>
+                      ),
+                      createdAt: (
+                        <Type
+                          variant="sm"
+                          className="text-muted-foreground truncate block max-w-[200px]"
+                        >
+                          {formatDateTime(item.createdAt)}
+                        </Type>
+                      ),
+                      status: (() => {
+                        const status = item.status ?? "waiting";
+                        return (
+                          <Chip status={STATUS_CHIP[status] ?? "neutral"} className="!rounded-sm">
+                            {status}
+                          </Chip>
+                        );
+                      })()
+                    };
+                    return <TableCell>{valueMap[key]}</TableCell>;
+                  }}
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
       </div>
 
-      <Modal
+      <SendCampaignModal
         isOpen={sendModal.isOpen}
         onOpenChange={sendModal.onOpenChange}
-        radius="sm"
-        isDismissable={animationPhase === "idle"}
-        hideCloseButton={animationPhase !== "idle"}
-      >
-        <ModalContent>
-          {() => {
-            if (animationPhase === "list") {
-              return (
-                <ModalBody className="p-0 overflow-hidden">
-                  <Player
-                    component={CampaignSentAnimation}
-                    inputProps={{ emails: sentEmails }}
-                    durationInFrames={animationFrames}
-                    fps={30}
-                    compositionWidth={460}
-                    compositionHeight={getAnimationHeight(sentEmails.length)}
-                    autoPlay
-                    style={{ width: "100%", height: getAnimationHeight(sentEmails.length) }}
-                  />
-                </ModalBody>
-              );
-            }
-
-            if (animationPhase === "result") {
-              const status = isSendSuccess ? "success" : isSendError ? "error" : "pending";
-
-              return (
-                <>
-                  <ModalBody className="p-0 overflow-hidden">
-                    <Player
-                      key={status}
-                      component={CampaignResultAnimation}
-                      inputProps={{
-                        status,
-                        message: isSendSuccess
-                          ? `${sentEmails.length} emails dispatched`
-                          : isSendError
-                            ? (sendError?.message ?? "An error occurred")
-                            : "Waiting for server response..."
-                      }}
-                      durationInFrames={9000}
-                      fps={30}
-                      compositionWidth={460}
-                      compositionHeight={160}
-                      autoPlay
-                      loop={isSending}
-                      style={{ width: "100%", height: 160 }}
-                    />
-                  </ModalBody>
-                  {(isSendSuccess || isSendError) && (
-                    <ModalFooter className="justify-center">
-                      <GlobalButton variant="light" onPress={handleCloseModal}>
-                        Close
-                      </GlobalButton>
-                    </ModalFooter>
-                  )}
-                </>
-              );
-            }
-
-            return (
-              <>
-                <ModalHeader>Send Email Campaign</ModalHeader>
-                <ModalBody>
-                  <p className="text-sm text-muted-foreground">
-                    You are about to send an email campaign to <strong>{selectedKeys.size}</strong>{" "}
-                    selected user
-                    {selectedKeys.size !== 1 ? "s" : ""}. Do you want to continue?
-                  </p>
-
-                  <Select
-                    label="Email template"
-                    placeholder="Select a template"
-                    radius="sm"
-                    size="sm"
-                    selectedKeys={selectedTemplateId ? [selectedTemplateId] : []}
-                    onSelectionChange={(keys) => {
-                      const key = Array.from(keys)[0] as string;
-                      if (key === "create-new") {
-                        window.open("/app/emails/templates", "_blank");
-                        return;
-                      }
-                      setSelectedTemplateId(key ?? "");
-                    }}
-                  >
-                    <SelectSection title="Templates">
-                      {((templates ?? []) as EmailTemplate[]).map((template) => (
-                        <SelectItem key={template._id}>{template.alias}</SelectItem>
-                      ))}
-                    </SelectSection>
-                    <SelectSection title="">
-                      <SelectItem key="create-new" startContent={<PlusIcon className="size-4" />}>
-                        Create new template
-                      </SelectItem>
-                    </SelectSection>
-                  </Select>
-
-                  {selectedTemplate?.preview && (
-                    <div className="rounded-sm border overflow-hidden bg-white">
-                      <Image
-                        src={selectedTemplate.preview}
-                        alt={selectedTemplate.alias}
-                        width={800}
-                        height={600}
-                        className="w-full h-auto object-contain"
-                      />
-                    </div>
-                  )}
-                </ModalBody>
-                <ModalFooter>
-                  <GlobalButton variant="light" onPress={handleCloseModal}>
-                    Cancel
-                  </GlobalButton>
-                  <PrimaryActionButton
-                    startContent={<RocketLaunchIcon className="size-4" />}
-                    isDisabled={selectedKeys.size === 0 || !selectedTemplateId}
-                    isLoading={isSending}
-                    onPress={handleSend}
-                  >
-                    Send to {selectedKeys.size} user{selectedKeys.size !== 1 ? "s" : ""}
-                  </PrimaryActionButton>
-                </ModalFooter>
-              </>
-            );
-          }}
-        </ModalContent>
-      </Modal>
+        waitlistId={id}
+        users={campaignUsers}
+      />
 
       <Modal isOpen={exportModal.isOpen} onOpenChange={exportModal.onOpenChange} radius="sm">
         <ModalContent>

@@ -1,12 +1,20 @@
-import { ValidationPipe, VersioningType } from "@nestjs/common";
+import { Logger, ValidationPipe, VersioningType } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import cookieParser from "cookie-parser";
-
+import * as fs from "fs";
 import { AppModule } from "./app.module";
 
+const processLogger = new Logger("Process");
+process.on("uncaughtException", (error) => {
+  processLogger.error(`Uncaught exception: ${error.message}`, error.stack);
+});
+process.on("unhandledRejection", (reason) => {
+  processLogger.error(`Unhandled rejection: ${String(reason)}`);
+});
+
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { cors: true, rawBody: true });
+  const app = await NestFactory.create(AppModule, { rawBody: true });
 
   // Class validator activation
   app.useGlobalPipes(
@@ -58,9 +66,8 @@ API requests are subject to rate limiting. Please handle 429 responses appropria
     .addTag("React to HTML", "React component to HTML conversion")
     .build();
 
-  const document = SwaggerModule.createDocument(app, config, {
-    operationIdFactory: (controllerKey: string, methodKey: string) => methodKey,
-  });
+  const document = SwaggerModule.createDocument(app, config);
+  fs.writeFileSync("./openapi.json", JSON.stringify(document, null, 2));
 
   SwaggerModule.setup("docs", app, document, {
     swaggerOptions: {
@@ -80,8 +87,10 @@ API requests are subject to rate limiting. Please handle 429 responses appropria
     `,
   });
 
+  const frontendUrl = "http://localhost:3002";
   app.enableCors({
-    origin: "https://zot.so",
+    origin: [frontendUrl, "https://zot.so"],
+    credentials: true,
   });
 
   await app.listen(process.env.PORT ?? 3010);

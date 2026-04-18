@@ -12,6 +12,7 @@ import Type from "@/components/type";
 import Chip from "@/components/ui/chip";
 import InputComponent from "@/components/ui/input";
 import { useHotkey } from "@/hooks/use-hotkey";
+import { analyzeTemplateCode } from "@/lib/extract-template-variables";
 import { cn } from "@/lib/utils";
 import useReactCodeEditorStore from "@/store/emails/react-code-editor-email.store";
 import {
@@ -23,7 +24,8 @@ import {
   EnvelopeIcon,
   EyeIcon,
   FolderPlusIcon,
-  SlashIcon
+  SlashIcon,
+  VariableIcon
 } from "@heroicons/react/24/outline";
 import { Button } from "@heroui/button";
 import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@heroui/dropdown";
@@ -37,9 +39,8 @@ import {
   type CreateEmailTemplateValues
 } from "@repo/packages/shared/schemas";
 import { useMutation } from "@tanstack/react-query";
-import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useRef, useState } from "react";
+import { Suspense, useMemo, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 
 type VisualizationType = "code" | "preview";
@@ -82,6 +83,10 @@ function CreateEmailPageContent() {
   };
 
   const { lastCodeMessageHtmlCode } = useReactCodeEditorStore();
+
+  const templateAnalysis = useMemo(() => analyzeTemplateCode(editorCode), [editorCode]);
+  const templateVariables = templateAnalysis.declared;
+  const missingVariables = templateAnalysis.missing;
 
   const [isSaveOpen, setIsSaveOpen] = useState(false);
 
@@ -199,16 +204,7 @@ function CreateEmailPageContent() {
             </GlobalTooltip>
           </div>
 
-          <div className="flex items-center gap-4">
-            <Link
-              href="https://react.email/docs/introduction"
-              title="React email documentation"
-              target="_blank"
-              className="hover:underline"
-            >
-              <Type variant="link">See documentation</Type>
-            </Link>
-
+          <div className="flex items-center gap-2">
             <Dropdown className="border p-0" disableAnimation>
               <DropdownTrigger>
                 <Button size="sm" variant="faded" isIconOnly disableAnimation>
@@ -230,6 +226,80 @@ function CreateEmailPageContent() {
                 >
                   Download file
                 </DropdownItem>
+              </DropdownMenu>
+            </Dropdown>
+
+            <Dropdown className="border p-0" disableAnimation>
+              <DropdownTrigger>
+                <Button
+                  size="sm"
+                  variant="faded"
+                  startContent={<VariableIcon className="size-4" />}
+                  disableAnimation
+                >
+                  Variables
+                  {templateVariables.length > 0 && (
+                    <Chip status="neutral" className="ml-1 bg-default-300 border rounded-sm">
+                      {templateVariables.length}
+                    </Chip>
+                  )}
+                  {missingVariables.length > 0 && (
+                    <Chip status="warning" className="ml-1 border rounded-sm">
+                      {missingVariables.length} missing
+                    </Chip>
+                  )}
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu aria-label="Detected template variables" variant="flat">
+                {[
+                  ...(templateVariables.length === 0 && missingVariables.length === 0
+                    ? [
+                        <DropdownItem key="empty" textValue="No variables" isDisabled>
+                          <Type variant="sm" className="text-muted-foreground font-normal">
+                            No variables detected yet.
+                          </Type>
+                        </DropdownItem>
+                      ]
+                    : []),
+                  ...templateVariables.map((variable) => (
+                    <DropdownItem key={`declared-${variable.name}`} textValue={variable.name}>
+                      <div className="flex items-center justify-between gap-4">
+                        <Type variant="sm" className="font-mono">
+                          {variable.name}
+                        </Type>
+                        {variable.defaultValue ? (
+                          <Type
+                            variant="sm"
+                            className="font-mono text-muted-foreground truncate max-w-[180px]"
+                          >
+                            {variable.defaultValue}
+                          </Type>
+                        ) : (
+                          <Type variant="sm" className="text-muted-foreground">
+                            —
+                          </Type>
+                        )}
+                      </div>
+                    </DropdownItem>
+                  )),
+                  ...missingVariables.map((name) => (
+                    <DropdownItem
+                      key={`missing-${name}`}
+                      textValue={name}
+                      description="Used in JSX but not declared in props. Add it to the destructured props or the template will crash."
+                      className="data-[hover=true]:bg-warning-50"
+                    >
+                      <div className="flex items-center justify-between gap-4">
+                        <Type variant="sm" className="font-mono text-warning">
+                          {name}
+                        </Type>
+                        <Chip status="warning" className="rounded-sm">
+                          missing
+                        </Chip>
+                      </div>
+                    </DropdownItem>
+                  ))
+                ]}
               </DropdownMenu>
             </Dropdown>
 
@@ -306,7 +376,11 @@ function CreateEmailPageContent() {
                   </div>
 
                   <div className="flex justify-end gap-2 pt-1">
-                    <PrimaryActionButton type="submit" isLoading={isSaving} className="w-full">
+                    <PrimaryActionButton
+                      type="submit"
+                      isLoading={isSaving}
+                      className="w-full max-h-7 min-h-7 h-7"
+                    >
                       Publish template
                     </PrimaryActionButton>
                   </div>
@@ -358,8 +432,8 @@ function CreateEmailPageContent() {
                           value={"info@zot.so"}
                           disabled
                         />
-                        <Type style={{ textWrap: "nowrap" }} className="text-black/70">
-                          Feature for premium users
+                        <Type style={{ textWrap: "nowrap" }} className="text-black/50 font-medium">
+                          Require domain configuration
                         </Type>
                       </div>
                       <div className="flex border-b items-center h-[40px] !border-muted-foreground/30">

@@ -3,6 +3,7 @@ import {
   IsArray,
   IsMongoId,
   IsNumber,
+  IsObject,
   IsOptional,
   IsPositive,
   IsString,
@@ -27,4 +28,12 @@ export class SendEmailToUsersById {
   @IsString()
   @IsOptional()
   templateId: string;
+
+  @IsObject()
+  @IsOptional()
+  mapping?: Record<string, string>;
+
+  @IsObject()
+  @IsOptional()
+  variables?: Record<string, unknown>;
 }

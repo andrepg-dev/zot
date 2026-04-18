@@ -94,7 +94,8 @@ export default function UsersTable({ id }: { id: string }) {
           removeWrapper
           className="bg-default-50 border cursor-pointer"
           classNames={{
-            td: "py-3"
+            td: "py-3",
+            tbody: "font-mono"
           }}
         >
           <TableHeader columns={columns}>

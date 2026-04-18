@@ -5,5 +5,6 @@ import { ReactToHtmlService } from "../core/react-to-html/react-to-html.service"
 @Module({
   controllers: [ReactToHtmlController],
   providers: [ReactToHtmlService],
+  exports: [ReactToHtmlService],
 })
 export class ReactToHtmlModule {}
