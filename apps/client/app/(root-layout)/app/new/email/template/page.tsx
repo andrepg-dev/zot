@@ -145,7 +145,6 @@ function CreateEmailPageContent() {
       <EditorSidebar
         onCodeReceived={handleCodeReceived}
         conversationId={conversationId}
-        isEdition={isEdition}
       />
 
       {/* Main Content */}
@@ -254,12 +253,12 @@ function CreateEmailPageContent() {
                 {[
                   ...(templateVariables.length === 0 && missingVariables.length === 0
                     ? [
-                        <DropdownItem key="empty" textValue="No variables" isDisabled>
-                          <Type variant="sm" className="text-muted-foreground font-normal">
-                            No variables detected yet.
-                          </Type>
-                        </DropdownItem>
-                      ]
+                      <DropdownItem key="empty" textValue="No variables" isDisabled>
+                        <Type variant="sm" className="text-muted-foreground font-normal">
+                          No variables detected yet.
+                        </Type>
+                      </DropdownItem>
+                    ]
                     : []),
                   ...templateVariables.map((variable) => (
                     <DropdownItem key={`declared-${variable.name}`} textValue={variable.name}>
