@@ -3,6 +3,7 @@ import { geistMonoFont, interFont } from "@/config/fonts";
 import { siteConfig } from "@/config/site";
 import "@/styles/globals.css";
 import { ToastProvider } from "@heroui/toast";
+import { Analytics } from "@vercel/analytics/next";
 import clsx from "clsx";
 import { Metadata } from "next";
 import React from "react";
@@ -40,6 +41,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           /> */}
             <QueryProvider>{children}</QueryProvider>
           </Providers>
+          <Analytics />
         </body>
       </html>
     </>
