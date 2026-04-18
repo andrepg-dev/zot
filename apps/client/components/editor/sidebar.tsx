@@ -17,13 +17,11 @@ import HeaderNavigation from "../navigation/header.navigation";
 interface EditorSidebarProps {
   onCodeReceived?: (code: string) => void;
   conversationId?: string;
-  isEdition: boolean | string;
 }
 
 export default function EditorSidebar({
   onCodeReceived,
   conversationId,
-  isEdition
 }: EditorSidebarProps) {
   const { editionType } = useLandingPageState();
   const {

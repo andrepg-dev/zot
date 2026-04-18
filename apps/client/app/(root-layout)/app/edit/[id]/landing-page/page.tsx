@@ -18,7 +18,7 @@ export default function EditLandingPage({ params }: { params: Promise<{ id: stri
   return (
     <>
       {/* Navigation */}
-      <EditorSidebar />
+      <EditorSidebar/>
       {/* <EditorHeader id={id} /> */}
       <HeaderNavigation hidden />
 
