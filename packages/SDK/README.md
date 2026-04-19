@@ -1,6 +1,6 @@
 # Zot SDK
 
-The official TypeScript/JavaScript SDK for [Zot](https://zot.so) — a platform for managing waitlists, emails, and subscriptions.
+The official TypeScript/JavaScript SDK for [Zot](https://zot.so), a platform for managing waitlists, emails, and subscriptions.
 
 Use it to grow your waitlist, track signups, manage user status, and wire up webhooks from any Node.js, Bun, Deno, or browser-like environment with `fetch` available.
 
@@ -90,7 +90,7 @@ The `ZotSDK` constructor accepts a single config object:
 
 | Option    | Type     | Required | Default              | Description                                   |
 | --------- | -------- | -------- | -------------------- | --------------------------------------------- |
-| `apiKey`  | `string` | Yes      | —                    | Your Zot API key.                             |
+| `apiKey`  | `string` | Yes      | none                 | Your Zot API key.                             |
 | `baseUrl` | `string` | No       | `https://api.zot.so` | Override for self-hosted or staging backends. |
 
 ```ts
@@ -106,8 +106,8 @@ const zot = new ZotSDK({
 
 The SDK is organized around two entry points:
 
-- **`zot.waitlists`** — operations that span all your waitlists (create, list).
-- **`zot.waitlist(id)`** — operations scoped to a single waitlist (get, update, delete, users, stats).
+- **`zot.waitlists`**: operations that span all your waitlists (create, list).
+- **`zot.waitlist(id)`**: operations scoped to a single waitlist (get, update, delete, users, stats).
 
 This split mirrors the REST API and keeps the scoping clear: anything that requires a waitlist ID lives on `zot.waitlist(id)`.
 
@@ -146,7 +146,7 @@ const waitlist = await zot.waitlist("wl_abc123").get();
 
 ```ts
 await zot.waitlist("wl_abc123").update({
-  name: "Product Launch — Closed Beta",
+  name: "Product Launch (Closed Beta)",
   isAvailable: false,
 });
 ```
@@ -243,7 +243,7 @@ const { total, referred } = await zot.waitlist("wl_abc123").userCount();
 const events = await zot.waitlist("wl_abc123").webhookEvents();
 ```
 
-Useful for debugging — see which webhook calls fired, their status codes, and payloads.
+Useful for debugging. See which webhook calls fired, their status codes, and payloads.
 
 ---
 
@@ -270,15 +270,15 @@ try {
 
 Common status codes:
 
-| Code | Meaning                                             |
-| ---- | --------------------------------------------------- |
-| 400  | Validation error — check the request body.          |
-| 401  | Invalid or missing API key.                         |
-| 403  | API key doesn't have access to this resource.       |
-| 404  | Waitlist or user not found.                         |
-| 409  | Conflict (e.g. email already registered).           |
-| 429  | Rate limit exceeded — back off and retry.           |
-| 5xx  | Server-side issue — retry with exponential backoff. |
+| Code | Meaning                                            |
+| ---- | -------------------------------------------------- |
+| 400  | Validation error. Check the request body.         |
+| 401  | Invalid or missing API key.                        |
+| 403  | API key doesn't have access to this resource.     |
+| 404  | Waitlist or user not found.                        |
+| 409  | Conflict (e.g. email already registered).          |
+| 429  | Rate limit exceeded. Back off and retry.          |
+| 5xx  | Server-side issue. Retry with exponential backoff. |
 
 ---
 
@@ -312,28 +312,28 @@ Creates a new SDK client.
 
 ### `zot.waitlists`
 
-| Method     | Returns                    | Description                    |
-| ---------- | -------------------------- | ------------------------------ |
-| `create()` | `Promise<WaitlistResponse>` | Create a new waitlist.         |
+| Method     | Returns                       | Description                        |
+| ---------- | ----------------------------- | ---------------------------------- |
+| `create()` | `Promise<WaitlistResponse>`   | Create a new waitlist.             |
 | `list()`   | `Promise<WaitlistResponse[]>` | List all waitlists on the account. |
 
 ### `zot.waitlist(id)`
 
-| Method                 | Returns                            | Description                               |
-| ---------------------- | ---------------------------------- | ----------------------------------------- |
-| `get()`                | `Promise<WaitlistResponse>`        | Fetch this waitlist's details.            |
-| `update(params)`       | `Promise<WaitlistResponse>`        | Update waitlist settings.                 |
-| `delete()`             | `Promise<void>`                    | Permanently delete this waitlist.         |
-| `stats()`              | `Promise<Record<string, unknown>>` | Aggregated waitlist stats.                |
-| `webhookEvents()`      | `Promise<unknown[]>`               | Webhook delivery history.                 |
-| `addUser(params)`      | `Promise<WaitlistUserResponse>`    | Register a new user.                      |
-| `listUsers()`          | `Promise<WaitlistUserResponse[]>`  | List all users on this waitlist.          |
-| `userCount()`          | `Promise<UserCountResponse>`       | Total + referred user counts.             |
-| `searchUser(email)`    | `Promise<WaitlistUserResponse>`    | Find a user by email.                     |
-| `updateUserStatus(p)`  | `Promise<void>`                    | Change a user's status.                   |
-| `bulkDeleteUsers(e)`   | `Promise<void>`                    | Delete one or many users by email.        |
-| `blockedUsers()`       | `Promise<WaitlistUserResponse[]>`  | List blocked users.                       |
-| `blockedUserCount()`   | `Promise<{ total: number }>`       | Count of blocked users.                   |
+| Method                 | Returns                            | Description                        |
+| ---------------------- | ---------------------------------- | ---------------------------------- |
+| `get()`                | `Promise<WaitlistResponse>`        | Fetch this waitlist's details.     |
+| `update(params)`       | `Promise<WaitlistResponse>`        | Update waitlist settings.          |
+| `delete()`             | `Promise<void>`                    | Permanently delete this waitlist.  |
+| `stats()`              | `Promise<Record<string, unknown>>` | Aggregated waitlist stats.         |
+| `webhookEvents()`      | `Promise<unknown[]>`               | Webhook delivery history.          |
+| `addUser(params)`      | `Promise<WaitlistUserResponse>`    | Register a new user.               |
+| `listUsers()`          | `Promise<WaitlistUserResponse[]>`  | List all users on this waitlist.   |
+| `userCount()`          | `Promise<UserCountResponse>`       | Total + referred user counts.      |
+| `searchUser(email)`    | `Promise<WaitlistUserResponse>`    | Find a user by email.              |
+| `updateUserStatus(p)`  | `Promise<void>`                    | Change a user's status.            |
+| `bulkDeleteUsers(e)`   | `Promise<void>`                    | Delete one or many users by email. |
+| `blockedUsers()`       | `Promise<WaitlistUserResponse[]>`  | List blocked users.                |
+| `blockedUserCount()`   | `Promise<{ total: number }>`       | Count of blocked users.            |
 
 ---
 

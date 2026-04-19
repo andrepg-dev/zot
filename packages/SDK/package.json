@@ -1,6 +1,6 @@
 {
   "name": "zot-sdk",
-  "version": "1.0.0",
+  "version": "0.0.3",
   "description": "Official Zot SDK for TypeScript/JavaScript",
   "license": "MIT",
   "author": "Zot",
