@@ -19,6 +19,6 @@ services:
         - .env
       restart: unless-stopped
 
-volumes:
-  mongo_data:
-    driver: local
+# volumes:
+#   mongo_data:
+#     driver: local
