@@ -14,7 +14,7 @@ services:
     api:
       build: .
       ports:
-        - "3000:3000"
+        - "3010:3010"
       env_file:
         - .env
       restart: unless-stopped
