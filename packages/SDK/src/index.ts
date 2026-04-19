@@ -2,7 +2,7 @@ import { HttpClient } from "./http";
 import { WaitlistResource, WaitlistsResource } from "./resources/waitlist";
 import type { ZotSDKConfig } from "./types";
 
-const DEFAULT_BASE_URL = "http://localhost:3010";
+const DEFAULT_BASE_URL = "https://api.zot.so";
 
 export class ZotSDK {
   private readonly http: HttpClient;
