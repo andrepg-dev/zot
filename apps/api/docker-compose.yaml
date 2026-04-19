@@ -1,16 +1,23 @@
 services:
-  mongodb:
-    container_name: mongodb_db
-    image: mongo:latest
+  # mongodb:
+  #   container_name: mongodb_db
+  #   image: mongo:latest
 
-    ports:
-      - 27017:27017
-    volumes:
-      - mongo_data:/data/db
+  #   ports:
+  #     - 27017:27017
+  #   volumes:
+  #     - mongo_data:/data/db
 
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: blaze
-      MONGO_INITDB_ROOT_PASSWORD: blaze
+  #   environment:
+  #     MONGO_INITDB_ROOT_USERNAME: blaze
+  #     MONGO_INITDB_ROOT_PASSWORD: blaze
+    api:
+      build: .
+      ports:
+        - "3000:3000"
+      env_file:
+        - .env
+      restart: unless-stopped
 
 volumes:
   mongo_data:
