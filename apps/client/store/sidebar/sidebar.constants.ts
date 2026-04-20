@@ -26,11 +26,6 @@ export const defaultNavItems = [
     label: "Usage",
     icon: ChartBarIcon
   },
-  {
-    href: "/app/billing",
-    label: "Billing",
-    icon: CreditCardIcon
-  },
   // {
   //   href: "/app/waitlist/emails",
   //   label: "Emails",
@@ -59,6 +54,11 @@ export const defaultNavItems = [
     href: "/app/api-keys",
     label: "Api keys",
     icon: KeyIcon
+  },
+  {
+    href: "/app/billing",
+    label: "Billing",
+    icon: CreditCardIcon
   },
   {
     href: "/app/landing-page",
