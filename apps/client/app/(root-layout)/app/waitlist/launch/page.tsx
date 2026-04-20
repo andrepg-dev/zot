@@ -130,6 +130,13 @@ export default function LaunchWaitList() {
     enabled: step === 2
   });
 
+  useHotkey({
+    key: "r",
+    modifiers: ["meta"],
+    onPress: () => setConnectionTab("react"),
+    enabled: step === 2
+  });
+
   const { isPending: isCreatingWaitlist, mutate: createWaitlistMutation } = useMutation({
     mutationFn: (data: SubmitWaitListValues) =>
       createWaitList({
@@ -588,6 +595,105 @@ const res = await client.waitlist("${createdWaitlistId || "wl_abc123"}").addUser
                       : undefined
                   }
                 />
+              </div>
+            </Tab>
+            <Tab
+              key="react"
+              title={
+                <div className="flex items-center gap-2">
+                  React Hook
+                  <Kbd className="text-xs" keys={["command"]}>
+                    R
+                  </Kbd>
+                </div>
+              }
+            >
+              <div className="flex flex-col gap-3 bg-default-50 border rounded-sm p-4">
+                <Type className="text-muted-foreground">
+                  Use the built-in React hook. No TanStack Query or custom state needed. The hook
+                  gives you loading and success flags out of the box.
+                </Type>
+                <Select
+                  radius="sm"
+                  size="sm"
+                  className="border rounded-lg overflow-hidden"
+                  label="API Key"
+                  placeholder="Select or generate an API key"
+                  selectedKeys={selectedApiKey ? [selectedApiKey] : []}
+                  onSelectionChange={(keys) => {
+                    const key = Array.from(keys)[0] as string;
+
+                    if (key === "generate") {
+                      generateApiKey();
+                      return;
+                    }
+
+                    setSelectedApiKey(key || "");
+                  }}
+                  items={[
+                    ...(apiKeys || []).map((k) => ({
+                      key: k._id,
+                      label: k.name
+                    })),
+                    { key: "generate", label: "Generate new API key" }
+                  ]}
+                >
+                  {(item) => (
+                    <SelectItem
+                      key={item.key}
+                      startContent={
+                        item.key === "generate" ? <PlusIcon className="size-4" /> : undefined
+                      }
+                      className={item.key === "generate" ? "!text-primary" : ""}
+                    >
+                      {item.label}
+                    </SelectItem>
+                  )}
+                </Select>
+                <CodeBlock lang="bash" code={`npm install zot-sdk react`} />
+                <CodeBlock
+                  code={`"use client";
+
+import { useAddUser } from "zot-sdk/react";
+import { useState } from "react";
+
+export function JoinWaitlist() {
+  const [email, setEmail] = useState("");
+
+  const { addUser, isPending, isUserRegistered, error } = useAddUser({
+    apiKey: process.env.NEXT_PUBLIC_ZOT_API_KEY!,
+    waitlistId: "${createdWaitlistId || "wl_abc123"}",
+  });
+
+  if (isUserRegistered) {
+    return <p>Thanks! You are on the list.</p>;
+  }
+
+  return (
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        addUser({ email });
+      }}
+    >
+      <input
+        type="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        required
+      />
+      <button type="submit" disabled={isPending}>
+        Join
+      </button>
+      {error && <p>{error.message}</p>}
+    </form>
+  );
+}`}
+                />
+                <Type variant="sm" className="text-muted-foreground">
+                  The hook returns addUser, isPending, isUserRegistered, data, error, isError, and
+                  reset. You can also pass onSuccess and onError callbacks.
+                </Type>
               </div>
             </Tab>
           </Tabs>

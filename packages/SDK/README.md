@@ -1,102 +1,90 @@
 # Zot SDK
 
-The official TypeScript/JavaScript SDK for [Zot](https://zot.so), a platform for managing waitlists, emails, and subscriptions.
+Official TypeScript SDK for [Zot](https://zot.so). Add users to your waitlist from any Node.js, Bun, Deno, or browser app.
 
-Use it to grow your waitlist, track signups, manage user status, and wire up webhooks from any Node.js, Bun, Deno, or browser-like environment with `fetch` available.
+## Two ways to use it
 
----
+1. **Plain client** (`zot-sdk`): for servers, scripts, and backends.
+2. **React hook** (`zot-sdk/react`): for React apps. Handles loading and success state for you.
 
-## Table of Contents
+Pick whichever fits your app. You do not need both.
 
-- [Installation](#installation)
-- [Quick Start](#quick-start)
-- [React Hooks](#react-hooks)
-- [Authentication](#authentication)
-- [Configuration](#configuration)
-- [Usage](#usage)
-  - [Waitlists](#waitlists)
-  - [Waitlist Users](#waitlist-users)
-  - [Stats & Webhook Events](#stats--webhook-events)
-- [Error Handling](#error-handling)
-- [TypeScript Support](#typescript-support)
-- [API Reference](#api-reference)
-- [License](#license)
+## 1. Plain client
 
----
-
-## Installation
-
-```bash
-npm install zot-sdk
-```
-
-```bash
-yarn add zot-sdk
-```
-
-```bash
-pnpm add zot-sdk
-```
-
-The SDK ships as an ES module with TypeScript definitions included. Node.js 18+ is required (for native `fetch` support).
-
----
-
-## Quick Start
+Use this on a server, API route, or backend job.
 
 ```ts
 import { ZotSDK } from "zot-sdk";
 
 const zot = new ZotSDK({ apiKey: process.env.ZOT_API_KEY! });
 
-// Create a new waitlist
-const waitlist = await zot.waitlists.create({
-  name: "Early Access",
-  sendEmailToNewSignup: true,
-});
-
-// Add a user to it
-await zot.waitlist(waitlist._id).addUser({
+await zot.waitlist("wl_abc123").addUser({
   email: "alice@example.com",
-  name: "Alice",
-  source: "social",
+  name: "Alice"
 });
-
-// Check how many people are on the list
-const { total, referred } = await zot.waitlist(waitlist._id).userCount();
-console.log(`${total} signups (${referred} via referral)`);
 ```
 
-That's it. Three lines, and you're capturing signups.
+That is it. One line and the user is on the waitlist.
 
----
+### Other things you can do
 
-## React Hooks
+```ts
+// Create a waitlist
+const waitlist = await zot.waitlists.create({
+  name: "Early Access",
+  sendEmailToNewSignup: true
+});
 
-If you are building with React, the SDK ships a hook for user registration with built-in state management. No TanStack Query, no Zustand, no manual `useState` needed.
+// Count users
+const { total, referred } = await zot.waitlist(waitlist._id).userCount();
+
+// Search a user
+const user = await zot.waitlist(waitlist._id).searchUser("alice@example.com");
+
+// Change a user's status
+await zot.waitlist(waitlist._id).updateUserStatus({
+  email: "alice@example.com",
+  status: "invited"
+});
+```
+
+Full method list is at the bottom of this file.
+
+## 2. React hook
+
+If you are building with React (including Next.js), import the hook instead. It gives you `isPending` and `isUserRegistered` out of the box, so you do not need TanStack Query, Zustand, or `useState`.
 
 ```tsx
 "use client";
 
+import { useState } from "react";
 import { useAddUser } from "zot-sdk/react";
 
-export function JoinWaitlistForm() {
+export function JoinWaitlist() {
+  const [email, setEmail] = useState("");
+
   const { addUser, isPending, isUserRegistered, error } = useAddUser({
     apiKey: process.env.NEXT_PUBLIC_ZOT_API_KEY!,
-    waitlistId: "your-waitlist-id",
+    waitlistId: "wl_abc123"
   });
+
+  if (isUserRegistered) return <p>Thanks! You are on the list.</p>;
 
   return (
     <form
       onSubmit={(e) => {
         e.preventDefault();
-        const email = new FormData(e.currentTarget).get("email") as string;
         addUser({ email });
       }}
     >
-      <input name="email" type="email" required />
-      <button type="submit" disabled={isPending || isUserRegistered}>
-        {isUserRegistered ? "Registered" : "Join"}
+      <input
+        type="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        required
+      />
+      <button type="submit" disabled={isPending}>
+        Join
       </button>
       {error && <p>{error.message}</p>}
     </form>
@@ -104,291 +92,126 @@ export function JoinWaitlistForm() {
 }
 ```
 
-Returned state:
+### What the hook returns
 
-| Field              | Type                                        | Description                          |
-| ------------------ | ------------------------------------------- | ------------------------------------ |
-| `addUser`          | `(params) => Promise<User \| undefined>`    | Trigger the registration.            |
-| `isPending`        | `boolean`                                   | `true` while the request is in-flight. |
-| `isUserRegistered` | `boolean`                                   | `true` after a successful signup.    |
-| `data`             | `WaitlistUserResponse \| undefined`         | The registered user on success.      |
-| `error`            | `ZotAPIError \| Error \| undefined`         | Error from the last attempt.         |
-| `isError`          | `boolean`                                   | Shortcut for `error !== undefined`.  |
-| `reset`            | `() => void`                                | Clear state back to initial.         |
+| Field              | What it is                                               |
+| ------------------ | -------------------------------------------------------- |
+| `addUser(params)`  | Call this to register a user. Same shape as the client.  |
+| `isPending`        | `true` while the request is running.                     |
+| `isUserRegistered` | `true` after a successful signup.                        |
+| `data`             | The registered user object, or `undefined`.              |
+| `error`            | The error object, or `undefined`.                        |
+| `isError`          | Shortcut for `error !== undefined`.                      |
+| `reset()`          | Clear the state back to its initial values.              |
 
-Optional callbacks: `onSuccess(user)` and `onError(err)`.
+### Optional callbacks
 
-> React 18+ is required as a peer dependency. The main `zot-sdk` entry point has no React dependency, so non-React consumers are unaffected.
-
----
-
-## Authentication
-
-All requests are authenticated with an API key sent in the `x-api-key` header. You can generate one from your [Zot dashboard](https://zot.so).
-
-```ts
-const zot = new ZotSDK({
-  apiKey: "zot_live_••••••••••••••••",
+```tsx
+useAddUser({
+  apiKey: "...",
+  waitlistId: "...",
+  onSuccess: (user) => console.log("Joined!", user),
+  onError: (err) => console.error(err)
 });
 ```
 
-> **Never expose your API key in client-side code.** Use the SDK from a server, serverless function, or backend service.
+### In Next.js
 
----
+Use the `NEXT_PUBLIC_` prefix so the key is available in the browser:
 
-## Configuration
+```bash
+# .env.local
+NEXT_PUBLIC_ZOT_API_KEY=zot_live_xxx
+```
 
-The `ZotSDK` constructor accepts a single config object:
+## API key
 
-| Option    | Type     | Required | Default              | Description                                   |
-| --------- | -------- | -------- | -------------------- | --------------------------------------------- |
-| `apiKey`  | `string` | Yes      | none                 | Your Zot API key.                             |
-| `baseUrl` | `string` | No       | `https://api.zot.so` | Override for self-hosted or staging backends. |
+All requests use the `x-api-key` header. Get yours from the [Zot dashboard](https://zot.so).
+
+Keep your key safe:
+
+* Use the plain client only on servers.
+* With the React hook, use a key with limited permissions (signup only) and expose it via `NEXT_PUBLIC_`.
+
+## Config
 
 ```ts
-const zot = new ZotSDK({
-  apiKey: process.env.ZOT_API_KEY!,
-  baseUrl: "https://staging.api.zot.so", // optional
+new ZotSDK({
+  apiKey: "zot_live_xxx",   // required
+  baseUrl: "https://api.zot.so" // optional, for self-hosted or staging
 });
 ```
 
----
+## Error handling
 
-## Usage
-
-The SDK is organized around two entry points:
-
-- **`zot.waitlists`**: operations that span all your waitlists (create, list).
-- **`zot.waitlist(id)`**: operations scoped to a single waitlist (get, update, delete, users, stats).
-
-This split mirrors the REST API and keeps the scoping clear: anything that requires a waitlist ID lives on `zot.waitlist(id)`.
-
----
-
-### Waitlists
-
-#### Create a waitlist
+Failed requests throw a `ZotAPIError`:
 
 ```ts
-const waitlist = await zot.waitlists.create({
-  name: "Product Launch",
-  sendEmailToNewSignup: true,
-  webhook: {
-    url: "https://my-app.com/webhooks/zot",
-    range: 100, // fire webhook every 100 signups
-  },
-  isAvailable: true,
-  isSecurityActive: false,
-});
-```
-
-#### List all waitlists
-
-```ts
-const waitlists = await zot.waitlists.list();
-```
-
-#### Get a specific waitlist
-
-```ts
-const waitlist = await zot.waitlist("wl_abc123").get();
-```
-
-#### Update a waitlist
-
-```ts
-await zot.waitlist("wl_abc123").update({
-  name: "Product Launch (Closed Beta)",
-  isAvailable: false,
-});
-```
-
-#### Delete a waitlist
-
-```ts
-await zot.waitlist("wl_abc123").delete();
-```
-
-> Deletion is permanent and will remove all associated users.
-
----
-
-### Waitlist Users
-
-#### Add a user
-
-```ts
-const user = await zot.waitlist("wl_abc123").addUser({
-  email: "bob@example.com",
-  name: "Bob",
-  referredBy: "REF_ALICE42",   // optional referral code
-  source: "paid_ads",          // "social" | "email" | "paid_ads"
-  metadata: {                  // any JSON-serializable metadata
-    plan: "pro",
-    campaign: "spring-2026",
-  },
-});
-
-console.log(user.referral_code); // share this with the user
-```
-
-#### List all users
-
-```ts
-const users = await zot.waitlist("wl_abc123").listUsers();
-```
-
-#### Search a user by email
-
-```ts
-const user = await zot.waitlist("wl_abc123").searchUser("bob@example.com");
-```
-
-#### Update a user's status
-
-```ts
-await zot.waitlist("wl_abc123").updateUserStatus({
-  email: "bob@example.com",
-  status: "invited", // "waiting" | "invited" | "converted" | "churned"
-});
-```
-
-#### Bulk delete users
-
-```ts
-// single email
-await zot.waitlist("wl_abc123").bulkDeleteUsers("bob@example.com");
-
-// or a batch
-await zot.waitlist("wl_abc123").bulkDeleteUsers([
-  "bob@example.com",
-  "carol@example.com",
-]);
-```
-
-#### Blocked users
-
-```ts
-const blocked = await zot.waitlist("wl_abc123").blockedUsers();
-const { total } = await zot.waitlist("wl_abc123").blockedUserCount();
-```
-
----
-
-### Stats & Webhook Events
-
-#### Get aggregated stats
-
-```ts
-const stats = await zot.waitlist("wl_abc123").stats();
-```
-
-#### Get user counts
-
-```ts
-const { total, referred } = await zot.waitlist("wl_abc123").userCount();
-```
-
-#### Inspect webhook deliveries
-
-```ts
-const events = await zot.waitlist("wl_abc123").webhookEvents();
-```
-
-Useful for debugging. See which webhook calls fired, their status codes, and payloads.
-
----
-
-## Error Handling
-
-Every failed API call throws a `ZotAPIError` with the HTTP status code and the response body:
-
-```ts
-import { ZotSDK, ZotAPIError } from "zot-sdk";
-
-const zot = new ZotSDK({ apiKey: process.env.ZOT_API_KEY! });
+import { ZotAPIError } from "zot-sdk";
 
 try {
-  await zot.waitlist("wl_does_not_exist").get();
+  await zot.waitlist("wl_xxx").addUser({ email: "a@b.com" });
 } catch (err) {
   if (err instanceof ZotAPIError) {
-    console.error("Status:", err.statusCode);
-    console.error("Body:", err.body);
-  } else {
-    throw err; // network error, etc.
+    console.error(err.statusCode, err.body);
   }
 }
 ```
 
-Common status codes:
+Common codes:
 
-| Code | Meaning                                            |
-| ---- | -------------------------------------------------- |
-| 400  | Validation error. Check the request body.         |
-| 401  | Invalid or missing API key.                        |
-| 403  | API key doesn't have access to this resource.     |
-| 404  | Waitlist or user not found.                        |
-| 409  | Conflict (e.g. email already registered).          |
-| 429  | Rate limit exceeded. Back off and retry.          |
-| 5xx  | Server-side issue. Retry with exponential backoff. |
+| Code | Meaning                         |
+| ---- | ------------------------------- |
+| 400  | Validation error.               |
+| 401  | Invalid or missing API key.     |
+| 404  | Waitlist or user not found.     |
+| 409  | Email already registered.       |
+| 429  | Rate limit. Back off and retry. |
+| 5xx  | Server issue. Retry later.      |
 
----
+With the React hook, the same error lands in `error` and triggers `onError`.
 
-## TypeScript Support
+## TypeScript
 
-The SDK is written in TypeScript and exports all public types. No `@types` package needed.
+All public types are exported:
 
 ```ts
 import type {
   AddUserParams,
   CreateWaitlistParams,
   UpdateUserStatusParams,
-  UpdateWaitlistParams,
-  UserCountResponse,
-  UserSource,
-  UserStatus,
   WaitlistResponse,
-  WaitlistUserResponse,
-  WebhookConfig,
-  ZotSDKConfig,
+  WaitlistUserResponse
 } from "zot-sdk";
 ```
 
----
-
-## API Reference
-
-### `new ZotSDK(config)`
-
-Creates a new SDK client.
+## Full method list
 
 ### `zot.waitlists`
 
-| Method     | Returns                       | Description                        |
-| ---------- | ----------------------------- | ---------------------------------- |
-| `create()` | `Promise<WaitlistResponse>`   | Create a new waitlist.             |
-| `list()`   | `Promise<WaitlistResponse[]>` | List all waitlists on the account. |
+| Method     | Description            |
+| ---------- | ---------------------- |
+| `create()` | Create a new waitlist. |
+| `list()`   | List your waitlists.   |
 
 ### `zot.waitlist(id)`
 
-| Method                 | Returns                            | Description                        |
-| ---------------------- | ---------------------------------- | ---------------------------------- |
-| `get()`                | `Promise<WaitlistResponse>`        | Fetch this waitlist's details.     |
-| `update(params)`       | `Promise<WaitlistResponse>`        | Update waitlist settings.          |
-| `delete()`             | `Promise<void>`                    | Permanently delete this waitlist.  |
-| `stats()`              | `Promise<Record<string, unknown>>` | Aggregated waitlist stats.         |
-| `webhookEvents()`      | `Promise<unknown[]>`               | Webhook delivery history.          |
-| `addUser(params)`      | `Promise<WaitlistUserResponse>`    | Register a new user.               |
-| `listUsers()`          | `Promise<WaitlistUserResponse[]>`  | List all users on this waitlist.   |
-| `userCount()`          | `Promise<UserCountResponse>`       | Total + referred user counts.      |
-| `searchUser(email)`    | `Promise<WaitlistUserResponse>`    | Find a user by email.              |
-| `updateUserStatus(p)`  | `Promise<void>`                    | Change a user's status.            |
-| `bulkDeleteUsers(e)`   | `Promise<void>`                    | Delete one or many users by email. |
-| `blockedUsers()`       | `Promise<WaitlistUserResponse[]>`  | List blocked users.                |
-| `blockedUserCount()`   | `Promise<{ total: number }>`       | Count of blocked users.            |
-
----
+| Method                | Description                   |
+| --------------------- | ----------------------------- |
+| `get()`               | Get this waitlist.            |
+| `update(params)`      | Update settings.              |
+| `delete()`            | Delete permanently.           |
+| `stats()`             | Aggregated stats.             |
+| `webhookEvents()`     | Webhook delivery history.     |
+| `addUser(params)`     | Register a new user.          |
+| `listUsers()`         | List users.                   |
+| `userCount()`         | Total and referred counts.    |
+| `searchUser(email)`   | Find a user by email.         |
+| `updateUserStatus(p)` | Change a user's status.       |
+| `bulkDeleteUsers(e)`  | Delete one or many users.     |
+| `blockedUsers()`      | List blocked users.           |
+| `blockedUserCount()`  | Count blocked users.          |
 
 ## License
 
-MIT © Zot
+MIT
