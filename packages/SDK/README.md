@@ -10,6 +10,7 @@ Use it to grow your waitlist, track signups, manage user status, and wire up web
 
 - [Installation](#installation)
 - [Quick Start](#quick-start)
+- [React Hooks](#react-hooks)
 - [Authentication](#authentication)
 - [Configuration](#configuration)
 - [Usage](#usage)
@@ -67,6 +68,57 @@ console.log(`${total} signups (${referred} via referral)`);
 ```
 
 That's it. Three lines, and you're capturing signups.
+
+---
+
+## React Hooks
+
+If you are building with React, the SDK ships a hook for user registration with built-in state management. No TanStack Query, no Zustand, no manual `useState` needed.
+
+```tsx
+"use client";
+
+import { useAddUser } from "zot-sdk/react";
+
+export function JoinWaitlistForm() {
+  const { addUser, isPending, isUserRegistered, error } = useAddUser({
+    apiKey: process.env.NEXT_PUBLIC_ZOT_API_KEY!,
+    waitlistId: "your-waitlist-id",
+  });
+
+  return (
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        const email = new FormData(e.currentTarget).get("email") as string;
+        addUser({ email });
+      }}
+    >
+      <input name="email" type="email" required />
+      <button type="submit" disabled={isPending || isUserRegistered}>
+        {isUserRegistered ? "Registered" : "Join"}
+      </button>
+      {error && <p>{error.message}</p>}
+    </form>
+  );
+}
+```
+
+Returned state:
+
+| Field              | Type                                        | Description                          |
+| ------------------ | ------------------------------------------- | ------------------------------------ |
+| `addUser`          | `(params) => Promise<User \| undefined>`    | Trigger the registration.            |
+| `isPending`        | `boolean`                                   | `true` while the request is in-flight. |
+| `isUserRegistered` | `boolean`                                   | `true` after a successful signup.    |
+| `data`             | `WaitlistUserResponse \| undefined`         | The registered user on success.      |
+| `error`            | `ZotAPIError \| Error \| undefined`         | Error from the last attempt.         |
+| `isError`          | `boolean`                                   | Shortcut for `error !== undefined`.  |
+| `reset`            | `() => void`                                | Clear state back to initial.         |
+
+Optional callbacks: `onSuccess(user)` and `onError(err)`.
+
+> React 18+ is required as a peer dependency. The main `zot-sdk` entry point has no React dependency, so non-React consumers are unaffected.
 
 ---
 

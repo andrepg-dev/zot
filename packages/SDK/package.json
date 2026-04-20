@@ -1,6 +1,6 @@
 {
   "name": "zot-sdk",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Official Zot SDK for TypeScript/JavaScript",
   "license": "MIT",
   "author": "Zot",
@@ -12,6 +12,11 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "default": "./dist/index.js"
+    },
+    "./react": {
+      "types": "./dist/react/index.d.ts",
+      "import": "./dist/react/index.js",
+      "default": "./dist/react/index.js"
     }
   },
   "files": [
@@ -25,7 +30,17 @@
     "dev:build": "tsc --watch",
     "prepublishOnly": "npm run build"
   },
+  "peerDependencies": {
+    "react": ">=18.0.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    }
+  },
   "devDependencies": {
+    "@types/react": "^19.0.0",
+    "react": "^19.0.0",
     "typescript": "^5.7.3"
   }
 }

@@ -554,12 +554,12 @@ export default function WaitListPage() {
                       </div>
                       <div className="flex flex-col gap-2 border-default-200">
                         <div className="flex justify-between items-center">
-                          <span className="text-xs text-muted-foreground">Emails sent:</span>
-                          <span className="text-xs ">{item.emailsSent}</span>
-                        </div>
-                        <div className="flex justify-between items-center">
                           <span className="text-xs text-muted-foreground">Total users:</span>
                           <span className="text-xs ">{item.users?.total}</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-xs text-muted-foreground">Emails sent:</span>
+                          <span className="text-xs ">{item.emailsSent}</span>
                         </div>
                         <div className="flex justify-between items-center">
                           <span className="text-xs text-muted-foreground">Users blocked:</span>

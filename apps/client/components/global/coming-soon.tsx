@@ -1,15 +1,17 @@
 "use client";
 
 import { getProfile } from "@/actions/auth/profile";
-import { joinEarlyUsers } from "@/actions/zot/early-users.actions";
 import { CheckCircleIcon } from "@heroicons/react/24/outline";
 import { addToast } from "@heroui/react";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { useAddUser } from "zot-sdk/react";
 import Type from "../type";
 import InputComponent from "../ui/input";
 import PrimaryActionButton from "./primary-action-button";
+
+const WAITLIST_ID = "69e65aadd2fdba5e8d8d8461";
 
 // Seeded PRNG to avoid hydration mismatch (Math.random differs server vs client)
 function seededRandom(seed: number) {
@@ -45,27 +47,23 @@ export default function ComingSoon({
   feature: "landing-page" | "domains";
 }) {
   const [email, setEmail] = useState("");
-  const [submitted, setSubmitted] = useState(false);
 
   const { data: profile } = useQuery({
     queryKey: ["user-profile"],
     queryFn: getProfile
   });
 
-  const { mutate: addToEarlyUsers, isPending } = useMutation({
-    mutationFn: (value: string) =>
-      joinEarlyUsers(value, profile?.name, { "feature": feature }),
-    onSuccess: () => setSubmitted(true),
+  const { addUser, isPending, isUserRegistered } = useAddUser({
+    waitlistId: WAITLIST_ID,
+    apiKey: process.env.NEXT_PUBLIC_ZOT_API_KEY!,
     onError: (err) =>
       addToast({ title: "Error", description: err.message, color: "danger" })
   });
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-
     if (!email) return;
-
-    addToEarlyUsers(email);
+    addUser({ email, metadata: { feature, profile } });
   }
 
   return (
@@ -104,7 +102,7 @@ export default function ComingSoon({
           <Type className="text-muted-foreground text-pretty leading-relaxed">{description}</Type>
         </div>
 
-        {submitted ? (
+        {isUserRegistered ? (
           <div className="flex items-center gap-2">
             <CheckCircleIcon className="size-5 text-success" />
             <Type className="text-success">
