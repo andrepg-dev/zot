@@ -89,7 +89,7 @@ API requests are subject to rate limiting. Please handle 429 responses appropria
 
   const frontendUrl = "http://localhost:3002";
   app.enableCors({
-    origin: [frontendUrl, "https://zot.so"],
+    origin: [frontendUrl, "https://zot.so", "https://app.zot.so"],
     credentials: true,
   });
 
