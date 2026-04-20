@@ -5,7 +5,7 @@ import BillingDrawing from "./global/billing-drawing";
 import Type from "./type";
 
 interface FormFieldProps {
-  title: string;
+  title: ReactNode;
   description: ReactNode;
   children: ReactNode;
   isRequired?: boolean;

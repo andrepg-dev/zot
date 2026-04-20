@@ -361,7 +361,7 @@ export default function LaunchWaitList() {
               <hr />
 
               <FormField
-                title="Webhook URL"
+                title={<Type>Webhook URL <span className="text-muted-foreground font-normal">- Optional</span></Type>}
                 description={
                   <>
                     Get notified when someone joins your waitlist. We'll send a{" "}
