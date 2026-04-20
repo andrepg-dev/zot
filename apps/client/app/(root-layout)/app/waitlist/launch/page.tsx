@@ -549,10 +549,10 @@ export default function LaunchWaitList() {
                     </SelectItem>
                   )}
                 </Select>
-                <CodeBlock lang="bash" code={`npm install @zot/sdk`} />
+                <CodeBlock lang="bash" code={`npm install zot-sdk`} />
                 <CodeBlock
                   code={`import "dotenv/config";
-import { ZotSDK } from "@zot/sdk";
+import { ZotSDK } from "zot-sdk";
 
 const client = new ZotSDK({
   apiKey: "${selectedApiKeyValue || "your-api-key"}",
@@ -681,7 +681,7 @@ const res = await client.waitlist("${createdWaitlistId || "wl_abc123"}").addUser
                               className={cn(
                                 "group relative flex flex-col gap-2 rounded-sm bg-default-50 p-0 text-left transition hover:border-primary",
                                 isSelected &&
-                                  "border-primary ring-1 ring-primary bg-primary/30 opacity-80"
+                                "border-primary ring-1 ring-primary bg-primary/30 opacity-80"
                               )}
                             >
                               <div className="relative w-full aspect-[4/3] overflow-hidden rounded-t-sm bg-white/90 flex justify-center">

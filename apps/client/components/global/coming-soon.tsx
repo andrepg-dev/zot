@@ -1,6 +1,10 @@
 "use client";
 
+import { getProfile } from "@/actions/auth/profile";
+import { joinEarlyUsers } from "@/actions/zot/early-users.actions";
 import { CheckCircleIcon } from "@heroicons/react/24/outline";
+import { addToast } from "@heroui/react";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import Type from "../type";
@@ -32,21 +36,36 @@ const floatingParticles = Array.from({ length: 30 }, (_, i) => ({
 export default function ComingSoon({
   title,
   description,
-  icon: Icon
+  icon: Icon,
+  feature
 }: {
   title: string;
   description: string;
   icon: React.ComponentType<{ size?: number }>;
+  feature: "landing-page" | "domains";
 }) {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
+
+  const { data: profile } = useQuery({
+    queryKey: ["user-profile"],
+    queryFn: getProfile
+  });
+
+  const { mutate: addToEarlyUsers, isPending } = useMutation({
+    mutationFn: (value: string) =>
+      joinEarlyUsers(value, profile?.name, { "feature": feature }),
+    onSuccess: () => setSubmitted(true),
+    onError: (err) =>
+      addToast({ title: "Error", description: err.message, color: "danger" })
+  });
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
     if (!email) return;
 
-    setSubmitted(true);
+    addToEarlyUsers(email);
   }
 
   return (
@@ -102,7 +121,9 @@ export default function ComingSoon({
               onValueChange={setEmail}
               className="min-w-64 max-w-64"
             />
-            <PrimaryActionButton type="submit">Notify me</PrimaryActionButton>
+            <PrimaryActionButton type="submit" isLoading={isPending}>
+              Notify me
+            </PrimaryActionButton>
           </form>
         )}
       </div>

@@ -9,6 +9,7 @@ export default function DomainsPage() {
     <PageComponent>
       <ComingSoon
         icon={GlobeAltIcon}
+        feature="domains"
         title="Custom Domains are coming soon"
         description="Soon you'll be able to connect your own domains to serve waitlists and landing pages under your brand."
       />

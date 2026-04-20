@@ -9,6 +9,7 @@ export default function LandingPage() {
     <PageComponent>
       <ComingSoon
         icon={Square3Stack3DIcon}
+        feature="landing-page"
         title="Landing Pages are coming soon"
         description="We're building a powerful landing page editor so you can create, customize, and publish pages directly from Zot."
       />
