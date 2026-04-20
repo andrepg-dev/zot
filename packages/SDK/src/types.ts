@@ -2,7 +2,6 @@
 
 export interface ZotSDKConfig {
   apiKey: string;
-  baseUrl?: string;
 }
 
 // ─── Waitlist ───

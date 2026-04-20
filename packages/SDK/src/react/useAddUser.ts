@@ -44,11 +44,11 @@ export interface UseAddUserResult {
 }
 
 export function useAddUser(options: UseAddUserOptions): UseAddUserResult {
-  const { waitlistId, apiKey, baseUrl, onSuccess, onError } = options;
+  const { waitlistId, apiKey, onSuccess, onError } = options;
 
   const sdkRef = useRef<ZotSDK | null>(null);
   if (!sdkRef.current) {
-    sdkRef.current = new ZotSDK({ apiKey, baseUrl });
+    sdkRef.current = new ZotSDK({ apiKey });
   }
 
   const [data, setData] = useState<WaitlistUserResponse | undefined>(undefined);

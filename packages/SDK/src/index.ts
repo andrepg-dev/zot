@@ -2,7 +2,7 @@ import { HttpClient } from "./http";
 import { WaitlistResource, WaitlistsResource } from "./resources/waitlist";
 import type { ZotSDKConfig } from "./types";
 
-const DEFAULT_BASE_URL = "https://api.zot.so";
+const BASE_URL = "https://api.zot.so";
 
 export class ZotSDK {
   private readonly http: HttpClient;
@@ -13,8 +13,7 @@ export class ZotSDK {
       throw new Error("ZotSDK: apiKey is required");
     }
 
-    const baseUrl = (config.baseUrl ?? DEFAULT_BASE_URL).replace(/\/+$/, "");
-    this.http = new HttpClient(baseUrl, config.apiKey);
+    this.http = new HttpClient(BASE_URL, config.apiKey);
     this.waitlists = new WaitlistsResource(this.http);
   }
 

@@ -138,7 +138,6 @@ Keep your key safe:
 ```ts
 new ZotSDK({
   apiKey: "zot_live_xxx",   // required
-  baseUrl: "https://api.zot.so" // optional, for self-hosted or staging
 });
 ```
 
