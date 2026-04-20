@@ -2,8 +2,12 @@ import { Logger, ValidationPipe, VersioningType } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import cookieParser from "cookie-parser";
+import cors from "cors";
+import type { Request } from "express";
 import * as fs from "fs";
 import { AppModule } from "./app.module";
+
+const PUBLIC_SDK_ROUTE = /^\/v\d+\/wait-list\/[^/]+\/user\/?$/;
 
 const processLogger = new Logger("Process");
 process.on("uncaughtException", (error) => {
@@ -87,11 +91,22 @@ API requests are subject to rate limiting. Please handle 429 responses appropria
     `,
   });
 
-  const frontendUrl = "http://localhost:3002";
-  app.enableCors({
-    origin: [frontendUrl, "https://zot.so", "https://app.zot.so"],
-    credentials: true,
-  });
+  const strictOrigins = ["http://localhost:3002", "https://zot.so", "https://app.zot.so"];
+
+  app.use(
+    cors((req, cb) => {
+      const path = (req as Request)?.path ?? "";
+      const isPublicSdkRoute =
+        PUBLIC_SDK_ROUTE.test(path) && ["POST", "OPTIONS"].includes(req?.method ?? "");
+
+      if (isPublicSdkRoute) {
+        cb(null, { origin: true, credentials: false });
+        return;
+      }
+
+      cb(null, { origin: strictOrigins, credentials: true });
+    }),
+  );
 
   await app.listen(process.env.PORT ?? 3010);
 }
