@@ -56,8 +56,9 @@ export default function ComingSoon({
   const { addUser, isPending, isUserRegistered } = useAddUser({
     waitlistId: WAITLIST_ID,
     apiKey: process.env.NEXT_PUBLIC_ZOT_API_KEY!,
-    onError: (err) =>
-      addToast({ title: "Error", description: err.message, color: "danger" })
+    onError: (err: any) => {
+      addToast({ title: "Error", description: err?.body?.message, color: "danger" })
+    }
   });
 
   function handleSubmit(e: React.FormEvent) {
