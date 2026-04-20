@@ -1,8 +1,31 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { ZotSDK } from "../index";
 import type { AddUserParams, WaitlistUserResponse, ZotSDKConfig } from "../types";
 import { ZotAPIError } from "../types";
+
+const STORAGE_PREFIX = "zot:waitlist:registered:";
+
+const storageKey = (waitlistId: string) => `${STORAGE_PREFIX}${waitlistId}`;
+
+function readRegistered(waitlistId: string): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    return window.localStorage.getItem(storageKey(waitlistId)) === "1";
+  } catch {
+    return false;
+  }
+}
+
+function writeRegistered(waitlistId: string, value: boolean) {
+  if (typeof window === "undefined") return;
+  try {
+    if (value) window.localStorage.setItem(storageKey(waitlistId), "1");
+    else window.localStorage.removeItem(storageKey(waitlistId));
+  } catch {
+    // ignore quota / privacy-mode errors
+  }
+}
 
 export interface UseAddUserOptions extends ZotSDKConfig {
   waitlistId: string;
@@ -33,6 +56,10 @@ export function useAddUser(options: UseAddUserOptions): UseAddUserResult {
   const [isPending, setIsPending] = useState(false);
   const [isUserRegistered, setIsUserRegistered] = useState(false);
 
+  useEffect(() => {
+    setIsUserRegistered(readRegistered(waitlistId));
+  }, [waitlistId]);
+
   const addUser = useCallback(
     async (params: AddUserParams) => {
       setIsPending(true);
@@ -42,12 +69,12 @@ export function useAddUser(options: UseAddUserOptions): UseAddUserResult {
         const user = await sdkRef.current!.waitlist(waitlistId).addUser(params);
         setData(user);
         setIsUserRegistered(true);
+        writeRegistered(waitlistId, true);
         onSuccess?.(user);
         return user;
       } catch (err) {
         const normalized = err instanceof Error ? err : new Error(String(err));
         setError(normalized);
-        setIsUserRegistered(false);
         onError?.(normalized);
         return undefined;
       } finally {
@@ -62,7 +89,8 @@ export function useAddUser(options: UseAddUserOptions): UseAddUserResult {
     setError(undefined);
     setIsPending(false);
     setIsUserRegistered(false);
-  }, []);
+    writeRegistered(waitlistId, false);
+  }, [waitlistId]);
 
   return {
     addUser,
