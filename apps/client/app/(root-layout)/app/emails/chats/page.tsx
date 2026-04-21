@@ -8,7 +8,6 @@ import {
 } from "@/actions/ai/ai-email.actions";
 import GlobalButton from "@/components/global/button";
 import PageActions from "@/components/global/page-actions";
-import Title from "@/components/global/title";
 import PageComponent from "@/components/layouts/page-component";
 import Type from "@/components/type";
 import InputComponent from "@/components/ui/input";
@@ -118,16 +117,10 @@ export default function EmailChatsPage() {
   }
 
   return (
-    <PageComponent className="">
-      <Title description="Your AI email conversations">Chats</Title>
-
+    <PageComponent className="pt-0">
       <PageActions
         searchPlaceholder="Search chats..."
         onSearchChange={setSearch}
-        actionButton={{
-          label: "Create conversation",
-          href: "/app/new/email/template"
-        }}
         className="w-full"
       />
 

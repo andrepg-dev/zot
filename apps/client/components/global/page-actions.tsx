@@ -10,7 +10,7 @@ import InputComponent from "../ui/input";
 export interface PageActionsProps {
   searchPlaceholder?: string;
   showFilter?: boolean;
-  actionButton: {
+  actionButton?: {
     label: string;
     href: string;
     icon?: React.ReactNode;
@@ -45,18 +45,20 @@ export default function PageActions({
         )}
       </div>
 
-      <Button
-        as={Link}
-        href={actionButton.href}
-        className="bg-primary border-transparent border transition-none"
-        startContent={actionButton.icon || <PlusIcon className="size-5" />}
-        endContent={actionButton.endContent}
-        size="sm"
-        variant="shadow"
-        type="button"
-      >
-        {actionButton.label}
-      </Button>
+      {actionButton && (
+        <Button
+          as={Link}
+          href={actionButton.href}
+          className="bg-primary border-transparent border transition-none"
+          startContent={actionButton.icon || <PlusIcon className="size-5" />}
+          endContent={actionButton.endContent}
+          size="sm"
+          variant="shadow"
+          type="button"
+        >
+          {actionButton.label}
+        </Button>
+      )}
     </div>
   );
 }

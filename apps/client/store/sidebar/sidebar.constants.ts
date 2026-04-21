@@ -2,7 +2,6 @@ import {
   ChartBarIcon,
   Cog6ToothIcon,
   CreditCardIcon,
-  EnvelopeIcon,
   GlobeAltIcon,
   InboxStackIcon,
   KeyIcon,
@@ -26,27 +25,22 @@ export const defaultNavItems = [
     label: "Usage",
     icon: ChartBarIcon
   },
-  // {
-  //   href: "/app/waitlist/emails",
-  //   label: "Emails",
-  //   icon: EnvelopeIcon
-  // },
   {
-    href: "/app/waitlist/dashboard",
-    label: "WaitList",
-    icon: InboxStackIcon
+    href: "/app/billing",
+    label: "Billing",
+    icon: CreditCardIcon
   },
   {
-    label: "Emails",
-    icon: EnvelopeIcon,
+    label: "WaitList",
+    icon: InboxStackIcon,
     subItem: [
       {
-        href: "/app/emails/templates",
-        label: "Templates"
+        href: "/app/waitlist/dashboard",
+        label: "Dashboard"
       },
       {
-        href: "/app/emails/chats",
-        label: "Chats"
+        href: "/app/emails/templates",
+        label: "Emails"
       }
     ]
   },
@@ -55,11 +49,7 @@ export const defaultNavItems = [
     label: "Api keys",
     icon: KeyIcon
   },
-  {
-    href: "/app/billing",
-    label: "Billing",
-    icon: CreditCardIcon
-  },
+
   {
     href: "/app/landing-page",
     label: "Landing page",

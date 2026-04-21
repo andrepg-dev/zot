@@ -6,8 +6,6 @@ export default function PageComponent({
   className,
   ...props
 }: React.PropsWithChildren<React.HTMLAttributes<HTMLDivElement>>) {
-  
-
   return (
     <div {...props} className={cn("p-6 text-sm", className)}>
       {children}

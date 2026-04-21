@@ -7,12 +7,10 @@ import {
 import GlobalButton from "@/components/global/button";
 import GlobalDrawer from "@/components/global/drawer";
 import PageActions from "@/components/global/page-actions";
-import Title from "@/components/global/title";
 import PageComponent from "@/components/layouts/page-component";
 import EmailTemplateCardSkeleton from "@/components/skeletons/email-template/card";
 import Type from "@/components/type";
 import Chip from "@/components/ui/chip";
-import { useHotkey } from "@/hooks/use-hotkey";
 import { formatDateTime } from "@/lib/format-date";
 import {
   EllipsisHorizontalIcon,
@@ -25,7 +23,6 @@ import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@heroui/d
 import {
   DrawerBody,
   DrawerHeader,
-  Kbd,
   Modal,
   ModalBody,
   ModalContent,
@@ -47,14 +44,6 @@ export default function EmailTemplatesPage() {
   const deleteModal = useDisclosure();
   const detailsDrawer = useDisclosure();
   const [selectedTemplate, setSelectedTemplate] = useState<EmailTemplate | null>(null);
-
-  useHotkey({
-    key: "k",
-    modifiers: ["meta"],
-    onPress: () => {
-      router.push("/app/new/email/template");
-    }
-  });
 
   const { data, isPending } = useQuery({
     queryKey: ["email-templates"],
@@ -89,22 +78,8 @@ export default function EmailTemplatesPage() {
   );
 
   return (
-    <PageComponent>
-      <Title description="Manage your saved email templates">Templates</Title>
-
-      <PageActions
-        searchPlaceholder="Search template..."
-        onSearchChange={setSearch}
-        actionButton={{
-          label: "Create template",
-          href: "/app/new/email/template",
-          endContent: (
-            <Kbd className="text-xs" keys={["command"]}>
-              K
-            </Kbd>
-          )
-        }}
-      />
+    <PageComponent className="pt-0">
+      <PageActions searchPlaceholder="Search template..." onSearchChange={setSearch} />
 
       <span className="text-default-400 text-small">Total {templates.length} templates</span>
 
