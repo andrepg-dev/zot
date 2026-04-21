@@ -577,7 +577,7 @@ const res = await client.waitlist("${createdWaitlistId || "wl_abc123"}").addUser
                   displayCode={
                     selectedApiKeyValue
                       ? `import "dotenv/config";
-import { ZotSDK } from "@zot/sdk";
+import { ZotSDK } from "zot-sdk";
 
 const client = new ZotSDK({
   apiKey: "${selectedApiKeyValue.slice(0, 8)}${"•".repeat(20)}",
