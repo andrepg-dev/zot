@@ -1,2 +1,2 @@
-export { useAddUser } from "./useAddUser";
-export type { UseAddUserOptions, UseAddUserResult } from "./useAddUser";
+export { useAddUser } from "./useAddUser.js";
+export type { UseAddUserOptions, UseAddUserResult } from "./useAddUser.js";

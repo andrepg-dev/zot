@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { ZotSDK } from "../index";
-import type { AddUserParams, WaitlistUserResponse, ZotSDKConfig } from "../types";
-import { ZotAPIError } from "../types";
+import { ZotSDK } from "../index.js";
+import type { AddUserParams, WaitlistUserResponse, ZotSDKConfig } from "../types.js";
+import { ZotAPIError } from "../types.js";
 
 const STORAGE_PREFIX = "zot:waitlist:registered:";
 

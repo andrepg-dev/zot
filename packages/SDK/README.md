@@ -121,7 +121,7 @@ Use the `NEXT_PUBLIC_` prefix so the key is available in the browser:
 
 ```bash
 # .env.local
-NEXT_PUBLIC_ZOT_API_KEY=zot_live_xxx
+NEXT_PUBLIC_ZOT_API_KEY=zot_xxx
 ```
 
 ## API key
@@ -137,7 +137,7 @@ Keep your key safe:
 
 ```ts
 new ZotSDK({
-  apiKey: "zot_live_xxx",   // required
+  apiKey: "zot_xxx",   // required
 });
 ```
 

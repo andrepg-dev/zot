@@ -1,0 +1,35 @@
+{
+  "name": "zot-skills",
+  "version": "0.1.0",
+  "description": "Install Zot agent skills (waitlist best practices, etc.) into any project. One command configures Claude Code, Cursor, GitHub Copilot and AGENTS.md.",
+  "license": "MIT",
+  "author": "Zot",
+  "type": "module",
+  "main": "dist/cli.js",
+  "bin": {
+    "zot-skills": "dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "skills"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsc && node scripts/post-build.mjs",
+    "dev:build": "tsc --watch",
+    "prepublishOnly": "npm run build",
+    "start": "node dist/cli.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "zot-sdk": "*"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.7.3"
+  }
+}
