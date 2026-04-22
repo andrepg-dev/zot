@@ -50,8 +50,8 @@ export async function tryRemoveEmptyDir(dir: string): Promise<void> {
 /** Markers so we can safely update/remove a section we previously wrote. */
 export function marker(name: string, skill: string) {
   return {
-    start: `<!-- zot-skills:${name}:${skill}:start -->`,
-    end: `<!-- zot-skills:${name}:${skill}:end -->`,
+    start: `<!-- zot-agents:${name}:${skill}:start -->`,
+    end: `<!-- zot-agents:${name}:${skill}:end -->`,
   };
 }
 

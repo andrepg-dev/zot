@@ -20,5 +20,5 @@ export async function listCommand(ctx: CommandContext): Promise<void> {
     console.log(`    ${s.description}`);
   }
   console.log();
-  log.info("Install one with: npx zot-skills add <name>");
+  log.info("Install one with: npx zot-agents add <name>");
 }

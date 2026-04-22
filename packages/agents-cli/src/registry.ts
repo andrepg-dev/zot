@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 import type { LoadedSkill, SkillManifest } from "./types.js";
 
 const DEFAULT_REMOTE_REGISTRY =
-  "https://raw.githubusercontent.com/ZotInc/zot/main/packages/skills-cli/skills/registry.json";
+  "https://raw.githubusercontent.com/ZotInc/zot/main/packages/agents-cli/skills/registry.json";
 
 interface BundledRegistry {
   version: number;

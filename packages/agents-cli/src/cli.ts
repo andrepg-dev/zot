@@ -7,13 +7,13 @@ import { removeCommand } from "./commands/remove.js";
 import { log } from "./ui.js";
 
 const HELP = `
-zot-skills — install Zot agent skills into any project
+zot-agents — configure AI coding agents to integrate Zot correctly
 
 Usage:
-  npx zot-skills <command> [options]
+  npx zot-agents <command> [options]
 
 Commands:
-  add <skill>          Install a skill (e.g. waitlist-best-practices)
+  add <skill>          Install a skill (e.g. waitlist)
   list                 List available skills
   remove <skill>       Remove an installed skill
   help                 Show this help
@@ -28,9 +28,9 @@ Options for \`add\` / \`remove\`:
   --local-only         Use only the bundled registry (add / list)
 
 Examples:
-  npx zot-skills add waitlist-best-practices
-  npx zot-skills list
-  npx zot-skills remove waitlist-best-practices
+  npx zot-agents add waitlist
+  npx zot-agents list
+  npx zot-agents remove waitlist
 
 Related:
   Need to create a Zot resource (like a waitlist) from the terminal?
@@ -59,7 +59,7 @@ async function main() {
         const { values, positionals } = parseSkillArgs(rest);
         const skill = positionals[0];
         if (!skill) {
-          log.error("Missing skill name. Try: npx zot-skills add waitlist-best-practices");
+          log.error("Missing skill name. Try: npx zot-agents add waitlist");
           process.exit(1);
         }
         await addCommand(skill, buildSkillContext(values));
@@ -70,7 +70,7 @@ async function main() {
         const { values, positionals } = parseSkillArgs(rest);
         const skill = positionals[0];
         if (!skill) {
-          log.error("Missing skill name. Try: npx zot-skills remove waitlist-best-practices");
+          log.error("Missing skill name. Try: npx zot-agents remove waitlist");
           process.exit(1);
         }
         await removeCommand(skill, buildSkillContext(values));
@@ -85,7 +85,7 @@ async function main() {
       case "create": {
         log.error(
           [
-            "`zot-skills` no longer creates Zot resources.",
+            "`zot-agents` does not create Zot resources.",
             "Use the dedicated Zot API CLI instead:",
             "",
             '  npx zot-cli waitlist create --name "Early Access" --write-env .env.local --public',

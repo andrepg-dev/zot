@@ -1,20 +1,11 @@
----
-name: waitlist
-version: 0.3.0
-description: Integrate a Zot waitlist into any TypeScript, React, or Next.js app using the official `zot-sdk` and the `zot-cli` command-line tool. Use this skill whenever the user asks to "add a waitlist", "create a waitlist", "collect signups", "add early access", "integrate Zot", "build a coming soon page with email capture", or wires email capture to Zot.
-triggers:
-  - add a waitlist
-  - create a waitlist
-  - integrate Zot
-  - collect waitlist signups
-  - early access form
-  - coming soon page
-  - signup form with Zot
-  - zot-sdk
-  - zot-cli
-  - zot-agents
-  - useAddUser
----
+# AGENTS.md
+
+Instructions for AI coding agents.
+
+<!-- zot-agents:agents-md:waitlist:start -->
+## Skill: waitlist (v0.3.0)
+
+Integrate a Zot waitlist using the official zot-sdk (server) or zot-sdk/react (useAddUser hook). Covers env setup via `npx zot-cli waitlist create`, error handling, and anti-patterns.
 
 # Zot Waitlist — Best Practices
 
@@ -326,3 +317,4 @@ Before telling the user the integration is done, confirm ALL of the following:
 - [ ] No duplicated loading/error/success state around `useAddUser`.
 
 If any box is unchecked, fix it before handing the task back to the user.
+<!-- zot-agents:agents-md:waitlist:end -->

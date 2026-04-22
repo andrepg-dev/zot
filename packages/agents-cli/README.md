@@ -1,10 +1,10 @@
-# zot-skills
+# zot-agents
 
-Install [Zot](https://zot.so) agent skills into any project. One command writes the right guides for Claude Code, Cursor, GitHub Copilot, and `AGENTS.md` so every agent in the repo knows how to integrate Zot correctly.
+Configure any AI coding agent (Claude Code, Cursor, GitHub Copilot, `AGENTS.md`) to integrate [Zot](https://zot.so) correctly. One command writes the right guide files into your repo so every agent in the project knows how to use the Zot SDK without hallucinating.
 
 ```bash
 # Teach every agent in this project how to integrate Zot
-npx zot-skills add waitlist-best-practices
+npx zot-agents add waitlist
 ```
 
 > Need to call the Zot API from the terminal (create a waitlist, manage API keys, etc.)?
@@ -14,7 +14,7 @@ npx zot-skills add waitlist-best-practices
 > npx zot-cli waitlist create --name "Early Access" --write-env .env.local --public
 > ```
 
-`zot-skills` only writes agent-guide files into your project. It does **not** talk to the Zot API.
+`zot-agents` only writes agent-guide files into your project. It does **not** talk to the Zot API.
 
 ## What gets installed
 
@@ -31,22 +31,25 @@ If none of those exist in your project, the CLI installs into all four so you're
 
 ```bash
 # Install a skill
-npx zot-skills add waitlist-best-practices
+npx zot-agents add waitlist
 
 # Only some targets
-npx zot-skills add waitlist-best-practices --target claude,cursor
+npx zot-agents add waitlist --target claude,cursor
 
-# Force overwrite
-npx zot-skills add waitlist-best-practices --force
+# Force overwrite (for discrete-file adapters)
+npx zot-agents add waitlist --force
+
+# Skip the confirmation prompt (ideal for CI and agents)
+npx zot-agents add waitlist --yes
 
 # List what is available (bundled + remote registry)
-npx zot-skills list
+npx zot-agents list
 
 # List only what ships inside this package (no network)
-npx zot-skills list --local-only
+npx zot-agents list --local-only
 
 # Remove from the project
-npx zot-skills remove waitlist-best-practices
+npx zot-agents remove waitlist
 ```
 
 ## Options
@@ -62,7 +65,7 @@ npx zot-skills remove waitlist-best-practices
 
 ## Available skills
 
-### `waitlist-best-practices`
+### `waitlist`
 
 Teaches the agent to integrate a Zot waitlist with the official `zot-sdk`:
 
@@ -73,11 +76,11 @@ Teaches the agent to integrate a Zot waitlist with the official `zot-sdk`:
 - Lists anti-patterns to avoid (no raw `fetch`, no wrapping the hook in TanStack Query, etc.).
 - Ends with a verification checklist the agent must confirm before marking the task done.
 
-Run `npx zot-skills list` to see anything else available from the remote registry.
+Run `npx zot-agents list` to see anything else available from the remote registry.
 
 ## For humans
 
-Even without an agent, `.claude/skills/waitlist-best-practices/SKILL.md` (and its peers) are plain markdown files you can read and follow yourself.
+Even without an agent, `.claude/skills/waitlist/SKILL.md` (and its peers) are plain markdown files you can read and follow yourself.
 
 ## Remote registry
 

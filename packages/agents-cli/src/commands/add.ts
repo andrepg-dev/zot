@@ -20,7 +20,7 @@ export async function addCommand(skillName: string, ctx: CommandContext): Promis
 
   if (!skill) {
     log.error(`Unknown skill: ${skillName}`);
-    log.info("Run `npx zot-skills list` to see available skills.");
+    log.info("Run `npx zot-agents list` to see available skills.");
     process.exit(1);
   }
 

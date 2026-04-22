@@ -1,10 +1,10 @@
 {
   "version": 1,
   "skills": {
-    "waitlist-best-practices": {
+    "waitlist": {
       "version": "0.3.0",
       "description": "Integrate a Zot waitlist using the official zot-sdk (server) or zot-sdk/react (useAddUser hook). Covers env setup via `npx zot-cli waitlist create`, error handling, and anti-patterns.",
-      "file": "waitlist-best-practices/SKILL.md"
+      "file": "waitlist/SKILL.md"
     }
   }
 }

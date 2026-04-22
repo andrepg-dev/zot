@@ -1,13 +1,13 @@
 {
-  "name": "zot-skills",
+  "name": "zot-agents",
   "version": "0.1.0",
-  "description": "Install Zot agent skills into any project. One command configures Claude Code, Cursor, GitHub Copilot and AGENTS.md so every agent knows how to integrate Zot correctly. To call the Zot API from the terminal (create waitlists, manage API keys, etc.) use the `zot-cli` package.",
+  "description": "Configure any AI coding agent (Claude Code, Cursor, GitHub Copilot, AGENTS.md) to integrate Zot correctly. One command writes the right guide files into your repo. To call the Zot API from the terminal (create waitlists, manage API keys, etc.) use the `zot-cli` package.",
   "license": "MIT",
   "author": "Zot",
   "type": "module",
   "main": "dist/cli.js",
   "bin": {
-    "zot-skills": "dist/cli.js"
+    "zot-agents": "dist/cli.js"
   },
   "files": [
     "dist",

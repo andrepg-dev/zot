@@ -11,7 +11,7 @@ const monorepoRoot = path.resolve(pkgRoot, "..", "..");
 //    into this package's bundled skills folder, so the published tarball is
 //    self-contained and does not depend on workspace siblings.
 const src = path.join(monorepoRoot, "packages", "skills", "zot-waitlist", "SKILL.md");
-const destDir = path.join(pkgRoot, "skills", "waitlist-best-practices");
+const destDir = path.join(pkgRoot, "skills", "waitlist");
 const dest = path.join(destDir, "SKILL.md");
 
 await mkdir(destDir, { recursive: true });

@@ -54,5 +54,5 @@ Standard [oclif](https://oclif.io) flags like `--help`, `-h`, `-v` work everywhe
 ## Related
 
 - [`zot-sdk`](../SDK/README.md) — the TypeScript SDK the CLI wraps.
-- [`zot-skills`](../skills-cli/README.md) — install agent skills (guides for
-  Claude Code, Cursor, Copilot, AGENTS.md) into a repo.
+- [`zot-agents`](../agents-cli/README.md) — configure AI coding agents
+  (Claude Code, Cursor, Copilot, AGENTS.md) with Zot integration guides.

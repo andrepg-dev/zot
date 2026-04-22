@@ -1,5 +1,5 @@
 ---
-name: waitlist-best-practices
+name: waitlist
 version: 0.3.0
 description: Integrate a Zot waitlist into any TypeScript, React, or Next.js app using the official `zot-sdk` and the `zot-cli` command-line tool. Use this skill whenever the user asks to "add a waitlist", "create a waitlist", "collect signups", "add early access", "integrate Zot", "build a coming soon page with email capture", or wires email capture to Zot.
 triggers:
@@ -12,7 +12,7 @@ triggers:
   - signup form with Zot
   - zot-sdk
   - zot-cli
-  - zot-skills
+  - zot-agents
   - useAddUser
 ---
 
@@ -67,7 +67,7 @@ You need two things:
 
 If the user does not already have a waitlist, use the official Zot CLI. It calls the Zot API with the user's `ZOT_API_KEY` and writes the resulting ID directly into the env file so you never have to copy-paste it.
 
-> Package: `zot-cli`. Do **not** confuse it with `zot-skills` — `zot-skills` only installs this agent guide into a repo; `zot-cli` talks to the Zot API.
+> Package: `zot-cli`. Do **not** confuse it with `zot-agents` — `zot-agents` only installs this agent guide into a repo; `zot-cli` talks to the Zot API.
 
 ```bash
 # Make sure ZOT_API_KEY is set (in the shell, in .env.local, or in .env)
