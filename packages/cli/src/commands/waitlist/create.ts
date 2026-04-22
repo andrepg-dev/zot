@@ -1,7 +1,7 @@
 import path from "node:path";
 
 import { Command, Flags } from "@oclif/core";
-import type { WaitlistResponse } from "zot-sdk";
+import type { WaitlistResponse } from "@zot-core/sdk";
 
 import { resolveEnv, upsertEnvFile } from "../../lib/env.js";
 import { c, log } from "../../lib/ui.js";
@@ -133,17 +133,17 @@ export default class WaitlistCreate extends Command {
 }
 
 async function loadSdk(): Promise<{
-  ZotSDK: typeof import("zot-sdk").ZotSDK;
-  ZotAPIError: typeof import("zot-sdk").ZotAPIError;
+  ZotSDK: typeof import("@zot-core/sdk").ZotSDK;
+  ZotAPIError: typeof import("@zot-core/sdk").ZotAPIError;
 }> {
   try {
-    const mod = await import("zot-sdk");
+    const mod = await import("@zot-core/sdk");
     return { ZotSDK: mod.ZotSDK, ZotAPIError: mod.ZotAPIError };
   } catch (err) {
     throw new Error(
       [
-        "Could not load `zot-sdk`. It should ship with zot-cli, but was not found.",
-        "Install manually: npm install zot-sdk",
+        "Could not load `@zot-core/sdk`. It should ship with @zot-core/cli, but was not found.",
+        "Install manually: npm install @zot-core/sdk",
         "",
         `Original error: ${err instanceof Error ? err.message : String(err)}`,
       ].join("\n"),

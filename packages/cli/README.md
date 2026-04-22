@@ -1,17 +1,23 @@
-# zot-cli
+# @zot-core/cli
 
 Command-line interface for the [Zot](https://zot.so) API.
 
 ```bash
-npx zot-cli waitlist create --name "Early Access" --write-env .env.local --public
+npx @zot-core/cli waitlist create --name "Early Access" --write-env .env.local --public
 ```
 
 ## Install
 
 ```bash
-npm install -g zot-cli        # global
-npm install -D zot-cli        # as a devDependency
-npx zot-cli <command>         # one-off
+npm install -g @zot-core/cli        # global
+npm install -D @zot-core/cli        # as a devDependency
+npx @zot-core/cli <command>         # one-off
+```
+
+After installing, the binary is exposed as `zot-cli`:
+
+```bash
+zot-cli waitlist create --name "Early Access"
 ```
 
 ## Authentication
@@ -53,6 +59,6 @@ Standard [oclif](https://oclif.io) flags like `--help`, `-h`, `-v` work everywhe
 
 ## Related
 
-- [`zot-sdk`](../SDK/README.md) — the TypeScript SDK the CLI wraps.
-- [`zot-agents`](../agents-cli/README.md) — configure AI coding agents
+- [`@zot-core/sdk`](../SDK/README.md) — the TypeScript SDK the CLI wraps.
+- [`@zot-core/agents`](../agents-cli/README.md) — configure AI coding agents
   (Claude Code, Cursor, Copilot, AGENTS.md) with Zot integration guides.

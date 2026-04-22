@@ -7,10 +7,10 @@ import { removeCommand } from "./commands/remove.js";
 import { log } from "./ui.js";
 
 const HELP = `
-zot-agents — configure AI coding agents to integrate Zot correctly
+@zot-core/agents — configure AI coding agents to integrate Zot correctly
 
 Usage:
-  npx zot-agents <command> [options]
+  npx @zot-core/agents <command> [options]
 
 Commands:
   add <skill>          Install a skill (e.g. waitlist)
@@ -28,14 +28,14 @@ Options for \`add\` / \`remove\`:
   --local-only         Use only the bundled registry (add / list)
 
 Examples:
-  npx zot-agents add waitlist
-  npx zot-agents list
-  npx zot-agents remove waitlist
+  npx @zot-core/agents add waitlist
+  npx @zot-core/agents list
+  npx @zot-core/agents remove waitlist
 
 Related:
   Need to create a Zot resource (like a waitlist) from the terminal?
   Use the Zot API CLI instead:
-    npx zot-cli waitlist create --name "Early Access" --write-env .env.local --public
+    npx @zot-core/cli waitlist create --name "Early Access" --write-env .env.local --public
 `.trim();
 
 async function main() {
@@ -59,7 +59,7 @@ async function main() {
         const { values, positionals } = parseSkillArgs(rest);
         const skill = positionals[0];
         if (!skill) {
-          log.error("Missing skill name. Try: npx zot-agents add waitlist");
+          log.error("Missing skill name. Try: npx @zot-core/agents add waitlist");
           process.exit(1);
         }
         await addCommand(skill, buildSkillContext(values));
@@ -70,7 +70,7 @@ async function main() {
         const { values, positionals } = parseSkillArgs(rest);
         const skill = positionals[0];
         if (!skill) {
-          log.error("Missing skill name. Try: npx zot-agents remove waitlist");
+          log.error("Missing skill name. Try: npx @zot-core/agents remove waitlist");
           process.exit(1);
         }
         await removeCommand(skill, buildSkillContext(values));
@@ -85,12 +85,12 @@ async function main() {
       case "create": {
         log.error(
           [
-            "`zot-agents` does not create Zot resources.",
+            "`@zot-core/agents` does not create Zot resources.",
             "Use the dedicated Zot API CLI instead:",
             "",
-            '  npx zot-cli waitlist create --name "Early Access" --write-env .env.local --public',
+            '  npx @zot-core/cli waitlist create --name "Early Access" --write-env .env.local --public',
             "",
-            "Run `npx zot-cli --help` for the full list of resource commands.",
+            "Run `npx @zot-core/cli --help` for the full list of resource commands.",
           ].join("\n"),
         );
         process.exit(1);

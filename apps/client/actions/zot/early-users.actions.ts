@@ -1,6 +1,6 @@
 "use server";
 
-import { ZotSDK } from "zot-sdk";
+import { ZotSDK } from "@zot-core/sdk";
 
 export async function joinEarlyUsers(
   email: string,

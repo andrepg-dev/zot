@@ -1,6 +1,6 @@
 {
-  "name": "zot-cli",
-  "version": "0.1.0",
+  "name": "@zot-core/cli",
+  "version": "1.0.0",
   "description": "Command-line interface for the Zot API. Create and manage waitlists, API keys, and more from the terminal.",
   "license": "MIT",
   "author": "Zot",
@@ -45,7 +45,7 @@
   },
   "dependencies": {
     "@oclif/core": "^4.0.0",
-    "zot-sdk": "*"
+    "@zot-core/sdk": "^1.0.0"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",

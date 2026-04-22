@@ -6,7 +6,7 @@ import { addToast } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { useAddUser } from "zot-sdk/react";
+import { useAddUser } from "@zot-core/sdk/react";
 import Type from "../type";
 import InputComponent from "../ui/input";
 import PrimaryActionButton from "./primary-action-button";

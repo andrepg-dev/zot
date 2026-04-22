@@ -1,20 +1,20 @@
-# zot-agents
+# @zot-core/agents
 
 Configure any AI coding agent (Claude Code, Cursor, GitHub Copilot, `AGENTS.md`) to integrate [Zot](https://zot.so) correctly. One command writes the right guide files into your repo so every agent in the project knows how to use the Zot SDK without hallucinating.
 
 ```bash
 # Teach every agent in this project how to integrate Zot
-npx zot-agents add waitlist
+npx @zot-core/agents add waitlist
 ```
 
 > Need to call the Zot API from the terminal (create a waitlist, manage API keys, etc.)?
-> Use **[`zot-cli`](../cli/README.md)** — it is the official CLI for Zot resources.
+> Use **[`@zot-core/cli`](../cli/README.md)** — it is the official CLI for Zot resources.
 >
 > ```bash
-> npx zot-cli waitlist create --name "Early Access" --write-env .env.local --public
+> npx @zot-core/cli waitlist create --name "Early Access" --write-env .env.local --public
 > ```
 
-`zot-agents` only writes agent-guide files into your project. It does **not** talk to the Zot API.
+`@zot-core/agents` only writes agent-guide files into your project. It does **not** talk to the Zot API.
 
 ## What gets installed
 
@@ -31,25 +31,25 @@ If none of those exist in your project, the CLI installs into all four so you're
 
 ```bash
 # Install a skill
-npx zot-agents add waitlist
+npx @zot-core/agents add waitlist
 
 # Only some targets
-npx zot-agents add waitlist --target claude,cursor
+npx @zot-core/agents add waitlist --target claude,cursor
 
 # Force overwrite (for discrete-file adapters)
-npx zot-agents add waitlist --force
+npx @zot-core/agents add waitlist --force
 
 # Skip the confirmation prompt (ideal for CI and agents)
-npx zot-agents add waitlist --yes
+npx @zot-core/agents add waitlist --yes
 
 # List what is available (bundled + remote registry)
-npx zot-agents list
+npx @zot-core/agents list
 
 # List only what ships inside this package (no network)
-npx zot-agents list --local-only
+npx @zot-core/agents list --local-only
 
 # Remove from the project
-npx zot-agents remove waitlist
+npx @zot-core/agents remove waitlist
 ```
 
 ## Options
@@ -67,16 +67,16 @@ npx zot-agents remove waitlist
 
 ### `waitlist`
 
-Teaches the agent to integrate a Zot waitlist with the official `zot-sdk`:
+Teaches the agent to integrate a Zot waitlist with the official `@zot-core/sdk`:
 
-- Picks `zot-sdk` for server code and `zot-sdk/react` (`useAddUser`) for React/Next.js.
+- Picks `@zot-core/sdk` for server code and `@zot-core/sdk/react` (`useAddUser`) for React/Next.js.
 - Sets up env vars (`ZOT_API_KEY`, `NEXT_PUBLIC_ZOT_API_KEY`).
-- Tells the agent to create the waitlist via `npx zot-cli waitlist create` instead of code.
+- Tells the agent to create the waitlist via `npx @zot-core/cli waitlist create` instead of code.
 - Canonical UI pattern with loading, persisted success state, and 409 handling.
 - Lists anti-patterns to avoid (no raw `fetch`, no wrapping the hook in TanStack Query, etc.).
 - Ends with a verification checklist the agent must confirm before marking the task done.
 
-Run `npx zot-agents list` to see anything else available from the remote registry.
+Run `npx @zot-core/agents list` to see anything else available from the remote registry.
 
 ## For humans
 
@@ -90,8 +90,8 @@ Override with `--registry https://...` for private registries.
 
 ## Related
 
-- [`zot-cli`](../cli/README.md) — official Zot API CLI (create waitlists, manage resources).
-- [`zot-sdk`](../SDK/README.md) — TypeScript SDK that both CLIs use under the hood.
+- [`@zot-core/cli`](../cli/README.md) — official Zot API CLI (create waitlists, manage resources).
+- [`@zot-core/sdk`](../SDK/README.md) — TypeScript SDK that both CLIs use under the hood.
 
 ## License
 

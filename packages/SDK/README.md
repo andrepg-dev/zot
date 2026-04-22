@@ -1,11 +1,15 @@
-# Zot SDK
+# @zot-core/sdk
 
 Official TypeScript SDK for [Zot](https://zot.so). Add users to your waitlist from any Node.js, Bun, Deno, or browser app.
 
+```bash
+npm install @zot-core/sdk
+```
+
 ## Two ways to use it
 
-1. **Plain client** (`zot-sdk`): for servers, scripts, and backends.
-2. **React hook** (`zot-sdk/react`): for React apps. Handles loading and success state for you.
+1. **Plain client** (`@zot-core/sdk`): for servers, scripts, and backends.
+2. **React hook** (`@zot-core/sdk/react`): for React apps. Handles loading and success state for you.
 
 Pick whichever fits your app. You do not need both.
 
@@ -14,7 +18,7 @@ Pick whichever fits your app. You do not need both.
 Use this on a server, API route, or backend job.
 
 ```ts
-import { ZotSDK } from "zot-sdk";
+import { ZotSDK } from "@zot-core/sdk";
 
 const zot = new ZotSDK({ apiKey: process.env.ZOT_API_KEY! });
 
@@ -58,7 +62,7 @@ If you are building with React (including Next.js), import the hook instead. It 
 "use client";
 
 import { useState } from "react";
-import { useAddUser } from "zot-sdk/react";
+import { useAddUser } from "@zot-core/sdk/react";
 
 export function JoinWaitlist() {
   const [email, setEmail] = useState("");
@@ -146,7 +150,7 @@ new ZotSDK({
 Failed requests throw a `ZotAPIError`:
 
 ```ts
-import { ZotAPIError } from "zot-sdk";
+import { ZotAPIError } from "@zot-core/sdk";
 
 try {
   await zot.waitlist("wl_xxx").addUser({ email: "a@b.com" });
@@ -181,7 +185,7 @@ import type {
   UpdateUserStatusParams,
   WaitlistResponse,
   WaitlistUserResponse
-} from "zot-sdk";
+} from "@zot-core/sdk";
 ```
 
 ## Full method list
