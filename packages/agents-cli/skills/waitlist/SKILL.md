@@ -1,7 +1,7 @@
 ---
 name: waitlist-best-practices
-version: 0.2.0
-description: Integrate a Zot waitlist into any TypeScript, React, or Next.js app using the official `zot-sdk` and the `zot-skills` CLI. Use this skill whenever the user asks to "add a waitlist", "create a waitlist", "collect signups", "add early access", "integrate Zot", "build a coming soon page with email capture", or wires email capture to Zot.
+version: 0.3.0
+description: Integrate a Zot waitlist into any TypeScript, React, or Next.js app using the official `zot-sdk` and the `zot-cli` command-line tool. Use this skill whenever the user asks to "add a waitlist", "create a waitlist", "collect signups", "add early access", "integrate Zot", "build a coming soon page with email capture", or wires email capture to Zot.
 triggers:
   - add a waitlist
   - create a waitlist
@@ -11,6 +11,7 @@ triggers:
   - coming soon page
   - signup form with Zot
   - zot-sdk
+  - zot-cli
   - zot-skills
   - useAddUser
 ---
@@ -26,7 +27,7 @@ This skill tells you how to integrate a Zot waitlist correctly. Follow these rul
 npm install zot-sdk
 
 # 2. Create the waitlist and persist its ID in .env.local
-npx zot-skills create waitlist --name "Early Access" --write-env .env.local --public
+npx zot-cli waitlist create --name "Early Access" --write-env .env.local --public
 
 # 3. Build the UI (see Pattern B below) using `useAddUser` from "zot-sdk/react"
 ```
@@ -62,13 +63,15 @@ You need two things:
 1. **API key** — from the Zot dashboard at https://zot.so. Create one key for server usage and, if you plan to call from the browser, a second key scoped to signup-only.
 2. **Waitlist ID** — looks like `wl_abc123`.
 
-### Create the waitlist with the CLI (recommended)
+### Create the waitlist with `zot-cli` (recommended)
 
-If the user does not already have a waitlist, use the official CLI. It calls the Zot API with the user's `ZOT_API_KEY` and writes the resulting ID directly into the env file so you never have to copy-paste it.
+If the user does not already have a waitlist, use the official Zot CLI. It calls the Zot API with the user's `ZOT_API_KEY` and writes the resulting ID directly into the env file so you never have to copy-paste it.
+
+> Package: `zot-cli`. Do **not** confuse it with `zot-skills` — `zot-skills` only installs this agent guide into a repo; `zot-cli` talks to the Zot API.
 
 ```bash
 # Make sure ZOT_API_KEY is set (in the shell, in .env.local, or in .env)
-npx zot-skills create waitlist \
+npx zot-cli waitlist create \
   --name "Early Access" \
   --write-env .env.local \
   --public
@@ -85,13 +88,13 @@ Useful variations:
 
 ```bash
 # Pure server stack (Node/Nest/Express). Drop --public.
-npx zot-skills create waitlist --name "Beta list" --write-env .env
+npx zot-cli waitlist create --name "Beta list" --write-env .env
 
 # Non-interactive / scripted use. Prints JSON only.
-npx zot-skills create waitlist --name "Beta list" --api-key $ZOT_API_KEY --json
+npx zot-cli waitlist create --name "Beta list" --api-key $ZOT_API_KEY --json
 
 # Disable the automatic welcome email.
-npx zot-skills create waitlist --name "Quiet list" --no-send-email
+npx zot-cli waitlist create --name "Quiet list" --no-send-email
 ```
 
 If the CLI exits with `No API key found`, the user has to get one at https://zot.so and either export `ZOT_API_KEY` in their shell or add it to `.env.local` / `.env` before retrying.
@@ -304,7 +307,7 @@ Detect with `err instanceof ZotAPIError` and read `err.statusCode` and `err.body
 - ❌ Adding a manual `useState<boolean>` for loading. Use `isPending`.
 - ❌ Storing "already registered" in your own localStorage key. `useAddUser` already does it under `zot:waitlist:registered:<waitlistId>`.
 - ❌ Using the full-access `ZOT_API_KEY` inside a `"use client"` component.
-- ❌ Calling `zot.waitlists.create` on every render, build, or app startup. Use `npx zot-skills create waitlist` once at setup time and store the ID.
+- ❌ Calling `zot.waitlists.create` on every render, build, or app startup. Use `npx zot-cli waitlist create` once at setup time and store the ID.
 - ❌ Hard-coding the waitlist ID inside the component. Read it from env (`ZOT_WAITLIST_ID` or `NEXT_PUBLIC_ZOT_WAITLIST_ID`).
 - ❌ Silently swallowing errors. 409 is a product decision; others should be surfaced or logged.
 
@@ -313,7 +316,7 @@ Detect with `err instanceof ZotAPIError` and read `err.statusCode` and `err.body
 Before telling the user the integration is done, confirm ALL of the following:
 
 - [ ] `zot-sdk` is in `package.json` at the latest published version.
-- [ ] A waitlist exists and its ID is stored in env (created via `npx zot-skills create waitlist` or, only if justified, via a one-time script).
+- [ ] A waitlist exists and its ID is stored in env (created via `npx zot-cli waitlist create` or, only if justified, via a one-time script).
 - [ ] API key is in env vars, not hard-coded.
 - [ ] If the key is used in client code, it is prefixed with `NEXT_PUBLIC_` (or equivalent) AND is a signup-scoped key.
 - [ ] The waitlist ID is read from env, not hard-coded, unless the user explicitly asked for a hard-coded constant.

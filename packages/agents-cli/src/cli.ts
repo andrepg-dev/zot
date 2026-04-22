@@ -2,13 +2,12 @@
 import { parseArgs } from "node:util";
 
 import { addCommand } from "./commands/add.js";
-import { createWaitlistCommand } from "./commands/create-waitlist.js";
 import { listCommand } from "./commands/list.js";
 import { removeCommand } from "./commands/remove.js";
 import { log } from "./ui.js";
 
 const HELP = `
-zot-skills — install Zot agent skills and manage Zot resources
+zot-skills — install Zot agent skills into any project
 
 Usage:
   npx zot-skills <command> [options]
@@ -17,7 +16,6 @@ Commands:
   add <skill>          Install a skill (e.g. waitlist-best-practices)
   list                 List available skills
   remove <skill>       Remove an installed skill
-  create waitlist      Create a new waitlist via the Zot API
   help                 Show this help
 
 Options for \`add\` / \`remove\`:
@@ -29,20 +27,15 @@ Options for \`add\` / \`remove\`:
   --registry <url>     Override registry URL (add / list)
   --local-only         Use only the bundled registry (add / list)
 
-Options for \`create waitlist\`:
-  --name <string>      Waitlist name (required)
-  --api-key <key>      Override ZOT_API_KEY (falls back to env / .env.local / .env)
-  --no-send-email      Disable "send email to new signup" (default: enabled)
-  --write-env <file>   Append ZOT_WAITLIST_ID to this env file (e.g. .env.local)
-  --public             With --write-env, also write NEXT_PUBLIC_ZOT_WAITLIST_ID
-  --json               Print the raw API response as JSON
-  --cwd <path>         Working directory
-
 Examples:
   npx zot-skills add waitlist-best-practices
-  npx zot-skills create waitlist --name "Early Access" --write-env .env.local --public
   npx zot-skills list
   npx zot-skills remove waitlist-best-practices
+
+Related:
+  Need to create a Zot resource (like a waitlist) from the terminal?
+  Use the Zot API CLI instead:
+    npx zot-cli waitlist create --name "Early Access" --write-env .env.local --public
 `.trim();
 
 async function main() {
@@ -90,43 +83,16 @@ async function main() {
         return;
       }
       case "create": {
-        const [resource, ...createRest] = rest;
-        if (!resource) {
-          log.error('Missing resource. Try: npx zot-skills create waitlist --name "My list"');
-          process.exit(1);
-        }
-        if (resource === "waitlist") {
-          const { values } = parseArgs({
-            args: createRest,
-            allowPositionals: false,
-            strict: false,
-            options: {
-              name: { type: "string" },
-              "api-key": { type: "string" },
-              "send-email": { type: "boolean" },
-              "no-send-email": { type: "boolean" },
-              "write-env": { type: "string" },
-              public: { type: "boolean" },
-              json: { type: "boolean" },
-              cwd: { type: "string" },
-            },
-          });
-          const sendEmail =
-            values["no-send-email"] === true ? false : values["send-email"] !== false;
-          await createWaitlistCommand({
-            cwd: typeof values.cwd === "string" ? values.cwd : process.cwd(),
-            name: typeof values.name === "string" ? values.name : undefined,
-            apiKey:
-              typeof values["api-key"] === "string" ? values["api-key"] : undefined,
-            sendEmail,
-            writeEnv:
-              typeof values["write-env"] === "string" ? values["write-env"] : undefined,
-            publicToo: values.public === true,
-            json: values.json === true,
-          });
-          return;
-        }
-        log.error(`Unknown resource: ${resource}. Supported: waitlist`);
+        log.error(
+          [
+            "`zot-skills` no longer creates Zot resources.",
+            "Use the dedicated Zot API CLI instead:",
+            "",
+            '  npx zot-cli waitlist create --name "Early Access" --write-env .env.local --public',
+            "",
+            "Run `npx zot-cli --help` for the full list of resource commands.",
+          ].join("\n"),
+        );
         process.exit(1);
         return;
       }
