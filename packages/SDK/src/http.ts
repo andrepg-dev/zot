@@ -1,4 +1,4 @@
-import { ZotAPIError } from "./types";
+import { ZotAPIError } from "./types.js";
 
 export interface RequestOptions {
   method: "GET" | "POST" | "PATCH" | "DELETE";

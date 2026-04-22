@@ -556,10 +556,10 @@ export default function LaunchWaitList() {
                     </SelectItem>
                   )}
                 </Select>
-                <CodeBlock lang="bash" code={`npm install zot-sdk`} />
+                <CodeBlock lang="bash" code={`npm install @zot-core/sdk`} />
                 <CodeBlock
                   code={`import "dotenv/config";
-import { ZotSDK } from "zot-sdk";
+import { ZotSDK } from "@zot-core/sdk";
 
 const client = new ZotSDK({
   apiKey: "${selectedApiKeyValue || "your-api-key"}",
@@ -577,7 +577,7 @@ const res = await client.waitlist("${createdWaitlistId || "wl_abc123"}").addUser
                   displayCode={
                     selectedApiKeyValue
                       ? `import "dotenv/config";
-import { ZotSDK } from "zot-sdk";
+import { ZotSDK } from "@zot-core/sdk";
 
 const client = new ZotSDK({
   apiKey: "${selectedApiKeyValue.slice(0, 8)}${"•".repeat(20)}",
@@ -650,11 +650,11 @@ const res = await client.waitlist("${createdWaitlistId || "wl_abc123"}").addUser
                     </SelectItem>
                   )}
                 </Select>
-                <CodeBlock lang="bash" code={`npm install zot-sdk react`} />
+                <CodeBlock lang="bash" code={`npm install @zot-core/sdk react`} />
                 <CodeBlock
                   code={`"use client";
 
-import { useAddUser } from "zot-sdk/react";
+import { useAddUser } from "@zot-core/sdk/react";
 import { useState } from "react";
 
 export function JoinWaitlist() {

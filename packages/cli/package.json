@@ -1,0 +1,54 @@
+{
+  "name": "@zot-core/cli",
+  "version": "1.0.0",
+  "description": "Command-line interface for the Zot API. Create and manage waitlists, API keys, and more from the terminal.",
+  "license": "MIT",
+  "author": "Zot",
+  "type": "module",
+  "bin": {
+    "zot-cli": "./bin/run.js"
+  },
+  "files": [
+    "bin",
+    "dist",
+    "oclif.manifest.json"
+  ],
+  "oclif": {
+    "bin": "zot-cli",
+    "dirname": "zot-cli",
+    "commands": "./dist/commands",
+    "topicSeparator": " ",
+    "topics": {
+      "waitlist": {
+        "description": "Manage Zot waitlists (create, list, inspect, etc.)."
+      }
+    },
+    "additionalHelpFlags": [
+      "-h"
+    ],
+    "additionalVersionFlags": [
+      "-v"
+    ]
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "clean": "node -e \"import('node:fs/promises').then(fs => fs.rm('dist', { recursive: true, force: true }))\"",
+    "build": "npm run clean && tsc && node scripts/post-build.mjs",
+    "dev:build": "tsc --watch",
+    "prepublishOnly": "npm run build",
+    "start": "./bin/run.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "@oclif/core": "^4.0.0",
+    "@zot-core/sdk": "^1.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.7.3"
+  }
+}

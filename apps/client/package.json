@@ -84,7 +84,7 @@
     "shiki": "^4.0.2",
     "streamdown": "^2.5.0",
     "zod": "^4.1.13",
-    "zot-sdk": "0.0.5",
+    "@zot-core/sdk": "^1.0.0",
     "zustand": "^5.0.9"
   },
   "devDependencies": {

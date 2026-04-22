@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "skills": {
+    "waitlist": {
+      "version": "0.4.0",
+      "description": "Integrate a Zot waitlist using the official @zot-core/sdk (server) or @zot-core/sdk/react (useAddUser hook). Covers env setup via `npx @zot-core/cli waitlist create`, error handling, and anti-patterns.",
+      "file": "waitlist/SKILL.md"
+    }
+  }
+}

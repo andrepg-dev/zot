@@ -1,6 +1,6 @@
-import { HttpClient } from "./http";
-import { WaitlistResource, WaitlistsResource } from "./resources/waitlist";
-import type { ZotSDKConfig } from "./types";
+import { HttpClient } from "./http.js";
+import { WaitlistResource, WaitlistsResource } from "./resources/waitlist.js";
+import type { ZotSDKConfig } from "./types.js";
 
 const BASE_URL = "https://api.zot.so";
 
@@ -23,7 +23,7 @@ export class ZotSDK {
   }
 }
 
-export { ZotAPIError } from "./types";
+export { ZotAPIError } from "./types.js";
 export type {
   AddUserParams,
   CreateWaitlistParams,
@@ -36,5 +36,5 @@ export type {
   WaitlistUserResponse,
   WebhookConfig,
   ZotSDKConfig
-} from "./types";
+} from "./types.js";
 
