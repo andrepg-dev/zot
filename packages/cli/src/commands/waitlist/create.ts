@@ -62,7 +62,7 @@ export default class WaitlistCreate extends Command {
           "  ZOT_API_KEY environment variable",
           "  a .env.local or .env file in the working directory",
           "",
-          "Get your key at https://zot.so → Settings → API Keys.",
+          "Get your key at https://app.zot.so/app/api-keys",
         ].join("\n"),
         { exit: 1 },
       );

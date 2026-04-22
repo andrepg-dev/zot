@@ -23,7 +23,7 @@ Every command needs a Zot API key. Resolution order:
 3. `.env.local` in the working directory
 4. `.env` in the working directory
 
-Get your key at **https://zot.so → Settings → API Keys**.
+Get your key at **https://app.zot.so/app/api-keys**.
 
 ## Commands
 

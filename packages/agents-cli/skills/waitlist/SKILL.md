@@ -60,7 +60,7 @@ No extra peer deps are required for server usage. For the hook, `react >= 18` mu
 
 You need two things:
 
-1. **API key** — from the Zot dashboard at https://zot.so. Create one key for server usage and, if you plan to call from the browser, a second key scoped to signup-only.
+1. **API key** — from the Zot dashboard at https://app.zot.so/app/api-keys. Create one key for server usage and, if you plan to call from the browser, a second key scoped to signup-only.
 2. **Waitlist ID** — looks like `wl_abc123`.
 
 ### Create the waitlist with `zot-cli` (recommended)
@@ -97,7 +97,7 @@ npx zot-cli waitlist create --name "Beta list" --api-key $ZOT_API_KEY --json
 npx zot-cli waitlist create --name "Quiet list" --no-send-email
 ```
 
-If the CLI exits with `No API key found`, the user has to get one at https://zot.so and either export `ZOT_API_KEY` in their shell or add it to `.env.local` / `.env` before retrying.
+If the CLI exits with `No API key found`, the user has to get one at https://app.zot.so/app/api-keys and either export `ZOT_API_KEY` in their shell or add it to `.env.local` / `.env` before retrying.
 
 ### Alternative: create it from code (only if you have a clear reason)
 
