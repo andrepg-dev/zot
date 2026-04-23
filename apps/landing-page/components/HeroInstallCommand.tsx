@@ -27,7 +27,7 @@ export default function HeroInstallCommand({
 
   return (
     <div
-      className={`group relative inline-flex w-full max-w-md items-center gap-3 border border-white/10 bg-black/60 px-3.5 py-2.5 font-mono text-[13px] backdrop-blur-md transition hover:border-[#006FEE]/40 hover:bg-black/70 ${
+      className={`group relative inline-flex w-full max-w-md items-center gap-3 border border-white/10 bg-black px-3.5 py-2.5 font-mono text-[13px] backdrop-blur-md transition hover:border-[#006FEE] hover:bg-black/70 ${
         className ?? ""
       }`}
     >
