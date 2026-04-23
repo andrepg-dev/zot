@@ -95,12 +95,12 @@ export default function HomePage() {
 
       <div className="w-full h-screen absolute -z-10 bg-black bg-[url('/background.webp')] bg-cover bg-center">
         <DarkVeil
-          speed={0.6}
-          hueShift={30}
+          speed={0.2}
+          hueShift={20}
           noiseIntensity={0.1}
-          scanlineIntensity={5}
-          scanlineFrequency={1}
-          warpAmount={0}
+          scanlineIntensity={9}
+          scanlineFrequency={0.15}
+          warpAmount={2}
         />
       </div>
 
@@ -138,10 +138,10 @@ export default function HomePage() {
             <div
               data-hero-badge
               style={{ opacity: 0 }}
-              className="hidden sm:inline-flex bg-black/30 hover:bg-zinc-600/10 transition backdrop-blur-md px-3 sm:px-5 sm:pr-2 pr-2 py-1.5 border items-center gap-2 sm:gap-4 cursor-pointer flex-wrap"
+              className="hidden sm:inline-flex bg-black/30 hover:bg-zinc-600/10 transition backdrop-blur-md px-4 py-1.5 border items-center gap-2 sm:gap-4 cursor-pointer flex-wrap"
             >
               <ShinyText
-                text="Developer-first waitlist infrastructure"
+                text="The indie hacker platform"
                 speed={2}
                 delay={0}
                 color="#b5b5b5"
@@ -152,9 +152,6 @@ export default function HomePage() {
                 pauseOnHover={false}
                 disabled={false}
               />
-              <span className="bg-zinc-900 text-white px-3 sm:px-4 py-1 text-xs sm:text-sm shrink-0 border border-white/10">
-                v1.0
-              </span>
             </div>
 
             <h1

@@ -51,7 +51,7 @@ export default async function HeroCodePreview({
 
           <div className="flex items-center gap-1">
             <span className="inline-flex items-center gap-1.5 border border-white/10 bg-white/5 px-2.5 py-1 text-[11px] font-mono text-white/90">
-              <span className="inline-block size-1.5 rounded-full bg-[#006FEE] shadow-[0_0_8px_rgba(0,111,238,0.8)]" aria-hidden />
+              {/* <span className="inline-block size-1.5 rounded-full bg-[#006FEE] shadow-[0_0_8px_rgba(0,111,238,0.8)]" aria-hidden /> */}
               app/waitlist.tsx
             </span>
             <span className="hidden sm:inline-flex items-center px-2.5 py-1 text-[11px] font-mono text-white/40">
@@ -71,7 +71,7 @@ export default async function HeroCodePreview({
 
         <div className="flex items-center justify-between border-t border-white/5 bg-black/30 px-3 py-2">
           <span className="inline-flex items-center gap-2 text-[11px] font-mono text-white/60">
-            <span className="brand-pulse inline-block size-1.5 rounded-full bg-[#22C55E]" aria-hidden />
+            <span className="brand-pulse inline-block size-1.5 rounded-full bg-[#195830]" aria-hidden />
             2,418 signups · live
           </span>
           <span className="text-[11px] font-mono text-white/40">
