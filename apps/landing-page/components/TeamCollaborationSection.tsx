@@ -26,7 +26,7 @@ export default function TeamCollaborationSection() {
     {
       id: 2,
       title: "Smart notifications",
-      description: "Get notified via email on every 20 users registered. Stay on top of your growth without checking the dashboard.",
+      description: "Get notified by email every time your waitlist hits a new milestone. Stay on top of growth without checking the dashboard.",
       icon: PlusSignIcon,
     },
   ];
@@ -60,11 +60,11 @@ export default function TeamCollaborationSection() {
       <LandingPageTitle
         subtitle="Integrations"
         title={{ before: "Powerful", gradient: "automation tools" }}
-        gradient={{ colors: ["#5227FF", "#ffffff"], animationSpeed: 16 }}
+        gradient={{ colors: ["#006FEE", "#ffffff"], animationSpeed: 16 }}
         classNames={{
           description: "max-w-[50ch]"
         }}
-        description="Webhooks, email campaigns, and smart notifications. Automate your workflow and stay connected to your users."
+        description="Webhooks, email campaigns, and smart notifications that wire up in minutes. Automate your workflow and stay connected to your users."
       />
 
       <div className="min-h-[500px] lg:min-h-[550px] lg:h-[550px] relative pt-12 sm:pt-16 lg:pt-24 -mb-8 lg:-mb-12 flex flex-col lg:flex-row gap-8 sm:gap-10 lg:gap-0">
@@ -77,7 +77,7 @@ export default function TeamCollaborationSection() {
                   key={button.id}
                   onClick={() => handleButtonClick(index)}
                   type="button"
-                  className={`w-full min-h-[80px] sm:min-h-[100px] text-left rounded-2xl sm:rounded-3xl px-5 sm:px-7 py-4 sm:py-5 flex flex-col gap-2 sm:gap-3 transition-colors cursor-pointer border ${isActive
+                  className={`w-full min-h-[80px] sm:min-h-[100px] text-left px-5 sm:px-7 py-4 sm:py-5 flex flex-col gap-2 sm:gap-3 transition-colors cursor-pointer border ${isActive
                     ? "bg-zinc-900 border-border shadow-[0_0_0_1px_rgba(255,255,255,0.06)]"
                     : "bg-zinc-900/20 text-muted-foreground hover:text-white/90 hover:bg-zinc-900/40 border-transparent"
                     }`}
@@ -106,7 +106,7 @@ export default function TeamCollaborationSection() {
         </div>
 
         <div className="flex-1 flex items-center justify-center lg:justify-end lg:pr-8 xl:pr-16 lg:pl-4 xl:pl-8 min-h-[320px] sm:min-h-[400px]">
-          <div className="w-full max-w-[700px] h-[320px] sm:h-[400px] lg:h-[500px] rounded-xl border overflow-hidden bg-black border-border">
+          <div className="w-full max-w-[700px] h-[320px] sm:h-[400px] lg:h-[500px] border overflow-hidden bg-black border-border">
             <WebWindowCard
               url={activeCard.url}
               title={activeCard.title}

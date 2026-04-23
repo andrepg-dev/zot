@@ -24,7 +24,11 @@ export default function HeroCascade({ children, className }: HeroCascadeProps) {
       const subtitle = container.querySelector<HTMLElement>(
         "[data-hero-subtitle]"
       );
+      const command = container.querySelector<HTMLElement>(
+        "[data-hero-command]"
+      );
       const ctas = container.querySelector<HTMLElement>("[data-hero-ctas]");
+      const code = container.querySelector<HTMLElement>("[data-hero-code]");
       const bottom = container.querySelector<HTMLElement>("[data-hero-bottom]");
 
       const tl = gsap.timeline({
@@ -88,6 +92,20 @@ export default function HeroCascade({ children, className }: HeroCascadeProps) {
         );
       }
 
+      if (command) {
+        gsap.set(command, { opacity: 0, y: 14, filter: "blur(3px)" });
+        tl.to(
+          command,
+          {
+            opacity: 1,
+            y: 0,
+            filter: "blur(0px)",
+            duration: 0.5,
+          },
+          "-=0.4"
+        );
+      }
+
       if (ctas) {
         gsap.set(ctas, { opacity: 0, y: 16, scale: 0.96 });
         tl.to(
@@ -100,6 +118,22 @@ export default function HeroCascade({ children, className }: HeroCascadeProps) {
             ease: "power2.out",
           },
           "-=0.35"
+        );
+      }
+
+      if (code) {
+        gsap.set(code, { opacity: 0, x: 28, y: 10, filter: "blur(6px)" });
+        tl.to(
+          code,
+          {
+            opacity: 1,
+            x: 0,
+            y: 0,
+            filter: "blur(0px)",
+            duration: 0.75,
+            ease: "power3.out",
+          },
+          "-=0.7"
         );
       }
 

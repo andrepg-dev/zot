@@ -9,12 +9,22 @@ const FAQ_ITEMS = [
   {
     question: "What is Zot and who is it for?",
     answer:
-      "Zot is a waitlist management platform for developers and founders validating product ideas. It lets you create waitlists, collect leads, track analytics, send emails, and block fake sign ups, all from one dashboard.",
+      "Zot is a developer-first waitlist platform for founders, indie hackers, and teams validating product ideas. Create waitlists from the terminal, drop them into any React app with a single hook, track real-time analytics, send emails, and block fake signups, all from one dashboard.",
   },
   {
     question: "How quickly can I set up a waitlist?",
     answer:
-      "You can create and launch a waitlist in under five minutes. Sign up, name your waitlist, and start sharing your link. No technical setup required.",
+      "Under five minutes. Run npx @zot-core/cli waitlist create to create it, then useAddUser from @zot-core/sdk/react to embed the form. Or skip the code and share the link Zot gives you.",
+  },
+  {
+    question: "How do I integrate Zot in my Next.js app?",
+    answer:
+      "Two steps. First, npx @zot-core/cli waitlist create --write-env .env.local --public creates the waitlist and stores its ID in your env. Then import useAddUser from @zot-core/sdk/react, pass the env vars, and render your form. Full guide: npx @zot-core/agents add waitlist.",
+  },
+  {
+    question: "Does Zot work with AI coding agents?",
+    answer:
+      "Yes. npx @zot-core/agents add waitlist writes integration guides for Claude Code, Cursor, GitHub Copilot and AGENTS.md, so whichever agent is editing your repo ships the right code on the first try.",
   },
   {
     question: "How does the fake email protection work?",
@@ -24,7 +34,7 @@ const FAQ_ITEMS = [
   {
     question: "Can I send emails to my waitlist users?",
     answer:
-      "Yes. Zot lets you create and edit email templates with code using React Email. You have full control over the design and content, and can send updates, welcome messages, and announcements directly to your waitlist.",
+      "Yes. Zot lets you author email templates as React components with React Email. You keep full control over design and content, and can send updates, welcome messages, and announcements directly to your waitlist.",
   },
   {
     question: "What analytics does Zot provide?",
@@ -66,7 +76,7 @@ export default function FaqSection() {
           return (
             <div
               key={index}
-              className="rounded border border-white/10 bg-zinc-900/80 transition-colors hover:border-white/15"
+              className="border border-white/10 bg-zinc-900/80 transition-colors hover:border-white/15"
             >
               <button
                 type="button"

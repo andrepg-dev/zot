@@ -10,20 +10,20 @@ interface WebWindowCardProps {
 
 export default function WebWindowCard({ url, title, description, imageSrc, imageAlt }: WebWindowCardProps) {
   return (
-    <div className="overflow-hidden ml-auto w-full h-full rounded rounded-tr-none bg-black/20 backdrop-blur-3xl">
+    <div className="overflow-hidden ml-auto w-full h-full bg-black/20 backdrop-blur-3xl">
       <header className="relative flex items-center justify-center p-3">
         <div className="absolute left-3 flex gap-1.5">
-          <div className="aspect-square h-3 w-3 bg-muted-foreground border rounded-full" />
-          <div className="aspect-square h-3 w-3 bg-muted-foreground border rounded-full" />
-          <div className="aspect-square h-3 w-3 bg-muted-foreground border rounded-full" />
+          <div className="aspect-square h-3 w-3 bg-muted-foreground border" />
+          <div className="aspect-square h-3 w-3 bg-muted-foreground border" />
+          <div className="aspect-square h-3 w-3 bg-muted-foreground border" />
         </div>
 
-        <div className="border rounded bg-muted-foreground/30 text-muted-foreground px-4 text-xs">
+        <div className="border bg-muted-foreground/30 text-muted-foreground px-4 text-xs">
           {url}
         </div>
       </header>
 
-      <div className="mx-1.5 sm:mx-2 mb-3 sm:mb-4 border rounded-lg overflow-hidden h-[90%] bg-black/10 flex flex-col justify-center">
+      <div className="mx-1.5 sm:mx-2 mb-3 sm:mb-4 border overflow-hidden h-[90%] bg-black/10 flex flex-col justify-center">
         {imageSrc ? (
           <div className="relative w-full h-full">
             <Image

@@ -7,7 +7,7 @@ import { useCallback, useState } from "react";
 const TESTIMONIALS = [
   {
     quote:
-      "We launched our waitlist with Zot in under 10 minutes. Within a week we had 2,000 sign ups and clear data showing our idea had real demand.",
+      "One `npx @zot-core/cli waitlist create` and we were live. A week later we had 2,000 signups and clear data showing our idea had real demand.",
     name: "David Martinez",
     role: "Indie Founder",
     avatarFallback: "DM",
@@ -21,7 +21,7 @@ const TESTIMONIALS = [
   },
   {
     quote:
-      "Webhooks plus coding our own email templates with React Email meant we automated the entire onboarding flow. Zot let us focus on building instead of managing spreadsheets.",
+      "The @zot-core/sdk hook dropped our waitlist form into the app in ten minutes. Webhooks and React Email templates automated the rest of the onboarding flow. We focused on shipping the product.",
     name: "Marcus Johnson",
     role: "CTO, Early-stage Startup",
     avatarFallback: "MJ",
@@ -54,7 +54,7 @@ export default function TestimonialsSection() {
         <button
           type="button"
           onClick={goPrev}
-          className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 sm:translate-x-0 z-10 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-zinc-800 border border-white/10 flex items-center justify-center text-white hover:bg-zinc-700 hover:border-white/20 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
+          className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 sm:translate-x-0 z-10 w-10 h-10 sm:w-12 sm:h-12 bg-zinc-800 border border-white/10 flex items-center justify-center text-white hover:bg-zinc-700 hover:border-white/20 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
           aria-label="Testimonio anterior"
         >
           <HugeiconsIcon icon={ArrowLeft01Icon} size={20} strokeWidth={2} />
@@ -62,7 +62,7 @@ export default function TestimonialsSection() {
         <button
           type="button"
           onClick={goNext}
-          className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 sm:translate-x-0 z-10 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-zinc-800 border border-white/10 flex items-center justify-center text-white hover:bg-zinc-700 hover:border-white/20 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
+          className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 sm:translate-x-0 z-10 w-10 h-10 sm:w-12 sm:h-12 bg-zinc-800 border border-white/10 flex items-center justify-center text-white hover:bg-zinc-700 hover:border-white/20 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
           aria-label="Siguiente testimonio"
         >
           <HugeiconsIcon icon={ArrowRight01Icon} size={20} strokeWidth={2} />
@@ -77,7 +77,7 @@ export default function TestimonialsSection() {
 
         {/* Avatar */}
         <div className="flex flex-col items-center mt-8 sm:mt-10">
-          <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-[#fce7f3] flex items-center justify-center border-2 border-white/10">
+          <div className="w-14 h-14 sm:w-16 sm:h-16 bg-[#fce7f3] flex items-center justify-center border-2 border-white/10">
             <span className="text-lg font-semibold text-zinc-600">
               {testimonial.avatarFallback}
             </span>
