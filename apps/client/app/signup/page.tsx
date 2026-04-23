@@ -172,7 +172,7 @@ export default function SignupPage() {
               <InputComponent
                 id="name"
                 type="text"
-                placeholder="Andrew"
+                placeholder="Your first name"
                 classNames={{ inputWrapper: inputWrapperClass }}
                 {...register("name")}
               />
@@ -186,7 +186,7 @@ export default function SignupPage() {
               <InputComponent
                 id="lastName"
                 type="text"
-                placeholder="Doe"
+                placeholder="Your last name"
                 classNames={{ inputWrapper: inputWrapperClass }}
                 {...register("lastName")}
               />
@@ -201,7 +201,7 @@ export default function SignupPage() {
             <InputComponent
               id="email"
               type="email"
-              placeholder="andrew@example.com"
+              placeholder="founder@example.com"
               classNames={{ inputWrapper: inputWrapperClass }}
               {...register("email")}
             />
