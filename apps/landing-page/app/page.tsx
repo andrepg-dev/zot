@@ -93,9 +93,9 @@ export default function HomePage() {
         </div>
       </div>
 
-      <div className="w-full h-screen absolute -z-10 bg-black bg-[url('/background.webp')] bg-cover bg-center">
+      <div className="w-full h-screen absolute -z-10 bg-black bg-[url('/background.avif')] bg-cover bg-center">
         <DarkVeil
-          speed={0.2}
+          speed={0}
           hueShift={20}
           noiseIntensity={0.1}
           scanlineIntensity={9}
