@@ -11,7 +11,7 @@ const PLANS = [
     frequency: "/ month",
     blurb: "Perfect to validate an idea and run simple launches.",
     ctaLabel: "Get started",
-    ctaHref: "#testimonial",
+    ctaHref: "__dashboard__",
     popular: false,
     features: [
       "15,000 users signup limit",
@@ -31,8 +31,8 @@ const PLANS = [
     price: "$14",
     frequency: "/ month",
     blurb: "For products in production that need headroom and support.",
-    ctaLabel: "Start free trial",
-    ctaHref: "#testimonial",
+    ctaLabel: "Upgrade plan",
+    ctaHref: "__dashboard__",
     popular: true,
     features: [
       "1,500,000 users signup limit",
@@ -167,12 +167,6 @@ export default function PricingSection() {
                   >
                     {plan.ctaLabel}
                   </Link>
-                  {plan.name === "Premium" && (
-                    <p className="mt-2 text-xs text-zinc-500 text-center">
-                      This offer is valid during our early user adoption phase.
-                      You won&apos;t be charged.
-                    </p>
-                  )}
                 </div>
 
                 <div className="mt-6 flex-1 space-y-3">
@@ -212,7 +206,6 @@ export default function PricingSection() {
 
       <div className="mx-auto mt-8 sm:mt-10 max-w-2xl text-center text-xs text-zinc-500 space-y-1">
         <p>Prices and plans may change.</p>
-        <p>We&apos;re currently in beta and testing.</p>
       </div>
     </section>
   );

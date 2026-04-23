@@ -10,15 +10,10 @@ import ProjectsChartSVG from "@/components/ProjectsChartSVG";
 import { getDashboardUrl } from "@/lib/dashboard-url";
 import {
   ChartColumnIcon,
-  Facebook01Icon,
-  InstagramIcon,
   Mail01Icon,
-  NewTwitterIcon,
   Notification03Icon,
   PlusSignIcon,
   ShieldKeyIcon,
-  TiktokIcon,
-  YoutubeIcon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import dynamic from "next/dynamic";
@@ -77,25 +72,43 @@ export default function HomePage() {
 
   return (
     <div className="font-sans overflow-x-hidden">
-      <div
-        className="absolute top-5 left-0 w-3/6 right-0 z-30 h-10 hidden sm:flex items-center justify-center px-4 bg-[#006FEE]/10 ml-auto border-l-8 border-l-[#006FEE]"
+      <Link
+        href="#pricing"
+        aria-label="Claim 10% off for 3 months"
+        className="group absolute top-0 left-0 right-0 z-30 block overflow-hidden border-b border-white/10 backdrop-blur-md"
+        style={{
+          background:
+            "linear-gradient(90deg, rgba(0,111,238,0.14) 0%, rgba(0,111,238,0.32) 50%, rgba(0,111,238,0.14) 100%)",
+        }}
       >
-        <div className="w-full max-w-6xl flex flex-wrap items-center justify-center gap-6 sm:gap-8 text-center">
-          <p className="text-xs sm:text-sm text-white/90">
-            We&apos;re taking early adopters - get exclusive discounts on Zot.
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 opacity-40"
+          style={{
+            backgroundImage:
+              "radial-gradient(ellipse 40% 120% at 50% 50%, rgba(138,182,255,0.35) 0%, transparent 60%)",
+          }}
+        />
+        <div className="relative mx-auto flex max-w-7xl items-center justify-center gap-2 sm:gap-4 px-4 sm:px-6 py-2 sm:py-2.5 text-center">
+          <span className="hidden sm:inline-flex items-center gap-1.5 border border-white/20 bg-white/5 px-2 py-0.5 text-[10px] font-medium uppercase tracking-[0.12em] text-white shrink-0">
+            <span className="size-1.5 rounded-full bg-[#22C55E] shadow-[0_0_8px_rgba(34,197,94,0.9)]" />
+            Limited
+          </span>
+          <p className="text-[11px] sm:text-sm text-white/90">
+            <span className="font-semibold text-white">10% off for 3 months</span>
+            <span className="hidden sm:inline">, our welcome gift to early adopters.</span>
+            <span className="sm:hidden"> for early adopters.</span>
           </p>
-          <Link
-            href="#pricing"
-            className="inline-flex items-center text-xs sm:text-sm font-medium text-white hover:text-white/90 transition-colors shrink-0 underline decoration-2"
-          >
-            Try now →
-          </Link>
+          <span className="hidden sm:inline-flex items-center gap-1 text-sm font-medium text-white underline decoration-white/40 decoration-2 underline-offset-4 transition-colors group-hover:decoration-white">
+            Claim discount
+            <span aria-hidden className="transition-transform group-hover:translate-x-0.5">→</span>
+          </span>
         </div>
-      </div>
+      </Link>
 
       <div className="w-full h-screen absolute -z-10 bg-black bg-[url('/background.avif')] bg-cover bg-center">
         <DarkVeil
-          speed={0}
+          speed={0.1}
           hueShift={20}
           noiseIntensity={0.1}
           scanlineIntensity={9}
@@ -104,7 +117,7 @@ export default function HomePage() {
         />
       </div>
 
-      <header className="px-4 sm:px-6 md:px-8 lg:px-16 xl:px-32 text-muted-foreground absolute top-8 left-0 right-0 z-20">
+      <header className="px-4 sm:px-6 md:px-8 lg:px-16 xl:px-32 text-muted-foreground absolute top-14 sm:top-16 left-0 right-0 z-20">
         <div className="flex flex-wrap gap-3 sm:gap-4 md:gap-6 items-center">
           <Image
             src="/zot-icon.png"
@@ -115,7 +128,7 @@ export default function HomePage() {
             priority
           />
           <nav className="flex flex-wrap gap-3 sm:gap-4 md:gap-6 items-center">
-            <Link href="#integration" className="ml-0 md:ml-4 text-sm hover:text-foreground">Features</Link>
+            <Link href="#integration" className="ml-0 md:ml-4 text-sm hover:text-foreground">Integrations</Link>
             <Link href="#demo" className="text-sm hover:text-foreground">Demo</Link>
             <Link href="#pricing" className="text-sm hover:text-foreground">Pricing</Link>
             <a
@@ -188,7 +201,7 @@ export default function HomePage() {
                 Start Launching
               </Link>
               <Link
-                href="#integration"
+                href="#demo"
                 className="backdrop-blur-md border border-white/20 bg-white/5 hover:bg-white/10 px-5 sm:px-6 py-2 cursor-pointer inline-flex items-center justify-center text-sm sm:text-base transition-all hover:px-8"
               >
                 See how it works
@@ -378,13 +391,6 @@ export default function HomePage() {
                 git, and send updates, referral links, and announcements to
                 your waitlist whenever you need.
               </p>
-              <Link
-                href="#integration"
-                className="text-sm text-foreground/90 hover:text-foreground inline-flex items-center gap-1 w-fit"
-              >
-                Learn more
-                <span aria-hidden className="ml-0.5">→</span>
-              </Link>
             </div>
           </div>
         </div>
@@ -429,13 +435,6 @@ export default function HomePage() {
               <p className="text-muted-foreground text-sm max-w-[36ch]">
                 {item.description}
               </p>
-              <Link
-                href="#integration"
-                className="text-sm text-foreground/90 hover:text-foreground inline-flex items-center gap-1 w-fit mt-auto"
-              >
-                Learn more
-                <span aria-hidden className="ml-0.5">→</span>
-              </Link>
             </div>
           ))}
         </div>
@@ -475,7 +474,7 @@ export default function HomePage() {
 
           <nav className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-sm text-white/90">
             <Link href="#integration" className="hover:text-white transition-colors">
-              Features
+              Integrations
             </Link>
             <Link href="#demo" className="hover:text-white transition-colors">
               Demo
@@ -498,24 +497,6 @@ export default function HomePage() {
               Contact
             </Link>
           </nav>
-
-          <div className="flex items-center justify-center gap-4 sm:gap-6" aria-label="Redes sociales">
-            <a href="#" className="text-white/80 hover:text-white transition-colors" aria-label="X (Twitter)">
-              <HugeiconsIcon icon={NewTwitterIcon} size={22} strokeWidth={1.5} />
-            </a>
-            <a href="#" className="text-white/80 hover:text-white transition-colors" aria-label="Instagram">
-              <HugeiconsIcon icon={InstagramIcon} size={22} strokeWidth={1.5} />
-            </a>
-            <a href="#" className="text-white/80 hover:text-white transition-colors" aria-label="Facebook">
-              <HugeiconsIcon icon={Facebook01Icon} size={22} strokeWidth={1.5} />
-            </a>
-            <a href="#" className="text-white/80 hover:text-white transition-colors" aria-label="TikTok">
-              <HugeiconsIcon icon={TiktokIcon} size={22} strokeWidth={1.5} />
-            </a>
-            <a href="#" className="text-white/80 hover:text-white transition-colors" aria-label="YouTube">
-              <HugeiconsIcon icon={YoutubeIcon} size={22} strokeWidth={1.5} />
-            </a>
-          </div>
 
           <p className="text-sm text-white/70">
             © {new Date().getFullYear()} Zot. All rights reserved.
