@@ -11,11 +11,13 @@ export async function middleware(request: NextRequest) {
 
   const tokensExists = refresh_token_value;
 
-  if (pathname === "/login" && tokensExists) {
+  const isAuthRoute = pathname === "/login" || pathname === "/signup";
+
+  if (isAuthRoute && tokensExists) {
     return NextResponse.redirect(new URL("/app/dashboard", request.url));
   }
 
-  if (pathname !== "/login" && !tokensExists) {
+  if (!isAuthRoute && !tokensExists) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
@@ -24,5 +26,5 @@ export async function middleware(request: NextRequest) {
 
 // See "Matching Paths" below to learn more
 export const config = {
-  matcher: ["/app/:path*", "/login"]
+  matcher: ["/app/:path*", "/login", "/signup"]
 };
