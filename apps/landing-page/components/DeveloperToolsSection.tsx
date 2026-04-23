@@ -113,7 +113,7 @@ export default async function DeveloperToolsSection() {
               </p>
             </div>
 
-            <div className="mt-auto border-t border-white/5 bg-black/40">
+            <div className="mt-auto border-t border-white/5 bg-black/40 pb-4">
               <div className="flex items-center justify-between border-b border-white/5 px-4 py-2">
                 <span className="inline-flex items-center gap-1.5 text-[11px] font-mono text-white/50">
                   <span className="inline-block size-1.5 rounded-full bg-[#006FEE] shadow-[0_0_6px_rgba(0,111,238,0.7)]" />

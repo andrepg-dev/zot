@@ -8,13 +8,7 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
-
-export const VIDEO_CONFIG = {
-  fps: 30,
-  durationInFrames: 360,
-  width: 1280,
-  height: 720,
-} as const;
+import type { CodeTokenLines, ZotDemoProps } from "./ZotDemo.shared";
 
 const BRAND = "#006FEE";
 const BRAND_STRONG = "#0A84FF";
@@ -127,37 +121,9 @@ function CommandScene() {
   );
 }
 
-function CodeScene() {
+function CodeScene({ tokens }: { tokens: CodeTokenLines }) {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const lines = [
-    { text: `"use client";`, color: "#ff7b72" },
-    { text: "", color: "#fff" },
-    {
-      text: `import { useAddUser } from "@zot-core/sdk/react";`,
-      color: "#c9d1d9",
-    },
-    { text: "", color: "#fff" },
-    { text: `export default function Waitlist() {`, color: "#c9d1d9" },
-    {
-      text: `  const { addUser, isPending, isUserRegistered } = useAddUser();`,
-      color: "#c9d1d9",
-    },
-    { text: "", color: "#fff" },
-    { text: `  return (`, color: "#c9d1d9" },
-    {
-      text: `    <form onSubmit={(e) => addUser(new FormData(e.currentTarget))}>`,
-      color: "#c9d1d9",
-    },
-    {
-      text: `      <input name="email" placeholder="you@domain.com" />`,
-      color: "#c9d1d9",
-    },
-    { text: `      <button>Join</button>`, color: "#c9d1d9" },
-    { text: `    </form>`, color: "#c9d1d9" },
-    { text: `  );`, color: "#c9d1d9" },
-    { text: "}", color: "#c9d1d9" },
-  ];
 
   return (
     <AbsoluteFill
@@ -200,7 +166,7 @@ function CodeScene() {
             app/waitlist.tsx
           </div>
         </div>
-        {lines.map((line, i) => {
+        {tokens.map((line, i) => {
           const delay = i * 4;
           const opacity = interpolate(frame, [delay, delay + 8], [0, 1], {
             extrapolateRight: "clamp",
@@ -212,6 +178,7 @@ function CodeScene() {
             [-12, 0],
             { extrapolateRight: "clamp", extrapolateLeft: "clamp" }
           );
+          const isEmptyLine = line.length === 0 || line.every((tok) => tok.content.trim() === "");
           return (
             <div
               key={i}
@@ -220,11 +187,30 @@ function CodeScene() {
                 transform: `translateX(${translate}px)`,
                 fontSize: 22,
                 lineHeight: 1.6,
-                color: line.color,
                 minHeight: 32,
+                whiteSpace: "pre",
               }}
             >
-              {line.text || "\u00A0"}
+              {isEmptyLine
+                ? "\u00A0"
+                : line.map((tok, j) => (
+                    <span
+                      key={j}
+                      style={{
+                        color: tok.color ?? "#c9d1d9",
+                        fontStyle:
+                          tok.fontStyle && tok.fontStyle & 1
+                            ? "italic"
+                            : undefined,
+                        fontWeight:
+                          tok.fontStyle && tok.fontStyle & 2
+                            ? 600
+                            : undefined,
+                      }}
+                    >
+                      {tok.content}
+                    </span>
+                  ))}
             </div>
           );
         })}
@@ -516,7 +502,7 @@ function AnalyticsScene() {
   );
 }
 
-export function ZotDemo() {
+export function ZotDemo({ tokens }: ZotDemoProps) {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const pulse = Math.sin((frame / fps) * 2) * 0.04 + 1;
@@ -538,7 +524,7 @@ export function ZotDemo() {
         <CommandScene />
       </Sequence>
       <Sequence from={130} durationInFrames={80}>
-        <CodeScene />
+        <CodeScene tokens={tokens} />
       </Sequence>
       <Sequence from={210} durationInFrames={70}>
         <SignupScene />

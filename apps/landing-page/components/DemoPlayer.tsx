@@ -1,10 +1,18 @@
 "use client";
 
+import { ZotDemo } from "@/remotion/ZotDemo";
+import {
+  VIDEO_CONFIG,
+  type CodeTokenLines,
+} from "@/remotion/ZotDemo.shared";
 import { Player, type PlayerRef } from "@remotion/player";
-import { useEffect, useRef, useState } from "react";
-import { VIDEO_CONFIG, ZotDemo } from "@/remotion/ZotDemo";
+import { useEffect, useMemo, useRef, useState } from "react";
 
-export default function DemoPlayer() {
+interface DemoPlayerProps {
+  tokens: CodeTokenLines;
+}
+
+export default function DemoPlayer({ tokens }: DemoPlayerProps) {
   const ref = useRef<PlayerRef>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [hasAutoplayed, setHasAutoplayed] = useState(false);
@@ -26,14 +34,17 @@ export default function DemoPlayer() {
     return () => observer.disconnect();
   }, [hasAutoplayed]);
 
+  const inputProps = useMemo(() => ({ tokens }), [tokens]);
+
   return (
     <div
       ref={containerRef}
-      className="relative w-full overflow-hidden border border-white/10 bg-black shadow-[0_40px_80px_-30px_rgba(0,111,238,0.45)]"
+      className="relative w-full overflow-hidden border border-white/10 bg-black shadow-[0_0px_120px_-50px_rgba(0,111,238,0.45)]"
     >
       <Player
         ref={ref}
         component={ZotDemo}
+        inputProps={inputProps}
         compositionWidth={VIDEO_CONFIG.width}
         compositionHeight={VIDEO_CONFIG.height}
         fps={VIDEO_CONFIG.fps}

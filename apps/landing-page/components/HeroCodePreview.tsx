@@ -41,7 +41,7 @@ export default async function HeroCodePreview({
         }}
       />
 
-      <div className="relative overflow-hidden border border-white/10 bg-[#0d1117] shadow-[0_10px_40px_-10px_rgba(0,111,238,0.35),0_0_0_1px_rgba(255,255,255,0.04)]">
+      <div className="relative overflow-hidden border border-white/10 bg-[#0d1117]">
         <div className="flex items-center justify-between border-b border-white/5 bg-black/30 px-3 py-2">
           <div className="flex items-center gap-1.5">
             <span className="size-2.5 rounded-full bg-[#FF5F56]" aria-hidden />

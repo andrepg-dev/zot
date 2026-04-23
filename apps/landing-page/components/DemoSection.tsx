@@ -1,6 +1,11 @@
-import LandingPageTitle from "@/components/LandingPageTitle";
 import AnimatedCounter from "@/components/AnimatedCounter";
 import DemoPlayer from "@/components/DemoPlayer";
+import LandingPageTitle from "@/components/LandingPageTitle";
+import {
+  DEMO_CODE_SNIPPET,
+  type CodeTokenLines,
+} from "@/remotion/ZotDemo.shared";
+import { codeToTokens } from "shiki";
 
 const METRICS = [
   { value: 14728, suffix: "+", label: "Signups tracked" },
@@ -9,19 +14,31 @@ const METRICS = [
   { value: 99.99, suffix: "%", label: "API uptime", decimals: 2 },
 ];
 
-export default function DemoSection() {
+async function getDemoTokens(): Promise<CodeTokenLines> {
+  const result = await codeToTokens(DEMO_CODE_SNIPPET, {
+    lang: "tsx",
+    theme: "github-dark-default",
+  });
+  return result.tokens.map((line) =>
+    line.map((token) => ({
+      content: token.content,
+      color: token.color,
+      fontStyle: token.fontStyle,
+    }))
+  );
+}
+
+export default async function DemoSection() {
+  const tokens = await getDemoTokens();
+
   return (
     <section
       id="demo"
-      className="relative flex flex-col items-center py-14 sm:py-20 lg:py-28 px-4 sm:px-6 md:px-8 lg:px-16 xl:px-32 gap-10 sm:gap-14 bg-black"
+      className="relative flex flex-col items-center py-14 pt sm:py-20 lg:py-28 px-4 sm:px-6 md:px-8 lg:px-16 xl:px-32 gap-10 sm:gap-14 bg-black"
     >
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 opacity-70"
-        style={{
-          background:
-            "radial-gradient(ellipse 60% 50% at 50% 0%, rgba(0, 111, 238, 0.18) 0%, rgba(0, 111, 238, 0.06) 40%, transparent 75%)",
-        }}
       />
 
       <div className="relative w-full max-w-6xl flex flex-col items-center gap-10 sm:gap-14">
@@ -36,7 +53,7 @@ export default function DemoSection() {
         />
 
         <div className="w-full max-w-5xl">
-          <DemoPlayer />
+          <DemoPlayer tokens={tokens} />
         </div>
 
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 w-full max-w-5xl">
