@@ -23,6 +23,7 @@ const PLANS = [
       "Export your data",
       "Analytics for signups and sent emails",
       "Trend search powered by Google Search",
+      "@zot-core/cli, @zot-core/sdk and @zot-core/agents included",
     ],
   },
   {
@@ -44,7 +45,8 @@ const PLANS = [
       "Extra security to block fake or disposable emails",
       "Analytics for sent emails and registered users",
       "Export your data",
-      "Use more powerful AI models",
+      "Priority support",
+      "@zot-core/cli, @zot-core/sdk and @zot-core/agents included",
     ],
   },
 ];
@@ -59,7 +61,7 @@ export default function PricingSection() {
       <LandingPageTitle
         subtitle="Pricing"
         title={{ before: "Choose the plan that", gradient: "fits" }}
-        gradient={{ colors: ["#a78bfa", "#c4b5fd"], animationSpeed: 16 }}
+        gradient={{ colors: ["#60A5FA", "#ffffff"], animationSpeed: 16 }}
         description="Transparent pricing with zero surprises. Upgrade when you need more room to scale launches, emails, and domains."
       />
 
@@ -128,13 +130,13 @@ export default function PricingSection() {
                 className={`relative z-10 flex flex-col flex-1 p-4 sm:p-5 lg:p-6 ${isPremium ? "bg-[#0D0D0E]/60" : "bg-black/40"}`}
               >
                 {isPremium && (
-                  <span className="absolute right-4 top-4 rounded-full bg-[#4338ca] px-3 py-1 text-xs font-semibold text-white z-20">
+                  <span className="absolute right-4 top-4 bg-[#006FEE] px-3 py-1 text-xs font-semibold text-white z-20 shadow-[0_0_20px_rgba(0,111,238,0.45)]">
                     Most popular
                   </span>
                 )}
 
                 <div className="space-y-2">
-                  <p className="text-xs uppercase tracking-wide text-[#a78bfa]">
+                  <p className="text-xs uppercase tracking-wide text-[#60A5FA]">
                     {plan.name}
                   </p>
                   <p className="text-lg font-semibold text-foreground">
@@ -157,9 +159,9 @@ export default function PricingSection() {
                         ? dashboardUrl
                         : plan.ctaHref
                     }
-                    className={`inline-flex h-10 w-full cursor-pointer items-center justify-center rounded border px-5 py-2.5 text-sm font-medium transition ${
+                    className={`inline-flex h-10 w-full cursor-pointer items-center justify-center border px-5 py-2.5 text-sm font-medium transition ${
                       isPremium
-                        ? "border-[#4338ca]/60 bg-[#4338ca] text-white hover:bg-[#3730a3] hover:border-[#4338ca]"
+                        ? "border-[#006FEE]/60 bg-[#006FEE] text-white hover:bg-[#0A84FF] hover:border-[#0A84FF] shadow-[0_0_24px_rgba(0,111,238,0.35)]"
                         : "border border-zinc-600/80 bg-[#131315] text-white hover:bg-zinc-800/80 hover:border-zinc-500"
                     }`}
                   >

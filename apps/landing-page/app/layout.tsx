@@ -56,7 +56,7 @@ export const metadata: Metadata = {
     images: ["/og-image.webp"],
   },
   icons: {
-    icon: "/zot-icon.svg",
+    icon: "/zot-icon.png",
   },
   alternates: {
     canonical: "/",

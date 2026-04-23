@@ -18,10 +18,10 @@ export default function ProductivityInsightsCard({
 }: ProductivityInsightsCardProps) {
   return (
     <div
-      className="border border-white/10 rounded-br-none rounded-tl-none overflow-hidden aspect-square min-h-[300px] sm:min-h-0"
+      className="border border-white/10 overflow-hidden aspect-square min-h-[300px] sm:min-h-0"
       style={{
         background:
-          "radial-gradient(ellipse 80% 80% at 50% 40%, rgba(82, 39, 255, 0.35) 0%, rgba(82, 39, 255, 0.12) 35%, transparent 70%), #000000",
+          "radial-gradient(ellipse 80% 80% at 50% 40%, rgba(0, 111, 238, 0.35) 0%, rgba(0, 111, 238, 0.12) 35%, transparent 70%), #000000",
       }}
     >
       <div className="p-6 sm:p-8 lg:p-12">
@@ -34,26 +34,26 @@ export default function ProductivityInsightsCard({
         </div>
       </div>
 
-      <div className="border-t border-l ml-auto w-5/6 h-full rounded-lg rounded-tr-none bg-black/40 backdrop-blur-3xl">
+      <div className="border-t border-l ml-auto w-5/6 h-full bg-black/40 backdrop-blur-3xl">
         <header className="flex p-2 sm:p-3 gap-1.5 items-center">
           <div className="flex gap-1.5 mt-1 shrink-0">
-            <div className="aspect-square h-2.5 w-2.5 sm:h-3 sm:w-3 bg-red-500 border rounded-full"></div>
-            <div className="aspect-square h-2.5 w-2.5 sm:h-3 sm:w-3 bg-yellow-500 border rounded-full"></div>
-            <div className="aspect-square h-2.5 w-2.5 sm:h-3 sm:w-3 bg-green-500 border rounded-full"></div>
+            <div className="aspect-square h-2.5 w-2.5 sm:h-3 sm:w-3 bg-red-500 border"></div>
+            <div className="aspect-square h-2.5 w-2.5 sm:h-3 sm:w-3 bg-yellow-500 border"></div>
+            <div className="aspect-square h-2.5 w-2.5 sm:h-3 sm:w-3 bg-green-500 border"></div>
           </div>
 
-          <div className="border rounded bg-muted-foreground/30 text-muted-foreground px-2 sm:px-4 text-[10px] sm:text-xs ml-auto mr-4 sm:mr-8 md:mr-32 truncate min-w-0 max-w-[50%] sm:max-w-none">
+          <div className="border bg-muted-foreground/30 text-muted-foreground px-2 sm:px-4 text-[10px] sm:text-xs ml-auto mr-4 sm:mr-8 md:mr-32 truncate min-w-0 max-w-[50%] sm:max-w-none">
             {previewUrl}
           </div>
         </header>
 
-        <div className="mx-2 mr-0 border-t overflow-hidden rounded rounded-tr-none bg-black/10 min-h-[200px] sm:min-h-[280px] lg:min-h-[320px]">
+        <div className="mx-2 mr-0 border-t overflow-hidden bg-black/10 min-h-[200px] sm:min-h-[280px] lg:min-h-[320px]">
           <Image
             src={previewImage.src}
             width={612}
             height={467}
             alt={previewImage.alt ?? "Vista previa"}
-            className="object-cover rounded"
+            className="object-cover"
             sizes="(max-width: 640px) 85vw, (max-width: 1024px) 45vw, 500px"
             loading="lazy"
           />

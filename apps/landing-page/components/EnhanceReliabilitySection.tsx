@@ -22,10 +22,10 @@ export default function EnhanceReliabilitySection() {
       <HugeiconsIcon icon={PlusSignIcon} size={26} strokeWidth={1} className="absolute -right-[12.5px] -bottom-[12.5px] z-50 text-zinc-700" />
 
       <div
-        className="border border-white/10 rounded-br-none rounded-tl-none overflow-hidden relative min-h-[280px] sm:min-h-[320px]"
+        className="border border-white/10 overflow-hidden relative min-h-[280px] sm:min-h-[320px]"
         style={{
           background:
-            "radial-gradient(ellipse 80% 80% at 50% 40%, rgba(82, 39, 255, 0.35) 0%, rgba(82, 39, 255, 0.12) 35%, transparent 70%), #000000",
+            "radial-gradient(ellipse 80% 80% at 50% 40%, rgba(0, 111, 238, 0.4) 0%, rgba(0, 111, 238, 0.14) 35%, transparent 70%), #000000",
         }}
       >
         <div className="p-6 sm:p-8 lg:p-12 py-8 sm:py-10 lg:py-14">
@@ -34,9 +34,9 @@ export default function EnhanceReliabilitySection() {
             <div className="flex flex-col gap-3 sm:gap-4">
               <HugeiconsIcon icon={SecurityCheckIcon} strokeWidth={2} className="size-7" />
 
-              <h3 className="text-2xl sm:text-3xl">Built in security</h3>
+              <h3 className="text-2xl sm:text-3xl">Clean leads, by default</h3>
               <h4 className="text-muted-foreground max-w-[40ch] text-sm sm:text-base">
-                Protect your waitlist from fake and disposable emails automatically. Zot blocks fraudulent sign ups so every lead in your list is a real person genuinely interested in your product, giving you clean data you can trust.
+                Zot blocks disposable and fraudulent emails before they hit your list. No cron jobs, no third-party services, no spreadsheet cleanup. Every signup you see is a real person genuinely interested in your product.
               </h4>
             </div>
           </div>

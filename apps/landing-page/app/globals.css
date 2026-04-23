@@ -4,6 +4,14 @@
 
 @custom-variant dark (&:is(.dark *));
 
+:root {
+  --brand: #006FEE;
+  --brand-strong: #0A84FF;
+  --brand-soft: rgba(0, 111, 238, 0.12);
+  --brand-ring: rgba(0, 111, 238, 0.35);
+  --brand-accent: #4F46E5;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -133,8 +141,31 @@ body {
 .icon-glow {
   filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.95))
     drop-shadow(0 0 12px rgba(255, 255, 255, 0.6))
-    drop-shadow(0 0 20px rgba(147, 112, 219, 0.4))
-    drop-shadow(0 0 28px rgba(74, 222, 128, 0.25));
+    drop-shadow(0 0 20px rgba(0, 111, 238, 0.5))
+    drop-shadow(0 0 28px rgba(10, 132, 255, 0.3));
+}
+
+/* Pulso para el status pill del hero code preview */
+@keyframes brand-pulse {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.45); }
+  50% { opacity: 0.75; box-shadow: 0 0 0 6px rgba(34, 197, 94, 0); }
+}
+.brand-pulse {
+  animation: brand-pulse 2s ease-in-out infinite;
+}
+
+/* Shiki: respetamos la paleta del tema pero quitamos el fondo y el padding interno */
+.hero-code-preview pre,
+.dev-tools-code pre {
+  background: transparent !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  font-family: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, "Liberation Mono", monospace;
+}
+.hero-code-preview code,
+.dev-tools-code code {
+  background: transparent !important;
+  font-family: inherit;
 }
 
 /* Below-the-fold: skip rendering until near viewport (rendering-content-visibility) */
