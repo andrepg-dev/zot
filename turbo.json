@@ -6,7 +6,7 @@
     },
     "build": {
       "dependsOn": ["^build", "^build:lib"],
-      "outputs": ["dist/**", "storybook-static/**"]
+      "outputs": ["dist/**", "storybook-static/**", ".next/**", "!.next/cache/**"]
     },
     "check-types": {
       "dependsOn": ["^check-types"]
