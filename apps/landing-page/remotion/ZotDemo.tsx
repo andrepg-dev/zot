@@ -373,7 +373,7 @@ function SignupScene() {
 function AnalyticsScene() {
   const frame = useCurrentFrame();
   const signups = Math.round(
-    interpolate(frame, [0, 60], [0, 14728], { extrapolateRight: "clamp" })
+    interpolate(frame, [0, 60], [0, 18234], { extrapolateRight: "clamp" })
   );
   const conversion = interpolate(frame, [0, 60], [0, 42.8], {
     extrapolateRight: "clamp",

@@ -8,7 +8,7 @@ import {
 import { codeToTokens } from "shiki";
 
 const METRICS = [
-  { value: 14728, suffix: "+", label: "Signups tracked" },
+  { value: 18234, suffix: "+", label: "Signups tracked" },
   { value: 42.8, suffix: "%", label: "Avg conversion", decimals: 1 },
   { value: 5, suffix: " min", label: "From npx to live" },
   { value: 99.99, suffix: "%", label: "API uptime", decimals: 2 },
