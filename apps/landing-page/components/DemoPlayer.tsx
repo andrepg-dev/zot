@@ -39,12 +39,16 @@ export default function DemoPlayer() {
         fps={VIDEO_CONFIG.fps}
         durationInFrames={VIDEO_CONFIG.durationInFrames}
         loop
-        controls
-        clickToPlay
+        clickToPlay={false}
+        doubleClickToFullscreen={false}
+        allowFullscreen={false}
+        spaceKeyToPlayOrPause={false}
+        acknowledgeRemotionLicense
         style={{
           width: "100%",
           height: "auto",
           aspectRatio: `${VIDEO_CONFIG.width} / ${VIDEO_CONFIG.height}`,
+          pointerEvents: "none",
         }}
       />
     </div>

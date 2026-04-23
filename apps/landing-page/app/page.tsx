@@ -1,3 +1,4 @@
+import DemoSection from "@/components/DemoSection";
 import DeveloperToolsSection from "@/components/DeveloperToolsSection";
 import HeroCodePreview from "@/components/HeroCodePreview";
 import HeroInstallCommand from "@/components/HeroInstallCommand";
@@ -94,7 +95,7 @@ export default function HomePage() {
 
       <div className="w-full h-screen absolute -z-10 bg-black bg-[url('/background.webp')] bg-cover bg-center">
         <DarkVeil
-          speed={1.5}
+          speed={0.6}
           hueShift={0}
           noiseIntensity={0.1}
           scanlineIntensity={5}
@@ -115,6 +116,7 @@ export default function HomePage() {
           />
           <nav className="flex flex-wrap gap-3 sm:gap-4 md:gap-6 items-center">
             <Link href="#integration" className="ml-0 md:ml-4 text-sm hover:text-foreground">Features</Link>
+            <Link href="#demo" className="text-sm hover:text-foreground">Demo</Link>
             <Link href="#pricing" className="text-sm hover:text-foreground">Pricing</Link>
             <a
               href="https://www.npmjs.com/package/@zot-core/sdk"
@@ -229,6 +231,8 @@ export default function HomePage() {
       </HeroCascade>
 
       <DeveloperToolsSection />
+
+      <DemoSection />
 
       <section className="content-visibility-auto px-4 sm:px-6 md:px-8 lg:px-16 pb-20 sm:pb-24 lg:pb-32 bg-black">
         <LandingPageTitle
@@ -475,6 +479,9 @@ export default function HomePage() {
           <nav className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-sm text-white/90">
             <Link href="#integration" className="hover:text-white transition-colors">
               Features
+            </Link>
+            <Link href="#demo" className="hover:text-white transition-colors">
+              Demo
             </Link>
             <Link href="#pricing" className="hover:text-white transition-colors">
               Pricing

@@ -376,7 +376,7 @@ function SignupScene() {
             >
               ✓
             </div>
-            <div style={{ fontSize: 20 }}>You're on the list</div>
+            <div style={{ fontSize: 20 }}>You&apos;re on the list</div>
           </div>
         )}
       </div>

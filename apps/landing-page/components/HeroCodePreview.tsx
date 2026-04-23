@@ -1,29 +1,14 @@
 import { codeToHtml } from "shiki";
 
-const HERO_WAITLIST_SNIPPET = `"use client";
+const HERO_WAITLIST_SNIPPET = `import { useAddUser } from "@zot-core/sdk/react";
 
-import { useAddUser } from "@zot-core/sdk/react";
-
-export function WaitlistForm() {
-  const { addUser, isPending, isUserRegistered } = useAddUser({
-    apiKey: process.env.NEXT_PUBLIC_ZOT_API_KEY!,
-    waitlistId: process.env.NEXT_PUBLIC_ZOT_WAITLIST_ID!,
-  });
-
-  if (isUserRegistered) return <p>You're on the list ✓</p>;
+export function Waitlist() {
+  const { addUser, isPending } = useAddUser();
 
   return (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        const email = (e.currentTarget.email as HTMLInputElement).value;
-        addUser({ email });
-      }}
-    >
+    <form action={addUser}>
       <input name="email" type="email" required />
-      <button disabled={isPending}>
-        {isPending ? "Joining..." : "Join waitlist"}
-      </button>
+      <button disabled={isPending}>Join</button>
     </form>
   );
 }
