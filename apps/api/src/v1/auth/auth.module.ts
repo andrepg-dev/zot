@@ -14,6 +14,7 @@ import { GoogleStrategy } from "./strategies/google.strategy";
 import { JwtStrategy } from "./strategies/jwt.strategy";
 import { LocalStrategy } from "./strategies/local.strategy";
 import { ApiKeyModule } from "../api-key/api-key.module";
+import { CliAuthModule } from "./cli/cli-auth.module";
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { ApiKeyModule } from "../api-key/api-key.module";
     JwtServicesModule,
     MongooseModule.forFeature([{ name: RefreshToken.name, schema: RefreshTokenSchema }]),
     ApiKeyModule,
+    CliAuthModule,
   ],
   controllers: [AuthController],
   providers: [

@@ -518,6 +518,191 @@
         ]
       }
     },
+    "/v1/auth/cli/start": {
+      "post": {
+        "description": "Called by the CLI. Returns a device code (used for polling), a verification URL to open in the browser, and a short user code used as fallback.",
+        "operationId": "CliAuthController_start_v1",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StartCliSessionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StartCliSessionResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Start a CLI device authorization session.",
+        "tags": [
+          "CLI Auth"
+        ]
+      }
+    },
+    "/v1/auth/cli/session/by-token/{sessionToken}": {
+      "get": {
+        "operationId": "CliAuthController_getByToken_v1",
+        "parameters": [
+          {
+            "name": "sessionToken",
+            "required": true,
+            "in": "path",
+            "description": "64-char hex session token.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "Fetch a pending CLI session (browser-side, authorize page).",
+        "tags": [
+          "CLI Auth"
+        ]
+      }
+    },
+    "/v1/auth/cli/session/by-code/{userCode}": {
+      "get": {
+        "operationId": "CliAuthController_getByCode_v1",
+        "parameters": [
+          {
+            "name": "userCode",
+            "required": true,
+            "in": "path",
+            "description": "Short user code, format XXXX-XXXX.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "Fetch a pending CLI session by its user code (manual entry fallback).",
+        "tags": [
+          "CLI Auth"
+        ]
+      }
+    },
+    "/v1/auth/cli/approve": {
+      "post": {
+        "operationId": "CliAuthController_approve_v1",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApproveCliSessionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "Approve a CLI session and issue an API key.",
+        "tags": [
+          "CLI Auth"
+        ]
+      }
+    },
+    "/v1/auth/cli/deny": {
+      "post": {
+        "operationId": "CliAuthController_deny_v1",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DenyCliSessionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "Deny a pending CLI session.",
+        "tags": [
+          "CLI Auth"
+        ]
+      }
+    },
+    "/v1/auth/cli/poll": {
+      "post": {
+        "operationId": "CliAuthController_poll_v1",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PollCliSessionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PollCliSessionResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Poll the status of a CLI session (called by the CLI).",
+        "tags": [
+          "CLI Auth"
+        ]
+      }
+    },
     "/v1/react2html": {
       "post": {
         "description": "Compiles React email components to static HTML. \n    \nThis endpoint is useful for generating email templates using React Email components.\nThe input should be valid React/JSX code that exports a default component.\n\n**Supported packages:**\n- @react-email/components (Html, Head, Body, Container, Text, Button, etc.)",
@@ -1827,6 +2012,126 @@
             "maxLength": 100
           }
         }
+      },
+      "StartCliSessionDto": {
+        "type": "object",
+        "properties": {
+          "clientName": {
+            "type": "string",
+            "description": "Optional human-readable name of the CLI client requesting access.",
+            "example": "zot-cli 1.0.0"
+          }
+        }
+      },
+      "StartCliSessionResponseDto": {
+        "type": "object",
+        "properties": {
+          "deviceCode": {
+            "type": "string",
+            "description": "Opaque device code the CLI uses to poll."
+          },
+          "userCode": {
+            "type": "string",
+            "description": "Short human code used as fallback when manual entry is needed."
+          },
+          "verificationUri": {
+            "type": "string",
+            "description": "Base URL the CLI should open in the user's browser."
+          },
+          "verificationUriComplete": {
+            "type": "string",
+            "description": "Full URL (with session token) the CLI should open. Opens the authorize page directly without manual code entry."
+          },
+          "expiresIn": {
+            "type": "number",
+            "description": "Seconds until the session expires."
+          },
+          "interval": {
+            "type": "number",
+            "description": "Minimum poll interval in seconds."
+          }
+        },
+        "required": [
+          "deviceCode",
+          "userCode",
+          "verificationUri",
+          "verificationUriComplete",
+          "expiresIn",
+          "interval"
+        ]
+      },
+      "ApproveCliSessionDto": {
+        "type": "object",
+        "properties": {
+          "sessionToken": {
+            "type": "string",
+            "description": "Session token from verificationUriComplete (preferred)."
+          },
+          "userCode": {
+            "type": "string",
+            "description": "User code. Required when the user typed it in manually instead of following the session URL.",
+            "example": "AB12-CD34"
+          },
+          "apiKeyName": {
+            "type": "string",
+            "description": "Name to assign to the generated API key.",
+            "example": "My laptop CLI"
+          }
+        },
+        "required": [
+          "apiKeyName"
+        ]
+      },
+      "DenyCliSessionDto": {
+        "type": "object",
+        "properties": {
+          "sessionToken": {
+            "type": "string"
+          },
+          "userCode": {
+            "type": "string",
+            "example": "AB12-CD34"
+          }
+        }
+      },
+      "PollCliSessionDto": {
+        "type": "object",
+        "properties": {
+          "deviceCode": {
+            "type": "string",
+            "description": "Device code returned by POST /auth/cli/start."
+          }
+        },
+        "required": [
+          "deviceCode"
+        ]
+      },
+      "PollCliSessionResponseDto": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Session status. 'approved' means apiKey is present. 'authorization_pending' and 'slow_down' mean keep polling.",
+            "enum": [
+              "authorization_pending",
+              "slow_down",
+              "approved",
+              "access_denied",
+              "expired_token"
+            ]
+          },
+          "apiKey": {
+            "type": "string",
+            "description": "The issued API key, only returned once on the first 'approved' poll."
+          },
+          "interval": {
+            "type": "number",
+            "description": "Interval hint for the next poll, in seconds."
+          }
+        },
+        "required": [
+          "status"
+        ]
       },
       "ReactToHtmlDto": {
         "type": "object",

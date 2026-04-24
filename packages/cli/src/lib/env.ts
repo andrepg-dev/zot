@@ -1,6 +1,8 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 
+import { readCredentials } from "./credentials.js";
+
 export function parseEnv(source: string): Record<string, string> {
   const result: Record<string, string> = {};
   for (const rawLine of source.split(/\r?\n/)) {
@@ -49,6 +51,18 @@ export async function resolveEnv(
   }
 
   return undefined;
+}
+
+/**
+ * Resolve the Zot API key. Same lookup as {@link resolveEnv} for
+ * `ZOT_API_KEY`, with one additional fallback: credentials stored by
+ * `zot-cli login` (~/.config/zot/credentials.json).
+ */
+export async function resolveApiKey(cwd: string): Promise<string | undefined> {
+  const fromEnv = await resolveEnv("ZOT_API_KEY", cwd);
+  if (fromEnv) return fromEnv;
+  const creds = await readCredentials();
+  return creds?.apiKey;
 }
 
 /**

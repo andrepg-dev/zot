@@ -2,6 +2,7 @@ export { zMongoId } from "../libs/utils";
 export * from "./ai-conversation/ai-conversation.zod";
 export * from "./api-key/api-key.zod";
 export * from "./auth/auth.zod";
+export * from "./auth/cli-auth.zod";
 export * from "./email-templates/email-templates.zod";
 export * from "./emails/emails.zod";
 export * from "./react-to-html/react-to-html.zod";

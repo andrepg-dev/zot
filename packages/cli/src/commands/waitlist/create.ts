@@ -3,7 +3,7 @@ import path from "node:path";
 import { Command, Flags } from "@oclif/core";
 import type { WaitlistResponse } from "@zot-core/sdk";
 
-import { resolveEnv, upsertEnvFile } from "../../lib/env.js";
+import { resolveApiKey, upsertEnvFile } from "../../lib/env.js";
 import { c, log } from "../../lib/ui.js";
 
 export default class WaitlistCreate extends Command {
@@ -52,17 +52,18 @@ export default class WaitlistCreate extends Command {
     const { flags } = await this.parse(WaitlistCreate);
     const cwd = flags.cwd ?? process.cwd();
 
-    const apiKey = flags["api-key"] ?? (await resolveEnv("ZOT_API_KEY", cwd));
+    const apiKey = flags["api-key"] ?? (await resolveApiKey(cwd));
     if (!apiKey) {
       this.error(
         [
           "No API key found.",
-          "Provide one via:",
+          "",
+          "Quickest fix: run `zot-cli login` to authorize this machine in your browser.",
+          "",
+          "Or provide a key via:",
           "  --api-key <key>",
           "  ZOT_API_KEY environment variable",
           "  a .env.local or .env file in the working directory",
-          "",
-          "Get your key at https://app.zot.so/app/api-keys",
         ].join("\n"),
         { exit: 1 },
       );
