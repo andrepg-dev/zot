@@ -1,6 +1,7 @@
 "use client";
 
 import { login } from "@/actions/auth/login";
+import { signInWithGitHub, signInWithGoogle } from "@/actions/auth/oauth";
 import InputComponent from "@/components/ui/input";
 import { siteConfig } from "@/config/site";
 import { cn } from "@/lib/utils";
@@ -108,47 +109,50 @@ export default function LoginPage() {
 
         <div className="w-full flex flex-col gap-2 mt-4">
           <div className="w-full flex gap-3">
-            <Button
-              className={cn(
-                "flex-1 min-w-0 h-10 font-medium",
-                "bg-default-100/50 border border-border backdrop-blur-[25px]",
-                "text-foreground justify-center gap-2 px-3"
-              )}
-              onPress={() => {
-                router.push(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/google`)
-              }}
-              disableRipple
-              startContent={
-                <Image
-                  src={"/icons/google-icon.svg"}
-                  width={30}
-                  height={30}
-                  alt="Google icon"
-                  className="w-5 h-5 shrink-0 brightness-0 invert"
-                />
-              }
-            >
-              Login with Google
-            </Button>
-            <Button
-              className={cn(
-                "flex-1 min-w-0 h-10 font-medium",
-                "bg-default-100/50 border border-border backdrop-blur-[25px]",
-                "text-foreground justify-center gap-2 px-3"
-              )}
-              startContent={
-                <Image
-                  src={"/icons/github-icon.svg"}
-                  width={30}
-                  height={30}
-                  alt="GitHub icon"
-                  className="w-5 h-5 shrink-0 brightness-0 invert"
-                />
-              }
-              disableRipple
-            >
-              Login with GitHub
-            </Button>
+            <form action={signInWithGoogle} className="flex-1 min-w-0">
+              <Button
+                type="submit"
+                className={cn(
+                  "w-full h-10 font-medium",
+                  "bg-default-100/50 border border-border backdrop-blur-[25px]",
+                  "text-foreground justify-center gap-2 px-3"
+                )}
+                disableRipple
+                startContent={
+                  <Image
+                    src={"/icons/google-icon.svg"}
+                    width={30}
+                    height={30}
+                    alt="Google icon"
+                    className="w-5 h-5 shrink-0 brightness-0 invert"
+                  />
+                }
+              >
+                Login with Google
+              </Button>
+            </form>
+            <form action={signInWithGitHub} className="flex-1 min-w-0">
+              <Button
+                type="submit"
+                className={cn(
+                  "w-full h-10 font-medium",
+                  "bg-default-100/50 border border-border backdrop-blur-[25px]",
+                  "text-foreground justify-center gap-2 px-3"
+                )}
+                disableRipple
+                startContent={
+                  <Image
+                    src={"/icons/github-icon.svg"}
+                    width={30}
+                    height={30}
+                    alt="GitHub icon"
+                    className="w-5 h-5 shrink-0 brightness-0 invert"
+                  />
+                }
+              >
+                Login with GitHub
+              </Button>
+            </form>
           </div>
         </div>
 
