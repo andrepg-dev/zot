@@ -1,9 +1,9 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Card, CardBody, CardFooter, CardHeader } from "@heroui/card";
 import { Spinner } from "@heroui/spinner";
 import { addToast } from "@heroui/toast";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   approveCliSessionSchema,
   type ApproveCliSessionValues,
@@ -20,7 +20,6 @@ import {
   getCliSessionByToken,
 } from "@/actions/cli-auth/cli-auth.actions";
 import GlobalButton from "@/components/global/button";
-import Title from "@/components/global/title";
 import PageComponent from "@/components/layouts/page-component";
 import Type from "@/components/type";
 import InputComponent from "@/components/ui/input";
@@ -147,17 +146,13 @@ function CliAuthorizeInner() {
   return (
     <PageComponent className="flex justify-center">
       <div className="w-full max-w-lg">
-        <Title description="Review the request and approve or deny access.">
-          Authorize CLI
-        </Title>
-
         <Card radius="none" className="mt-6 border">
           <CardHeader className="flex flex-col items-start gap-1 border-b">
             <Type variant="h5" className="font-medium">
-              {session?.clientName ?? "Zot CLI"}
+              {session?.clientName ?? "Authorize CLI"}
             </Type>
             <Type className="text-muted-foreground">
-              This device is requesting permission to generate an API key for your account.
+              Review the request and approve or deny access.
             </Type>
           </CardHeader>
 
@@ -171,7 +166,7 @@ function CliAuthorizeInner() {
 
             {phase === "error" ? (
               <div className="py-2">
-                <Type className="text-danger">{errorMessage}</Type>
+                <Type className="text-danger">An error has ocurred. Please try again or later</Type>
                 <GlobalButton
                   className="mt-4"
                   variant="light"

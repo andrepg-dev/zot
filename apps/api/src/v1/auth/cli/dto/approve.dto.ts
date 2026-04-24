@@ -12,7 +12,8 @@ export class ApproveCliSessionDto {
   sessionToken?: string;
 
   @ApiProperty({
-    description: "User code. Required when the user typed it in manually instead of following the session URL.",
+    description:
+      "User code. Required when the user typed it in manually instead of following the session URL.",
     required: false,
     example: "AB12-CD34",
   })

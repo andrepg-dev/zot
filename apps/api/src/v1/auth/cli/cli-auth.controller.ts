@@ -1,19 +1,6 @@
 import { UserId } from "@api/src/common/decorators/user-id.decorator";
-import {
-  BadRequestException,
-  Body,
-  Controller,
-  Get,
-  Param,
-  Post,
-} from "@nestjs/common";
-import {
-  ApiBearerAuth,
-  ApiOkResponse,
-  ApiOperation,
-  ApiParam,
-  ApiTags,
-} from "@nestjs/swagger";
+import { BadRequestException, Body, Controller, Get, Param, Post } from "@nestjs/common";
+import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiParam, ApiTags } from "@nestjs/swagger";
 import { Types } from "mongoose";
 
 import { Public } from "../decorators/skip-auth.decorator";
@@ -64,10 +51,7 @@ export class CliAuthController {
   @ApiOperation({
     summary: "Approve a CLI session and issue an API key.",
   })
-  async approve(
-    @Body() dto: ApproveCliSessionDto,
-    @UserId() userId: Types.ObjectId,
-  ) {
+  async approve(@Body() dto: ApproveCliSessionDto, @UserId() userId: Types.ObjectId) {
     if (!dto.sessionToken && !dto.userCode) {
       throw new BadRequestException("sessionToken or userCode is required.");
     }
