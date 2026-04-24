@@ -2,17 +2,31 @@
   "$schema": "https://turborepo.com/schema.json",
   "tasks": {
     "build:lib": {
-      "outputs": ["dist/**"]
+      "outputs": [
+        "dist/**"
+      ]
     },
     "build": {
-      "dependsOn": ["^build", "^build:lib"],
-      "outputs": ["dist/**", "storybook-static/**", ".next/**", "!.next/cache/**"]
+      "dependsOn": [
+        "^build",
+        "^build:lib"
+      ],
+      "outputs": [
+        "dist/**",
+        "storybook-static/**",
+        ".next/**",
+        "!.next/cache/**"
+      ]
     },
     "check-types": {
-      "dependsOn": ["^check-types"]
+      "dependsOn": [
+        "^check-types"
+      ]
     },
     "dev": {
-      "dependsOn": ["^build:lib"],
+      "dependsOn": [
+        "^build:lib"
+      ],
       "persistent": true,
       "cache": false
     }
