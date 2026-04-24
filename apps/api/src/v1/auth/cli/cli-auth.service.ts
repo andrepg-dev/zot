@@ -5,10 +5,7 @@ import { randomBytes } from "crypto";
 import { Model, Types } from "mongoose";
 
 import { ApiKeyService } from "../../api-key/api-key.service";
-import {
-  CliDeviceSession,
-  type CliDeviceSessionStatus,
-} from "./schemas/cli-device-session.schema";
+import { CliDeviceSession, type CliDeviceSessionStatus } from "./schemas/cli-device-session.schema";
 
 const DEVICE_CODE_BYTES = 32;
 const SESSION_TOKEN_BYTES = 32;
@@ -81,7 +78,7 @@ export class CliAuthService {
 
     session.status = "approved";
     session.approvedBy = userId;
-    session.apiKeyId = apiKey._id as Types.ObjectId;
+    session.apiKeyId = apiKey._id;
     session.apiKeyPlaintext = apiKey.apiKey;
     await session.save();
 
@@ -107,9 +104,7 @@ export class CliAuthService {
   }
 
   async poll(deviceCode: string) {
-    const session = await this.sessionModel
-      .findOne({ deviceCode })
-      .select("+apiKeyPlaintext");
+    const session = await this.sessionModel.findOne({ deviceCode }).select("+apiKeyPlaintext");
 
     if (!session) {
       return { status: "expired_token" as const };

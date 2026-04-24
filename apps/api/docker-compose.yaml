@@ -11,7 +11,7 @@ services:
   #   environment:
   #     MONGO_INITDB_ROOT_USERNAME: blaze
   #     MONGO_INITDB_ROOT_PASSWORD: blaze
-    api:
+    zot-api:
       build: .
       ports:
         - "3010:3010"
