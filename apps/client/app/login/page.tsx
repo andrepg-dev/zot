@@ -90,7 +90,7 @@ function LoginInner() {
 
       <Button
         as={Link}
-        href="/"
+        href="https://zot.so"
         className="absolute top-8 left-8 !p-0 !hover:bg-transparent text-muted-foreground"
         variant="light"
         startContent={<ChevronLeftIcon className="size-4" />}
