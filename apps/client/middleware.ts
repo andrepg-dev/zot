@@ -3,6 +3,7 @@ import { NextResponse, type NextRequest } from "next/server";
 
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
+  const search = request.nextUrl.search;
   const cookieStore = await cookies();
 
   const extract_refresh_token = cookieStore.get("refresh_token");
@@ -14,14 +15,25 @@ export async function middleware(request: NextRequest) {
   const isAuthRoute = pathname === "/login" || pathname === "/signup";
 
   if (isAuthRoute && tokensExists) {
-    return NextResponse.redirect(new URL("/app/dashboard", request.url));
+    const returnTo = safeReturnTo(request.nextUrl.searchParams.get("returnTo"));
+    return NextResponse.redirect(new URL(returnTo ?? "/app/dashboard", request.url));
   }
 
   if (!isAuthRoute && !tokensExists) {
-    return NextResponse.redirect(new URL("/login", request.url));
+    const url = new URL("/login", request.url);
+    const target = `${pathname}${search}`;
+    if (target && target !== "/") url.searchParams.set("returnTo", target);
+    return NextResponse.redirect(url);
   }
 
   return NextResponse.next();
+}
+
+function safeReturnTo(value: string | null): string | null {
+  if (!value) return null;
+  if (!value.startsWith("/")) return null;
+  if (value.startsWith("//")) return null;
+  return value;
 }
 
 // See "Matching Paths" below to learn more

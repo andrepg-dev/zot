@@ -13,16 +13,33 @@ import { loginSchema, type LoginFormValues } from "@repo/packages/shared/schemas
 import { useMutation } from "@tanstack/react-query";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import posthog from "posthog-js";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useForm } from "react-hook-form";
 
 const inputWrapperClass =
   "data-[focus=true]:bg-default-100/50 data-[hover=true]:!bg-default-100/50 bg-default-100/50 border backdrop-blur-[25px]";
 
+function resolveReturnTo(value: string | null): string | null {
+  if (!value) return null;
+  if (!value.startsWith("/")) return null;
+  if (value.startsWith("//")) return null;
+  return value;
+}
+
 export default function LoginPage() {
+  return (
+    <Suspense fallback={null}>
+      <LoginInner />
+    </Suspense>
+  );
+}
+
+function LoginInner() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const returnTo = resolveReturnTo(searchParams.get("returnTo"));
   const [showPassword, setShowPassword] = useState(false);
 
   const {
@@ -48,7 +65,7 @@ export default function LoginPage() {
         description: "You will be redirected."
       });
 
-      router.replace("/app/dashboard");
+      router.replace(returnTo ?? "/app/dashboard");
     },
     onError: (err: Error) => {
       addToast({
