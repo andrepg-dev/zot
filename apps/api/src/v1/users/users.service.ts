@@ -155,20 +155,23 @@ export class UsersService {
       stripeCustomerId?: string;
       stripeSubscriptionId?: string;
       stripeSubscriptionStatus: StripeSubscriptionStatus;
+      plan?: "STARTER" | "PREMIUM" | null;
     },
   ) {
     try {
-      const suscriptionPlan =
+      const isPaidStatus =
         data.stripeSubscriptionStatus === "active" ||
         data.stripeSubscriptionStatus === "trialing" ||
-        data.stripeSubscriptionStatus === "past_due"
-          ? "PREMIUM"
-          : "FREE";
+        data.stripeSubscriptionStatus === "past_due";
+
+      const suscriptionPlan = isPaidStatus ? (data.plan ?? "PREMIUM") : "FREE";
+
+      const { plan: _plan, ...persistData } = data;
 
       const updatedUser = await this.userModel.findByIdAndUpdate(
         userId,
         {
-          ...data,
+          ...persistData,
           suscriptionPlan,
         },
         { new: true },
@@ -179,6 +182,28 @@ export class UsersService {
       if (error instanceof HttpException) throw error;
       throw new HttpException(
         "Error syncing user Stripe subscription.",
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  async hasPremiumPlan(userId: Types.ObjectId) {
+    try {
+      if (!userId) {
+        throw new InternalServerErrorException("User ID is not provided.");
+      }
+
+      const user = await this.userModel.findById(userId).select("+suscriptionPlan");
+
+      if (!user) {
+        throw new InternalServerErrorException("User not found.");
+      }
+
+      return user?.suscriptionPlan === "PREMIUM";
+    } catch (error) {
+      if (error instanceof HttpException) throw error;
+      throw new HttpException(
+        "Error checking user plan.",
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
