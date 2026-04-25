@@ -22,7 +22,12 @@ export async function FetchWrapper<T>(
     ...options.headers
   };
 
-  if (options.method === "POST" || options.method === "PATCH" || options.method === "PUT") {
+  const isFormData = typeof FormData !== "undefined" && options.body instanceof FormData;
+
+  if (
+    !isFormData &&
+    (options.method === "POST" || options.method === "PATCH" || options.method === "PUT")
+  ) {
     headers["Content-Type"] = "application/json";
   }
 

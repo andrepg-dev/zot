@@ -21,7 +21,7 @@ const TESTIMONIALS = [
   },
   {
     quote:
-      "The @zot-core/sdk hook dropped our waitlist form into the app in ten minutes. Webhooks and React Email templates automated the rest of the onboarding flow. We focused on shipping the product.",
+      "The @zot-core/sdk hook dropped our waitlist form into the app in ten minutes. Webhooks and coded email templates automated the rest of the onboarding flow. We focused on shipping the product.",
     name: "Marcus Johnson",
     role: "CTO, Early-stage Startup",
     avatarFallback: "MJ",

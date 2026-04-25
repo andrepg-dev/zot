@@ -6,12 +6,9 @@ import LandingPageTitle from "@/components/LandingPageTitle";
 import type { LogoItem } from "@/components/LogoLoop";
 import LogoLoop from "@/components/LogoLoop";
 import ProductivityInsightsCard from "@/components/ProductivityInsightsCard";
-import ProjectsChartSVG from "@/components/ProjectsChartSVG";
+import WebWindowCard from "@/components/WebWindowCard";
 import { getDashboardUrl } from "@/lib/dashboard-url";
 import {
-  ChartColumnIcon,
-  Mail01Icon,
-  Notification03Icon,
   PlusSignIcon,
   ShieldKeyIcon,
 } from "@hugeicons/core-free-icons";
@@ -90,10 +87,6 @@ export default function HomePage() {
           }}
         />
         <div className="relative mx-auto flex max-w-7xl items-center justify-center gap-2 sm:gap-4 px-4 sm:px-6 py-2 sm:py-2.5 text-center">
-          <span className="hidden sm:inline-flex items-center gap-1.5 border border-white/20 bg-white/5 px-2 py-0.5 text-[10px] font-medium uppercase tracking-[0.12em] text-white shrink-0">
-            <span className="size-1.5 rounded-full bg-[#22C55E] shadow-[0_0_8px_rgba(34,197,94,0.9)]" />
-            Limited
-          </span>
           <p className="text-[11px] sm:text-sm text-white/90">
             <span className="font-semibold text-white">10% off for 3 months</span>
             <span className="hidden sm:inline">, our welcome gift to early adopters.</span>
@@ -146,7 +139,7 @@ export default function HomePage() {
       </header>
 
       <HeroCascade className="relative flex justify-center items-center w-full min-h-screen flex-col pt-28 sm:pt-32 pb-32 sm:pb-28" aria-label="Hero section">
-        <div className="w-full max-w-7xl px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] gap-10 lg:gap-12 xl:gap-16 items-center mb-16 sm:mb-20 lg:mb-28">
+        <div className="w-full max-w-[1400px] px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] gap-10 lg:gap-12 xl:gap-16 items-center mb-16 sm:mb-20 lg:mb-28">
           <div className="flex flex-col gap-5 sm:gap-6 items-center lg:items-start text-center lg:text-left">
             <div
               data-hero-badge
@@ -271,7 +264,7 @@ export default function HomePage() {
             <HugeiconsIcon icon={PlusSignIcon} size={26} strokeWidth={1} className="absolute -left-[12.5px] -top-[12.5px] z-50 text-zinc-700" />
 
             <ProductivityInsightsCard
-              previewImage={{ src: "/analytics-4.webp", alt: "Screenshot de analytics" }}
+              previewImage={{ src: "/waitlist-dashboard.avif", alt: "Waitlist dashboard preview" }}
               previewUrl="zot.so"
             />
           </AnimatedContent>
@@ -296,36 +289,24 @@ export default function HomePage() {
                 background:
                   "radial-gradient(ellipse 80% 80% at 50% 40%, rgba(0, 111, 238, 0.35) 0%, rgba(0, 111, 238, 0.12) 35%, transparent 70%), #000000",
               }}>
-              <div className="p-6 sm:p-8 lg:p-12">
+              <div className="p-6 sm:p-8 lg:p-12 relative z-10">
                 <div className="flex flex-col gap-3 sm:gap-4">
-                  <HugeiconsIcon icon={ChartColumnIcon} className="size-7" />
-                  <h3 className="text-2xl sm:text-3xl">Growth tracking</h3>
+                  <HugeiconsIcon icon={ShieldKeyIcon} className="size-7" />
+                  <h3 className="text-2xl sm:text-3xl">Fake user blocking</h3>
                   <h4 className="text-muted-foreground max-w-[40ch] text-sm sm:text-base">
-                    Daily signups, referral performance, and conversion rates at a glance. Make data-driven decisions with a single dashboard.
+                    Disposable and invalid emails are filtered automatically so your waitlist stays clean and every lead is real.
                   </h4>
                 </div>
               </div>
 
-              <div className="border-t border-l ml-auto w-5/6 h-full bg-black backdrop-blur-3xl relative">
-                <div className="m-2 bg-zinc-900 border w-full min-h-[160px] sm:h-[200px] p-3 sm:p-4 relative">
-                  <h4 className="text-base sm:text-lg font-medium">Total sign ups</h4>
-                  <h6 className="text-muted-foreground">
-                    Your waitlist is growing, it <br className="hidden sm:block" /> looks like there&apos;s <span className="text-white font-medium">real traction!</span>
-                  </h6>
-
-                  <div className="absolute bottom-3 sm:bottom-6 left-3 sm:left-6 flex flex-wrap items-center gap-2 sm:gap-0">
-                    <h2 className="text-2xl sm:text-4xl font-semibold">18.2k</h2>
-                    <div className="flex ml-2 sm:ml-6 gap-2 flex-wrap items-center">
-                      <div className="border border-green-700 bg-green-500/20 text-emerald-700 px-2 flex items-center text-xs">
-                        +12.5%
-                      </div>
-                      <span className="text-muted-foreground text-xs sm:text-sm">Compared to last month</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="w-full h-full">
-                  <ProjectsChartSVG />
-                </div>
+              <div className="absolute inset-x-4 sm:inset-x-6 bottom-4 sm:bottom-6 top-[42%] sm:top-[40%] border border-white/10 overflow-hidden bg-black">
+                <WebWindowCard
+                  url="app.zot.so/security"
+                  title="Fake user blocking"
+                  description="Blocked emails preview"
+                  imageSrc="/users-blocked.avif"
+                  imageAlt="Blocked users preview"
+                />
               </div>
             </div>
           </AnimatedContent>
@@ -339,106 +320,6 @@ export default function HomePage() {
         <TeamCollaborationSection />
       </div>
 
-
-      <section className="content-visibility-auto px-4 sm:px-6 md:px-8 lg:px-16 xl:px-32 pb-20 sm:pb-24 lg:pb-32 bg-[#000000]">
-        <LandingPageTitle
-          subtitle="Stay connected"
-          title={{ before: "Emails &", gradient: "notifications" }}
-          gradient={{ colors: ["#22C55E", "#00FF88"], animationSpeed: 16 }}
-          description="Write email templates in code with React Email, send them straight to your waitlist, and get real-time notifications. Full control, zero guesswork."
-        />
-
-        {/* Card principal: imagen (con difuminado) a la izquierda, texto a la derecha */}
-        <div className="mt-10 sm:mt-12 lg:mt-16 relative">
-          <HugeiconsIcon icon={PlusSignIcon} size={26} strokeWidth={1} className="absolute -left-[12.5px] -top-[12.5px] z-50 text-zinc-700" />
-          <HugeiconsIcon icon={PlusSignIcon} size={26} strokeWidth={1} className="absolute -right-[12.5px] -bottom-[12.5px] z-50 text-zinc-700" />
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 overflow-hidden border border-white/10 min-h-[280px] sm:min-h-[320px]"
-            style={{
-              background:
-                "radial-gradient(ellipse 60% 80% at 80% 50%, rgba(0, 111, 238, 0.2) 0%, rgba(0, 111, 238, 0.06) 40%, transparent 70%), #000000",
-            }}
-          >
-            {/* Lado izquierdo: imagen con difuminado en el borde derecho */}
-            <div className="relative h-[280px] lg:h-auto lg:min-h-[320px] shrink-0">
-              <div className="absolute inset-0 bg-zinc-900/80">
-                <Image
-                  src="/ai-editor-2.webp"
-                  alt="AI editor preview"
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 1024px) 100vw, 50vw"
-                  loading="lazy"
-                />
-              </div>
-              {/* Difuminado: gradiente para integrar la imagen con el fondo de la card */}
-              <div
-                className="absolute inset-y-0 right-0 w-1/3 min-w-[120px] pointer-events-none"
-                style={{
-                  background:
-                    "linear-gradient(to left, #000000 0%, rgba(0,0,0,0.85) 35%, transparent 100%)",
-                }}
-              />
-            </div>
-
-            {/* Lado derecho: texto */}
-            <div className="flex flex-col justify-center gap-3 sm:gap-4 p-6 sm:p-8 lg:p-10 xl:p-12">
-              <h3 className="text-xl sm:text-2xl lg:text-3xl">
-                Code your emails, own the design
-              </h3>
-              <p className="text-muted-foreground max-w-[44ch] text-sm sm:text-base">
-                Build and edit email templates as React components with
-                React Email. Full control over every pixel, version them in
-                git, and send updates, referral links, and announcements to
-                your waitlist whenever you need.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Tres cards de características */}
-        <div className="mt-6 sm:mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-          {[
-            {
-              icon: Mail01Icon,
-              title: "Code-first templates",
-              description:
-                "Write email templates as React components with React Email. Ship exactly the emails your users deserve, version-controlled in your repo.",
-            },
-            {
-              icon: Notification03Icon,
-              title: "Milestone alerts",
-              description:
-                "Email notifications every time your waitlist hits a new milestone. Stay on top of growth without babysitting the dashboard.",
-            },
-            {
-              icon: ShieldKeyIcon,
-              title: "Fake email blocking",
-              description:
-                "Disposable and throwaway emails are blocked automatically. Your leads stay clean without a single line of config.",
-            },
-          ].map((item) => (
-            <div
-              key={item.title}
-              className="relative border border-white/10 overflow-hidden pt-6 sm:pt-8 lg:pt-10 pb-6 sm:pb-8 px-5 sm:px-6 lg:px-8 flex flex-col gap-3 sm:gap-4 transition hover:border-white/15"
-              style={{
-                background:
-                  "radial-gradient(ellipse 80% 60% at 50% 0%, rgba(0, 111, 238, 0.12) 0%, rgba(0, 111, 238, 0.04) 40%, transparent 70%), #000000",
-              }}
-            >
-              <HugeiconsIcon
-                icon={item.icon}
-                size={28}
-                strokeWidth={1.5}
-                className="text-foreground"
-              />
-              <h4 className="text-lg sm:text-xl font-semibold">{item.title}</h4>
-              <p className="text-muted-foreground text-sm max-w-[36ch]">
-                {item.description}
-              </p>
-            </div>
-          ))}
-        </div>
-      </section>
 
       <div className="content-visibility-auto">
         <TestimonialsSection />

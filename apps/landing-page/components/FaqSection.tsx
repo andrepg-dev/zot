@@ -34,7 +34,7 @@ const FAQ_ITEMS = [
   {
     question: "Can I send emails to my waitlist users?",
     answer:
-      "Yes. Zot lets you author email templates as React components with React Email. You keep full control over design and content, and can send updates, welcome messages, and announcements directly to your waitlist.",
+      "Yes. Zot lets you author email templates as components in your codebase. You keep full control over design and content, and can send updates, welcome messages, and announcements directly to your waitlist.",
   },
   {
     question: "What analytics does Zot provide?",

@@ -70,10 +70,7 @@ export default async function HeroCodePreview({
         />
 
         <div className="flex items-center justify-between border-t border-white/5 bg-black/30 px-3 py-2">
-          <span className="inline-flex items-center gap-2 text-[11px] font-mono text-white/60">
-            <span className="brand-pulse inline-block size-1.5 rounded-full bg-[#195830]" aria-hidden />
-            2,418 signups · live
-          </span>
+        <div></div>
           <span className="text-[11px] font-mono text-white/40">
             3 lines. Done.
           </span>

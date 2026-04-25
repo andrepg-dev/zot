@@ -1786,6 +1786,57 @@
           "GeneralStats"
         ]
       }
+    },
+    "/v1/feedback": {
+      "post": {
+        "description": "Creates a new feedback entry from the authenticated user. Optionally accepts up to 5 image attachments.",
+        "operationId": "FeedbackController_create_v1",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "message": {
+                    "type": "string",
+                    "example": "I would love to see dark mode support."
+                  },
+                  "images": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "binary"
+                    },
+                    "description": "Optional screenshots (max 5, 5MB each)"
+                  }
+                },
+                "required": [
+                  "message"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Feedback submitted successfully"
+          },
+          "401": {
+            "description": "Not authenticated"
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "Submit feedback",
+        "tags": [
+          "Feedback"
+        ]
+      }
     }
   },
   "info": {

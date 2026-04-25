@@ -11,6 +11,7 @@ import { S3Service } from "./core/aws/s3/s3.service";
 import { EmailSendingService } from "./core/email-sending/email-sending.service";
 import { EmailTemplatesModule } from "./email-templates/email-templates.module";
 import { EmailsModule } from "./emails/emails.module";
+import { FeedbackModule } from "./feedback/feedback.module";
 import { GeneralStatsModule } from "./general-stats/general-stats.module";
 import { GeneralStatsService } from "./general-stats/general-stats.service";
 import { ReactToHtmlModule } from "./react-to-html/react-to-html.module";
@@ -30,6 +31,7 @@ import { WaitListModule } from "./wait-list/wait-list.module";
     ApiKeyModule,
     AiServerConnectionModule,
     GeneralStatsModule,
+    FeedbackModule,
   ],
   providers: [
     JwtAuthGuard,
