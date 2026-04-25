@@ -43,6 +43,23 @@ const trustBullets = [
 
 const LAST_USED_LOGIN_METHOD_KEY = "zot:last-used-login-method";
 
+function LastUsedBadge() {
+  return (
+    <span
+      className={cn(
+        "absolute -top-2 left-1/2 -translate-x-1/2 z-20",
+        "inline-flex items-center gap-1 px-1.5 py-0.5",
+        "bg-foreground text-background border",
+        "text-[9px] font-medium uppercase tracking-wide leading-none whitespace-nowrap",
+        "rounded-none shadow-sm pointer-events-none"
+      )}
+    >
+      <span className="size-1 rounded-none bg-success" />
+      Last used
+    </span>
+  );
+}
+
 function resolveReturnTo(value: string | null): string | null {
   if (!value) return null;
   if (!value.startsWith("/")) return null;
@@ -239,7 +256,8 @@ function LoginInner() {
 
           <div className="w-full flex flex-col gap-2 mt-2">
             <div className="w-full flex gap-3">
-              <form action={signInWithGoogle} className="flex-1 min-w-0">
+              <form action={signInWithGoogle} className="relative flex-1 min-w-0">
+                {lastUsedMethod === "Google" && <LastUsedBadge />}
                 <Button
                   type="submit"
                   radius="none"
@@ -259,7 +277,8 @@ function LoginInner() {
                   Google
                 </Button>
               </form>
-              <form action={signInWithGitHub} className="flex-1 min-w-0">
+              <form action={signInWithGitHub} className="relative flex-1 min-w-0">
+                {lastUsedMethod === "GitHub" && <LastUsedBadge />}
                 <Button
                   type="submit"
                   radius="none"
@@ -289,12 +308,6 @@ function LoginInner() {
             </span>
             <div className="flex-1 h-px bg-border" />
           </div>
-
-          {lastUsedMethod && (
-            <p className="w-full text-xs text-muted-foreground text-center">
-              Last used: {lastUsedMethod}
-            </p>
-          )}
 
           <form className="w-full space-y-5" onSubmit={handleSubmit(onSubmit)}>
             <div className="space-y-2">
@@ -350,15 +363,18 @@ function LoginInner() {
               {errors.password && <p className="text-xs text-danger">{errors.password.message}</p>}
             </div>
 
-            <Button
-              type="submit"
-              radius="none"
-              className="w-full h-10 rounded-none !text-sm bg-default-50 border text-muted-foreground hover:bg-default-300 backdrop-blur-[25px]"
-              isLoading={isPending}
-              isDisabled={isPending}
-            >
-              Log In
-            </Button>
+            <div className="relative">
+              {lastUsedMethod === "Email" && <LastUsedBadge />}
+              <Button
+                type="submit"
+                radius="none"
+                className="w-full h-10 rounded-none !text-sm bg-default-50 border text-muted-foreground hover:bg-default-300 backdrop-blur-[25px]"
+                isLoading={isPending}
+                isDisabled={isPending}
+              >
+                Log In
+              </Button>
+            </div>
           </form>
 
           <p className="text-xs text-muted-foreground text-center max-w-[36ch]">
