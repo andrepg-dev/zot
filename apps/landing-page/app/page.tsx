@@ -71,7 +71,7 @@ export default function HomePage() {
     <div className="font-sans overflow-x-hidden">
       <Link
         href="#pricing"
-        aria-label="Claim 10% off for 3 months"
+        aria-label='Use coupon "EARLY-USER" to get 10% off'
         className="group absolute top-0 left-0 right-0 z-30 block overflow-hidden border-b border-white/10 backdrop-blur-md"
         style={{
           background:
@@ -88,9 +88,9 @@ export default function HomePage() {
         />
         <div className="relative mx-auto flex max-w-7xl items-center justify-center gap-2 sm:gap-4 px-4 sm:px-6 py-2 sm:py-2.5 text-center">
           <p className="text-[11px] sm:text-sm text-white/90">
-            <span className="font-semibold text-white">10% off for 3 months</span>
-            <span className="hidden sm:inline">, our welcome gift to early adopters.</span>
-            <span className="sm:hidden"> for early adopters.</span>
+            <span className="font-semibold text-white">Use coupon "EARLY-USER" for 10% off</span>
+            <span className="hidden sm:inline"> on your Starter or Premium plan.</span>
+            <span className="sm:hidden"> on paid plans.</span>
           </p>
           <span className="hidden sm:inline-flex items-center gap-1 text-sm font-medium text-white underline decoration-white/40 decoration-2 underline-offset-4 transition-colors group-hover:decoration-white">
             Claim discount
