@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://app.zot.so/favicon.svg" alt="Zot" width="72" height="72" />
+  <img src="./apps/landing-page/public/zot-icon.svg" alt="Zot logo" width="72" height="72" />
 </p>
 
 <h1 align="center">Zot</h1>
