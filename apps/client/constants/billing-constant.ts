@@ -20,6 +20,26 @@ export const plans = [
     ]
   },
   {
+    name: "Starter",
+    price: "$7",
+    frequency: "/ month",
+    blurb: "For indie hackers ready to grow beyond validation.",
+    ctaLabel: "Upgrade plan",
+    ctaHref: "/app/billing",
+    popular: false,
+    features: [
+      "100,000 users signup limit",
+      "10 waitlists maximum",
+      "10 landing pages maximum",
+      "1,000 users emailed per month",
+      "50 email templates",
+      "Custom email creation",
+      "2 domains for branded emails",
+      "Analytics for signups and sent emails",
+      "Export your data"
+    ]
+  },
+  {
     name: "Premium",
     price: "$14",
     frequency: "/ month",

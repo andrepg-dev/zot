@@ -27,6 +27,27 @@ const PLANS = [
     ],
   },
   {
+    name: "Starter",
+    price: "$7",
+    frequency: "/ month",
+    blurb: "For indie hackers ready to grow beyond validation.",
+    ctaLabel: "Start with Starter",
+    ctaHref: "__dashboard__",
+    popular: false,
+    features: [
+      "100,000 users signup limit",
+      "10 waitlists maximum",
+      "10 landing pages maximum",
+      "1,000 users emailed per month",
+      "50 email templates",
+      "Custom email creation",
+      "2 domains for branded emails",
+      "Analytics for signups and sent emails",
+      "Export your data",
+      "@zot-core/cli, @zot-core/sdk and @zot-core/agents included",
+    ],
+  },
+  {
     name: "Premium",
     price: "$14",
     frequency: "/ month",
@@ -65,7 +86,7 @@ export default function PricingSection() {
         description="Transparent pricing with zero surprises. Upgrade when you need more room to scale launches, emails, and domains."
       />
 
-      <div className="mx-auto mt-10 sm:mt-12 lg:mt-16 grid max-w-4xl grid-cols-1 gap-3 sm:gap-4 lg:grid-cols-2 items-start px-0">
+      <div className="mx-auto mt-10 sm:mt-12 lg:mt-16 grid max-w-6xl grid-cols-1 gap-3 sm:gap-4 md:grid-cols-2 lg:grid-cols-3 items-start px-0">
         {PLANS.map((plan) => {
           const isPremium = plan.popular;
           return (
@@ -130,7 +151,7 @@ export default function PricingSection() {
                 className={`relative z-10 flex flex-col flex-1 p-4 sm:p-5 lg:p-6 ${isPremium ? "bg-[#0D0D0E]/60" : "bg-black/40"}`}
               >
                 {isPremium && (
-                  <span className="absolute right-4 top-4 bg-[#006FEE] px-3 py-1 text-xs font-semibold text-white z-20 shadow-[0_0_20px_rgba(0,111,238,0.45)]">
+                  <span className="absolute right-4 top-4 bg-[#006FEE] px-3 py-1 text-xs font-semibold text-white z-20">
                     Most popular
                   </span>
                 )}
@@ -161,7 +182,7 @@ export default function PricingSection() {
                     }
                     className={`inline-flex h-10 w-full cursor-pointer items-center justify-center border px-5 py-2.5 text-sm font-medium transition ${
                       isPremium
-                        ? "border-[#006FEE]/60 bg-[#006FEE] text-white hover:bg-[#0A84FF] hover:border-[#0A84FF] shadow-[0_0_24px_rgba(0,111,238,0.35)]"
+                        ? "border-[#006FEE]/60 bg-[#006FEE] text-white hover:bg-[#0A84FF] hover:border-[#0A84FF]"
                         : "border border-zinc-600/80 bg-[#131315] text-white hover:bg-zinc-800/80 hover:border-zinc-500"
                     }`}
                   >
