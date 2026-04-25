@@ -70,7 +70,7 @@ export default async function HeroCodePreview({
         />
 
         <div className="flex items-center justify-between border-t border-white/5 bg-black/30 px-3 py-2">
-        <div></div>
+          <div></div>
           <span className="text-[11px] font-mono text-white/40">
             3 lines. Done.
           </span>
