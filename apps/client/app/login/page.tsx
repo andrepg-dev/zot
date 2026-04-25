@@ -103,7 +103,7 @@ function LoginInner() {
       <div
         className={cn(
           "absolute inset-0 bg-cover bg-center bg-no-repeat opacity-90",
-          "bg-[url('/zot-background-3.png')]"
+          "bg-[url('/zot-background-blue.avif')]"
         )}
         aria-hidden
       />
@@ -152,7 +152,7 @@ function LoginInner() {
           </h1>
 
           <p className="text-sm text-muted-foreground max-w-[46ch] leading-relaxed">
-            CLI, SDK and agent integrations so you spend minutes — not days —
+            CLI, SDK and agent integrations so you spend minutes, not days,
             collecting real leads.
           </p>
 
@@ -181,7 +181,7 @@ function LoginInner() {
               <span className="size-6 rounded-full bg-default-200 flex items-center justify-center text-[10px] text-foreground/80">
                 MR
               </span>
-              <span>Mateo R. — indie founder</span>
+              <span>Mateo R., indie founder</span>
             </figcaption>
           </figure>
         </div>
