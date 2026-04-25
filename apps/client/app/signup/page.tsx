@@ -27,10 +27,10 @@ import { Suspense, useState } from "react";
 import { useForm } from "react-hook-form";
 
 const inputWrapperClass =
-  "data-[focus=true]:bg-default-100/50 data-[hover=true]:!bg-default-100/50 bg-default-100/50 border backdrop-blur-[25px]";
+  "rounded-none data-[focus=true]:bg-default-100/50 data-[hover=true]:!bg-default-100/50 bg-default-100/50 border backdrop-blur-[25px]";
 
 const oauthButtonClass = cn(
-  "w-full h-10 font-medium",
+  "w-full h-10 font-medium rounded-none",
   "bg-default-100/50 border border-border backdrop-blur-[25px]",
   "text-foreground justify-center gap-2 px-3"
 );
@@ -108,7 +108,7 @@ function SignupInner() {
         aria-hidden
       />
       <div
-        className="absolute inset-0 bg-gradient-to-r from-background/30 via-background/60 to-background"
+        className="absolute inset-0 bg-gradient-to-r from-gren-500/5 via-green/100 to-background"
         aria-hidden
       />
 
@@ -127,13 +127,13 @@ function SignupInner() {
           href="https://zot.so"
           className="flex items-center gap-2.5 w-max text-foreground"
         >
-          <div className="w-9 h-9 rounded-lg flex items-center justify-center border overflow-hidden bg-black">
+          <div className="w-9 h-9 rounded-none flex items-center justify-center border overflow-hidden bg-black">
             <Image
               width={300}
               height={300}
               src="/favicon_io/android-chrome-512x512.png"
               alt={siteConfig.name}
-              className="w-9 h-9 rounded-lg object-cover"
+              className="w-9 h-9 rounded-none object-cover"
               priority
             />
           </div>
@@ -141,8 +141,8 @@ function SignupInner() {
         </Link>
 
         <div className="flex flex-col gap-7 max-w-[520px]">
-          <span className="inline-flex items-center gap-2 w-max bg-default-100/50 border backdrop-blur-[25px] px-3 py-1 text-xs text-muted-foreground rounded-full">
-            <span className="size-1.5 rounded-full bg-success" />
+          <span className="inline-flex items-center gap-2 w-max bg-default-100/50 border backdrop-blur-[25px] px-3 py-1 text-xs text-muted-foreground rounded-none">
+            <span className="size-1.5 rounded-none bg-success" />
             The indie hacker waitlist platform
           </span>
 
@@ -178,7 +178,7 @@ function SignupInner() {
               signups, email campaigns, webhooks and a dashboard we can trust.&rdquo;
             </blockquote>
             <figcaption className="flex items-center gap-2 text-xs text-muted-foreground">
-              <span className="size-6 rounded-full bg-default-200 flex items-center justify-center text-[10px] text-foreground/80">
+              <span className="size-6 rounded-none bg-default-200 flex items-center justify-center text-[10px] text-foreground/80">
                 MR
               </span>
               <span>Mateo R., indie founder</span>
@@ -195,13 +195,13 @@ function SignupInner() {
       <main className="relative z-10 flex flex-col items-center justify-center px-4 py-12">
         <div className="w-full max-w-[420px] flex flex-col items-center gap-4">
           <Link href="/" className="lg:hidden flex items-center justify-center">
-            <div className="w-10 h-10 rounded-lg flex items-center justify-center border overflow-hidden bg-black">
+            <div className="w-10 h-10 rounded-none flex items-center justify-center border overflow-hidden bg-black">
               <Image
                 width={300}
                 height={300}
                 src="/favicon_io/android-chrome-512x512.png"
                 alt={siteConfig.name}
-                className="w-10 h-10 rounded-lg object-cover"
+                className="w-10 h-10 rounded-none object-cover"
                 priority
               />
             </div>
@@ -228,6 +228,7 @@ function SignupInner() {
               <form action={signInWithGoogle} className="flex-1 min-w-0">
                 <Button
                   type="submit"
+                  radius="none"
                   className={oauthButtonClass}
                   disableRipple
                   startContent={
@@ -246,6 +247,7 @@ function SignupInner() {
               <form action={signInWithGitHub} className="flex-1 min-w-0">
                 <Button
                   type="submit"
+                  radius="none"
                   className={oauthButtonClass}
                   disableRipple
                   startContent={
@@ -282,6 +284,7 @@ function SignupInner() {
                   id="name"
                   type="text"
                   placeholder="Your first name"
+                  radius="none"
                   classNames={{ inputWrapper: inputWrapperClass }}
                   {...register("name")}
                 />
@@ -296,6 +299,7 @@ function SignupInner() {
                   id="lastName"
                   type="text"
                   placeholder="Your last name"
+                  radius="none"
                   classNames={{ inputWrapper: inputWrapperClass }}
                   {...register("lastName")}
                 />
@@ -311,6 +315,7 @@ function SignupInner() {
                 id="email"
                 type="email"
                 placeholder="founder@example.com"
+                radius="none"
                 classNames={{ inputWrapper: inputWrapperClass }}
                 {...register("email")}
               />
@@ -325,6 +330,7 @@ function SignupInner() {
                 id="password"
                 type={showPassword ? "text" : "password"}
                 placeholder="••••••••"
+                radius="none"
                 classNames={{ inputWrapper: inputWrapperClass }}
                 endContent={
                   <button
@@ -348,7 +354,8 @@ function SignupInner() {
 
             <Button
               type="submit"
-              className="w-full h-10 rounded-sm !text-sm bg-default-50 border text-muted-foreground hover:bg-default-300 backdrop-blur-[25px]"
+              radius="none"
+              className="w-full h-10 rounded-none !text-sm bg-default-50 border text-muted-foreground hover:bg-default-300 backdrop-blur-[25px]"
               isLoading={isPending}
               isDisabled={isPending}
             >
