@@ -88,7 +88,7 @@ export default function HomePage() {
         />
         <div className="relative mx-auto flex max-w-7xl items-center justify-center gap-2 sm:gap-4 px-4 sm:px-6 py-2 sm:py-2.5 text-center">
           <p className="text-[11px] sm:text-sm text-white/90">
-            <span className="font-semibold text-white">Use coupon "EARLY-USER" for 10% off</span>
+            <span className="font-semibold text-white">Use coupon &quot;EARLY-USER&quot; for 10% off</span>
             <span className="hidden sm:inline"> on your Starter or Premium plan.</span>
             <span className="sm:hidden"> on paid plans.</span>
           </p>
