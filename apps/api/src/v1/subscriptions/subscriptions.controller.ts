@@ -35,21 +35,22 @@ export class SubscriptionsController {
   @Post("checkout-session")
   @ApiBearerAuth("JWT-auth")
   @ApiOperation({
-    summary: "Create Stripe checkout session for Zot Premium",
-    description: "Creates a Stripe-hosted checkout session for the current user subscription.",
+    summary: "Create Stripe checkout session for a paid Zot plan",
+    description:
+      "Creates a Stripe-hosted checkout session for the current user. Pass plan: STARTER or PREMIUM.",
   })
   @ApiOkResponse({
     description: "Checkout session created successfully",
     type: CheckoutSessionResponseDto,
   })
-  @ApiBody({ type: CreateCheckoutSessionDto, required: false })
+  @ApiBody({ type: CreateCheckoutSessionDto })
   @ApiUnauthorizedResponse({ description: "Not authenticated" })
   @ApiInternalServerErrorResponse({ description: "Stripe error while creating session" })
   async createCheckoutSession(
     @UserId() userId: Types.ObjectId,
     @Body() body: CreateCheckoutSessionDto,
   ) {
-    return this.subscriptionsService.createPremiumCheckoutSession(userId, body?.couponCode);
+    return this.subscriptionsService.createCheckoutSession(userId, body.plan, body.couponCode);
   }
 
   @Public()

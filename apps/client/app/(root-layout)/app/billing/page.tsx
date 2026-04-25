@@ -7,7 +7,14 @@ import { plans } from "@/constants/billing-constant";
 import { CheckIcon } from "@heroicons/react/24/solid";
 import { addToast } from "@heroui/toast";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import type { PaidPlan } from "@repo/packages/shared/schemas";
 import posthog from "posthog-js";
+
+const PLAN_RANK: Record<string, number> = {
+  FREE: 0,
+  STARTER: 1,
+  PREMIUM: 2
+};
 
 export default function BillingPage() {
   const { data: profile } = useQuery({
@@ -16,9 +23,10 @@ export default function BillingPage() {
   });
 
   const currentPlan = profile?.suscriptionPlan ?? "FREE";
+  const currentRank = PLAN_RANK[currentPlan] ?? 0;
 
   const { mutate: startCheckout, isPending: isCheckoutPending } = useMutation({
-    mutationFn: () => createCheckoutSession({}),
+    mutationFn: (plan: PaidPlan) => createCheckoutSession({ plan }),
     onSuccess: (data) => {
       if (data?.url) {
         window.location.href = data.url;
@@ -43,67 +51,78 @@ export default function BillingPage() {
           </p>
         </div>
 
-        <div className="grid gap-3 lg:grid-cols-2 max-w-3xl mx-auto w-full mt-2">
-          {plans.map((plan) => (
-            <div
-              key={plan.name}
-              className={`relative flex flex-col bg-default-50/70 border p-6 shadow-lg backdrop-blur ${
-                plan.popular ? "border-[#4338CA] -translate-y-5" : "border-white/10"
-              }`}
-            >
-              {plan.popular && (
-                <span className="absolute right-4 top-4 bg-[#4338CA]/20 border-[#4338CA] px-3 py-1 text-xs font-semibold text-blue-100">
-                  Most popular
-                </span>
-              )}
+        <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3 max-w-6xl mx-auto w-full mt-2">
+          {plans.map((plan) => {
+            const planKey = plan.name.toUpperCase();
+            const planRank = PLAN_RANK[planKey] ?? 0;
+            const isCurrent = planKey === currentPlan && currentPlan !== "FREE";
+            const isPaidUpgrade = planRank > currentRank && planKey !== "FREE";
 
-              <div className="space-y-2">
-                <p className="text-xs uppercase tracking-wide text-blue-300/80">{plan.name}</p>
-                <p className="text-lg font-semibold">{plan.blurb}</p>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-4xl font-semibold">{plan.price}</span>
-                  <span className="text-muted-foreground">{plan.frequency}</span>
+            return (
+              <div
+                key={plan.name}
+                className={`relative flex flex-col bg-default-50/70 border p-6 shadow-lg backdrop-blur ${
+                  plan.popular ? "border-[#4338CA] -translate-y-5" : "border-white/10"
+                }`}
+              >
+                {plan.popular && (
+                  <span className="absolute right-4 top-4 bg-[#4338CA]/20 border-[#4338CA] px-3 py-1 text-xs font-semibold text-blue-100">
+                    Most popular
+                  </span>
+                )}
+
+                <div className="space-y-2">
+                  <p className="text-xs uppercase tracking-wide text-blue-300/80">{plan.name}</p>
+                  <p className="text-lg font-semibold">{plan.blurb}</p>
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-4xl font-semibold">{plan.price}</span>
+                    <span className="text-muted-foreground">{plan.frequency}</span>
+                  </div>
+                </div>
+
+                {isCurrent ? (
+                  <span className="mt-6 inline-flex h-10.5 items-center justify-center border px-4 text-sm font-semibold border-blue-500/50 text-blue-100 opacity-70 cursor-default">
+                    Current plan
+                  </span>
+                ) : isPaidUpgrade ? (
+                  <button
+                    type="button"
+                    disabled={isCheckoutPending}
+                    onClick={() => {
+                      posthog.capture("checkout_initiated", {
+                        plan: plan.name,
+                        price: plan.price,
+                        is_popular: plan.popular ?? false
+                      });
+                      startCheckout(planKey as PaidPlan);
+                    }}
+                    className={`mt-6 inline-flex h-10.5 items-center justify-center border px-4 text-sm font-semibold transition-colors disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer ${
+                      plan.popular
+                        ? "hover:bg-[#4338CA]/50 bg-[#4338CA]/70 text-white border-blue-500 drop-shadow-lg drop-shadow-black"
+                        : "border-blue-500/50 text-blue-100 hover:bg-blue-500/10"
+                    }`}
+                  >
+                    {isCheckoutPending ? "Redirecting..." : plan.ctaLabel}
+                  </button>
+                ) : (
+                  <span className="mt-6 inline-flex h-10.5 items-center justify-center border px-4 text-sm font-semibold border-blue-500/50 text-blue-100 opacity-50 cursor-not-allowed">
+                    {plan.ctaLabel}
+                  </span>
+                )}
+
+                <div className="mt-6 flex-1 space-y-3">
+                  {plan.features.map((feature) => (
+                    <div key={`${plan.name}-${feature}`} className="flex items-start gap-3">
+                      <span className="mt-0.5 inline-flex rounded-full p-1 text-blue-100">
+                        <CheckIcon className="size-4" />
+                      </span>
+                      <span className="text-sm leading-relaxed text-foreground">{feature}</span>
+                    </div>
+                  ))}
                 </div>
               </div>
-
-              {currentPlan === plan.name.toUpperCase() && currentPlan !== "FREE" ? (
-                <span className="mt-6 inline-flex h-10.5 items-center justify-center border px-4 text-sm font-semibold border-blue-500/50 text-blue-100 opacity-70 cursor-default">
-                  Current plan
-                </span>
-              ) : plan.popular ? (
-                <button
-                  type="button"
-                  disabled={isCheckoutPending}
-                  onClick={() => {
-                    posthog.capture("checkout_initiated", {
-                      plan: plan.name,
-                      price: plan.price,
-                      is_popular: plan.popular ?? false
-                    });
-                    startCheckout();
-                  }}
-                  className="mt-6 inline-flex h-10.5 items-center justify-center border px-4 text-sm font-semibold transition-colors hover:bg-[#4338CA]/50 bg-[#4338CA]/70 text-white border-blue-500 drop-shadow-lg drop-shadow-black disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer"
-                >
-                  {isCheckoutPending ? "Redirecting..." : plan.ctaLabel}
-                </button>
-              ) : (
-                <span className="mt-6 inline-flex h-10.5 items-center justify-center border px-4 text-sm font-semibold border-blue-500/50 text-blue-100 opacity-50 cursor-not-allowed">
-                  {plan.ctaLabel}
-                </span>
-              )}
-
-              <div className="mt-6 flex-1 space-y-3">
-                {plan.features.map((feature) => (
-                  <div key={`${plan.name}-${feature}`} className="flex items-start gap-3">
-                    <span className="mt-0.5 inline-flex rounded-full p-1 text-blue-100">
-                      <CheckIcon className="size-4" />
-                    </span>
-                    <span className="text-sm leading-relaxed text-foreground">{feature}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </PageComponent>

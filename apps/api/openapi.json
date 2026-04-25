@@ -741,11 +741,11 @@
     },
     "/v1/subscriptions/checkout-session": {
       "post": {
-        "description": "Creates a Stripe-hosted checkout session for the current user subscription.",
+        "description": "Creates a Stripe-hosted checkout session for the current user. Pass plan: STARTER or PREMIUM.",
         "operationId": "SubscriptionsController_createCheckoutSession_v1",
         "parameters": [],
         "requestBody": {
-          "required": false,
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
@@ -777,7 +777,7 @@
             "JWT-auth": []
           }
         ],
-        "summary": "Create Stripe checkout session for Zot Premium",
+        "summary": "Create Stripe checkout session for a paid Zot plan",
         "tags": [
           "Subscriptions"
         ]
@@ -1786,6 +1786,57 @@
           "GeneralStats"
         ]
       }
+    },
+    "/v1/feedback": {
+      "post": {
+        "description": "Creates a new feedback entry from the authenticated user. Optionally accepts up to 5 image attachments.",
+        "operationId": "FeedbackController_create_v1",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "message": {
+                    "type": "string",
+                    "example": "I would love to see dark mode support."
+                  },
+                  "images": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "binary"
+                    },
+                    "description": "Optional screenshots (max 5, 5MB each)"
+                  }
+                },
+                "required": [
+                  "message"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Feedback submitted successfully"
+          },
+          "401": {
+            "description": "Not authenticated"
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "Submit feedback",
+        "tags": [
+          "Feedback"
+        ]
+      }
     }
   },
   "info": {
@@ -2170,12 +2221,24 @@
       "CreateCheckoutSessionDto": {
         "type": "object",
         "properties": {
+          "plan": {
+            "type": "string",
+            "description": "Plan to subscribe to.",
+            "enum": [
+              "STARTER",
+              "PREMIUM"
+            ],
+            "example": "PREMIUM"
+          },
           "couponCode": {
             "type": "string",
             "description": "Optional promotion code to apply immediately. If omitted, Stripe Checkout still allows entering a code manually.",
             "example": "WELCOME10"
           }
-        }
+        },
+        "required": [
+          "plan"
+        ]
       },
       "CheckoutSessionResponseDto": {
         "type": "object",

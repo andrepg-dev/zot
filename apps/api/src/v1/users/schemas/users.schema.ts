@@ -28,8 +28,8 @@ export class User {
   @Prop()
   avatar?: string;
 
-  @Prop({ default: "FREE", enum: ["FREE", "PREMIUM", "SCALE"] })
-  suscriptionPlan: "FREE" | "PREMIUM" | "SCALE";
+  @Prop({ default: "FREE", enum: ["FREE", "STARTER", "PREMIUM", "SCALE"] })
+  suscriptionPlan: "FREE" | "STARTER" | "PREMIUM" | "SCALE";
 
   @Prop({ required: false, index: true })
   stripeCustomerId?: string;

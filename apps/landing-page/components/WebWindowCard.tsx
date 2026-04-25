@@ -13,9 +13,9 @@ export default function WebWindowCard({ url, title, description, imageSrc, image
     <div className="overflow-hidden ml-auto w-full h-full bg-black/20 backdrop-blur-3xl">
       <header className="relative flex items-center justify-center p-3">
         <div className="absolute left-3 flex gap-1.5">
-          <div className="aspect-square h-3 w-3 bg-muted-foreground border" />
-          <div className="aspect-square h-3 w-3 bg-muted-foreground border" />
-          <div className="aspect-square h-3 w-3 bg-muted-foreground border" />
+          <div className="aspect-square h-3 w-3 bg-red-500/90 border border-red-300/60" />
+          <div className="aspect-square h-3 w-3 bg-green-500/90 border border-green-300/60" />
+          <div className="aspect-square h-3 w-3 bg-yellow-400/90 border border-yellow-300/60" />
         </div>
 
         <div className="border bg-muted-foreground/30 text-muted-foreground px-4 text-xs">

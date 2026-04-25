@@ -19,14 +19,14 @@ export default function TeamCollaborationSection() {
     },
     {
       id: 1,
-      title: "Email campaigns",
-      description: "Build email templates with React Email and send them directly to your waitlist users. Stay close to the code, keep your audience engaged.",
+      title: "Email editor",
+      description: "Edit your email template by prompting. Generate better subject lines, stronger CTAs, and conversion-focused copy in seconds.",
       icon: Mail01Icon,
     },
     {
       id: 2,
-      title: "Smart notifications",
-      description: "Get notified by email every time your waitlist hits a new milestone. Stay on top of growth without checking the dashboard.",
+      title: "Email campaigns",
+      description: "Review campaign performance and send updates to your waitlist at the right moment from a single timeline.",
       icon: PlusSignIcon,
     },
   ];
@@ -36,16 +36,22 @@ export default function TeamCollaborationSection() {
       url: "api.zot.so/webhooks",
       title: "Webhook integration",
       description: "Connect your waitlist events to any service via webhooks. Automate workflows when users sign up or leave.",
+      imageSrc: "/webhooks.avif",
+      imageAlt: "Webhook dashboard preview",
     },
     {
       url: "app.zot.so/emails",
       title: "Email editor",
-      description: "Edit your email templates with code powered by React Email. Preview, tweak, and ship beautiful emails without leaving your workflow.",
+      description: "Prompt your way to higher-performing emails. Rewrite hooks, value props, and calls to action to improve opens and clicks.",
+      imageSrc: "/email-editor.avif",
+      imageAlt: "Email editor preview",
     },
     {
-      url: "app.zot.so/notifications",
-      title: "Growth alerts",
-      description: "Receive milestone notifications as your waitlist grows. Never miss a key moment in your product validation.",
+      url: "app.zot.so/emails/history",
+      title: "Email campaigns",
+      description: "Track sent campaigns, open activity, and delivery history to understand what content drives real engagement.",
+      imageSrc: "/email-history.avif",
+      imageAlt: "Email campaign history preview",
     },
   ];
 
@@ -76,6 +82,8 @@ export default function TeamCollaborationSection() {
                 <button
                   key={button.id}
                   onClick={() => handleButtonClick(index)}
+                  onMouseEnter={() => handleButtonClick(index)}
+                  onFocus={() => handleButtonClick(index)}
                   type="button"
                   className={`w-full min-h-[80px] sm:min-h-[100px] text-left px-5 sm:px-7 py-4 sm:py-5 flex flex-col gap-2 sm:gap-3 transition-colors cursor-pointer border ${isActive
                     ? "bg-zinc-900 border-border shadow-[0_0_0_1px_rgba(255,255,255,0.06)]"
@@ -111,6 +119,8 @@ export default function TeamCollaborationSection() {
               url={activeCard.url}
               title={activeCard.title}
               description={activeCard.description}
+              imageSrc={activeCard.imageSrc}
+              imageAlt={activeCard.imageAlt}
             />
           </div>
         </div>

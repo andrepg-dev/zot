@@ -100,13 +100,14 @@ function SignupInner() {
 
       <div className="w-full max-w-[480px] flex flex-col items-center gap-4 relative z-10">
         <Link href="/" className="flex items-center justify-center mb-3">
-          <div className="w-10 h-10 rounded-lg flex items-center justify-center border">
+          <div className="w-10 h-10 rounded-lg flex items-center justify-center border overflow-hidden bg-black">
             <Image
               width={300}
               height={300}
-              src="/zot-icon.svg"
+              src="/favicon_io/android-chrome-512x512.png"
               alt={siteConfig.name}
-              className="w-10 rounded-lg"
+              className="w-10 h-10 rounded-lg object-cover"
+              priority
             />
           </div>
         </Link>

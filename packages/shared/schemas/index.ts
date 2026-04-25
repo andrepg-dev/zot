@@ -5,6 +5,7 @@ export * from "./auth/auth.zod";
 export * from "./auth/cli-auth.zod";
 export * from "./email-templates/email-templates.zod";
 export * from "./emails/emails.zod";
+export * from "./feedback/feedback.zod";
 export * from "./react-to-html/react-to-html.zod";
 export * from "./subscriptions/subscriptions.zod";
 export * from "./users/user-quote.zod";

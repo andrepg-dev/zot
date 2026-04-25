@@ -22,11 +22,11 @@ export class WaitListService {
 
   async create(createWaitListDto: CreateWaitListDto, owner: Types.ObjectId) {
     try {
-      const hasFreePlan = await this.usersService.hasFreePlan(owner);
+      const hasPremiumPlan = await this.usersService.hasPremiumPlan(owner);
 
-      if (hasFreePlan && createWaitListDto.isSecurityActive) {
+      if (!hasPremiumPlan && createWaitListDto.isSecurityActive) {
         throw new HttpException(
-          "You need to upgrade to a paying plan to use this feature or disable the security feature in your waitlist settings.",
+          "You need the Premium plan to use this feature or disable the security feature in your waitlist settings.",
           HttpStatus.BAD_REQUEST,
         );
       }
@@ -155,11 +155,11 @@ export class WaitListService {
 
   async update(id: Types.ObjectId, updateWaitListDto: UpdateWaitListDto, owner: Types.ObjectId) {
     try {
-      const hasFreePlan = await this.usersService.hasFreePlan(owner);
+      const hasPremiumPlan = await this.usersService.hasPremiumPlan(owner);
 
-      if (hasFreePlan && updateWaitListDto.isSecurityActive) {
+      if (!hasPremiumPlan && updateWaitListDto.isSecurityActive) {
         throw new HttpException(
-          "You need to upgrade to a paying plan to use this feature or disable the security feature in your waitlist settings.",
+          "You need the Premium plan to use this feature or disable the security feature in your waitlist settings.",
           HttpStatus.BAD_REQUEST,
         );
       }
