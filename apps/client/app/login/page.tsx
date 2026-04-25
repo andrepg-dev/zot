@@ -23,7 +23,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import posthog from "posthog-js";
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
 const inputWrapperClass =
@@ -40,6 +40,8 @@ const trustBullets = [
   { icon: ShieldCheckIcon, label: "Disposable emails blocked" },
   { icon: SparklesIcon, label: "Realtime analytics included" }
 ];
+
+const LAST_USED_LOGIN_METHOD_KEY = "zot:last-used-login-method";
 
 function resolveReturnTo(value: string | null): string | null {
   if (!value) return null;
@@ -61,6 +63,12 @@ function LoginInner() {
   const searchParams = useSearchParams();
   const returnTo = resolveReturnTo(searchParams.get("returnTo"));
   const [showPassword, setShowPassword] = useState(false);
+  const [lastUsedMethod, setLastUsedMethod] = useState<string | null>(null);
+
+  useEffect(() => {
+    const storedMethod = localStorage.getItem(LAST_USED_LOGIN_METHOD_KEY);
+    if (storedMethod) setLastUsedMethod(storedMethod);
+  }, []);
 
   const {
     register,
@@ -96,7 +104,15 @@ function LoginInner() {
     }
   });
 
-  const onSubmit = (data: LoginFormValues) => mutate(data);
+  const saveLastUsedMethod = (method: "Google" | "GitHub" | "Email") => {
+    localStorage.setItem(LAST_USED_LOGIN_METHOD_KEY, method);
+    setLastUsedMethod(method);
+  };
+
+  const onSubmit = (data: LoginFormValues) => {
+    saveLastUsedMethod("Email");
+    mutate(data);
+  };
 
   return (
     <div className="min-h-screen grid grid-cols-1 lg:grid-cols-[1.05fr_minmax(0,1fr)] relative bg-background">
@@ -229,6 +245,7 @@ function LoginInner() {
                   radius="none"
                   className={oauthButtonClass}
                   disableRipple
+                  onPress={() => saveLastUsedMethod("Google")}
                   startContent={
                     <Image
                       src={"/icons/google-icon.svg"}
@@ -248,6 +265,7 @@ function LoginInner() {
                   radius="none"
                   className={oauthButtonClass}
                   disableRipple
+                  onPress={() => saveLastUsedMethod("GitHub")}
                   startContent={
                     <Image
                       src={"/icons/github-icon.svg"}
@@ -271,6 +289,12 @@ function LoginInner() {
             </span>
             <div className="flex-1 h-px bg-border" />
           </div>
+
+          {lastUsedMethod && (
+            <p className="w-full text-xs text-muted-foreground text-center">
+              Last used: {lastUsedMethod}
+            </p>
+          )}
 
           <form className="w-full space-y-5" onSubmit={handleSubmit(onSubmit)}>
             <div className="space-y-2">
