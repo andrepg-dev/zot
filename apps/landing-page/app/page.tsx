@@ -165,7 +165,7 @@ export default function HomePage() {
               style={{ opacity: 0 }}
               className="text-4xl sm:text-5xl md:text-6xl lg:text-[56px] xl:text-6xl leading-[1.05] tracking-tight relative perspective-[600px]"
             >
-              Ship your waitlist <br /> <span className="text-muted-foreground">| in one command</span>
+              Ship your waitlist <br /> <span className="text-muted-foreground">in one command</span>
             </h1>
 
             <h3
