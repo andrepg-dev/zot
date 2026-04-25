@@ -44,11 +44,7 @@ export class SubscriptionsService {
     return null;
   }
 
-  async createCheckoutSession(
-    userId: Types.ObjectId,
-    plan: PaidPlan,
-    couponCode?: string,
-  ) {
+  async createCheckoutSession(userId: Types.ObjectId, plan: PaidPlan, couponCode?: string) {
     const priceId = this.getPriceIdForPlan(plan);
     const checkoutSuccessUrl = this.configService.get<string>("STRIPE_CHECKOUT_SUCCESS_URL");
     const checkoutCancelUrl = this.configService.get<string>("STRIPE_CHECKOUT_CANCEL_URL");
@@ -93,7 +89,7 @@ export class SubscriptionsService {
     }
 
     let discounts: Stripe.Checkout.SessionCreateParams.Discount[] | undefined;
-    const effectiveCouponCode = couponCode?.trim() || "EARLY-USER";
+    const effectiveCouponCode = couponCode?.trim();
 
     if (effectiveCouponCode) {
       const promotionCodes = await this.stripe.promotionCodes.list({
@@ -104,12 +100,7 @@ export class SubscriptionsService {
 
       const promotionCode = promotionCodes.data[0];
       if (!promotionCode) {
-        if (couponCode) {
-          throw new BadRequestException("Invalid or inactive coupon code");
-        }
-        throw new InternalServerErrorException(
-          "Default promotion code EARLY-USER is invalid or inactive",
-        );
+        throw new BadRequestException("Invalid or inactive coupon code");
       }
 
       discounts = [{ promotion_code: promotionCode.id }];
