@@ -185,8 +185,7 @@ function LoginInner() {
           </h1>
 
           <p className="text-sm text-muted-foreground max-w-[46ch] leading-relaxed">
-            CLI, SDK and agent integrations so you spend minutes, not days,
-            collecting real leads.
+            Waitlists, email campaigns, fake user blocking, webhooks, and more. All wired up in minutes.
           </p>
 
           <div className="bg-default-100/40 border backdrop-blur-[25px] p-3 font-mono text-xs flex items-center gap-2">
