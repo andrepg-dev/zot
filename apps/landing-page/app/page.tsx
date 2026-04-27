@@ -173,9 +173,8 @@ export default function HomePage() {
               style={{ opacity: 0 }}
               className="text-muted-foreground text-base sm:text-lg max-w-[52ch] leading-relaxed"
             >
-              The waitlist stack for developers. CLI, SDK, and agent
-              integrations so you spend minutes, not days, collecting real
-              leads.
+              Waitlists, email campaigns, fake user blocking, webhooks,
+              and more. All wired up in minutes.
             </h3>
 
             <div data-hero-command style={{ opacity: 0 }} className="w-full max-w-md">
