@@ -179,7 +179,7 @@ export default function HomePage() {
             </h3>
 
             <div data-hero-command style={{ opacity: 0 }} className="w-full max-w-md">
-              <HeroInstallCommand command="npx @zot-core/agents add waitlist" />
+              <HeroInstallCommand command="npx skills add launch-waitlist-zot/zot-skills" />
             </div>
 
             <div
