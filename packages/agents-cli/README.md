@@ -4,7 +4,7 @@ Configure any AI coding agent (Claude Code, Cursor, GitHub Copilot, `AGENTS.md`)
 
 ```bash
 # Teach every agent in this project how to integrate Zot
-npx @zot-core/agents add waitlist
+npx skills add launch-waitlist-zot/zot-skills
 ```
 
 > Need to call the Zot API from the terminal (create a waitlist, manage API keys, etc.)?
@@ -31,25 +31,25 @@ If none of those exist in your project, the CLI installs into all four so you're
 
 ```bash
 # Install a skill
-npx @zot-core/agents add waitlist
+npx skills add launch-waitlist-zot/zot-skills
 
 # Only some targets
-npx @zot-core/agents add waitlist --target claude,cursor
+npx skills add launch-waitlist-zot/zot-skills --target claude,cursor
 
 # Force overwrite (for discrete-file adapters)
-npx @zot-core/agents add waitlist --force
+npx skills add launch-waitlist-zot/zot-skills --force
 
 # Skip the confirmation prompt (ideal for CI and agents)
-npx @zot-core/agents add waitlist --yes
+npx skills add launch-waitlist-zot/zot-skills --yes
 
 # List what is available (bundled + remote registry)
-npx @zot-core/agents list
+npx skills add launch-waitlist-zot/zot-skills
 
 # List only what ships inside this package (no network)
-npx @zot-core/agents list --local-only
+npx skills add launch-waitlist-zot/zot-skills --local-only
 
 # Remove from the project
-npx @zot-core/agents remove waitlist
+npx skills add launch-waitlist-zot/zot-skills
 ```
 
 ## Options
@@ -76,7 +76,7 @@ Teaches the agent to integrate a Zot waitlist with the official `@zot-core/sdk`:
 - Lists anti-patterns to avoid (no raw `fetch`, no wrapping the hook in TanStack Query, etc.).
 - Ends with a verification checklist the agent must confirm before marking the task done.
 
-Run `npx @zot-core/agents list` to see anything else available from the remote registry.
+Run `npx skills add launch-waitlist-zot/zot-skills` to see anything else available from the remote registry.
 
 ## For humans
 

@@ -75,7 +75,7 @@ npm install @zot-core/sdk
 npx @zot-core/cli waitlist create --name "Early Access" --write-env .env.local --public
 
 # 3. (Optional) Teach the AI agents in this repo how to use Zot
-npx @zot-core/agents add waitlist
+npx skills add launch-waitlist-zot/zot-skills
 ```
 
 Then, in a client component:
@@ -174,7 +174,7 @@ Smoke test from a clean directory:
 
 ```bash
 mkdir /tmp/zot-smoke && cd /tmp/zot-smoke
-npx @zot-core/agents@latest list
+npx skills add launch-waitlist-zot/zot-skills
 npx @zot-core/cli@latest waitlist create --help
 ```
 

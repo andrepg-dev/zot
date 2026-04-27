@@ -43,7 +43,7 @@ const TOOLS = [
       "One command writes integration guides for Claude Code, Cursor, GitHub Copilot and AGENTS.md, so every agent in your repo ships the right code.",
     icon: MagicWand01Icon,
     lang: "bash",
-    code: `npx @zot-core/agents add waitlist`,
+    code: `npx skills add launch-waitlist-zot/zot-skills`,
   },
 ] as const;
 

@@ -158,7 +158,7 @@ function SignupInner() {
 
           <div className="bg-default-100/40 border backdrop-blur-[25px] p-3 font-mono text-xs flex items-center gap-2">
             <span className="text-success">$</span>
-            <span className="text-foreground/90">npx @zot-core/agents add waitlist</span>
+            <span className="text-foreground/90">npx skills add launch-waitlist-zot/zot-skills</span>
           </div>
 
           <ul className="flex flex-col gap-3">

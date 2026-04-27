@@ -19,12 +19,12 @@ const FAQ_ITEMS = [
   {
     question: "How do I integrate Zot in my Next.js app?",
     answer:
-      "Two steps. First, npx @zot-core/cli waitlist create --write-env .env.local --public creates the waitlist and stores its ID in your env. Then import useAddUser from @zot-core/sdk/react, pass the env vars, and render your form. Full guide: npx @zot-core/agents add waitlist.",
+      "Two steps. First, npx @zot-core/cli waitlist create --write-env .env.local --public creates the waitlist and stores its ID in your env. Then import useAddUser from @zot-core/sdk/react, pass the env vars, and render your form. Full guide: npx skills add launch-waitlist-zot/zot-skills.",
   },
   {
     question: "Does Zot work with AI coding agents?",
     answer:
-      "Yes. npx @zot-core/agents add waitlist writes integration guides for Claude Code, Cursor, GitHub Copilot and AGENTS.md, so whichever agent is editing your repo ships the right code on the first try.",
+      "Yes. npx skills add launch-waitlist-zot/zot-skills writes integration guides for Claude Code, Cursor, GitHub Copilot and AGENTS.md, so whichever agent is editing your repo ships the right code on the first try.",
   },
   {
     question: "How does the fake email protection work?",

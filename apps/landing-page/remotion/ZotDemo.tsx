@@ -60,7 +60,7 @@ function Terminal({
 
 function CommandScene() {
   const frame = useCurrentFrame();
-  const fullCommand = "npx @zot-core/agents add waitlist";
+  const fullCommand = "npx skills add launch-waitlist-zot/zot-skills";
   const typingDuration = 75;
   const charsToShow = Math.min(
     fullCommand.length,
