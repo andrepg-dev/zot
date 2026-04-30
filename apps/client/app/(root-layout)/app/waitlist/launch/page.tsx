@@ -93,6 +93,14 @@ export default function LaunchWaitList() {
     }
   }, [userData?.suscriptionPlan, setValue]);
 
+  const sendEmail = watch("sendEmail");
+
+  useEffect(() => {
+    if (step === 3 && !sendEmail) {
+      setStep(2);
+    }
+  }, [step, sendEmail]);
+
   const [selectedApiKey, setSelectedApiKey] = useState<string>("");
   const selectedApiKeyValue = apiKeys?.find((k) => k._id === selectedApiKey)?.apiKey;
 
@@ -262,7 +270,7 @@ export default function LaunchWaitList() {
               {
                 number: 3,
                 title: "Configure email sending",
-                optional: true
+                disabled: !sendEmail
               },
               {
                 number: 4,
@@ -480,7 +488,7 @@ export default function LaunchWaitList() {
                 </Select>
                 <CodeBlock
                   lang="bash"
-                  code={`curl -X POST http://localhost:3010/v1/wait-list/${createdWaitlistId || "wl_abc123"}/user \\
+                  code={`curl -X POST https://api.zot.so/v1/wait-list/${createdWaitlistId || "wl_abc123"}/user \\
   -H "Authorization: Bearer ${selectedApiKeyValue || "your-api-key"}" \\
   -H "Content-Type: application/json" \\
   -d '{
@@ -492,7 +500,7 @@ export default function LaunchWaitList() {
   }'`}
                   displayCode={
                     selectedApiKeyValue
-                      ? `curl -X POST http://localhost:3010/v1/wait-list/${createdWaitlistId || "wl_abc123"}/user \\
+                      ? `curl -X POST https://api.zot.so/v1/wait-list/${createdWaitlistId || "wl_abc123"}/user \\
   -H "Authorization: Bearer ${selectedApiKeyValue.slice(0, 8)}${"•".repeat(20)}" \\
   -H "Content-Type: application/json" \\
   -d '{
@@ -718,7 +726,12 @@ export function JoinWaitlist() {
               <Button className="w-fit" variant="bordered" size="sm" onPress={() => setStep(1)}>
                 <Type variant="sm">Back</Type>
               </Button>
-              <Button color="primary" className="w-fit border" size="sm" onPress={() => setStep(3)}>
+              <Button
+                color="primary"
+                className="w-fit border"
+                size="sm"
+                onPress={() => setStep(sendEmail ? 3 : 4)}
+              >
                 <Type variant="sm">Next</Type>
               </Button>
             </div>
@@ -959,7 +972,7 @@ export function JoinWaitlist() {
                       className="w-fit"
                       variant="bordered"
                       size="sm"
-                      onPress={() => setStep(3)}
+                      onPress={() => setStep(sendEmail ? 3 : 2)}
                     >
                       <Type variant="sm">Back</Type>
                     </Button>

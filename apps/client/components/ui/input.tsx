@@ -56,6 +56,7 @@ const InputComponent = forwardRef<HTMLInputElement, InputProps>((props, ref) => 
     <div className="relative">
       <Input
         ref={innerRef}
+        type={type}
         value={inputValue}
         onChange={handleChange}
         maxLength={maxLength}

@@ -6,6 +6,7 @@ export interface StepperStep {
   number: number;
   title: string;
   optional?: boolean;
+  disabled?: boolean;
 }
 
 export interface StepperProps {
@@ -33,8 +34,14 @@ export default function Stepper({
           return (
             <div
               key={step.number}
-              className="flex relative cursor-pointer"
-              onClick={() => onStepChange?.(step.number)}
+              className={cn(
+                "flex relative",
+                step.disabled ? "cursor-not-allowed opacity-50" : "cursor-pointer"
+              )}
+              onClick={() => {
+                if (step.disabled) return;
+                onStepChange?.(step.number);
+              }}
             >
               <div className="flex flex-col items-center mr-4">
                 <div
