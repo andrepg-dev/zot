@@ -100,7 +100,13 @@ export class EmailTemplatesService {
       const compiledCode = await this.reactToHtmlService.compile(createEmailTemplateDto.code);
       const imageBuffer = await this.screenshotHTML(compiledCode);
 
-      const { url } = await this.s3Service.uploadSingleFile({ file: imageBuffer });
+      const { url } = await this.s3Service.uploadSingleFile({
+        file: {
+          buffer: imageBuffer,
+          mimetype: "image/png",
+          originalname: `email-template-${Date.now()}.png`,
+        },
+      });
       const image = await url;
 
       if (!image.url) {
