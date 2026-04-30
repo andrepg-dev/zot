@@ -345,6 +345,117 @@
         ]
       }
     },
+    "/v1/email-templates": {
+      "post": {
+        "operationId": "EmailTemplatesController_create_v1",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateEmailTemplateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "EmailTemplates"
+        ]
+      },
+      "get": {
+        "operationId": "EmailTemplatesController_findAll_v1",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "EmailTemplates"
+        ]
+      }
+    },
+    "/v1/email-templates/{id}": {
+      "get": {
+        "operationId": "EmailTemplatesController_findOne_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "$ref": "#/components/schemas/ObjectId"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "EmailTemplates"
+        ]
+      },
+      "patch": {
+        "operationId": "EmailTemplatesController_update_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "$ref": "#/components/schemas/ObjectId"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateEmailTemplateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "EmailTemplates"
+        ]
+      },
+      "delete": {
+        "operationId": "EmailTemplatesController_remove_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "$ref": "#/components/schemas/ObjectId"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "EmailTemplates"
+        ]
+      }
+    },
     "/v1/api-key": {
       "post": {
         "description": "Creates a new API key for the authenticated user.",
@@ -1425,117 +1536,6 @@
         ]
       }
     },
-    "/v1/email-templates": {
-      "post": {
-        "operationId": "EmailTemplatesController_create_v1",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateEmailTemplateDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "EmailTemplates"
-        ]
-      },
-      "get": {
-        "operationId": "EmailTemplatesController_findAll_v1",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "EmailTemplates"
-        ]
-      }
-    },
-    "/v1/email-templates/{id}": {
-      "get": {
-        "operationId": "EmailTemplatesController_findOne_v1",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "$ref": "#/components/schemas/ObjectId"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "EmailTemplates"
-        ]
-      },
-      "patch": {
-        "operationId": "EmailTemplatesController_update_v1",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "$ref": "#/components/schemas/ObjectId"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateEmailTemplateDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "EmailTemplates"
-        ]
-      },
-      "delete": {
-        "operationId": "EmailTemplatesController_remove_v1",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "$ref": "#/components/schemas/ObjectId"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "EmailTemplates"
-        ]
-      }
-    },
     "/v1/emails": {
       "post": {
         "operationId": "EmailsController_sendEmail_v1",
@@ -2033,6 +2033,18 @@
           }
         }
       },
+      "CreateEmailTemplateDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "ObjectId": {
+        "type": "object",
+        "properties": {}
+      },
+      "UpdateEmailTemplateDto": {
+        "type": "object",
+        "properties": {}
+      },
       "CreateApiKeyDto": {
         "type": "object",
         "properties": {
@@ -2047,10 +2059,6 @@
         "required": [
           "name"
         ]
-      },
-      "ObjectId": {
-        "type": "object",
-        "properties": {}
       },
       "UpdateApiKeyDto": {
         "type": "object",
@@ -2582,14 +2590,6 @@
           "email",
           "status"
         ]
-      },
-      "CreateEmailTemplateDto": {
-        "type": "object",
-        "properties": {}
-      },
-      "UpdateEmailTemplateDto": {
-        "type": "object",
-        "properties": {}
       },
       "SendEmailDto": {
         "type": "object",

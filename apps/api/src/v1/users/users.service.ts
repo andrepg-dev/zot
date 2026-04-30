@@ -8,6 +8,7 @@ import { InjectModel } from "@nestjs/mongoose";
 import * as bcrypt from "bcrypt";
 import { randomUUID } from "crypto";
 import { Model, Types } from "mongoose";
+import { EmailTemplatesService } from "../email-templates/email-templates.service";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { User } from "./schemas/users.schema";
@@ -28,6 +29,7 @@ export class UsersService {
   constructor(
     @InjectModel(User.name) private userModel: Model<User>,
     private readonly userQuoteService: UserQuoteService,
+    private readonly emailTemplatesService: EmailTemplatesService,
   ) {}
 
   async create(user: CreateUserDto, providers: Array<"local" | "google" | "github">) {
@@ -58,7 +60,11 @@ export class UsersService {
 
       userDocument.quote = userQuote._id;
 
-      return await userDocument.save();
+      const savedUser = await userDocument.save();
+
+      await this.emailTemplatesService.seedDefault(savedUser._id);
+
+      return savedUser;
     } catch (error) {
       if (error instanceof HttpException) throw error;
       throw new HttpException(`Error creating user. ${error}`, HttpStatus.INTERNAL_SERVER_ERROR);

@@ -3,6 +3,7 @@ import {
   HttpStatus,
   Injectable,
   InternalServerErrorException,
+  Logger,
 } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, Types } from "mongoose";
@@ -14,14 +15,59 @@ import { CreateEmailTemplateDto } from "./dto/create-email-template.dto";
 import { UpdateEmailTemplateDto } from "./dto/update-email-template.dto";
 import { EmailTemplate } from "./schemas/email-template.schema";
 
+const WELCOME_TEMPLATE_CODE = `const Email = ({ position = "", email = "" } = {}) => (
+  <Html>
+    <Head />
+    <Preview>You're on the waitlist</Preview>
+    <Body style={{ backgroundColor: "#f6f6f6", fontFamily: "Arial, sans-serif" }}>
+      <Container style={{ backgroundColor: "#ffffff", padding: "32px", margin: "40px auto", maxWidth: "560px", borderRadius: "8px" }}>
+        <Heading style={{ fontSize: "22px", margin: "0 0 16px" }}>You're in!</Heading>
+        <Text style={{ fontSize: "16px", color: "#333", margin: "0 0 12px" }}>
+          Thanks for joining. We saved your spot on the waitlist.
+        </Text>
+        <Text style={{ fontSize: "16px", color: "#333", margin: "0 0 8px" }}>
+          Email: <strong>{email}</strong>
+        </Text>
+        <Text style={{ fontSize: "16px", color: "#333", margin: "0 0 24px" }}>
+          Your position: <strong>#{position}</strong>
+        </Text>
+        <Text style={{ fontSize: "14px", color: "#777", margin: 0 }}>
+          We'll keep you posted as we get closer to launch.
+        </Text>
+      </Container>
+    </Body>
+  </Html>
+);`;
+
 @Injectable()
 export class EmailTemplatesService {
+  private readonly logger = new Logger(EmailTemplatesService.name);
+
   constructor(
     @InjectModel(EmailTemplate.name) private EmailTemplateModel: Model<EmailTemplate>,
     private readonly reactToHtmlService: ReactToHtmlService,
     private readonly userQuoteService: UserQuoteService,
     private readonly s3Service: S3Service,
   ) {}
+
+  async seedDefault(owner: Types.ObjectId) {
+    try {
+      return await this.create(
+        {
+          alias: "Welcome email",
+          subject: "You're on the waitlist",
+          code: WELCOME_TEMPLATE_CODE,
+          status: "published",
+        },
+        owner,
+      );
+    } catch (error) {
+      this.logger.warn(
+        `Failed to seed default email template for ${owner.toString()}: ${(error as Error).message}`,
+      );
+      return null;
+    }
+  }
 
   async screenshotHTML(html: string) {
     const browser = await puppeteer.launch();
