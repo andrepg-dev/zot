@@ -316,7 +316,7 @@ function LoginInner() {
               <InputComponent
                 id="email"
                 type="email"
-                placeholder="user@example.com"
+                placeholder="founder@example.com"
                 radius="none"
                 classNames={{ inputWrapper: inputWrapperClass }}
                 {...register("email")}
