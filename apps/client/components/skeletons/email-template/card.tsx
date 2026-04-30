@@ -6,7 +6,7 @@ export default function EmailTemplateCardSkeleton({ count = 3 }: { count?: numbe
     <div className="relative col-span-full grid grid-cols-subgrid">
       {Array.from({ length: count }).map((_, i) => (
         <div key={i} className="flex flex-col gap-2">
-          <div className="bg-default-50/70 border rounded-sm w-full aspect-video flex justify-center relative">
+          <div className="bg-default-50/70 border w-full aspect-video flex justify-center relative">
             <Skeleton className="w-3/4 h-3/4 absolute bottom-0 rounded-sm" />
           </div>
 

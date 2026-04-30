@@ -84,7 +84,7 @@ export default function EmailTemplatesPage() {
       <span className="text-default-400 text-small">Total {templates.length} templates</span>
 
       {isPending ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-6 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-6 gap-6 mt-4">
           <EmailTemplateCardSkeleton />
         </div>
       ) : templates.length === 0 ? (
