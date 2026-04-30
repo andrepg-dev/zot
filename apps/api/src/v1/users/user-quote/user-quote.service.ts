@@ -188,7 +188,11 @@ export class UserQuoteService {
 
       return quote.toJSON();
     } catch (error) {
-      if (error instanceof NotFoundException || error instanceof BadRequestException) {
+      if (
+        error instanceof NotFoundException ||
+        error instanceof BadRequestException ||
+        error instanceof HttpException
+      ) {
         throw error;
       }
 
