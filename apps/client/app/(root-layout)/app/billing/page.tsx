@@ -112,7 +112,7 @@ export default function BillingPage() {
                   <p className="text-xs uppercase tracking-wide text-blue-300/80">{plan.name}</p>
                   <p className="text-lg font-semibold">{plan.blurb}</p>
                   <div className="flex items-baseline gap-2">
-                    {interval === "yearly" && plan.price.annual !== plan.price.monthly && (
+                    {interval === "yearly" && plan.price.yearly !== plan.price.monthly && (
                       <span className="text-2xl font-medium text-muted-foreground line-through decoration-red-400/70 decoration-2">
                         {plan.price.monthly}
                       </span>

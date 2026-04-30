@@ -3,8 +3,8 @@ export const ANNUAL_DISCOUNT = 0.16;
 export const plans = [
   {
     name: "Free",
-    price: { monthly: "$0", annual: "$0" },
-    priceSuffix: { monthly: "/ month", annual: "/ month" },
+    price: { monthly: "$0", yearly: "$0" },
+    priceSuffix: { monthly: "/ month", yearly: "/ month" },
     blurb: "A demo to try Zot before you launch.",
     ctaLabel: "Free plan",
     ctaHref: "/app/waitlist/launch",
@@ -21,8 +21,8 @@ export const plans = [
   },
   {
     name: "Starter",
-    price: { monthly: "$19", annual: "$16" },
-    priceSuffix: { monthly: "/ month", annual: "/ month" },
+    price: { monthly: "$19", yearly: "$16" },
+    priceSuffix: { monthly: "/ month", yearly: "/ month" },
     blurb: "For indie hackers who already validated something.",
     ctaLabel: "Upgrade plan",
     ctaHref: "/app/billing",
@@ -39,8 +39,8 @@ export const plans = [
   },
   {
     name: "Pro",
-    price: { monthly: "$49", annual: "$41" },
-    priceSuffix: { monthly: "/ month", annual: "/ month" },
+    price: { monthly: "$49", yearly: "$41" },
+    priceSuffix: { monthly: "/ month", yearly: "/ month" },
     blurb: "For products in production that need real headroom.",
     ctaLabel: "Upgrade plan",
     ctaHref: "/app/billing",
