@@ -70,7 +70,10 @@ export class EmailTemplatesService {
   }
 
   async screenshotHTML(html: string) {
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({
+      executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    });
     const page = await browser.newPage();
 
     await page.setViewport({ width: 800, height: 600 });
