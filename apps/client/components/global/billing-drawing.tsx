@@ -44,8 +44,8 @@ export default function BillingDrawing({ children }: { children: React.ReactNode
                   </p>
                   <p className="text-base font-semibold">{plan.blurb}</p>
                   <div className="flex items-baseline gap-1.5">
-                    <span className="text-3xl font-semibold">{plan.price}</span>
-                    <span className="text-sm text-muted-foreground">{plan.frequency}</span>
+                    <span className="text-3xl font-semibold">{plan.price.monthly}</span>
+                    <span className="text-sm text-muted-foreground">{plan.priceSuffix.monthly}</span>
                   </div>
                 </div>
 
@@ -54,7 +54,7 @@ export default function BillingDrawing({ children }: { children: React.ReactNode
                   onClick={() => {
                     posthog.capture("checkout_initiated", {
                       plan: plan.name,
-                      price: plan.price,
+                      price: plan.price.monthly,
                       is_popular: plan.popular ?? false
                     });
                     onOpenChange();
