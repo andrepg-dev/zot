@@ -1,71 +1,70 @@
+"use client";
+
 import Grainient from "@/components/Grainient";
 import LandingPageTitle from "@/components/LandingPageTitle";
 import { getDashboardUrl } from "@/lib/dashboard-url";
 import Link from "next/link";
+import { useState } from "react";
+
+const ANNUAL_DISCOUNT = 0.16;
+
+type Interval = "monthly" | "yearly";
 
 /** Planes alineados con apps/client/constants/billing-constant.ts */
 const PLANS = [
   {
     name: "Free",
-    price: "$0",
-    frequency: "/ month",
-    blurb: "Perfect to validate an idea and run simple launches.",
+    price: { monthly: "$0", annual: "$0" },
+    blurb: "A demo to try Zot before you launch.",
     ctaLabel: "Get started",
     ctaHref: "__dashboard__",
     popular: false,
     features: [
-      "15,000 users signup limit",
-      "3 waitlists maximum",
-      "3 landing pages maximum",
-      "100 users emailed per month",
-      "10 email templates",
+      "500 users signup limit",
+      "1 waitlist",
+      "1 landing page",
+      "50 users emailed per month",
       "Custom email creation",
       "Export your data",
       "Analytics for signups and sent emails",
-      "Trend search powered by Google Search",
       "@zot-core/cli, @zot-core/sdk and @zot-core/agents included",
     ],
   },
   {
     name: "Starter",
-    price: "$7",
-    frequency: "/ month",
-    blurb: "For indie hackers ready to grow beyond validation.",
+    price: { monthly: "$19", annual: "$16" },
+    blurb: "For indie hackers who already validated something.",
     ctaLabel: "Start with Starter",
     ctaHref: "__dashboard__",
     popular: false,
     features: [
-      "100,000 users signup limit",
-      "10 waitlists maximum",
-      "10 landing pages maximum",
+      "5,000 users signup limit",
+      "3 waitlists maximum",
       "1,000 users emailed per month",
-      "50 email templates",
       "Custom email creation",
-      "2 domains for branded emails",
+      "1 domain for branded emails",
       "Analytics for signups and sent emails",
       "Export your data",
       "@zot-core/cli, @zot-core/sdk and @zot-core/agents included",
     ],
   },
   {
-    name: "Premium",
-    price: "$14",
-    frequency: "/ month",
-    blurb: "For products in production that need headroom and support.",
+    name: "Pro",
+    price: { monthly: "$49", annual: "$41" },
+    blurb: "For products in production that need real headroom.",
     ctaLabel: "Upgrade plan",
     ctaHref: "__dashboard__",
     popular: true,
     features: [
-      "1,500,000 users signup limit",
-      "30 waitlists maximum",
-      "30 landing pages maximum",
+      "50,000 users signup limit",
+      "10 waitlists maximum",
       "10,000 users emailed per month",
-      "200 email templates",
       "Custom email creation",
       "10 domains for branded emails",
       "Extra security to block fake or disposable emails",
       "Analytics for sent emails and registered users",
       "Export your data",
+      "Use more powerful AI models",
       "Priority support",
       "@zot-core/cli, @zot-core/sdk and @zot-core/agents included",
     ],
@@ -74,6 +73,8 @@ const PLANS = [
 
 export default function PricingSection() {
   const dashboardUrl = getDashboardUrl();
+  const [interval, setInterval] = useState<Interval>("monthly");
+  const discountPct = Math.round(ANNUAL_DISCOUNT * 100);
   return (
     <section
       className="px-4 sm:px-6 md:px-8 lg:px-16 pb-16 sm:pb-20 lg:pb-24 pt-12 sm:pt-14 lg:pt-16 bg-[#000000]"
@@ -86,7 +87,37 @@ export default function PricingSection() {
         description="Transparent pricing with zero surprises. Upgrade when you need more room to scale launches, emails, and domains."
       />
 
-      <div className="mx-auto mt-10 sm:mt-12 lg:mt-16 grid max-w-6xl grid-cols-1 gap-3 sm:gap-4 md:grid-cols-2 lg:grid-cols-3 items-start px-0">
+      <div className="mx-auto mt-8 flex justify-center">
+        <div className="inline-flex items-center gap-1 border border-white/10 bg-black/40 p-1 backdrop-blur">
+          <button
+            type="button"
+            onClick={() => setInterval("monthly")}
+            className={`px-4 py-1.5 text-sm transition-colors ${
+              interval === "monthly"
+                ? "bg-[#006FEE] text-white"
+                : "text-zinc-400 hover:text-white"
+            }`}
+          >
+            Monthly
+          </button>
+          <button
+            type="button"
+            onClick={() => setInterval("yearly")}
+            className={`px-4 py-1.5 text-sm transition-colors flex items-center gap-2 ${
+              interval === "yearly"
+                ? "bg-[#006FEE] text-white"
+                : "text-zinc-400 hover:text-white"
+            }`}
+          >
+            Yearly
+            <span className="text-[10px] font-semibold uppercase tracking-wide text-blue-200 bg-blue-500/20 border border-blue-500/40 px-1.5 py-0.5">
+              Save {discountPct}%
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <div className="mx-auto mt-8 sm:mt-10 lg:mt-12 grid max-w-6xl grid-cols-1 gap-3 sm:gap-4 md:grid-cols-2 lg:grid-cols-3 items-start px-0">
         {PLANS.map((plan) => {
           const isPremium = plan.popular;
           return (
@@ -164,12 +195,15 @@ export default function PricingSection() {
                     {plan.blurb}
                   </p>
                   <div className="flex flex-wrap items-baseline gap-2">
+                    {interval === "yearly" && plan.price.annual !== plan.price.monthly && (
+                      <span className="text-xl sm:text-2xl font-medium text-muted-foreground line-through decoration-red-400/70 decoration-2">
+                        {plan.price.monthly}
+                      </span>
+                    )}
                     <span className="text-3xl sm:text-4xl font-semibold text-foreground">
-                      {plan.price}
+                      {interval === "yearly" ? plan.price.annual : plan.price.monthly}
                     </span>
-                    <span className="text-muted-foreground">
-                      {plan.frequency}
-                    </span>
+                    <span className="text-muted-foreground">/ month</span>
                   </div>
                 </div>
 
@@ -223,10 +257,6 @@ export default function PricingSection() {
             </div>
           );
         })}
-      </div>
-
-      <div className="mx-auto mt-8 sm:mt-10 max-w-2xl text-center text-xs text-zinc-500 space-y-1">
-        <p>Prices and plans may change.</p>
       </div>
     </section>
   );

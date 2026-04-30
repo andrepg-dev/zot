@@ -2230,6 +2230,16 @@
             ],
             "example": "PREMIUM"
           },
+          "interval": {
+            "type": "string",
+            "description": "Billing interval. Yearly applies a 16% discount.",
+            "enum": [
+              "monthly",
+              "yearly"
+            ],
+            "example": "monthly",
+            "default": "monthly"
+          },
           "couponCode": {
             "type": "string",
             "description": "Optional promotion code to apply immediately. If omitted, Stripe Checkout still allows entering a code manually.",

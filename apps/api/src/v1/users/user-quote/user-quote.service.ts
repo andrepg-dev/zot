@@ -33,27 +33,27 @@ export class UserQuoteService {
   };
 
   public readonly freeQuoteLimit = {
-    userSignUp: 15000,
-    waitlist: 3,
-    landingPage: 3,
-    emailsSent: 100,
+    userSignUp: 500,
+    waitlist: 1,
+    landingPage: 1,
+    emailsSent: 50,
     emailsTemplates: 10,
     domains: { email: 0, general: 0 },
   };
 
   public readonly starterQuoteLimit = {
-    userSignUp: 100000,
-    waitlist: 10,
-    landingPage: 10,
+    userSignUp: 5000,
+    waitlist: 3,
+    landingPage: 3,
     emailsSent: 1000,
     emailsTemplates: 50,
-    domains: { email: 2, general: 100 },
+    domains: { email: 1, general: 100 },
   };
 
   public readonly premiumQuoteLimit = {
-    userSignUp: 1500000,
-    waitlist: 30,
-    landingPage: 30,
+    userSignUp: 50000,
+    waitlist: 10,
+    landingPage: 10,
     emailsSent: 10000,
     emailsTemplates: 200,
     domains: { email: 10, general: 10000 },
@@ -141,7 +141,7 @@ export class UserQuoteService {
 
       // <================== GET THE USER LIMITS ==================>
       let serviceLimit: number;
-      let subKey = service === "domains.email" ? "email" : "general";
+      const subKey = service === "domains.email" ? "email" : "general";
       const planLimits = this.resolveQuoteLimit(userPlan);
 
       if (isNested) {

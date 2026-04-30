@@ -50,7 +50,12 @@ export class SubscriptionsController {
     @UserId() userId: Types.ObjectId,
     @Body() body: CreateCheckoutSessionDto,
   ) {
-    return this.subscriptionsService.createCheckoutSession(userId, body.plan, body.couponCode);
+    return this.subscriptionsService.createCheckoutSession(
+      userId,
+      body.plan,
+      body.interval,
+      body.couponCode,
+    );
   }
 
   @Public()

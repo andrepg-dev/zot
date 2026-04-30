@@ -69,37 +69,7 @@ export default function HomePage() {
 
   return (
     <div className="font-sans overflow-x-hidden">
-      <Link
-        href="#pricing"
-        aria-label='Use coupon "EARLY-USER" to get 10% off'
-        className="group absolute top-0 left-0 right-0 z-30 block overflow-hidden border-b border-white/10 backdrop-blur-md"
-        style={{
-          background:
-            "linear-gradient(90deg, rgba(0,111,238,0.14) 0%, rgba(0,111,238,0.32) 50%, rgba(0,111,238,0.14) 100%)",
-        }}
-      >
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 opacity-40"
-          style={{
-            backgroundImage:
-              "radial-gradient(ellipse 40% 120% at 50% 50%, rgba(138,182,255,0.35) 0%, transparent 60%)",
-          }}
-        />
-        <div className="relative mx-auto flex max-w-7xl items-center justify-center gap-2 sm:gap-4 px-4 sm:px-6 py-2 sm:py-2.5 text-center">
-          <p className="text-[11px] sm:text-sm text-white/90">
-            <span className="font-semibold text-white">Use coupon &quot;EARLY-USER&quot; for 10% off</span>
-            <span className="hidden sm:inline"> on your Starter or Premium plan.</span>
-            <span className="sm:hidden"> on paid plans.</span>
-          </p>
-          <span className="hidden sm:inline-flex items-center gap-1 text-sm font-medium text-white underline decoration-white/40 decoration-2 underline-offset-4 transition-colors group-hover:decoration-white">
-            Claim discount
-            <span aria-hidden className="transition-transform group-hover:translate-x-0.5">→</span>
-          </span>
-        </div>
-      </Link>
-
-      <div className="w-full h-screen absolute -z-10 bg-black bg-[url('/background.avif')] bg-cover bg-center">
+<div className="w-full h-screen absolute -z-10 bg-black bg-[url('/background.avif')] bg-cover bg-center">
         <DarkVeil
           speed={0.1}
           hueShift={20}
@@ -139,7 +109,7 @@ export default function HomePage() {
       </header>
 
       <HeroCascade className="relative flex justify-center items-center w-full min-h-screen flex-col pt-28 sm:pt-32 pb-32 sm:pb-28" aria-label="Hero section">
-        <div className="w-full max-w-[1400px] px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] gap-10 lg:gap-12 xl:gap-16 items-center mb-16 sm:mb-20 lg:mb-28">
+        <div className="w-full sm:max-w-[1400px] 2xl:max-w-[1600px] px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] gap-10 lg:gap-12 xl:gap-16 items-center mb-16 sm:mb-20 lg:mb-28">
           <div className="flex flex-col gap-5 sm:gap-6 items-center lg:items-start text-center lg:text-left">
             <div
               data-hero-badge

@@ -10,6 +10,7 @@ import Stripe from "stripe";
 import { UsersService } from "../users/users.service";
 
 export type PaidPlan = "STARTER" | "PREMIUM";
+export type BillingInterval = "monthly" | "yearly";
 
 const PLAN_RANK: Record<"FREE" | PaidPlan, number> = {
   FREE: 0,
@@ -32,20 +33,30 @@ export class SubscriptionsService {
     });
   }
 
-  getPriceIdForPlan(plan: PaidPlan): string | undefined {
-    const key = plan === "STARTER" ? "STRIPE_STARTER_PRICE_ID" : "STRIPE_PREMIUM_PRICE_ID";
+  getPriceIdForPlan(plan: PaidPlan, interval: BillingInterval = "monthly"): string | undefined {
+    const suffix = interval === "yearly" ? "_YEARLY_PRICE_ID" : "_PRICE_ID";
+    const key = plan === "STARTER" ? `STRIPE_STARTER${suffix}` : `STRIPE_PREMIUM${suffix}`;
     return this.configService.get<string>(key);
   }
 
   resolvePlanFromPriceId(priceId: string | undefined): PaidPlan | null {
     if (!priceId) return null;
-    if (priceId === this.configService.get<string>("STRIPE_STARTER_PRICE_ID")) return "STARTER";
-    if (priceId === this.configService.get<string>("STRIPE_PREMIUM_PRICE_ID")) return "PREMIUM";
+    const monthlyStarter = this.configService.get<string>("STRIPE_STARTER_PRICE_ID");
+    const yearlyStarter = this.configService.get<string>("STRIPE_STARTER_YEARLY_PRICE_ID");
+    const monthlyPremium = this.configService.get<string>("STRIPE_PREMIUM_PRICE_ID");
+    const yearlyPremium = this.configService.get<string>("STRIPE_PREMIUM_YEARLY_PRICE_ID");
+    if (priceId === monthlyStarter || priceId === yearlyStarter) return "STARTER";
+    if (priceId === monthlyPremium || priceId === yearlyPremium) return "PREMIUM";
     return null;
   }
 
-  async createCheckoutSession(userId: Types.ObjectId, plan: PaidPlan, couponCode?: string) {
-    const priceId = this.getPriceIdForPlan(plan);
+  async createCheckoutSession(
+    userId: Types.ObjectId,
+    plan: PaidPlan,
+    interval: BillingInterval = "monthly",
+    couponCode?: string,
+  ) {
+    const priceId = this.getPriceIdForPlan(plan, interval);
     const checkoutSuccessUrl = this.configService.get<string>("STRIPE_CHECKOUT_SUCCESS_URL");
     const checkoutCancelUrl = this.configService.get<string>("STRIPE_CHECKOUT_CANCEL_URL");
     const frontendUrl = this.configService.get<string>("FRONTEND_URL");

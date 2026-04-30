@@ -3,12 +3,13 @@
 import { getProfile } from "@/actions/auth/profile";
 import { createCheckoutSession } from "@/actions/subscriptions/subscriptions.actions";
 import PageComponent from "@/components/layouts/page-component";
-import { plans } from "@/constants/billing-constant";
+import { ANNUAL_DISCOUNT, plans } from "@/constants/billing-constant";
 import { CheckIcon } from "@heroicons/react/24/solid";
 import { addToast } from "@heroui/toast";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import type { PaidPlan } from "@repo/packages/shared/schemas";
+import type { BillingInterval, PaidPlan } from "@repo/packages/shared/schemas";
 import posthog from "posthog-js";
+import { useState } from "react";
 
 const PLAN_RANK: Record<string, number> = {
   FREE: 0,
@@ -17,6 +18,8 @@ const PLAN_RANK: Record<string, number> = {
 };
 
 export default function BillingPage() {
+  const [interval, setInterval] = useState<BillingInterval>("monthly");
+
   const { data: profile } = useQuery({
     queryKey: ["user-profile"],
     queryFn: getProfile
@@ -26,7 +29,7 @@ export default function BillingPage() {
   const currentRank = PLAN_RANK[currentPlan] ?? 0;
 
   const { mutate: startCheckout, isPending: isCheckoutPending } = useMutation({
-    mutationFn: (plan: PaidPlan) => createCheckoutSession({ plan }),
+    mutationFn: (plan: PaidPlan) => createCheckoutSession({ plan, interval }),
     onSuccess: (data) => {
       if (data?.url) {
         window.location.href = data.url;
@@ -38,6 +41,8 @@ export default function BillingPage() {
       addToast({ title: "Error", description: err.message, color: "danger" });
     }
   });
+
+  const discountPct = Math.round(ANNUAL_DISCOUNT * 100);
 
   return (
     <PageComponent className="max-w-6xl mx-auto text-foreground relative">
@@ -51,12 +56,44 @@ export default function BillingPage() {
           </p>
         </div>
 
+        <div className="flex justify-center">
+          <div className="inline-flex items-center gap-1 border border-white/10 bg-default-50/70 p-1">
+            <button
+              type="button"
+              onClick={() => setInterval("monthly")}
+              className={`px-4 py-1.5 text-sm transition-colors ${
+                interval === "monthly"
+                  ? "bg-[#4338CA]/70 text-white"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              Monthly
+            </button>
+            <button
+              type="button"
+              onClick={() => setInterval("yearly")}
+              className={`px-4 py-1.5 text-sm transition-colors flex items-center gap-2 ${
+                interval === "yearly"
+                  ? "bg-[#4338CA]/70 text-white"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              Yearly
+              <span className="text-[10px] font-semibold uppercase tracking-wide text-blue-200 bg-blue-500/20 border border-blue-500/40 px-1.5 py-0.5">
+                Save {discountPct}%
+              </span>
+            </button>
+          </div>
+        </div>
+
         <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3 max-w-6xl mx-auto w-full mt-2">
           {plans.map((plan) => {
-            const planKey = plan.name.toUpperCase();
+            const planKey = plan.name.toUpperCase() === "PRO" ? "PREMIUM" : plan.name.toUpperCase();
             const planRank = PLAN_RANK[planKey] ?? 0;
             const isCurrent = planKey === currentPlan && currentPlan !== "FREE";
             const isPaidUpgrade = planRank > currentRank && planKey !== "FREE";
+            const displayPrice = plan.price[interval];
+            const displaySuffix = plan.priceSuffix[interval];
 
             return (
               <div
@@ -75,8 +112,13 @@ export default function BillingPage() {
                   <p className="text-xs uppercase tracking-wide text-blue-300/80">{plan.name}</p>
                   <p className="text-lg font-semibold">{plan.blurb}</p>
                   <div className="flex items-baseline gap-2">
-                    <span className="text-4xl font-semibold">{plan.price}</span>
-                    <span className="text-muted-foreground">{plan.frequency}</span>
+                    {interval === "yearly" && plan.price.annual !== plan.price.monthly && (
+                      <span className="text-2xl font-medium text-muted-foreground line-through decoration-red-400/70 decoration-2">
+                        {plan.price.monthly}
+                      </span>
+                    )}
+                    <span className="text-4xl font-semibold">{displayPrice}</span>
+                    <span className="text-muted-foreground">{displaySuffix}</span>
                   </div>
                 </div>
 
@@ -91,7 +133,8 @@ export default function BillingPage() {
                     onClick={() => {
                       posthog.capture("checkout_initiated", {
                         plan: plan.name,
-                        price: plan.price,
+                        price: displayPrice,
+                        interval,
                         is_popular: plan.popular ?? false
                       });
                       startCheckout(planKey as PaidPlan);
