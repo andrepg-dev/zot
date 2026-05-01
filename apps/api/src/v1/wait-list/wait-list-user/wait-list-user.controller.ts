@@ -15,6 +15,10 @@ import {
 import { Types } from "mongoose";
 import { Public } from "../../auth/decorators/skip-auth.decorator";
 import { EmailSecurityService } from "../../core/email-security/email-security.service";
+import {
+  BulkImportWaitListUsersDto,
+  BulkImportWaitListUsersResponseDto,
+} from "./dto/bulk-import-wait-list-users.dto";
 import { RegisterWaitListUserDto } from "./dto/register-wait-list-user.dto";
 import { UpdateWaitListUserStatusDto } from "./dto/update-wait-list-user-status.dto";
 import {
@@ -171,6 +175,26 @@ export class WaitListUserController {
     @Body() dto: UpdateWaitListUserStatusDto,
   ) {
     return await this.waitListUserService.updateStatus(waitlistId, dto.email, dto.status, userId);
+  }
+
+  @Post("bulk")
+  @ApiBearerAuth("JWT-auth")
+  @ApiOperation({
+    summary: "Bulk import waitlist users",
+    description:
+      "Imports a list of users into the waitlist. Skips emails that are already registered and reports per-row errors. Max 5000 users per request.",
+  })
+  @ApiCreatedResponse({
+    description: "Bulk import summary",
+    type: BulkImportWaitListUsersResponseDto,
+  })
+  @ApiUnauthorizedResponse({ description: "Not authenticated or not the waitlist owner" })
+  async bulkImport(
+    @Param("waitlistId", ParseObjectIdPipe) waitlistId: Types.ObjectId,
+    @UserId() userId: Types.ObjectId,
+    @Body() dto: BulkImportWaitListUsersDto,
+  ) {
+    return await this.waitListUserService.bulkImport(waitlistId, userId, dto.users);
   }
 
   @Post("bulk-delete")

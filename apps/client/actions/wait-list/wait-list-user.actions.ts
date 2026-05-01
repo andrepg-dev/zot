@@ -50,3 +50,28 @@ export async function deleteWaitListUser(waitlistId: string, emails: string | Ar
     body: JSON.stringify(emails)
   });
 }
+
+export type BulkImportWaitListUserItem = {
+  email: string;
+  name?: string;
+  metadata?: Record<string, unknown>;
+};
+
+export type BulkImportWaitListUsersResponse = {
+  added: number;
+  skipped: number;
+  errors: Array<{ email: string; reason: string }>;
+};
+
+export async function importWaitListUsers(
+  waitlistId: string,
+  users: BulkImportWaitListUserItem[]
+) {
+  return await FetchWrapper<BulkImportWaitListUsersResponse>(
+    `/wait-list/${waitlistId}/user/bulk`,
+    {
+      method: "POST",
+      body: JSON.stringify({ users })
+    }
+  );
+}

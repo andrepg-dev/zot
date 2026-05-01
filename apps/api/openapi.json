@@ -1456,6 +1456,57 @@
         ]
       }
     },
+    "/v1/wait-list/{waitlistId}/user/bulk": {
+      "post": {
+        "description": "Imports a list of users into the waitlist. Skips emails that are already registered and reports per-row errors. Max 5000 users per request.",
+        "operationId": "WaitListUserController_bulkImport_v1",
+        "parameters": [
+          {
+            "name": "waitlistId",
+            "required": true,
+            "in": "path",
+            "description": "Waitlist MongoDB ObjectId",
+            "schema": {
+              "$ref": "#/components/schemas/ObjectId"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BulkImportWaitListUsersDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Bulk import summary",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BulkImportWaitListUsersResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated or not the waitlist owner"
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "Bulk import waitlist users",
+        "tags": [
+          "WaitList Users"
+        ]
+      }
+    },
     "/v1/wait-list/{waitlistId}/user/bulk-delete": {
       "post": {
         "description": "Removes a user from the waitlist by their email address.",
@@ -2589,6 +2640,74 @@
         "required": [
           "email",
           "status"
+        ]
+      },
+      "BulkImportWaitListUserItem": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "user@example.com",
+            "format": "email"
+          },
+          "name": {
+            "type": "string",
+            "example": "Jane Doe"
+          },
+          "metadata": {
+            "type": "object",
+            "example": {
+              "plan": "pro"
+            }
+          }
+        },
+        "required": [
+          "email"
+        ]
+      },
+      "BulkImportWaitListUsersDto": {
+        "type": "object",
+        "properties": {
+          "users": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BulkImportWaitListUserItem"
+            }
+          }
+        },
+        "required": [
+          "users"
+        ]
+      },
+      "BulkImportWaitListUsersResponseDto": {
+        "type": "object",
+        "properties": {
+          "added": {
+            "type": "number",
+            "description": "Number of users successfully added"
+          },
+          "skipped": {
+            "type": "number",
+            "description": "Number of users skipped (already in this waitlist)"
+          },
+          "errors": {
+            "description": "Per-row errors: email and reason",
+            "example": [
+              {
+                "email": "bad-email",
+                "reason": "Invalid email"
+              }
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "added",
+          "skipped",
+          "errors"
         ]
       },
       "SendEmailDto": {

@@ -9,15 +9,22 @@ import PageComponent from "@/components/layouts/page-component";
 import Type from "@/components/type";
 import Chip from "@/components/ui/chip";
 import InputComponent from "@/components/ui/input";
+import ImportUsersModal, {
+  type ImportMethod
+} from "@/components/wait-list/import-users-modal";
 import SendCampaignModal from "@/components/wait-list/send-campaign-modal";
 import { useHotkey } from "@/hooks/use-hotkey";
 import { formatDateTime } from "@/lib/format-date";
 import { exportToCsv } from "@/lib/utils";
 import {
   ArrowDownTrayIcon,
+  ArrowUpTrayIcon,
   ChevronDownIcon,
+  ClipboardDocumentListIcon,
   MagnifyingGlassIcon,
+  PencilSquareIcon,
   RocketLaunchIcon,
+  Square2StackIcon,
   TrashIcon
 } from "@heroicons/react/24/outline";
 import { Kbd } from "@heroui/kbd";
@@ -75,7 +82,14 @@ export default function AudiencePage({ params }: { params: Promise<{ id: string 
   const confirmModal = useDisclosure();
   const exportModal = useDisclosure();
   const sendModal = useDisclosure();
+  const importModal = useDisclosure();
+  const [importMethod, setImportMethod] = useState<ImportMethod>("paste");
   const queryClient = useQueryClient();
+
+  function handleOpenImport(method: ImportMethod) {
+    setImportMethod(method);
+    importModal.onOpen();
+  }
 
   useHotkey({
     key: "k",
@@ -276,6 +290,52 @@ export default function AudiencePage({ params }: { params: Promise<{ id: string 
               </Dropdown>
             )}
 
+            <Dropdown>
+              <DropdownTrigger>
+                <GlobalButton
+                  size="sm"
+                  variant="faded"
+                  startContent={<ArrowUpTrayIcon className="size-4" />}
+                  endContent={<ChevronDownIcon className="size-4" />}
+                >
+                  Add users
+                </GlobalButton>
+              </DropdownTrigger>
+              <DropdownMenu
+                aria-label="Add users"
+                onAction={(key) => handleOpenImport(key as ImportMethod)}
+              >
+                <DropdownItem
+                  key="manual"
+                  startContent={<PencilSquareIcon className="size-4" />}
+                  description="Add a single user by email"
+                >
+                  Add manually
+                </DropdownItem>
+                <DropdownItem
+                  key="paste"
+                  startContent={<ClipboardDocumentListIcon className="size-4" />}
+                  description="Paste a list of emails"
+                >
+                  Paste emails
+                </DropdownItem>
+                <DropdownItem
+                  key="csv"
+                  startContent={<ArrowUpTrayIcon className="size-4" />}
+                  description="Upload a .csv file"
+                >
+                  Upload CSV
+                </DropdownItem>
+                <DropdownItem
+                  key="from-waitlist"
+                  startContent={<Square2StackIcon className="size-4" />}
+                  description="Copy users from another waitlist"
+                >
+                  From another waitlist
+                </DropdownItem>
+              </DropdownMenu>
+            </Dropdown>
+
             <GlobalButton
               size="sm"
               variant="faded"
@@ -440,6 +500,13 @@ export default function AudiencePage({ params }: { params: Promise<{ id: string 
         onOpenChange={sendModal.onOpenChange}
         waitlistId={id}
         users={campaignUsers}
+      />
+
+      <ImportUsersModal
+        isOpen={importModal.isOpen}
+        onOpenChange={importModal.onOpenChange}
+        waitlistId={id}
+        initialMethod={importMethod}
       />
 
       <Modal isOpen={exportModal.isOpen} onOpenChange={exportModal.onOpenChange} radius="sm">

@@ -12,6 +12,7 @@ import { UserQuoteService } from "../../users/user-quote/user-quote.service";
 import { WaitListUser } from "../schemas/wait-list-user.schema";
 import { WaitList } from "../schemas/wait-list.schema";
 import { WaitlistWebhookEvent } from "../schemas/waitlist-webhooks-events.schema";
+import { BulkImportWaitListUserItem } from "./dto/bulk-import-wait-list-users.dto";
 import { RegisterWaitListUserDto } from "./dto/register-wait-list-user.dto";
 
 @Injectable()
@@ -236,6 +237,83 @@ export class WaitListUserService {
         error instanceof Error ? error.message : "Error registering in waitlist.",
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
+    }
+  }
+
+  async bulkImport(
+    waitlistId: Types.ObjectId,
+    owner: Types.ObjectId,
+    items: BulkImportWaitListUserItem[],
+  ): Promise<{ added: number; skipped: number; errors: Array<{ email: string; reason: string }> }> {
+    await this.validateOwnership(waitlistId, owner);
+
+    const errors: Array<{ email: string; reason: string }> = [];
+
+    const seen = new Set<string>();
+    const normalized: BulkImportWaitListUserItem[] = [];
+    for (const item of items) {
+      const email = item.email.trim().toLowerCase();
+      if (seen.has(email)) {
+        errors.push({ email, reason: "Duplicate in import payload" });
+        continue;
+      }
+      seen.add(email);
+      normalized.push({ ...item, email });
+    }
+
+    if (normalized.length === 0) {
+      return { added: 0, skipped: 0, errors };
+    }
+
+    const existing = await this.WaitListUserModel.find({
+      waitlistId,
+      email: { $in: normalized.map((u) => u.email) },
+    })
+      .select("email")
+      .lean();
+    const existingSet = new Set(existing.map((u) => u.email));
+
+    const toInsert = normalized.filter((u) => !existingSet.has(u.email));
+    const skipped = normalized.length - toInsert.length;
+
+    if (toInsert.length === 0) {
+      return { added: 0, skipped, errors };
+    }
+
+    const lastUser = await this.WaitListUserModel.findOne({ waitlistId })
+      .sort({ position: -1 })
+      .select("position")
+      .lean();
+    let nextPosition = (lastUser?.position ?? 0) + 1;
+
+    const docs = toInsert.map((u) => ({
+      email: u.email,
+      name: u.name,
+      metadata: u.metadata,
+      waitlistId,
+      position: nextPosition++,
+      source: "organic" as const,
+    }));
+
+    try {
+      const inserted = await this.WaitListUserModel.insertMany(docs, { ordered: false });
+      return { added: inserted.length, skipped, errors };
+    } catch (err: unknown) {
+      const writeErrors =
+        (err as { writeErrors?: Array<{ err?: { op?: { email?: string }; errmsg?: string } }> })
+          ?.writeErrors ?? [];
+      const insertedCount =
+        (err as { insertedDocs?: unknown[] })?.insertedDocs?.length ??
+        Math.max(docs.length - writeErrors.length, 0);
+
+      for (const writeErr of writeErrors) {
+        errors.push({
+          email: writeErr.err?.op?.email ?? "",
+          reason: writeErr.err?.errmsg ?? "Insert failed",
+        });
+      }
+
+      return { added: insertedCount, skipped, errors };
     }
   }
 
