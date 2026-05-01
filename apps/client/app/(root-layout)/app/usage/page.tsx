@@ -18,6 +18,7 @@ interface QuotaSection {
   title: string;
   description: string;
   items: QuotaItem[];
+  disabled?: boolean;
 }
 
 interface UserQuoteResponse {
@@ -77,7 +78,8 @@ function buildSections(data: UserQuoteResponse): QuotaSection[] {
     {
       title: "Landing Pages",
       description: "Build and publish landing pages for your products.",
-      items: [{ label: "Landing pages", used: usage.landingPage, limit: limits.landingPage }]
+      items: [{ label: "Landing pages", used: usage.landingPage, limit: limits.landingPage }],
+      disabled: true
     },
     {
       title: "Domains",
@@ -85,7 +87,8 @@ function buildSections(data: UserQuoteResponse): QuotaSection[] {
       items: [
         { label: "Email domains", used: usage.domains.email, limit: limits.domains.email },
         { label: "General domains", used: usage.domains.general, limit: limits.domains.general }
-      ]
+      ],
+      disabled: true
     }
   ];
 }
@@ -127,14 +130,22 @@ function QuotaSectionBlock({
   isLast: boolean;
 }) {
   const isPremium = plan === "PREMIUM";
+  const isDisabled = section.disabled === true;
 
   return (
-    <div className={!isLast ? "border-b pb-10" : ""}>
+    <div className={`${!isLast ? "border-b pb-10" : ""} ${isDisabled ? "opacity-50" : ""}`}>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10 py-10">
         <div className="flex flex-col gap-3">
-          <Type variant="h4">{section.title}</Type>
+          <div className="flex items-center gap-2">
+            <Type variant="h4">{section.title}</Type>
+            {isDisabled && (
+              <span className="inline-flex items-center text-[10px] rounded-full border px-2 py-0.5 text-muted-foreground">
+                Coming soon
+              </span>
+            )}
+          </div>
           <Type className="text-muted-foreground max-w-xs">{section.description}</Type>
-          {!isPremium && (
+          {!isPremium && !isDisabled && (
             <div className="mt-2">
               <BillingDrawing>
                 <span className="inline-flex cursor-pointer items-center text-xs rounded-sm border bg-foreground px-3 py-1.5 text-white dark:text-black">
