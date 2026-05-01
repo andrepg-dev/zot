@@ -52,12 +52,18 @@ const BASE_FIELDS: Array<{ value: string; label: string }> = [
   { value: "createdAt", label: "Joined at" }
 ];
 
+const GLOBAL_FIELDS: Array<{ value: string; label: string }> = [
+  { value: "globals.waitlistName", label: "waitlistName" }
+];
+
 function suggestFieldForVariable(
   variableName: string,
   availableValues: string[]
 ): string | undefined {
   const lower = variableName.toLowerCase();
   if (availableValues.includes(variableName)) return variableName;
+  if (lower === "waitlistname" && availableValues.includes("globals.waitlistName"))
+    return "globals.waitlistName";
   if (lower.includes("name") && availableValues.includes("name")) return "name";
   if (lower.includes("email") && availableValues.includes("email")) return "email";
   if (lower.includes("position") && availableValues.includes("position")) return "position";
@@ -96,19 +102,21 @@ export default function SendCampaignModal({
     [templates, selectedTemplateId]
   );
 
-  const availableFields = useMemo(() => {
+  const metadataFields = useMemo(() => {
     const metaKeys = new Set<string>();
     users.forEach((u) => {
       if (u.metadata) Object.keys(u.metadata).forEach((k) => metaKeys.add(k));
     });
-    return [
-      ...BASE_FIELDS,
-      ...Array.from(metaKeys).map((k) => ({
-        value: `metadata.${k}`,
-        label: `metadata.${k}`
-      }))
-    ];
+    return Array.from(metaKeys).map((k) => ({
+      value: `metadata.${k}`,
+      label: `metadata.${k}`
+    }));
   }, [users]);
+
+  const availableFields = useMemo(
+    () => [...BASE_FIELDS, ...metadataFields, ...GLOBAL_FIELDS],
+    [metadataFields]
+  );
 
   const detectedVariables = useMemo(
     () => (selectedTemplate?.code ? extractTemplateVariables(selectedTemplate.code) : []),
@@ -349,9 +357,23 @@ export default function SendCampaignModal({
                                     });
                                   }}
                                 >
-                                  {availableFields.map((field) => (
-                                    <SelectItem key={field.value}>{field.label}</SelectItem>
-                                  ))}
+                                  <SelectSection title="User fields" showDivider>
+                                    {BASE_FIELDS.map((field) => (
+                                      <SelectItem key={field.value}>{field.label}</SelectItem>
+                                    ))}
+                                  </SelectSection>
+                                  {metadataFields.length > 0 ? (
+                                    <SelectSection title="Metadata" showDivider>
+                                      {metadataFields.map((field) => (
+                                        <SelectItem key={field.value}>{field.label}</SelectItem>
+                                      ))}
+                                    </SelectSection>
+                                  ) : null}
+                                  <SelectSection title="Global variables">
+                                    {GLOBAL_FIELDS.map((field) => (
+                                      <SelectItem key={field.value}>{field.label}</SelectItem>
+                                    ))}
+                                  </SelectSection>
                                 </Select>
                               )}
 
