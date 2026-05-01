@@ -1,12 +1,9 @@
 import * as Babel from "@babel/core";
 import { BadRequestException, Injectable, Logger } from "@nestjs/common";
 import * as ReactEmail from "@react-email/components";
+import { render } from "@react-email/render";
 import React from "react";
-import { renderToStaticMarkup } from "react-dom/server";
 import * as vm from "vm";
-
-const DOCTYPE =
-  '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">';
 
 /**
  * Servicio para compilar código React (pensado para plantillas de @react-email/components)
@@ -78,8 +75,7 @@ export class ReactToHtmlService {
     variables: Record<string, unknown> = {},
   ): Promise<string> {
     try {
-      const html = renderToStaticMarkup(React.createElement(Component, variables));
-      return `${DOCTYPE}${html.replace(/<!DOCTYPE.*?>/, "")}`;
+      return await render(React.createElement(Component, variables));
     } catch (error) {
       this.logger.warn(`Failed to render email component: ${(error as Error).message}`);
       throw new BadRequestException(`Render failed: ${(error as Error).message}`);
