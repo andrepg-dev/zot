@@ -265,30 +265,29 @@ export default function AudiencePage({ params }: { params: Promise<{ id: string 
               {filteredUsers.length} user{filteredUsers.length !== 1 ? "s" : ""}
             </span>
 
-            {selectedKeys.size > 0 && (
-              <Dropdown>
-                <DropdownTrigger>
-                  <GlobalButton
-                    size="sm"
-                    variant="faded"
-                    endContent={<ChevronDownIcon className="size-4" />}
-                  >
-                    Actions ({selectedKeys.size})
-                  </GlobalButton>
-                </DropdownTrigger>
-                <DropdownMenu aria-label="Actions">
-                  <DropdownItem
-                    key="delete"
-                    className="text-danger"
-                    color="danger"
-                    startContent={<TrashIcon className="size-4" />}
-                    onPress={handleDeleteSelected}
-                  >
-                    Delete
-                  </DropdownItem>
-                </DropdownMenu>
-              </Dropdown>
-            )}
+            <Dropdown>
+              <DropdownTrigger>
+                <GlobalButton
+                  size="sm"
+                  variant="faded"
+                  endContent={<ChevronDownIcon className="size-4" />}
+                  isDisabled={selectedKeys.size === 0}
+                >
+                  Actions {selectedKeys.size > 0 && <>({selectedKeys.size})</>}
+                </GlobalButton>
+              </DropdownTrigger>
+              <DropdownMenu aria-label="Actions">
+                <DropdownItem
+                  key="delete"
+                  className="text-danger"
+                  color="danger"
+                  startContent={<TrashIcon className="size-4" />}
+                  onPress={handleDeleteSelected}
+                >
+                  Delete
+                </DropdownItem>
+              </DropdownMenu>
+            </Dropdown>
 
             <Dropdown>
               <DropdownTrigger>
