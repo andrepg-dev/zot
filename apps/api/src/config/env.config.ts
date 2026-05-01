@@ -26,6 +26,8 @@ export default () => ({
     STRIPE_SECRET_KEY: joi.string().required(),
     STRIPE_WEBHOOK_SECRET: joi.string().required(),
     STRIPE_PREMIUM_PRICE_ID: joi.string().required(),
+    STRIPE_PREMIUM_YEARLY_PRICE_ID: joi.string().required(),
     STRIPE_STARTER_PRICE_ID: joi.string().required(),
+    STRIPE_STARTER_YEARLY_PRICE_ID: joi.string().required(),
   }),
 });
