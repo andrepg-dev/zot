@@ -48,7 +48,8 @@ const config = {
         disabledOpacity: "0.5",
         radius: {
           small: "5px",
-          medium: ".45rem"
+          medium: "0px",
+          large: "0px"
         },
         borderWidth: {
           medium: "thin"

@@ -306,7 +306,7 @@ export default function SettingsPage({ params }: { params: Promise<{ id: string 
                         <Select
                           label="Email template"
                           placeholder="Select a template"
-                          radius="sm"
+                          radius="none"
                           size="sm"
                           isRequired
                           selectedKeys={field.value ? [field.value] : []}

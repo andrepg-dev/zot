@@ -364,7 +364,7 @@ export default function ImportUsersModal({
                         labelPlacement="outside"
                         variant="bordered"
                         size="sm"
-                        radius="sm"
+                        radius="none"
                         placeholder="Choose a waitlist"
                         selectedKeys={sourceWaitlistId ? new Set([sourceWaitlistId]) : new Set()}
                         onSelectionChange={(keys) => {

@@ -88,3 +88,13 @@
 .monaco-editor .react-hook-custom {
   color: #c678dd !important;
 }
+
+/* Keep HeroUI Select fully square (trigger, dropdown panel, and options). */
+[data-slot="trigger"][aria-haspopup="listbox"],
+[data-slot="listboxWrapper"] {
+  border-radius: 0 !important;
+}
+
+[data-slot="listboxWrapper"] [role="option"] {
+  border-radius: 0 !important;
+}

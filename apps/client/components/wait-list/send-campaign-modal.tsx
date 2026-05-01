@@ -3,8 +3,8 @@
 import { getEmailTemplates } from "@/actions/email-templates/email-templates.actions";
 import { sendEmailToUsersById } from "@/actions/emails/emails.actions";
 import GlobalButton from "@/components/global/button";
-import GlobalTooltip from "@/components/global/tooltip";
 import PrimaryActionButton from "@/components/global/primary-action-button";
+import GlobalTooltip from "@/components/global/tooltip";
 import Type from "@/components/type";
 import InputComponent from "@/components/ui/input";
 import CampaignResultAnimation from "@/components/wait-list/campaign-result-animation";
@@ -278,7 +278,7 @@ export default function SendCampaignModal({
                 <Select
                   label="Email template"
                   placeholder="Select a template"
-                  radius="sm"
+                  radius="none"
                   size="sm"
                   selectedKeys={selectedTemplateId ? [selectedTemplateId] : []}
                   onSelectionChange={(keys) => {
@@ -343,7 +343,7 @@ export default function SendCampaignModal({
                                 <Select
                                   aria-label={`Field for ${variable.name}`}
                                   placeholder="Select field"
-                                  radius="sm"
+                                  radius="none"
                                   size="sm"
                                   className="max-w-[220px] min-w-[200px]"
                                   selectedKeys={binding?.value ? [binding.value] : []}
