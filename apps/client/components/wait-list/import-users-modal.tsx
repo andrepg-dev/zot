@@ -1,11 +1,11 @@
 "use client";
 
 import {
+  getWaitListUsers,
   importWaitListUsers,
   type BulkImportWaitListUserItem
 } from "@/actions/wait-list/wait-list-user.actions";
 import { getWaitLists } from "@/actions/wait-list/wait-list.actions";
-import { getWaitListUsers } from "@/actions/wait-list/wait-list-user.actions";
 import GlobalButton from "@/components/global/button";
 import PrimaryActionButton from "@/components/global/primary-action-button";
 import GlobalTextarea from "@/components/global/Textarea";
@@ -51,31 +51,31 @@ const METHODS: Array<{
   description: string;
   Icon: React.ComponentType<{ className?: string }>;
 }> = [
-  {
-    key: "manual",
-    label: "Add manually",
-    description: "Add a single user by email and name.",
-    Icon: PencilSquareIcon
-  },
-  {
-    key: "paste",
-    label: "Paste emails",
-    description: "Paste a list of emails separated by commas or new lines.",
-    Icon: ClipboardDocumentListIcon
-  },
-  {
-    key: "csv",
-    label: "Upload CSV",
-    description: "Upload a .csv with an email column. Extra columns become metadata.",
-    Icon: ArrowUpTrayIcon
-  },
-  {
-    key: "from-waitlist",
-    label: "From another waitlist",
-    description: "Copy users from another waitlist in your workspace.",
-    Icon: Square2StackIcon
-  }
-];
+    {
+      key: "manual",
+      label: "Add manually",
+      description: "Add a single user by email and name.",
+      Icon: PencilSquareIcon
+    },
+    {
+      key: "paste",
+      label: "Paste emails",
+      description: "Paste a list of emails separated by commas or new lines.",
+      Icon: ClipboardDocumentListIcon
+    },
+    {
+      key: "csv",
+      label: "Upload CSV",
+      description: "Upload a .csv with an email column. Extra columns become metadata.",
+      Icon: ArrowUpTrayIcon
+    },
+    {
+      key: "from-waitlist",
+      label: "From another waitlist",
+      description: "Copy users from another waitlist in your workspace.",
+      Icon: Square2StackIcon
+    }
+  ];
 
 export default function ImportUsersModal({
   isOpen,
@@ -176,7 +176,7 @@ export default function ImportUsersModal({
     [waitlists, waitlistId]
   );
 
-  const { data: sourceUsers, isPending: isLoadingSourceUsers } = useQuery({
+  const { data: sourceUsers, isFetching: isLoadingSourceUsers } = useQuery({
     queryKey: [sourceWaitlistId, "audience"],
     queryFn: () => getWaitListUsers(sourceWaitlistId),
     enabled: isOpen && method === "from-waitlist" && !!sourceWaitlistId
@@ -241,7 +241,7 @@ export default function ImportUsersModal({
       isOpen={isOpen}
       onOpenChange={onOpenChange}
       radius="none"
-      size="3xl"
+      size="5xl"
       scrollBehavior="inside"
     >
       <ModalContent>
@@ -282,7 +282,6 @@ export default function ImportUsersModal({
                     <div className="flex flex-col gap-3">
                       <div className="grid grid-cols-2 gap-3">
                         <InputComponent
-                          label="Email"
                           placeholder="user@example.com"
                           variant="bordered"
                           size="sm"
@@ -296,7 +295,6 @@ export default function ImportUsersModal({
                           }}
                         />
                         <InputComponent
-                          label="Name (optional)"
                           placeholder="Jane Doe"
                           variant="bordered"
                           size="sm"

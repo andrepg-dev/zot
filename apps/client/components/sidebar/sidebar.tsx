@@ -230,12 +230,12 @@ export default function Sidebar() {
                       </div>
                     ) : (
                       <div className="flex w-full items-center gap-2 cursor-pointer">
-                        <div className="border size-6 flex items-center justify-center bg-default-100 rounded-full text-[9px] font-light text-muted-foreground">
+                        <div className="border min-w-6 size-6 flex items-center justify-center bg-default-100 rounded-full text-[9px] font-light text-muted-foreground">
                           {data?.name?.slice(0, 1)}
                           {data?.lastName?.slice(0, 1)}
                         </div>
                         <div className="flex flex-col text-[12px] leading-3.5 font-light">
-                          <p>
+                          <p className="line-clamp-1 max-w-[28ch]" title={`${data?.name}${data?.lastName}`}>
                             {data?.name} {data?.lastName}
                           </p>
                           <p className="text-muted-foreground">{data?.suscriptionPlan}</p>

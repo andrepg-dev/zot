@@ -49,7 +49,7 @@ API requests are subject to rate limiting. Please handle 429 responses appropria
     `.trim(),
     )
     .setVersion("1.0.0")
-    .setContact("Zot Team", "https://zot.so", "support@zot.so")
+    .setContact("Zot Team", "https://zot.so", "mail@zot.so")
     .addServer(process.env.API_URL ?? "http://localhost:3010", "Current Environment")
     .addBearerAuth(
       {

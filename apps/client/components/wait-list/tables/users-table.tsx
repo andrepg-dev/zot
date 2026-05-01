@@ -294,8 +294,8 @@ export default function UsersTable({ id }: { id: string }) {
                 <Type variant="h6">Support</Type>
                 <Type variant="sm" className="text-muted-foreground">
                   Having trouble? Contact us at{" "}
-                  <a href="mailto:support@zot.so" className="text-primary-400 hover:underline">
-                    support@zot.so
+                  <a href="mailto:mail@zot.so" className="text-primary-400 hover:underline">
+                    mail@zot.so
                   </a>
                 </Type>
               </div>
