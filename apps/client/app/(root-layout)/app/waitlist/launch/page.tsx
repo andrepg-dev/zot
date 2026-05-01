@@ -1,9 +1,7 @@
 "use client";
 
-import { createApiKey, getApiKeys } from "@/actions/api-key/api-key.actions";
 import { getProfile } from "@/actions/auth/profile";
 import { getEmailTemplates } from "@/actions/email-templates/email-templates.actions";
-import { registerWaitListUser } from "@/actions/wait-list/wait-list-user.actions";
 import { createWaitList, updateWaitList } from "@/actions/wait-list/wait-list.actions";
 import Form from "@/components/form";
 import FormField from "@/components/form-field";
@@ -16,10 +14,8 @@ import Type from "@/components/type";
 import Chip from "@/components/ui/chip";
 import CodeBlock from "@/components/ui/code-block";
 import InputComponent from "@/components/ui/input";
-import { useHotkey } from "@/hooks/use-hotkey";
 import { cn } from "@/lib/utils";
 import {
-  BoltIcon,
   CheckCircleIcon,
   LockClosedIcon,
   PlusIcon,
@@ -31,17 +27,12 @@ import {
   Card,
   CardBody,
   CardFooter,
-  Checkbox,
-  Kbd,
-  Select,
-  SelectItem,
-  Tab,
-  Tabs
+  Checkbox
 } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { EmailTemplate } from "@repo/packages/shared/schemas";
 import { submitWaitlistSchema, SubmitWaitListValues } from "@repo/packages/shared/schemas/index";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -51,17 +42,11 @@ import { Controller, useForm } from "react-hook-form";
 
 export default function LaunchWaitList() {
   const [step, setStep] = useState(1);
-  const [connectionTab, setConnectionTab] = useState<string>("sdk");
   const [createdWaitlistId, setCreatedWaitlistId] = useState<string>("");
 
   const { data: userData } = useQuery({
     queryKey: ["user-profile"],
     queryFn: getProfile
-  });
-
-  const { data: apiKeys } = useQuery({
-    queryKey: ["api-keys"],
-    queryFn: getApiKeys
   });
 
   const { data: templatesData, isPending: isTemplatesPending } = useQuery({
@@ -96,54 +81,11 @@ export default function LaunchWaitList() {
   const sendEmail = watch("sendEmail");
 
   useEffect(() => {
-    if (step === 3 && !sendEmail) {
-      setStep(2);
+    if (step === 2 && !sendEmail) {
+      setStep(3);
     }
   }, [step, sendEmail]);
-
-  const [selectedApiKey, setSelectedApiKey] = useState<string>("");
-  const selectedApiKeyValue = apiKeys?.find((k) => k._id === selectedApiKey)?.apiKey;
-
-  const { mutate: generateApiKey } = useMutation({
-    mutationFn: () => createApiKey({ name: `Waitlist Key - ${Date.now()}` }),
-    onSuccess: (data: any) => {
-      queryClient.invalidateQueries({ queryKey: ["api-keys"] });
-      setSelectedApiKey(data._id);
-      addToast({ description: "API key generated", color: "success" });
-    },
-    onError: (err) => addToast({ title: "Error", description: err.message, color: "danger" })
-  });
-
-  const queryClient = useQueryClient();
   const router = useRouter();
-
-  useHotkey({
-    key: "escape",
-    onPress: () => {
-      router.push("/app/waitlist/dashboard");
-    }
-  });
-
-  useHotkey({
-    key: "s",
-    modifiers: ["meta"],
-    onPress: () => setConnectionTab("sdk"),
-    enabled: step === 2
-  });
-
-  useHotkey({
-    key: "a",
-    modifiers: ["meta"],
-    onPress: () => setConnectionTab("api"),
-    enabled: step === 2
-  });
-
-  useHotkey({
-    key: "r",
-    modifiers: ["meta"],
-    onPress: () => setConnectionTab("react"),
-    enabled: step === 2
-  });
 
   const { isPending: isCreatingWaitlist, mutate: createWaitlistMutation } = useMutation({
     mutationFn: (data: SubmitWaitListValues) =>
@@ -152,36 +94,11 @@ export default function LaunchWaitList() {
         sendEmailToNewSignup: data.sendEmail,
         isSecurityActive: data.addSecurity
       }),
-    onSuccess: (response) => {
+    onSuccess: (response, variables) => {
       setCreatedWaitlistId(response._id);
-      setStep(2);
+      setStep(variables.sendEmail ? 2 : 3);
     },
     onError: (err) => addToast({ title: "Error", description: err.message, color: "danger" })
-  });
-
-  const { isPending: isTestingConnection, mutate: testConnection } = useMutation({
-    mutationFn: () =>
-      registerWaitListUser(createdWaitlistId, {
-        email: `test+${Date.now()}@zot.dev`,
-        name: "Test User"
-      }),
-    onSuccess: () => {
-      addToast({
-        title: "Connection successful",
-        description: "A test user was added to your waitlist.",
-        color: "success"
-      });
-    },
-    onError: (err) => addToast({ title: "Error", description: err.message, color: "danger" })
-  });
-
-  useHotkey({
-    key: "Enter",
-    modifiers: ["meta"],
-    onPress: () => {
-      if (createdWaitlistId) testConnection();
-    },
-    enabled: step === 2
   });
 
   const { isPending, error, mutate } = useMutation({
@@ -265,15 +182,11 @@ export default function LaunchWaitList() {
               },
               {
                 number: 2,
-                title: "Connection"
-              },
-              {
-                number: 3,
                 title: "Configure email sending",
                 disabled: !sendEmail
               },
               {
-                number: 4,
+                number: 3,
                 title: "Review"
               }
             ]}
@@ -292,7 +205,7 @@ export default function LaunchWaitList() {
             as="form"
             onSubmit={handleSubmit((data) => {
               if (createdWaitlistId) {
-                setStep(2);
+                setStep(data.sendEmail ? 2 : 3);
                 return;
               }
               createWaitlistMutation(data);
@@ -424,322 +337,9 @@ export default function LaunchWaitList() {
         </div>
       )}
 
-      {step === 2 && (
-        <div className="flex flex-col gap-2">
-          <Title description="Choose how to connect your waitlist to your application">
-            Connection
-          </Title>
+      
 
-          <Tabs
-            radius="sm"
-            size="sm"
-            variant="bordered"
-            selectedKey={connectionTab}
-            onSelectionChange={(key) => setConnectionTab(key as string)}
-          >
-            <Tab
-              key="api"
-              title={
-                <div className="flex items-center gap-2">
-                  API Connection
-                  <Kbd className="text-xs" keys={["command"]}>
-                    A
-                  </Kbd>
-                </div>
-              }
-            >
-              <div className="flex flex-col gap-3 bg-default-50 border rounded-sm p-4">
-                <Select
-                  radius="sm"
-                  size="sm"
-                  className="border rounded-lg overflow-hidden"
-                  label="API Key"
-                  placeholder="Select or generate an API key"
-                  selectedKeys={selectedApiKey ? [selectedApiKey] : []}
-                  onSelectionChange={(keys) => {
-                    const key = Array.from(keys)[0] as string;
-
-                    if (key === "generate") {
-                      generateApiKey();
-                      return;
-                    }
-
-                    setSelectedApiKey(key || "");
-                  }}
-                  items={[
-                    ...(apiKeys || []).map((k) => ({
-                      key: k._id,
-                      label: k.name
-                    })),
-                    { key: "generate", label: "Generate new API key" }
-                  ]}
-                >
-                  {(item) => (
-                    <SelectItem
-                      key={item.key}
-                      startContent={
-                        item.key === "generate" ? <PlusIcon className="size-4" /> : undefined
-                      }
-                      className={item.key === "generate" ? "!text-primary" : ""}
-                    >
-                      {item.label}
-                    </SelectItem>
-                  )}
-                </Select>
-                <CodeBlock
-                  lang="bash"
-                  code={`curl -X POST https://api.zot.so/v1/wait-list/${createdWaitlistId || "wl_abc123"}/user \\
-  -H "Authorization: Bearer ${selectedApiKeyValue || "your-api-key"}" \\
-  -H "Content-Type: application/json" \\
-  -d '{
-    "email": "asponceg@gmail.com",
-    "name": "Andre Ponce",
-    "referredBy": "user@gmail.com",
-    "source": "social",
-    "metadata": {}
-  }'`}
-                  displayCode={
-                    selectedApiKeyValue
-                      ? `curl -X POST https://api.zot.so/v1/wait-list/${createdWaitlistId || "wl_abc123"}/user \\
-  -H "Authorization: Bearer ${selectedApiKeyValue.slice(0, 8)}${"•".repeat(20)}" \\
-  -H "Content-Type: application/json" \\
-  -d '{
-    "email": "asponceg@gmail.com",
-    "name": "Andre Ponce",
-    "referredBy": "user@gmail.com",
-    "source": "social",
-    "metadata": {}
-  }'`
-                      : undefined
-                  }
-                />
-              </div>
-            </Tab>
-            <Tab
-              key="sdk"
-              title={
-                <div className="flex items-center gap-2">
-                  SDK Connection
-                  <Kbd className="text-xs" keys={["command"]}>
-                    S
-                  </Kbd>
-                </div>
-              }
-            >
-              <div className="flex flex-col gap-3 bg-default-50 border rounded-sm p-4">
-                <Select
-                  radius="sm"
-                  size="sm"
-                  className="border rounded-lg overflow-hidden"
-                  label="API Key"
-                  placeholder="Select or generate an API key"
-                  selectedKeys={selectedApiKey ? [selectedApiKey] : []}
-                  onSelectionChange={(keys) => {
-                    const key = Array.from(keys)[0] as string;
-
-                    if (key === "generate") {
-                      generateApiKey();
-                      return;
-                    }
-
-                    setSelectedApiKey(key || "");
-                  }}
-                  items={[
-                    ...(apiKeys || []).map((k) => ({
-                      key: k._id,
-                      label: k.name
-                    })),
-                    { key: "generate", label: "Generate new API key" }
-                  ]}
-                >
-                  {(item) => (
-                    <SelectItem
-                      key={item.key}
-                      startContent={
-                        item.key === "generate" ? <PlusIcon className="size-4" /> : undefined
-                      }
-                      className={item.key === "generate" ? "!text-primary" : ""}
-                    >
-                      {item.label}
-                    </SelectItem>
-                  )}
-                </Select>
-                <CodeBlock lang="bash" code={`npm install @zot-core/sdk`} />
-                <CodeBlock
-                  code={`import "dotenv/config";
-import { ZotSDK } from "@zot-core/sdk";
-
-const client = new ZotSDK({
-  apiKey: "${selectedApiKeyValue || "your-api-key"}",
-});
-
-const res = await client.waitlist("${createdWaitlistId || "wl_abc123"}").addUser({
-  email: "asponceg@gmail.com",
-  name: "Andre Ponce", // Optional
-  referredBy: "user@gmail.com", // Optional — auto-sets source to "referral"
-  source: "social", // Optional — social | email | paid_ads (organic/referral are auto-determined)
-  metadata: {
-    // Any relevant data for you
-  },
-});`}
-                  displayCode={
-                    selectedApiKeyValue
-                      ? `import "dotenv/config";
-import { ZotSDK } from "@zot-core/sdk";
-
-const client = new ZotSDK({
-  apiKey: "${selectedApiKeyValue.slice(0, 8)}${"•".repeat(20)}",
-});
-
-const res = await client.waitlist("${createdWaitlistId || "wl_abc123"}").addUser({
-  email: "asponceg@gmail.com",
-  name: "Andre Ponce", // Optional
-  referredBy: "user@gmail.com", // Optional — auto-sets source to "referral"
-  source: "social", // Optional — social | email | paid_ads (organic/referral are auto-determined)
-  metadata: {
-    // Any relevant data for you
-  },
-});`
-                      : undefined
-                  }
-                />
-              </div>
-            </Tab>
-            <Tab
-              key="react"
-              title={
-                <div className="flex items-center gap-2">
-                  React Hook
-                  <Kbd className="text-xs" keys={["command"]}>
-                    R
-                  </Kbd>
-                </div>
-              }
-            >
-              <div className="flex flex-col gap-3 bg-default-50 border rounded-sm p-4">
-                <Type className="text-muted-foreground">
-                  Use the built-in React hook. No TanStack Query or custom state needed. The hook
-                  gives you loading and success flags out of the box.
-                </Type>
-                <Select
-                  radius="sm"
-                  size="sm"
-                  className="border rounded-lg overflow-hidden"
-                  label="API Key"
-                  placeholder="Select or generate an API key"
-                  selectedKeys={selectedApiKey ? [selectedApiKey] : []}
-                  onSelectionChange={(keys) => {
-                    const key = Array.from(keys)[0] as string;
-
-                    if (key === "generate") {
-                      generateApiKey();
-                      return;
-                    }
-
-                    setSelectedApiKey(key || "");
-                  }}
-                  items={[
-                    ...(apiKeys || []).map((k) => ({
-                      key: k._id,
-                      label: k.name
-                    })),
-                    { key: "generate", label: "Generate new API key" }
-                  ]}
-                >
-                  {(item) => (
-                    <SelectItem
-                      key={item.key}
-                      startContent={
-                        item.key === "generate" ? <PlusIcon className="size-4" /> : undefined
-                      }
-                      className={item.key === "generate" ? "!text-primary" : ""}
-                    >
-                      {item.label}
-                    </SelectItem>
-                  )}
-                </Select>
-                <CodeBlock lang="bash" code={`npm install @zot-core/sdk react`} />
-                <CodeBlock
-                  code={`"use client";
-
-import { useAddUser } from "@zot-core/sdk/react";
-import { useState } from "react";
-
-export function JoinWaitlist() {
-  const [email, setEmail] = useState("");
-
-  const { addUser, isPending, isUserRegistered, error } = useAddUser({
-    apiKey: process.env.NEXT_PUBLIC_ZOT_API_KEY!,
-    waitlistId: "${createdWaitlistId || "wl_abc123"}",
-  });
-
-  if (isUserRegistered) {
-    return <p>Thanks! You are on the list.</p>;
-  }
-
-  return (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        addUser({ email });
-      }}
-    >
-      <input
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        required
-      />
-      <button type="submit" disabled={isPending}>
-        Join
-      </button>
-      {error && <p>{error.message}</p>}
-    </form>
-  );
-}`}
-                />
-                <Type variant="sm" className="text-muted-foreground">
-                  The hook returns addUser, isPending, isUserRegistered, data, error, isError, and
-                  reset. You can also pass onSuccess and onError callbacks.
-                </Type>
-              </div>
-            </Tab>
-          </Tabs>
-
-          <div className="flex gap-2 justify-between bg-default-50 p-4 py-3 border rounded-sm">
-            <Button
-              className="w-fit"
-              variant="flat"
-              color="success"
-              size="sm"
-              isDisabled={!createdWaitlistId}
-              isLoading={isTestingConnection}
-              onPress={() => testConnection()}
-            >
-              <BoltIcon className="size-4" />
-              <Type variant="sm">Test Connection</Type>
-              <Kbd className="text-xs" keys={["command"]}>
-                ↵
-              </Kbd>
-            </Button>
-            <div className="flex gap-2">
-              <Button className="w-fit" variant="bordered" size="sm" onPress={() => setStep(1)}>
-                <Type variant="sm">Back</Type>
-              </Button>
-              <Button
-                color="primary"
-                className="w-fit border"
-                size="sm"
-                onPress={() => setStep(sendEmail ? 3 : 4)}
-              >
-                <Type variant="sm">Next</Type>
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {step === 3 && (
+      {step === 2 && sendEmail && (
         <div className="flex flex-col gap-4">
           <Title description="Choose the email template sent to new signups">
             Configure email sending
@@ -850,14 +450,14 @@ export function JoinWaitlist() {
 
             <CardFooter className="border-t flex justify-end py-4">
               <div className="flex gap-2 justify-end">
-                <Button className="w-fit" variant="bordered" size="sm" onPress={() => setStep(2)}>
+                <Button className="w-fit" variant="bordered" size="sm" onPress={() => setStep(1)}>
                   <Type variant="sm">Back</Type>
                 </Button>
                 <Button
                   color="primary"
                   className="w-fit border"
                   size="sm"
-                  onPress={() => setStep(4)}
+                  onPress={() => setStep(3)}
                 >
                   <Type variant="sm">Next</Type>
                 </Button>
@@ -867,7 +467,7 @@ export function JoinWaitlist() {
         </div>
       )}
 
-      {step === 4 &&
+      {step === 3 &&
         (() => {
           const formValues = watch();
           const selectedTemplate = templates.find(
@@ -972,7 +572,7 @@ export function JoinWaitlist() {
                       className="w-fit"
                       variant="bordered"
                       size="sm"
-                      onPress={() => setStep(sendEmail ? 3 : 2)}
+                      onPress={() => setStep(sendEmail ? 2 : 1)}
                     >
                       <Type variant="sm">Back</Type>
                     </Button>
