@@ -11,6 +11,7 @@ import { EmailTemplate } from "../email-templates/schemas/email-template.schema"
 import { EmailParams, ResendEmail } from "../types/email-sending";
 import { UserQuoteService } from "../users/user-quote/user-quote.service";
 import { WaitListUser } from "../wait-list/schemas/wait-list-user.schema";
+import { WaitList } from "../wait-list/schemas/wait-list.schema";
 import { WaitListUserService } from "../wait-list/wait-list-user/wait-list-user.service";
 import { EmailSendRecord } from "./schemas/email-send-record.schema";
 
@@ -61,12 +62,27 @@ export class EmailsService {
     private readonly userquoteService: UserQuoteService,
     private readonly reactToHtmlService: ReactToHtmlService,
     @InjectModel(WaitListUser.name) private readonly WaitListUserModel: Model<WaitListUser>,
+    @InjectModel(WaitList.name) private readonly WaitListModel: Model<WaitList>,
   ) {}
 
-  private resolveFieldPath(recipient: RecipientRow, path: string): unknown {
+  private resolveFieldPath(
+    recipient: RecipientRow,
+    path: string,
+    globals: Record<string, unknown>,
+  ): unknown {
     if (!path) return undefined;
 
     const [root, ...rest] = path.split(".");
+
+    if (root === "globals") {
+      if (rest.length === 0) return globals;
+      let current: unknown = globals;
+      for (const segment of rest) {
+        if (current == null || typeof current !== "object") return undefined;
+        current = (current as Record<string, unknown>)[segment];
+      }
+      return current;
+    }
 
     if (root === "metadata") {
       if (rest.length === 0) return recipient.metadata;
@@ -85,44 +101,69 @@ export class EmailsService {
     recipient: RecipientRow,
     mapping: Record<string, string> | undefined,
     extra: Record<string, unknown> = {},
+    globals: Record<string, unknown> = {},
   ): Record<string, unknown> {
     const resolved: Record<string, unknown> = mapping
       ? Object.fromEntries(
           Object.entries(mapping).map(([variable, path]) => [
             variable,
-            this.resolveFieldPath(recipient, path),
+            this.resolveFieldPath(recipient, path, globals),
           ]),
         )
       : {
           recipientName: recipient.name ?? "",
           recipientEmail: recipient.email,
+          email: recipient.email,
           position: recipient.position,
           referredBy: recipient.referredBy,
+          ...globals,
         };
 
     return { ...resolved, ...extra };
   }
 
+  private renderSubject(template: string, vars: Record<string, unknown>): string {
+    if (!template) return template;
+    return template.replace(/\{\{\s*([\w.]+)\s*\}\}/g, (_, key: string) => {
+      const segments = key.split(".");
+      let current: unknown = vars;
+      for (const segment of segments) {
+        if (current == null || typeof current !== "object") return "";
+        current = (current as Record<string, unknown>)[segment];
+      }
+      return current == null ? "" : String(current);
+    });
+  }
+
   private async processBatch(
     chunk: RecipientRow[],
     Component: ComponentType<Record<string, unknown>>,
-    basePayload: Omit<EmailParams, "to" | "options"> & {
+    basePayload: Omit<EmailParams, "to" | "options" | "subject"> & {
       options: Omit<ResendEmail["options"], "html">;
+      subjectTemplate: string;
     },
     mapping: Record<string, string> | undefined,
     variables: Record<string, unknown> | undefined,
+    globals: Record<string, unknown>,
   ): Promise<{ sent: string[]; failed: string[] }> {
-    const rendered: Array<{ recipient: RecipientRow; html: string }> = [];
+    const rendered: Array<{ recipient: RecipientRow; html: string; subject: string }> = [];
     const failed: string[] = [];
 
     await Promise.all(
       chunk.map(async (recipient) => {
         try {
-          const html = await this.reactToHtmlService.renderComponent(
-            Component,
-            this.buildRecipientVariables(recipient, mapping, variables),
+          const recipientVars = this.buildRecipientVariables(
+            recipient,
+            mapping,
+            variables,
+            globals,
           );
-          rendered.push({ recipient, html });
+          const html = await this.reactToHtmlService.renderComponent(Component, recipientVars);
+          const subject = this.renderSubject(basePayload.subjectTemplate, {
+            ...globals,
+            ...recipientVars,
+          });
+          rendered.push({ recipient, html, subject });
         } catch (err) {
           this.logger.warn(`Render failed for ${recipient.email}: ${(err as Error).message}`);
           failed.push(recipient.email);
@@ -134,12 +175,15 @@ export class EmailsService {
       return { sent: [], failed };
     }
 
+    const { subjectTemplate: _subjectTemplate, ...sendBase } = basePayload;
+
     try {
       await this.emailService.sendBatch(
-        rendered.map(({ recipient, html }) => ({
-          ...basePayload,
+        rendered.map(({ recipient, html, subject }) => ({
+          ...sendBase,
+          subject,
           to: recipient.email,
-          options: { ...basePayload.options, html },
+          options: { ...sendBase.options, html },
         })),
       );
 
@@ -348,12 +392,20 @@ export class EmailsService {
 
     const Component = this.reactToHtmlService.compileComponent(template.code);
 
-    const basePayload: Omit<EmailParams, "to" | "options"> & {
+    const waitlist = await this.WaitListModel.findById(waitlistId).select("name").lean();
+    const globals: Record<string, unknown> = {
+      waitlistName: waitlist?.name ?? "",
+    };
+
+    const fromName = (waitlist?.name ?? "Zot Waitlist").replace(/[<>"]/g, "").trim() || "Zot Waitlist";
+
+    const basePayload: Omit<EmailParams, "to" | "options" | "subject"> & {
       options: Omit<ResendEmail["options"], "html">;
+      subjectTemplate: string;
     } = {
-      from: "Zot WaitList <mail@zot.so>",
+      from: `${fromName} <mail@zot.so>`,
       provider: "resend",
-      subject: template.subject,
+      subjectTemplate: template.subject,
       options: {
         replyTo: "mail@zot.so",
       },
@@ -368,7 +420,9 @@ export class EmailsService {
 
     const chunkResults = await Promise.all(
       chunks.map((chunk) =>
-        limit(async () => this.processBatch(chunk, Component, basePayload, mapping, variables)),
+        limit(async () =>
+          this.processBatch(chunk, Component, basePayload, mapping, variables, globals),
+        ),
       ),
     );
 

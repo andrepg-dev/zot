@@ -15,98 +15,107 @@ import { CreateEmailTemplateDto } from "./dto/create-email-template.dto";
 import { UpdateEmailTemplateDto } from "./dto/update-email-template.dto";
 import { EmailTemplate } from "./schemas/email-template.schema";
 
-const WELCOME_TEMPLATE_CODE = `const Email = ({ position = "", email = "" } = {}) => (
-  <Html>
-    <Head />
-    <Preview>You're on the waitlist. Position #{position}.</Preview>
-    <Tailwind>
-      <Body className="bg-zinc-100 m-0 py-12 px-4 font-sans">
-        <Container className="bg-white mx-auto max-w-[560px] border border-solid border-zinc-200">
-          <Section className="px-10 pt-8 pb-2">
-            <Text className="text-[13px] tracking-[0.18em] uppercase text-zinc-600 m-0 font-semibold">
-              Waitlist
-            </Text>
-          </Section>
+const WELCOME_TEMPLATE_CODE = `const Email = ({ recipientName = "", waitlistName = "", position = "", email = "" } = {}) => {
+  const displayWaitlist = waitlistName || "the";
+  const greetingSuffix = recipientName ? \`, \${recipientName}\` : "";
 
-          <Section className="px-10 pt-5 pb-7">
-            <Heading as="h1" className="text-[32px] leading-[38px] text-zinc-950 m-0 mb-3 font-semibold tracking-tight">
-              You're in.
-            </Heading>
-            <Text className="text-base leading-6 text-zinc-600 m-0">
-              Thanks for signing up. Your spot is saved and we'll be in touch as we get closer to launch.
-            </Text>
-          </Section>
-
-          <Section className="px-10 pb-8">
-            <Section className="bg-zinc-950 px-7 py-6">
-              <Text className="text-[11px] tracking-[0.2em] uppercase text-zinc-400 m-0 mb-1.5 font-semibold">
-                Your position
-              </Text>
-              <Heading as="h2" className="text-[44px] leading-[48px] text-zinc-50 m-0 font-semibold tracking-tighter">
-                #{position}
-              </Heading>
-              <Text className="text-[13px] text-zinc-400 mt-2.5 mb-0">
-                The earlier you joined, the earlier you get access.
+  return (
+    <Html>
+      <Head />
+      <Preview>You're on the {displayWaitlist} waitlist.</Preview>
+      <Tailwind>
+        <Body className="bg-zinc-100 m-0 py-12 px-4 font-sans">
+          <Container className="bg-white mx-auto max-w-[560px] border border-solid border-zinc-200">
+            <Section className="px-10 pt-10 pb-2">
+              <Text className="text-[13px] tracking-[0.18em] uppercase text-zinc-600 m-0 font-semibold">
+                {displayWaitlist} waitlist
               </Text>
             </Section>
-          </Section>
 
-          <Hr className="border-zinc-200 mx-10 my-3" />
+            <Section className="px-10 pt-5 pb-7">
+              <Heading as="h1" className="text-[32px] leading-[38px] text-zinc-950 m-0 mb-3 font-semibold tracking-tight">
+                You're in{greetingSuffix}.
+              </Heading>
+              <Text className="text-base leading-6 text-zinc-600 m-0">
+                Thanks for joining the {displayWaitlist} waitlist. Your spot is saved and we'll be in touch as we get closer to launch.
+              </Text>
+            </Section>
 
-          <Text className="px-10 text-[11px] tracking-[0.2em] uppercase text-zinc-500 m-0 mb-4 font-semibold">
-            What happens next
-          </Text>
+            {position ? (
+              <Section className="px-10 pb-8">
+                <Section className="bg-zinc-950 px-7 py-6">
+                  <Text className="text-[11px] tracking-[0.2em] uppercase text-zinc-400 m-0 mb-1.5 font-semibold">
+                    Your position
+                  </Text>
+                  <Heading as="h2" className="text-[44px] leading-[48px] text-zinc-50 m-0 font-semibold tracking-tighter">
+                    #{position}
+                  </Heading>
+                  <Text className="text-[13px] text-zinc-400 mt-2.5 mb-0">
+                    The earlier you joined, the earlier you get access.
+                  </Text>
+                </Section>
+              </Section>
+            ) : null}
 
-          <Section className="px-10 pb-4">
-            <Text className="text-[13px] text-zinc-400 m-0 mb-1 font-semibold font-mono">01</Text>
-            <Text className="text-[15px] text-zinc-950 m-0 mb-1 font-semibold">
-              We'll send updates that matter
-            </Text>
-            <Text className="text-sm leading-[22px] text-zinc-600 m-0">
-              Milestones, behind the scenes notes, and the occasional sneak peek. No spam, no filler.
-            </Text>
-          </Section>
+            <Hr className="border-zinc-200 mx-10 my-3" />
 
-          <Section className="px-10 pb-4">
-            <Text className="text-[13px] text-zinc-400 m-0 mb-1 font-semibold font-mono">02</Text>
-            <Text className="text-[15px] text-zinc-950 m-0 mb-1 font-semibold">
-              You'll get early access
+            <Text className="px-10 text-[11px] tracking-[0.2em] uppercase text-zinc-500 m-0 mb-4 font-semibold">
+              What happens next
             </Text>
-            <Text className="text-sm leading-[22px] text-zinc-600 m-0">
-              When access opens, we'll roll it out in batches starting at the top of the list.
-            </Text>
-          </Section>
 
-          <Section className="px-10 pb-4">
-            <Text className="text-[13px] text-zinc-400 m-0 mb-1 font-semibold font-mono">03</Text>
-            <Text className="text-[15px] text-zinc-950 m-0 mb-1 font-semibold">
-              Your feedback shapes the launch
-            </Text>
-            <Text className="text-sm leading-[22px] text-zinc-600 m-0">
-              Early members help decide what we build first. Reply to any of our emails and you'll reach a real person.
-            </Text>
-          </Section>
+            <Section className="px-10 pb-4">
+              <Text className="text-[13px] text-zinc-400 m-0 mb-1 font-semibold font-mono">01</Text>
+              <Text className="text-[15px] text-zinc-950 m-0 mb-1 font-semibold">
+                We'll send updates that matter
+              </Text>
+              <Text className="text-sm leading-[22px] text-zinc-600 m-0">
+                Milestones from the {displayWaitlist} team, behind the scenes notes, and the occasional sneak peek. No spam, no filler.
+              </Text>
+            </Section>
 
-          <Hr className="border-zinc-200 mx-10 my-3" />
+            <Section className="px-10 pb-4">
+              <Text className="text-[13px] text-zinc-400 m-0 mb-1 font-semibold font-mono">02</Text>
+              <Text className="text-[15px] text-zinc-950 m-0 mb-1 font-semibold">
+                You'll get early access
+              </Text>
+              <Text className="text-sm leading-[22px] text-zinc-600 m-0">
+                When access opens, we'll roll it out in batches starting at the top of the list.
+              </Text>
+            </Section>
 
-          <Section className="px-10 pt-6 pb-3">
-            <Text className="text-[15px] leading-[23px] text-zinc-800 m-0 mb-2">
-              We're glad you're here. More soon.
-            </Text>
-            <Text className="text-[15px] text-zinc-800 m-0">The team</Text>
-          </Section>
+            <Section className="px-10 pb-4">
+              <Text className="text-[13px] text-zinc-400 m-0 mb-1 font-semibold font-mono">03</Text>
+              <Text className="text-[15px] text-zinc-950 m-0 mb-1 font-semibold">
+                Your feedback shapes the launch
+              </Text>
+              <Text className="text-sm leading-[22px] text-zinc-600 m-0">
+                Early members help decide what we build first. Reply to any of our emails and you'll reach a real person.
+              </Text>
+            </Section>
 
-          <Section className="px-10 pt-6 pb-8">
-            <Text className="text-xs text-zinc-500 m-0 mb-1 font-mono">{email}</Text>
-            <Text className="text-xs leading-[18px] text-zinc-400 m-0">
-              You're receiving this because you joined the waitlist. If this wasn't you, you can safely ignore this email.
-            </Text>
-          </Section>
-        </Container>
-      </Body>
-    </Tailwind>
-  </Html>
-);`;
+            <Hr className="border-zinc-200 mx-10 my-3" />
+
+            <Section className="px-10 pt-6 pb-3">
+              <Text className="text-[15px] leading-[23px] text-zinc-800 m-0 mb-2">
+                We're glad you're here. More soon.
+              </Text>
+              <Text className="text-[15px] text-zinc-800 m-0">The team</Text>
+            </Section>
+
+            <Section className="px-10 pt-6 pb-10">
+              {email ? (
+                <Text className="text-xs text-zinc-500 m-0 mb-1 font-mono">{email}</Text>
+              ) : null}
+              <Text className="text-xs leading-[18px] text-zinc-400 m-0">
+                You're receiving this because you joined the {displayWaitlist} waitlist. If this wasn't you, you can safely ignore this email.
+              </Text>
+            </Section>
+          </Container>
+        </Body>
+      </Tailwind>
+    </Html>
+  );
+};`;
 
 @Injectable()
 export class EmailTemplatesService {
@@ -124,7 +133,7 @@ export class EmailTemplatesService {
       return await this.create(
         {
           alias: "Welcome email",
-          subject: "You're on the waitlist",
+          subject: "You're on the {{waitlistName}} waitlist",
           code: WELCOME_TEMPLATE_CODE,
           status: "published",
         },
