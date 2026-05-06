@@ -1,6 +1,7 @@
 "use client";
 
 import { getPublicEmailTemplates } from "@/actions/email-templates/email-templates.actions";
+import { signInWithGitHub, signInWithGoogle } from "@/actions/auth/oauth";
 import InputComponent from "@/components/ui/input";
 import { siteConfig } from "@/config/site";
 import { cn } from "@/lib/utils";
@@ -9,8 +10,8 @@ import {
   CheckCircleIcon,
   ChevronLeftIcon,
   EnvelopeIcon,
+  MegaphoneIcon,
   RocketLaunchIcon,
-  ShieldCheckIcon
 } from "@heroicons/react/24/outline";
 import { Button } from "@heroui/button";
 import { Skeleton } from "@heroui/react";
@@ -19,7 +20,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 
 const inputWrapperClass =
-  "rounded-none data-[focus=true]:bg-default-100/50 data-[hover=true]:!bg-default-100/50 bg-default-100/50 border backdrop-blur-[25px]";
+  "rounded-none data-[focus=true]:bg-default-100/50 data-[focus=true]:ring-1 data-[focus=true]:ring-foreground/60 data-[hover=true]:!bg-default-100/50 bg-default-100/50 border backdrop-blur-[25px]";
 
 export const PENDING_WAITLIST_KEY = "zot:pending-waitlist";
 export const ONBOARDING_SEEN_KEY = "zot:onboarding-seen";
@@ -40,7 +41,6 @@ export function getPendingWaitlist(): PendingWaitlist | null {
 }
 
 interface WaitlistOnboardingProps {
-  onContinue: (name: string) => void;
   onSkip: () => void;
 }
 
@@ -71,7 +71,7 @@ const STEPS = [
   }
 ];
 
-export default function WaitlistOnboarding({ onContinue, onSkip }: WaitlistOnboardingProps) {
+export default function WaitlistOnboarding({ onSkip }: WaitlistOnboardingProps) {
   const [step, setStep] = useState(1);
   const [name, setName] = useState("");
   const [selectedTemplate, setSelectedTemplate] = useState<TemplateOption>("welcome");
@@ -85,7 +85,7 @@ export default function WaitlistOnboarding({ onContinue, onSkip }: WaitlistOnboa
     setLoadingTemplate(true);
     getPublicEmailTemplates()
       .then((templates) => setPublicTemplate(templates[0] ?? null))
-      .catch(() => {})
+      .catch(() => { })
       .finally(() => setLoadingTemplate(false));
   }, [step]);
 
@@ -99,7 +99,7 @@ export default function WaitlistOnboarding({ onContinue, onSkip }: WaitlistOnboa
     setStep(2);
   };
 
-  const handleLaunch = () => {
+  const persistPendingWaitlist = () => {
     const config: PendingWaitlist = {
       name: name.trim(),
       sendEmailToNewSignup: selectedTemplate === "welcome"
@@ -107,7 +107,6 @@ export default function WaitlistOnboarding({ onContinue, onSkip }: WaitlistOnboa
 
     sessionStorage.setItem(PENDING_WAITLIST_KEY, JSON.stringify(config));
     sessionStorage.setItem(ONBOARDING_SEEN_KEY, "1");
-    onContinue(name.trim());
   };
 
   const handleSkip = () => {
@@ -162,7 +161,11 @@ export default function WaitlistOnboarding({ onContinue, onSkip }: WaitlistOnboa
               placeholder="Early access, Product launch, Beta v2..."
               radius="none"
               maxLength={30}
-              classNames={{ inputWrapper: inputWrapperClass }}
+              classNames={{
+                inputWrapper:
+                  "!text-[14px] data-[focus=true]:ring-offset-2 data-[focus=true]:ring-offset-black data-[focus=true]:ring-2 data-[focus=true]:ring-primary/80 data-[focus=true]:bg-default-50/80 data-[hover=true]:!bg-default-50/80 bg-default-50/80 border",
+                input: "!text-[14px]"
+              }}
               value={name}
               onChange={(e) => {
                 setName(e.target.value);
@@ -307,7 +310,7 @@ export default function WaitlistOnboarding({ onContinue, onSkip }: WaitlistOnboa
               <RocketLaunchIcon className="size-3.5 text-success shrink-0 mt-0.5" />
               <div className="flex flex-col gap-0.5">
                 <span className="text-sm text-foreground font-medium">
-                  &ldquo;{name}&rdquo; waitlist
+                  <span className="capitalize">&ldquo;{name}&rdquo; </span>waitlist
                 </span>
                 <span className="text-xs text-muted-foreground">
                   Ready to collect signups immediately
@@ -338,25 +341,63 @@ export default function WaitlistOnboarding({ onContinue, onSkip }: WaitlistOnboa
             </div>
 
             <div className="flex items-start gap-3 border bg-default-100/20 backdrop-blur-[25px] px-3 py-3">
-              <ShieldCheckIcon className="size-3.5 text-success shrink-0 mt-0.5" />
+              <MegaphoneIcon className="size-3.5 text-success shrink-0 mt-0.5" />
               <div className="flex flex-col gap-0.5">
-                <span className="text-sm text-foreground font-medium">Fake email protection</span>
+                <span className="text-sm text-foreground font-medium">Email campaigns</span>
                 <span className="text-xs text-muted-foreground">
-                  Disposable and temporary emails are always blocked
+                  Send launch updates, announcements and drip campaigns to your audience.
                 </span>
               </div>
             </div>
           </div>
 
-          <Button
-            radius="none"
-            className="w-full h-10 !text-sm bg-default-50 border text-muted-foreground hover:bg-default-300 backdrop-blur-[25px]"
-            onPress={handleLaunch}
-            disableRipple
-            endContent={<ArrowRightIcon className="size-3.5" />}
-          >
-            Sign in to launch
-          </Button>
+          <div className="w-full flex flex-col gap-2">
+            <p className="text-xs text-muted-foreground uppercase tracking-wide">
+              Create wait-list with
+            </p>
+            <div className="w-full flex gap-3">
+              <form action={signInWithGoogle} className="flex-1 min-w-0">
+                <Button
+                  type="submit"
+                  radius="none"
+                  className="w-full h-10 !text-sm bg-default-50 border text-muted-foreground hover:bg-default-300 backdrop-blur-[25px]"
+                  disableRipple
+                  onPress={persistPendingWaitlist}
+                  startContent={
+                    <Image
+                      src={"/icons/google-icon.svg"}
+                      width={30}
+                      height={30}
+                      alt="Google icon"
+                      className="w-5 h-5 shrink-0 brightness-0 invert"
+                    />
+                  }
+                >
+                  Google
+                </Button>
+              </form>
+              <form action={signInWithGitHub} className="flex-1 min-w-0">
+                <Button
+                  type="submit"
+                  radius="none"
+                  className="w-full h-10 !text-sm bg-default-50 border text-muted-foreground hover:bg-default-300 backdrop-blur-[25px]"
+                  disableRipple
+                  onPress={persistPendingWaitlist}
+                  startContent={
+                    <Image
+                      src={"/icons/github-icon.svg"}
+                      width={30}
+                      height={30}
+                      alt="GitHub icon"
+                      className="w-5 h-5 shrink-0 brightness-0 invert"
+                    />
+                  }
+                >
+                  GitHub
+                </Button>
+              </form>
+            </div>
+          </div>
 
           <Button
             variant="bordered"

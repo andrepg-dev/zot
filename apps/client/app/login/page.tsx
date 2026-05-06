@@ -4,17 +4,17 @@ import { login } from "@/actions/auth/login";
 import { signInWithGitHub, signInWithGoogle } from "@/actions/auth/oauth";
 import WaitlistOnboarding, {
   getPendingWaitlist,
-  ONBOARDING_SEEN_KEY
+  ONBOARDING_SEEN_KEY,
+  type PendingWaitlist
 } from "@/components/onboarding/waitlist-onboarding";
-import InputComponent from "@/components/ui/input";
 import { siteConfig } from "@/config/site";
 import { cn } from "@/lib/utils";
 import {
   BoltIcon,
   CheckBadgeIcon,
   ChevronLeftIcon,
-  EyeIcon,
-  EyeSlashIcon,
+  EnvelopeIcon,
+  RocketLaunchIcon,
   ShieldCheckIcon,
   SparklesIcon
 } from "@heroicons/react/24/outline";
@@ -85,7 +85,7 @@ function LoginInner() {
   const returnTo = resolveReturnTo(searchParams.get("returnTo"));
 
   const [view, setView] = useState<"onboarding" | "login" | null>(null);
-  const [pendingWaitlistName, setPendingWaitlistName] = useState<string | null>(null);
+  const [pendingWaitlist, setPendingWaitlist] = useState<PendingWaitlist | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [lastUsedMethod, setLastUsedMethod] = useState<string | null>(null);
 
@@ -93,7 +93,7 @@ function LoginInner() {
     const seen = sessionStorage.getItem(ONBOARDING_SEEN_KEY);
     setView(seen || returnTo ? "login" : "onboarding");
     const pending = getPendingWaitlist();
-    if (pending) setPendingWaitlistName(pending.name);
+    if (pending) setPendingWaitlist(pending);
 
     const storedMethod = localStorage.getItem(LAST_USED_LOGIN_METHOD_KEY);
     if (storedMethod) setLastUsedMethod(storedMethod);
@@ -143,11 +143,6 @@ function LoginInner() {
     mutate(data);
   };
 
-  const handleOnboardingContinue = (name: string) => {
-    setPendingWaitlistName(name);
-    setView("login");
-  };
-
   const handleOnboardingSkip = () => {
     setView("login");
   };
@@ -177,10 +172,7 @@ function LoginInner() {
       </Button>
 
       <aside className="hidden lg:flex relative z-10 flex-col justify-between p-10 xl:p-14 border-r overflow-hidden">
-        <Link
-          href="https://zot.so"
-          className="flex items-center gap-2.5 w-max text-foreground"
-        >
+        <Link href="https://zot.so" className="flex items-center gap-2.5 w-max text-foreground">
           <div className="w-9 h-9 rounded-none flex items-center justify-center border overflow-hidden bg-black">
             <Image
               width={300}
@@ -206,12 +198,15 @@ function LoginInner() {
           </h1>
 
           <p className="text-sm text-muted-foreground max-w-[46ch] leading-relaxed">
-            Waitlists, email campaigns, fake user blocking, webhooks, and more. All wired up in minutes.
+            Waitlists, email campaigns, fake user blocking, webhooks, and more. All wired up in
+            minutes.
           </p>
 
           <div className="bg-default-100/40 border backdrop-blur-[25px] p-3 font-mono text-xs flex items-center gap-2">
             <span className="text-success">$</span>
-            <span className="text-foreground/90">npx skills add launch-waitlist-zot/zot-skills</span>
+            <span className="text-foreground/90">
+              npx skills add launch-waitlist-zot/zot-skills
+            </span>
           </div>
 
           <ul className="flex flex-col gap-3">
@@ -227,8 +222,8 @@ function LoginInner() {
 
           <figure className="flex flex-col gap-3 border bg-default-100/40 backdrop-blur-[25px] p-4">
             <blockquote className="text-sm text-foreground/90 leading-relaxed">
-              &ldquo;Replaced our hand-rolled stack in an afternoon. Realtime
-              signups, email campaigns, webhooks and a dashboard we can trust.&rdquo;
+              &ldquo;Replaced our hand-rolled stack in an afternoon. Realtime signups, email
+              campaigns, webhooks and a dashboard we can trust.&rdquo;
             </blockquote>
             <figcaption className="flex items-center gap-2 text-xs text-muted-foreground">
               <span className="size-6 rounded-none bg-default-200 flex items-center justify-center text-[10px] text-foreground/80">
@@ -253,10 +248,7 @@ function LoginInner() {
           )}
         >
           {view === "onboarding" && (
-            <WaitlistOnboarding
-              onContinue={handleOnboardingContinue}
-              onSkip={handleOnboardingSkip}
-            />
+            <WaitlistOnboarding onSkip={handleOnboardingSkip} />
           )}
 
           {view === "login" && (
@@ -274,34 +266,71 @@ function LoginInner() {
                 </div>
               </Link>
 
-              {pendingWaitlistName && (
-                <div className="w-full bg-default-100/30 border px-3 py-2.5 flex items-start gap-2">
-                  <SparklesIcon className="size-3.5 text-foreground/60 shrink-0 mt-0.5" />
-                  <p className="text-xs text-muted-foreground leading-relaxed">
-                    We&apos;ll launch{" "}
-                    <span className="text-foreground font-medium">
-                      &ldquo;{pendingWaitlistName}&rdquo;
-                    </span>{" "}
-                    right after you sign in.
-                  </p>
-                </div>
-              )}
-
               <div className="text-center w-full">
                 <h2 className="text-2xl font-semibold text-foreground">Welcome back</h2>
                 <p className="text-sm text-muted-foreground mt-1">Pick up where you left off.</p>
-                <p className="text-sm text-muted-foreground mt-3">
-                  New to {siteConfig.name}?{" "}
-                  <Link
-                    href="/signup"
-                    className="text-foreground font-medium hover:underline underline-offset-2"
-                  >
-                    Create an account<span className="text-muted-foreground">.</span>
-                  </Link>
-                </p>
               </div>
 
-              <div className="w-full flex flex-col gap-2 mt-2">
+              <div className="w-full flex flex-col gap-2">
+                {pendingWaitlist && (
+                  <div className="w-full border bg-default-100/30 backdrop-blur-[25px] p-3 flex flex-col gap-2.5">
+                    <div className="flex items-center gap-2 pb-2 border-b border-border/70">
+                      <SparklesIcon className="size-3.5 text-foreground/70 shrink-0" />
+                      <p className="text-xs text-muted-foreground uppercase tracking-wide">
+                        Waitlist summary
+                      </p>
+                    </div>
+
+                    <div className="flex items-start gap-3 border bg-default-100/20 backdrop-blur-[25px] px-3 py-3">
+                      <RocketLaunchIcon className="size-3.5 text-success shrink-0 mt-0.5" />
+                      <div className="flex flex-col gap-0.5">
+                        <span className="text-sm text-foreground font-medium">
+                          <span className="capitalize">&ldquo;{pendingWaitlist.name}&rdquo; </span>waitlist
+                        </span>
+                        <span className="text-xs text-muted-foreground">
+                          Ready to collect signups immediately
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-3 border bg-default-100/20 backdrop-blur-[25px] px-3 py-3">
+                      <EnvelopeIcon className="size-3.5 text-success shrink-0 mt-0.5" />
+                      <div className="flex flex-col gap-0.5">
+                        <span className="text-sm text-foreground font-medium">
+                          Welcome email{" "}
+                          <span
+                            className={cn(
+                              "font-normal",
+                              pendingWaitlist.sendEmailToNewSignup
+                                ? "text-success"
+                                : "text-muted-foreground"
+                            )}
+                          >
+                            {pendingWaitlist.sendEmailToNewSignup ? "· on" : "· off"}
+                          </span>
+                        </span>
+                        <span className="text-xs text-muted-foreground">
+                          {pendingWaitlist.sendEmailToNewSignup
+                            ? "New signups get a welcome email automatically"
+                            : "You can enable this later in settings"}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-3 border bg-default-100/20 backdrop-blur-[25px] px-3 py-3">
+                      <ShieldCheckIcon className="size-3.5 text-success shrink-0 mt-0.5" />
+                      <div className="flex flex-col gap-0.5">
+                        <span className="text-sm text-foreground font-medium">
+                          Fake email protection
+                        </span>
+                        <span className="text-xs text-muted-foreground">
+                          Disposable and temporary emails are always blocked
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 <div className="w-full flex gap-3">
                   <form action={signInWithGoogle} className="relative flex-1 min-w-0">
                     {lastUsedMethod === "Google" && <LastUsedBadge />}
@@ -346,85 +375,20 @@ function LoginInner() {
                     </Button>
                   </form>
                 </div>
-              </div>
 
-              <div className="w-full flex items-center gap-4 mt-1">
-                <div className="flex-1 h-px bg-border" />
-                <span className="text-xs text-muted-foreground uppercase tracking-wide">
-                  or with email
-                </span>
-                <div className="flex-1 h-px bg-border" />
-              </div>
-
-              <form className="w-full space-y-5" onSubmit={handleSubmit(onSubmit)}>
-                <div className="space-y-2">
-                  <label htmlFor="email" className="text-sm text-muted-foreground block">
-                    Email
-                  </label>
-                  <InputComponent
-                    id="email"
-                    type="email"
-                    placeholder="founder@example.com"
-                    radius="none"
-                    classNames={{ inputWrapper: inputWrapperClass }}
-                    {...register("email")}
-                  />
-                  {errors.email && <p className="text-xs text-danger">{errors.email.message}</p>}
-                </div>
-
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <label htmlFor="password" className="text-sm text-muted-foreground block">
-                      Password
-                    </label>
-                    <Link
-                      href="/forgot-password"
-                      className="text-xs text-muted-foreground hover:text-foreground underline-offset-2 hover:underline"
-                    >
-                      Forgot password?
-                    </Link>
+                {pendingWaitlist && (
+                  <div className="w-full bg-default-100/30 border px-3 py-2.5 flex items-start gap-2">
+                    <SparklesIcon className="size-3.5 text-foreground/60 shrink-0 mt-0.5" />
+                    <p className="text-xs text-muted-foreground leading-relaxed">
+                      We&apos;ll launch{" "}
+                      <span className="text-foreground font-medium">
+                        &ldquo;{pendingWaitlist.name}&rdquo;
+                      </span>{" "}
+                      right after you sign in.
+                    </p>
                   </div>
-                  <InputComponent
-                    id="password"
-                    type={showPassword ? "text" : "password"}
-                    placeholder="••••••••"
-                    radius="none"
-                    classNames={{ inputWrapper: inputWrapperClass }}
-                    endContent={
-                      <button
-                        type="button"
-                        tabIndex={-1}
-                        className="focus:outline-none"
-                        onClick={() => setShowPassword((p) => !p)}
-                        aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
-                      >
-                        {showPassword ? (
-                          <EyeSlashIcon className="size-4 text-muted-foreground" />
-                        ) : (
-                          <EyeIcon className="size-4 text-muted-foreground" />
-                        )}
-                      </button>
-                    }
-                    {...register("password")}
-                  />
-                  {errors.password && (
-                    <p className="text-xs text-danger">{errors.password.message}</p>
-                  )}
-                </div>
-
-                <div className="relative">
-                  {lastUsedMethod === "Email" && <LastUsedBadge />}
-                  <Button
-                    type="submit"
-                    radius="none"
-                    className="w-full h-10 rounded-none !text-sm bg-default-50 border text-muted-foreground hover:bg-default-300 backdrop-blur-[25px]"
-                    isLoading={isPending}
-                    isDisabled={isPending}
-                  >
-                    Log In
-                  </Button>
-                </div>
-              </form>
+                )}
+              </div>
 
               <p className="text-xs text-muted-foreground text-center max-w-[36ch]">
                 By continuing, you agree to our{" "}
