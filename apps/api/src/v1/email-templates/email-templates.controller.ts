@@ -12,6 +12,7 @@ import {
 } from "@nestjs/common";
 import { ParseObjectIdPipe } from "@nestjs/mongoose";
 import { Types } from "mongoose";
+import { Public } from "../auth/decorators/skip-auth.decorator";
 import { CreateEmailTemplateDto } from "./dto/create-email-template.dto";
 import { UpdateEmailTemplateDto } from "./dto/update-email-template.dto";
 import { EmailTemplatesService } from "./email-templates.service";
@@ -23,6 +24,12 @@ export class EmailTemplatesController {
   @Post()
   create(@Body() createEmailTemplateDto: CreateEmailTemplateDto, @UserId() userId: Types.ObjectId) {
     return this.emailTemplatesService.create(createEmailTemplateDto, userId);
+  }
+
+  @Public()
+  @Get("public")
+  findPublic() {
+    return this.emailTemplatesService.findPublic();
   }
 
   @Get()

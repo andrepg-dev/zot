@@ -28,6 +28,9 @@ export class EmailTemplate extends BasedHiddenOwnerSchema {
     enum: ["draft", "published"],
   })
   status: "draft" | "published";
+
+  @Prop({ default: false, index: true })
+  isPublic: boolean;
 }
 
 export const EmailTemplateSchema = SchemaFactory.createForClass(EmailTemplate);

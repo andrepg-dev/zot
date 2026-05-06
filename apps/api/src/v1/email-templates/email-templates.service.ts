@@ -4,6 +4,7 @@ import {
   Injectable,
   InternalServerErrorException,
   Logger,
+  OnModuleInit,
 } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, Types } from "mongoose";
@@ -117,8 +118,10 @@ const WELCOME_TEMPLATE_CODE = `const Email = ({ recipientName = "", waitlistName
   );
 };`;
 
+const SYSTEM_OWNER_ID = new Types.ObjectId("000000000000000000000000");
+
 @Injectable()
-export class EmailTemplatesService {
+export class EmailTemplatesService implements OnModuleInit {
   private readonly logger = new Logger(EmailTemplatesService.name);
 
   constructor(
@@ -127,6 +130,67 @@ export class EmailTemplatesService {
     private readonly userQuoteService: UserQuoteService,
     private readonly s3Service: S3Service,
   ) {}
+
+  async onModuleInit() {
+    try {
+      await this.seedPublicTemplate();
+    } catch (error) {
+      this.logger.warn(`Failed to seed public email template: ${(error as Error).message}`);
+    }
+  }
+
+  async seedPublicTemplate() {
+    const exists = await this.EmailTemplateModel.findOne({ isPublic: true });
+    if (exists) return;
+
+    await this.createPublic({
+      alias: "Welcome email",
+      subject: "You're on the {{waitlistName}} waitlist",
+      code: WELCOME_TEMPLATE_CODE,
+      status: "published",
+    });
+  }
+
+  async createPublic(dto: CreateEmailTemplateDto) {
+    try {
+      const compiledCode = await this.reactToHtmlService.compile(dto.code);
+      const imageBuffer = await this.screenshotHTML(compiledCode);
+
+      const { url } = await this.s3Service.uploadSingleFile({
+        file: {
+          buffer: imageBuffer,
+          mimetype: "image/png",
+          originalname: `public-template-${Date.now()}.png`,
+        },
+      });
+
+      const image = await url;
+
+      if (!image.url) throw new InternalServerErrorException("Cannot upload preview to S3");
+
+      return await this.EmailTemplateModel.create({
+        ...dto,
+        html: compiledCode,
+        owner: SYSTEM_OWNER_ID,
+        isPublic: true,
+        preview: image.url,
+      });
+    } catch (error) {
+      if (error instanceof HttpException) throw error;
+      throw new HttpException("Error creating public template.", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async findPublic() {
+    try {
+      return await this.EmailTemplateModel.find({ isPublic: true })
+        .select("-owner")
+        .sort({ createdAt: -1 });
+    } catch (error) {
+      if (error instanceof HttpException) throw error;
+      throw new HttpException("Error fetching public templates.", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
 
   async seedDefault(owner: Types.ObjectId) {
     try {

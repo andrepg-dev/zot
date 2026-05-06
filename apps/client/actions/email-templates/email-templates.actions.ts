@@ -17,6 +17,10 @@ export async function getEmailTemplates() {
   return await FetchWrapper("/email-templates");
 }
 
+export async function getPublicEmailTemplates() {
+  return await FetchWrapper<Array<{ _id: string; alias: string; preview: string; subject: string }>>("/email-templates/public");
+}
+
 export async function getEmailTemplateById(id: string) {
   return await FetchWrapper(`/email-templates/${id}`);
 }
