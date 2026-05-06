@@ -62,7 +62,7 @@ export default function GeneralSettingsPage() {
     onSuccess: async () => {
       addToast({ description: "Account deleted", color: "default" });
       await logout();
-      router.push("/login");
+      router.push("/setup-waitlist");
     },
     onError: (err) => {
       addToast({ title: "Error", description: err.message, color: "danger" });

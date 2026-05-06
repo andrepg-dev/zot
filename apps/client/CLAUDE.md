@@ -19,7 +19,7 @@ Requires the API running on port 3010 (`apps/api`). No test runner is configured
 
 ### Routing
 
-Next.js 16 App Router with a single route group `(root-layout)` that wraps all authenticated pages in a header + sidebar layout. Public routes (`/login`, `/api/auth/callback`) sit outside this group.
+Next.js 16 App Router with a single route group `(root-layout)` that wraps all authenticated pages in a header + sidebar layout. Public routes (`/setup-waitlist`, `/api/auth/callback`) sit outside this group.
 
 Dynamic routes use the Next.js 16 async params pattern:
 ```tsx
@@ -44,7 +44,7 @@ Generic typed HTTP client that all server actions use. Key behaviors:
 
 ### Auth
 
-JWT tokens in cookies: `access_token` (1h TTL) and `refresh_token` (7d TTL). Middleware (`middleware.ts`) checks `refresh_token` presence to gate `/app/*` routes and redirect authenticated users away from `/login`. OAuth callbacks (Google, GitHub) redirect through `/api/auth/callback`.
+JWT tokens in cookies: `access_token` (1h TTL) and `refresh_token` (7d TTL). Middleware (`middleware.ts`) checks `refresh_token` presence to gate `/app/*` routes and redirect authenticated users away from `/setup-waitlist`. OAuth callbacks (Google, GitHub) redirect through `/api/auth/callback`.
 
 ### UI Stack
 

@@ -21,14 +21,16 @@ import {
 } from "@/components/onboarding/waitlist-onboarding";
 import { cn } from "@/lib/utils";
 import {
+  ArrowTopRightOnSquareIcon,
   ArrowTrendingUpIcon,
   ChartBarIcon,
   ClockIcon,
   UserPlusIcon
 } from "@heroicons/react/24/outline";
-import { Select, SelectItem, Skeleton } from "@heroui/react";
+import { Button, Select, SelectItem, Skeleton } from "@heroui/react";
 import { addToast } from "@heroui/toast";
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import React from "react";
 
 function StatCardSkeleton() {
@@ -108,6 +110,8 @@ const DATE_RANGE_OPTIONS = [
 export default function Dashboard() {
   const [animated, setAnimated] = React.useState(false);
   const [selectedRange, setSelectedRange] = React.useState("30");
+  const queryClient = useQueryClient();
+  const router = useRouter();
 
   const { fromStr, toStr } = React.useMemo(() => {
     const now = new Date();
@@ -147,17 +151,44 @@ export default function Dashboard() {
           }
         }
 
-        await createWaitList({
+        const createdWaitlist = await createWaitList({
           name: pending.name,
           sendEmailToNewSignup: pending.sendEmailToNewSignup,
           ...(emailTemplateToNewSignUps && { emailTemplateToNewSignUps })
         });
         await completeOnboarding();
+        await Promise.all([
+          queryClient.invalidateQueries({ queryKey: ["waitlists"] }),
+          queryClient.invalidateQueries({ queryKey: ["dashboard-stats"] })
+        ]);
 
         addToast({
           title: `"${pending.name}" is live`,
-          description: "Your waitlist is ready. Start collecting signups.",
-          color: "success"
+          description: (
+            <div className="flex flex-col gap-2 mt-1 w-full">
+              <p className="text-muted-foreground">Your waitlist is ready. Start collecting signups.</p>
+              <div className="flex justify-end">
+                <Button
+                  size="sm"
+                  radius="none"
+                  variant="bordered"
+                  className="border-white/35 bg-white/10 text-white hover:bg-white/20"
+                  endContent={<ArrowTopRightOnSquareIcon className="size-3" />}
+                  onPress={() => router.push(`/app/launch/waitlist/${createdWaitlist._id}`)}
+                >
+                  View waitlist
+                </Button>
+              </div>
+            </div>
+          )
+          ,
+          color: "success",
+          hideIcon: true,
+          classNames: {
+            description: "text-sm w-full",
+            base: "rounded-none! border-l-8 border-l-success",
+            wrapper: "w-full"
+          }
         });
       } catch {
         // user can create a waitlist manually if this fails

@@ -5,7 +5,7 @@ The wizard has completed a deep integration of PostHog analytics into the Zot Ne
 
 | Event | Description | File |
 |---|---|---|
-| `user_logged_in` | User successfully logged in with email/password | `app/login/page.tsx` |
+| `user_logged_in` | User successfully logged in with email/password | `app/setup-waitlist/page.tsx` |
 | `waitlist_created` | User created a new waitlist | `app/(root-layout)/app/waitlist/launch/page.tsx` |
 | `waitlist_deleted` | User permanently deleted a waitlist (churn signal) | `app/(root-layout)/app/launch/waitlist/[id]/settings/page.tsx` |
 | `waitlist_status_toggled` | User toggled waitlist active/disabled status | `app/(root-layout)/app/waitlist/dashboard/page.tsx` |

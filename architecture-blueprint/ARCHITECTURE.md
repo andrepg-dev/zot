@@ -276,7 +276,7 @@ apps/client/
 
 ### 4.2 Routing
 
-- Next.js 16 App Router. A single route group `(root-layout)` wraps every authenticated page in the header + sidebar layout. Public routes (`/login`, `/signup`, `/api/*`) live outside it.
+- Next.js 16 App Router. A single route group `(root-layout)` wraps every authenticated page in the header + sidebar layout. Public routes (`/setup-waitlist`, `/signup`, `/api/*`) live outside it.
 - Dynamic route params are async:
   ```tsx
   export default function Page({ params }: { params: Promise<{ id: string }> }) {
@@ -286,9 +286,9 @@ apps/client/
 
 ### 4.3 Auth middleware (`middleware.ts`)
 
-- Reads `refresh_token` cookie. If a user without the cookie hits anything other than `/login` or `/signup`, redirect to `/login?returnTo=...`. If a user *with* the cookie hits an auth route, redirect to `/app/dashboard` (or `returnTo`).
+- Reads `refresh_token` cookie. If a user without the cookie hits anything other than `/setup-waitlist` or `/signup`, redirect to `/setup-waitlist?returnTo=...`. If a user *with* the cookie hits an auth route, redirect to `/app/dashboard` (or `returnTo`).
 - `safeReturnTo` rejects values that don't start with a single `/` to prevent open redirects.
-- `matcher: ["/app/:path*", "/login", "/signup"]`.
+- `matcher: ["/app/:path*", "/setup-waitlist", "/signup"]`.
 
 ### 4.4 The `FetchWrapper` (the heart of data flow)
 

@@ -7,7 +7,7 @@ export async function GET(request: NextRequest) {
   const refresh_token = request.nextUrl.searchParams.get("refresh_token");
 
   if (!access_token || !refresh_token) {
-    return NextResponse.redirect(new URL("/login", request.url));
+    return NextResponse.redirect(new URL("/setup-waitlist", request.url));
   }
 
   const cookieStore = await cookies();

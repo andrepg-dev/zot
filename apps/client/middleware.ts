@@ -12,7 +12,7 @@ export async function middleware(request: NextRequest) {
 
   const tokensExists = refresh_token_value;
 
-  const isAuthRoute = pathname === "/login" || pathname === "/signup";
+  const isAuthRoute = pathname === "/setup-waitlist" || pathname === "/signup";
 
   if (isAuthRoute && tokensExists) {
     const returnTo = safeReturnTo(request.nextUrl.searchParams.get("returnTo"));
@@ -20,7 +20,7 @@ export async function middleware(request: NextRequest) {
   }
 
   if (!isAuthRoute && !tokensExists) {
-    const url = new URL("/login", request.url);
+    const url = new URL("/setup-waitlist", request.url);
     const target = `${pathname}${search}`;
     if (target && target !== "/") url.searchParams.set("returnTo", target);
     return NextResponse.redirect(url);
@@ -38,5 +38,5 @@ function safeReturnTo(value: string | null): string | null {
 
 // See "Matching Paths" below to learn more
 export const config = {
-  matcher: ["/app/:path*", "/login", "/signup"]
+  matcher: ["/app/:path*", "/setup-waitlist", "/signup"]
 };

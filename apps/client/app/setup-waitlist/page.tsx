@@ -71,15 +71,15 @@ function resolveReturnTo(value: string | null): string | null {
   return value;
 }
 
-export default function LoginPage() {
+export default function SetupWaitlistPage() {
   return (
     <Suspense fallback={null}>
-      <LoginInner />
+      <SetupWaitlistInner />
     </Suspense>
   );
 }
 
-function LoginInner() {
+function SetupWaitlistInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const returnTo = resolveReturnTo(searchParams.get("returnTo"));

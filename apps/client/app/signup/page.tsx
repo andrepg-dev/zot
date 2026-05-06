@@ -214,7 +214,7 @@ function SignupInner() {
             <p className="text-sm text-muted-foreground mt-3">
               Already have an account?{" "}
               <Link
-                href="/login"
+                href="/setup-waitlist"
                 className="text-foreground font-medium hover:underline underline-offset-2"
               >
                 Log in<span className="text-muted-foreground">.</span>
