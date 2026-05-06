@@ -2,6 +2,10 @@
 
 import { login } from "@/actions/auth/login";
 import { signInWithGitHub, signInWithGoogle } from "@/actions/auth/oauth";
+import WaitlistOnboarding, {
+  getPendingWaitlist,
+  ONBOARDING_SEEN_KEY
+} from "@/components/onboarding/waitlist-onboarding";
 import InputComponent from "@/components/ui/input";
 import { siteConfig } from "@/config/site";
 import { cn } from "@/lib/utils";
@@ -79,13 +83,21 @@ function LoginInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const returnTo = resolveReturnTo(searchParams.get("returnTo"));
+
+  const [view, setView] = useState<"onboarding" | "login" | null>(null);
+  const [pendingWaitlistName, setPendingWaitlistName] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [lastUsedMethod, setLastUsedMethod] = useState<string | null>(null);
 
   useEffect(() => {
+    const seen = sessionStorage.getItem(ONBOARDING_SEEN_KEY);
+    setView(seen || returnTo ? "login" : "onboarding");
+    const pending = getPendingWaitlist();
+    if (pending) setPendingWaitlistName(pending.name);
+
     const storedMethod = localStorage.getItem(LAST_USED_LOGIN_METHOD_KEY);
     if (storedMethod) setLastUsedMethod(storedMethod);
-  }, []);
+  }, [returnTo]);
 
   const {
     register,
@@ -129,6 +141,15 @@ function LoginInner() {
   const onSubmit = (data: LoginFormValues) => {
     saveLastUsedMethod("Email");
     mutate(data);
+  };
+
+  const handleOnboardingContinue = (name: string) => {
+    setPendingWaitlistName(name);
+    setView("login");
+  };
+
+  const handleOnboardingSkip = () => {
+    setView("login");
   };
 
   return (
@@ -225,173 +246,204 @@ function LoginInner() {
       </aside>
 
       <main className="relative z-10 flex flex-col items-center justify-center px-4 py-12">
-        <div className="w-full max-w-[420px] flex flex-col items-center gap-4">
-          <Link href="/" className="lg:hidden flex items-center justify-center">
-            <div className="w-10 h-10 rounded-none flex items-center justify-center border overflow-hidden bg-black">
-              <Image
-                width={300}
-                height={300}
-                src="/favicon_io/android-chrome-512x512.png"
-                alt={siteConfig.name}
-                className="w-10 h-10 rounded-none object-cover"
-                priority
-              />
-            </div>
-          </Link>
+        <div
+          className={cn(
+            "w-full max-w-[420px] transition-opacity duration-150",
+            view === null ? "opacity-0 pointer-events-none" : "opacity-100"
+          )}
+        >
+          {view === "onboarding" && (
+            <WaitlistOnboarding
+              onContinue={handleOnboardingContinue}
+              onSkip={handleOnboardingSkip}
+            />
+          )}
 
-          <div className="text-center w-full">
-            <h2 className="text-2xl font-semibold text-foreground">Welcome back</h2>
-            <p className="text-sm text-muted-foreground mt-1">Pick up where you left off.</p>
-            <p className="text-sm text-muted-foreground mt-3">
-              New to {siteConfig.name}?{" "}
-              <Link
-                href="/signup"
-                className="text-foreground font-medium hover:underline underline-offset-2"
-              >
-                Create an account<span className="text-muted-foreground">.</span>
+          {view === "login" && (
+            <div className="flex flex-col items-center gap-4 w-full">
+              <Link href="/" className="lg:hidden flex items-center justify-center">
+                <div className="w-10 h-10 rounded-none flex items-center justify-center border overflow-hidden bg-black">
+                  <Image
+                    width={300}
+                    height={300}
+                    src="/favicon_io/android-chrome-512x512.png"
+                    alt={siteConfig.name}
+                    className="w-10 h-10 rounded-none object-cover"
+                    priority
+                  />
+                </div>
               </Link>
-            </p>
-          </div>
 
-          <div className="w-full flex flex-col gap-2 mt-2">
-            <div className="w-full flex gap-3">
-              <form action={signInWithGoogle} className="relative flex-1 min-w-0">
-                {lastUsedMethod === "Google" && <LastUsedBadge />}
-                <Button
-                  type="submit"
-                  radius="none"
-                  className={oauthButtonClass}
-                  disableRipple
-                  onPress={() => saveLastUsedMethod("Google")}
-                  startContent={
-                    <Image
-                      src={"/icons/google-icon.svg"}
-                      width={30}
-                      height={30}
-                      alt="Google icon"
-                      className="w-5 h-5 shrink-0 brightness-0 invert"
-                    />
-                  }
-                >
-                  Google
-                </Button>
-              </form>
-              <form action={signInWithGitHub} className="relative flex-1 min-w-0">
-                {lastUsedMethod === "GitHub" && <LastUsedBadge />}
-                <Button
-                  type="submit"
-                  radius="none"
-                  className={oauthButtonClass}
-                  disableRipple
-                  onPress={() => saveLastUsedMethod("GitHub")}
-                  startContent={
-                    <Image
-                      src={"/icons/github-icon.svg"}
-                      width={30}
-                      height={30}
-                      alt="GitHub icon"
-                      className="w-5 h-5 shrink-0 brightness-0 invert"
-                    />
-                  }
-                >
-                  GitHub
-                </Button>
-              </form>
-            </div>
-          </div>
+              {pendingWaitlistName && (
+                <div className="w-full bg-default-100/30 border px-3 py-2.5 flex items-start gap-2">
+                  <SparklesIcon className="size-3.5 text-foreground/60 shrink-0 mt-0.5" />
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    We&apos;ll launch{" "}
+                    <span className="text-foreground font-medium">
+                      &ldquo;{pendingWaitlistName}&rdquo;
+                    </span>{" "}
+                    right after you sign in.
+                  </p>
+                </div>
+              )}
 
-          <div className="w-full flex items-center gap-4 mt-1">
-            <div className="flex-1 h-px bg-border" />
-            <span className="text-xs text-muted-foreground uppercase tracking-wide">
-              or with email
-            </span>
-            <div className="flex-1 h-px bg-border" />
-          </div>
-
-          <form className="w-full space-y-5" onSubmit={handleSubmit(onSubmit)}>
-            <div className="space-y-2">
-              <label htmlFor="email" className="text-sm text-muted-foreground block">
-                Email
-              </label>
-              <InputComponent
-                id="email"
-                type="email"
-                placeholder="founder@example.com"
-                radius="none"
-                classNames={{ inputWrapper: inputWrapperClass }}
-                {...register("email")}
-              />
-              {errors.email && <p className="text-xs text-danger">{errors.email.message}</p>}
-            </div>
-
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <label htmlFor="password" className="text-sm text-muted-foreground block">
-                  Password
-                </label>
-                <Link
-                  href="/forgot-password"
-                  className="text-xs text-muted-foreground hover:text-foreground underline-offset-2 hover:underline"
-                >
-                  Forgot password?
-                </Link>
-              </div>
-              <InputComponent
-                id="password"
-                type={showPassword ? "text" : "password"}
-                placeholder="••••••••"
-                radius="none"
-                classNames={{ inputWrapper: inputWrapperClass }}
-                endContent={
-                  <button
-                    type="button"
-                    tabIndex={-1}
-                    className="focus:outline-none"
-                    onClick={() => setShowPassword((p) => !p)}
-                    aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+              <div className="text-center w-full">
+                <h2 className="text-2xl font-semibold text-foreground">Welcome back</h2>
+                <p className="text-sm text-muted-foreground mt-1">Pick up where you left off.</p>
+                <p className="text-sm text-muted-foreground mt-3">
+                  New to {siteConfig.name}?{" "}
+                  <Link
+                    href="/signup"
+                    className="text-foreground font-medium hover:underline underline-offset-2"
                   >
-                    {showPassword ? (
-                      <EyeSlashIcon className="size-4 text-muted-foreground" />
-                    ) : (
-                      <EyeIcon className="size-4 text-muted-foreground" />
-                    )}
-                  </button>
-                }
-                {...register("password")}
-              />
-              {errors.password && <p className="text-xs text-danger">{errors.password.message}</p>}
-            </div>
+                    Create an account<span className="text-muted-foreground">.</span>
+                  </Link>
+                </p>
+              </div>
 
-            <div className="relative">
-              {lastUsedMethod === "Email" && <LastUsedBadge />}
-              <Button
-                type="submit"
-                radius="none"
-                className="w-full h-10 rounded-none !text-sm bg-default-50 border text-muted-foreground hover:bg-default-300 backdrop-blur-[25px]"
-                isLoading={isPending}
-                isDisabled={isPending}
-              >
-                Log In
-              </Button>
-            </div>
-          </form>
+              <div className="w-full flex flex-col gap-2 mt-2">
+                <div className="w-full flex gap-3">
+                  <form action={signInWithGoogle} className="relative flex-1 min-w-0">
+                    {lastUsedMethod === "Google" && <LastUsedBadge />}
+                    <Button
+                      type="submit"
+                      radius="none"
+                      className={oauthButtonClass}
+                      disableRipple
+                      onPress={() => saveLastUsedMethod("Google")}
+                      startContent={
+                        <Image
+                          src={"/icons/google-icon.svg"}
+                          width={30}
+                          height={30}
+                          alt="Google icon"
+                          className="w-5 h-5 shrink-0 brightness-0 invert"
+                        />
+                      }
+                    >
+                      Google
+                    </Button>
+                  </form>
+                  <form action={signInWithGitHub} className="relative flex-1 min-w-0">
+                    {lastUsedMethod === "GitHub" && <LastUsedBadge />}
+                    <Button
+                      type="submit"
+                      radius="none"
+                      className={oauthButtonClass}
+                      disableRipple
+                      onPress={() => saveLastUsedMethod("GitHub")}
+                      startContent={
+                        <Image
+                          src={"/icons/github-icon.svg"}
+                          width={30}
+                          height={30}
+                          alt="GitHub icon"
+                          className="w-5 h-5 shrink-0 brightness-0 invert"
+                        />
+                      }
+                    >
+                      GitHub
+                    </Button>
+                  </form>
+                </div>
+              </div>
 
-          <p className="text-xs text-muted-foreground text-center max-w-[36ch]">
-            By continuing, you agree to our{" "}
-            <Link
-              href="/terms"
-              className="text-foreground/80 hover:text-foreground underline underline-offset-2"
-            >
-              Terms
-            </Link>{" "}
-            and{" "}
-            <Link
-              href="/privacy"
-              className="text-foreground/80 hover:text-foreground underline underline-offset-2"
-            >
-              Privacy Policy.
-            </Link>
-          </p>
+              <div className="w-full flex items-center gap-4 mt-1">
+                <div className="flex-1 h-px bg-border" />
+                <span className="text-xs text-muted-foreground uppercase tracking-wide">
+                  or with email
+                </span>
+                <div className="flex-1 h-px bg-border" />
+              </div>
+
+              <form className="w-full space-y-5" onSubmit={handleSubmit(onSubmit)}>
+                <div className="space-y-2">
+                  <label htmlFor="email" className="text-sm text-muted-foreground block">
+                    Email
+                  </label>
+                  <InputComponent
+                    id="email"
+                    type="email"
+                    placeholder="founder@example.com"
+                    radius="none"
+                    classNames={{ inputWrapper: inputWrapperClass }}
+                    {...register("email")}
+                  />
+                  {errors.email && <p className="text-xs text-danger">{errors.email.message}</p>}
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <label htmlFor="password" className="text-sm text-muted-foreground block">
+                      Password
+                    </label>
+                    <Link
+                      href="/forgot-password"
+                      className="text-xs text-muted-foreground hover:text-foreground underline-offset-2 hover:underline"
+                    >
+                      Forgot password?
+                    </Link>
+                  </div>
+                  <InputComponent
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="••••••••"
+                    radius="none"
+                    classNames={{ inputWrapper: inputWrapperClass }}
+                    endContent={
+                      <button
+                        type="button"
+                        tabIndex={-1}
+                        className="focus:outline-none"
+                        onClick={() => setShowPassword((p) => !p)}
+                        aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                      >
+                        {showPassword ? (
+                          <EyeSlashIcon className="size-4 text-muted-foreground" />
+                        ) : (
+                          <EyeIcon className="size-4 text-muted-foreground" />
+                        )}
+                      </button>
+                    }
+                    {...register("password")}
+                  />
+                  {errors.password && (
+                    <p className="text-xs text-danger">{errors.password.message}</p>
+                  )}
+                </div>
+
+                <div className="relative">
+                  {lastUsedMethod === "Email" && <LastUsedBadge />}
+                  <Button
+                    type="submit"
+                    radius="none"
+                    className="w-full h-10 rounded-none !text-sm bg-default-50 border text-muted-foreground hover:bg-default-300 backdrop-blur-[25px]"
+                    isLoading={isPending}
+                    isDisabled={isPending}
+                  >
+                    Log In
+                  </Button>
+                </div>
+              </form>
+
+              <p className="text-xs text-muted-foreground text-center max-w-[36ch]">
+                By continuing, you agree to our{" "}
+                <Link
+                  href="/terms"
+                  className="text-foreground/80 hover:text-foreground underline underline-offset-2"
+                >
+                  Terms
+                </Link>{" "}
+                and{" "}
+                <Link
+                  href="/privacy"
+                  className="text-foreground/80 hover:text-foreground underline underline-offset-2"
+                >
+                  Privacy Policy.
+                </Link>
+              </p>
+            </div>
+          )}
         </div>
       </main>
     </div>

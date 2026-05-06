@@ -1,15 +1,24 @@
 "use client";
 
+import { getProfile } from "@/actions/auth/profile";
+import { getEmailTemplates } from "@/actions/email-templates/email-templates.actions";
 import {
   getDashboardStats,
   type DashboardStats
 } from "@/actions/general-stats/general-stats.actions";
+import { completeOnboarding } from "@/actions/users/users.actions";
+import { createWaitList } from "@/actions/wait-list/wait-list.actions";
 import RecentSignupsTable from "@/components/app/dashboard/recent-signups-table";
 import SourceChart from "@/components/app/dashboard/source-chart";
 import StatCard from "@/components/app/dashboard/stat-card";
 import StatusChart from "@/components/app/dashboard/status-chart";
 import Title from "@/components/global/title";
 import PageComponent from "@/components/layouts/page-component";
+import {
+  getPendingWaitlist,
+  ONBOARDING_SEEN_KEY,
+  PENDING_WAITLIST_KEY
+} from "@/components/onboarding/waitlist-onboarding";
 import { cn } from "@/lib/utils";
 import {
   ArrowTrendingUpIcon,
@@ -18,6 +27,7 @@ import {
   UserPlusIcon
 } from "@heroicons/react/24/outline";
 import { Select, SelectItem, Skeleton } from "@heroui/react";
+import { addToast } from "@heroui/toast";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import React from "react";
 
@@ -114,6 +124,45 @@ export default function Dashboard() {
 
   React.useEffect(() => {
     setAnimated(true);
+  }, []);
+
+  React.useEffect(() => {
+    const pending = getPendingWaitlist();
+    if (!pending) return;
+
+    sessionStorage.removeItem(PENDING_WAITLIST_KEY);
+    sessionStorage.removeItem(ONBOARDING_SEEN_KEY);
+
+    (async () => {
+      try {
+        const profile = await getProfile();
+        if (profile.hasCompletedOnboarding) return;
+
+        let emailTemplateToNewSignUps: string | undefined;
+
+        if (pending.sendEmailToNewSignup) {
+          const templates = await getEmailTemplates() as Array<{ _id: string }>;
+          if (Array.isArray(templates) && templates[0]) {
+            emailTemplateToNewSignUps = templates[0]._id;
+          }
+        }
+
+        await createWaitList({
+          name: pending.name,
+          sendEmailToNewSignup: pending.sendEmailToNewSignup,
+          ...(emailTemplateToNewSignUps && { emailTemplateToNewSignUps })
+        });
+        await completeOnboarding();
+
+        addToast({
+          title: `"${pending.name}" is live`,
+          description: "Your waitlist is ready. Start collecting signups.",
+          color: "success"
+        });
+      } catch {
+        // user can create a waitlist manually if this fails
+      }
+    })();
   }, []);
 
   return (
