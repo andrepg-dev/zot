@@ -53,6 +53,7 @@ function fillDailyData<T extends { date: string }>(
 export default function LaunchedWaitList({ params }: { params: Promise<{ id: string }> }) {
   const { id } = React.use(params);
   const [animated, setAnimated] = React.useState(false);
+  const [isPromptExpanded, setIsPromptExpanded] = React.useState(false);
 
   const { data, isPending } = useQuery({
     queryKey: [id],
@@ -157,6 +158,7 @@ export default function LaunchedWaitList({ params }: { params: Promise<{ id: str
   const emailsSentData = fillDailyData(rawEmailsSent, last20Days, { sent: 0, failed: 0 });
 
   const connectSkillCommand = "npx skills add launch-waitlist-zot/zot-skills";
+  const integrationGuideVideoUrl = "#";
   const connectWithClaudePrompt = `Integrate my Zot waitlist into this Next.js app using @zot-core/sdk/react.
 Use this waitlistId: ${id}
 Read variables from .env.local:
@@ -226,30 +228,40 @@ Requirements:
 
       {!isPending && !data?.integration?.connected && (
         <section className="mt-8 border border-secondary/15 bg-secondary-50/50">
-          <div className="border-b border-secondary/20 px-5 py-4">
-            <div className="flex items-center gap-2">
-              <CommandLineIcon className="size-4 text-secondary" />
-              <Type variant="h6">Connection guide</Type>
+          <div className="border-b border-secondary/20 px-5 py-4 flex items-center justify-between gap-3">
+            <div>
+              <div className="flex items-center gap-2">
+                <CommandLineIcon className="size-4 text-secondary" />
+                <Type variant="h6">Connection guide</Type>
+              </div>
+              <Type className="mt-1 text-muted-foreground">
+                Follow these two steps to connect this waitlist to your app.
+              </Type>
             </div>
-            <Type className="mt-1 text-muted-foreground">
-              Follow these two steps to connect this waitlist to your app.
-            </Type>
           </div>
 
-          <div className="grid grid-cols-1 gap-0 lg:grid-cols-[minmax(0,220px)_minmax(0,1fr)]">
+          <div className="grid grid-cols-1 gap-0 lg:grid-cols-3">
             <aside className="border-b border-secondary/15 bg-background p-5 lg:border-b-0 lg:border-r lg:border-r-secondary/15">
-              <Type variant="sm" className="text-foreground">
-                Guide notes
-              </Type>
-              <Type className="mt-1 text-muted-foreground">
-                The prompt already includes your waitlist ID, so you can copy and use it directly.
-              </Type>
-              <Type variant="sm" className="mt-3 text-muted-foreground/90">
-                Waitlist reference: <span className="font-mono">{id}</span>
-              </Type>
+              <div className="aspect-video w-full overflow-hidden border border-secondary/20 bg-black/60">
+                {integrationGuideVideoUrl === "#" ? (
+                  <div className="flex h-full w-full items-center justify-center px-6 text-center">
+                    <Type className="text-muted-foreground">
+                      Your integration walkthrough video will appear here.
+                    </Type>
+                  </div>
+                ) : (
+                  <iframe
+                    src={integrationGuideVideoUrl}
+                    title="Waitlist integration guide"
+                    className="h-full w-full"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowFullScreen
+                  />
+                )}
+              </div>
             </aside>
 
-            <div className="p-5">
+            <div className="p-5 lg:col-span-2">
               <div className="flex flex-col gap-6">
                 <div className="flex gap-3">
                   <div className="flex flex-col items-center">
@@ -276,15 +288,26 @@ Requirements:
                     <Type className="text-muted-foreground">
                       Generate the waitlist form integration using the official Zot SDK.
                     </Type>
-                    <div className="border border-secondary/20 bg-background p-2">
-                      <Type variant="sm" className="mb-2 text-foreground">
-                        Recommended
-                      </Type>
-                      <CodeBlock
-                        className="border-secondary/15"
-                        lang="markdown"
-                        code={connectWithClaudePrompt}
-                      />
+                    <div className="relative border border-secondary/20 bg-background p-2">
+                      <div className={cn("relative", !isPromptExpanded && "max-h-[220px] overflow-hidden")}>
+                        <CodeBlock
+                          className="border-secondary/15"
+                          lang="markdown"
+                          code={connectWithClaudePrompt}
+                        />
+                        {!isPromptExpanded && (
+                          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-background via-background/80 to-transparent" />
+                        )}
+                      </div>
+                      <div className="mt-2 flex justify-end">
+                        <button
+                          type="button"
+                          className="text-xs text-muted-foreground hover:text-foreground underline underline-offset-4"
+                          onClick={() => setIsPromptExpanded((previous) => !previous)}
+                        >
+                          {isPromptExpanded ? "Show less" : "Expand code"}
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
