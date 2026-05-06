@@ -1,5 +1,5 @@
 import { UserId } from "@api/src/common/decorators/user-id.decorator";
-import { Body, Controller, Delete, Patch } from "@nestjs/common";
+import { Body, Controller, Delete, HttpCode, HttpStatus, Patch } from "@nestjs/common";
 import { ApiBearerAuth, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { UsersService } from "./users.service";
@@ -17,6 +17,13 @@ export class UsersController {
   })
   async update(@UserId() userId: string, @Body() data: UpdateUserDto) {
     return await this.usersService.findByIdAndUpdate(userId, data);
+  }
+
+  @Patch("me/onboarding")
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: "Mark onboarding as complete" })
+  async completeOnboarding(@UserId() userId: string) {
+    return await this.usersService.completeOnboarding(userId);
   }
 
   @Delete()

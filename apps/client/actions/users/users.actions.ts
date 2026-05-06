@@ -12,3 +12,7 @@ export async function updateUser(data: { name?: string; lastName?: string }) {
 export async function deleteAccount() {
   return await FetchWrapper("/users", { method: "DELETE" });
 }
+
+export async function completeOnboarding() {
+  return await FetchWrapper("/users/me/onboarding", { method: "PATCH" });
+}

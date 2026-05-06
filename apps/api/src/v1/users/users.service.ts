@@ -215,6 +215,19 @@ export class UsersService {
     }
   }
 
+  async completeOnboarding(userId: string) {
+    try {
+      return await this.userModel.findByIdAndUpdate(
+        userId,
+        { hasCompletedOnboarding: true },
+        { new: true },
+      );
+    } catch (error) {
+      if (error instanceof HttpException) throw error;
+      throw new HttpException("Error completing onboarding.", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
   async hasFreePlan(userId: Types.ObjectId) {
     try {
       if (!userId) {

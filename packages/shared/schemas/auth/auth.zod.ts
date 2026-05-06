@@ -18,6 +18,7 @@ export const userProfileResponseSchema = z.object({
   providers: z.array(z.enum(["google", "local", "github"])),
   avatar: z.string().optional(),
   suscriptionPlan: z.enum(["FREE", "PREMIUM", "SCALE"]),
+  hasCompletedOnboarding: z.boolean().optional(),
   createdAt: z.string(),
   updatedAt: z.string(),
 });

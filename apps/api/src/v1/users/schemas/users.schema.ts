@@ -62,6 +62,9 @@ export class User {
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: UserQuote.name, required: true })
   quote: Types.ObjectId;
+
+  @Prop({ default: false })
+  hasCompletedOnboarding: boolean;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
