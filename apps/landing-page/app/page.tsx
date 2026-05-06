@@ -69,7 +69,7 @@ export default function HomePage() {
 
   return (
     <div className="font-sans overflow-x-hidden">
-<div className="w-full h-screen absolute -z-10 bg-black bg-[url('/background.avif')] bg-cover bg-center">
+      <div className="w-full h-screen absolute -z-10 bg-black bg-[url('/background.avif')] bg-cover bg-center">
         <DarkVeil
           speed={0.1}
           hueShift={20}

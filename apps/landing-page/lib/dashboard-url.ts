@@ -4,5 +4,5 @@
  */
 export function getDashboardUrl(): string {
   const base = process.env.NEXT_PUBLIC_FRONTEND_APP_URL ?? "https://app.zot.so";
-  return `${base.replace(/\/$/, "")}/app/dashboard`;
+  return `${base.replace(/\/$/, "")}/setup-waitlist`;
 }
