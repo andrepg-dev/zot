@@ -37,6 +37,22 @@ export class WaitList {
     url: string | undefined;
     range: number;
   };
+
+  @Prop({
+    type: {
+      connected: { type: Boolean, default: false },
+      connectedAt: { type: Date, required: false },
+      lastActivityAt: { type: Date, required: false },
+      channel: { type: String, required: false },
+    },
+    default: { connected: false },
+  })
+  integration: {
+    connected: boolean;
+    connectedAt?: Date;
+    lastActivityAt?: Date;
+    channel?: "api";
+  };
 }
 
 export const WaitListSchema = SchemaFactory.createForClass(WaitList);

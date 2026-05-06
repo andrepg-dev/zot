@@ -14,6 +14,12 @@ export interface WaitListStats {
     range: number;
     _id: string;
   };
+  integration?: {
+    connected: boolean;
+    connectedAt?: string;
+    lastActivityAt?: string;
+    channel?: "api";
+  };
   createdAt: string;
   updatedAt: string;
   dailyRegistration: Array<{

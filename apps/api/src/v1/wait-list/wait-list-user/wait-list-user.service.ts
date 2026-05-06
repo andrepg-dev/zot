@@ -108,6 +108,21 @@ export class WaitListUserService {
         source,
       });
 
+      const now = new Date();
+      await this.WaitListModel.updateOne(
+        { _id: waitlistId },
+        [
+          {
+            $set: {
+              "integration.connected": true,
+              "integration.lastActivityAt": now,
+              "integration.channel": "api",
+              "integration.connectedAt": { $ifNull: ["$integration.connectedAt", now] },
+            },
+          },
+        ],
+      );
+
       // <================== SEND WEBHOOK TO THE WEBHOOK URL ==================>
       /**
        * I need to count the amount of users registered in the waitlist, and if that number is divisible by the range, send the webhook to the webhook url

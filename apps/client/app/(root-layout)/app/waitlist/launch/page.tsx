@@ -17,7 +17,6 @@ import InputComponent from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import {
   CheckCircleIcon,
-  CommandLineIcon,
   LockClosedIcon,
   PlusIcon,
   SparklesIcon
@@ -160,21 +159,6 @@ export default function LaunchWaitList() {
     mutate(data);
   };
 
-  const connectSkillCommand = "npx skills add launch-waitlist-zot/zot-skills";
-
-  const waitlistIdForPrompt = createdWaitlistId || "wl_abc123";
-  const connectWithClaudePrompt = `Integrate my Zot waitlist into this Next.js app using @zot-core/sdk/react.
-Use this waitlistId: ${waitlistIdForPrompt}
-Read variables from .env.local:
-- NEXT_PUBLIC_ZOT_API_KEY
-- NEXT_PUBLIC_ZOT_WAITLIST_ID=${waitlistIdForPrompt}
-
-Requirements:
-- use useAddUser from @zot-core/sdk/react
-- handle 409 and 429 errors with user-friendly messages
-- keep the UI simple with required email and optional name
-- do not use raw fetch to Zot API`;
-
   return (
     <PageComponent>
       <HeaderNavigation
@@ -203,10 +187,6 @@ Requirements:
               },
               {
                 number: 3,
-                title: "Connection"
-              },
-              {
-                number: 4,
                 title: "Review"
               }
             ]}
@@ -487,7 +467,7 @@ Requirements:
         </div>
       )}
 
-      {step === 4 &&
+      {step === 3 &&
         (() => {
           const formValues = watch();
           const selectedTemplate = templates.find(
@@ -593,7 +573,7 @@ Requirements:
                       className="w-fit"
                       variant="bordered"
                       size="sm"
-                      onPress={() => setStep(3)}
+                      onPress={() => setStep(sendEmail ? 2 : 1)}
                     >
                       <Type variant="sm">Back</Type>
                     </Button>
@@ -612,63 +592,6 @@ Requirements:
             </div>
           );
         })()}
-
-      {step === 3 && (
-        <div className="flex flex-col gap-4">
-          <Title description="Connect your waitlist using one command and one prompt">
-            Connection
-          </Title>
-
-          <Card radius="sm" className="flex flex-col border">
-            <CardBody className="p-4 flex flex-col gap-4">
-              <div className="flex flex-col gap-1">
-                <div className="flex items-center gap-2">
-                  <CommandLineIcon className="size-4 text-primary" />
-                  <Type variant="h6">Connection onboarding</Type>
-                </div>
-                <Type className="text-muted-foreground">
-                  Connect your new waitlist in minutes with one command and one prompt.
-                </Type>
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <Type variant="sm" className="text-muted-foreground">
-                  1) Install the skill in your project
-                </Type>
-                <CodeBlock lang="bash" code={connectSkillCommand} />
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <Type variant="sm" className="text-muted-foreground">
-                  2) Paste this prompt in Claude to complete the integration
-                </Type>
-                <CodeBlock lang="markdown" code={connectWithClaudePrompt} />
-              </div>
-            </CardBody>
-
-            <CardFooter className="border-t flex justify-end py-4">
-              <div className="flex gap-2 justify-end">
-                <Button
-                  className="w-fit"
-                  variant="bordered"
-                  size="sm"
-                  onPress={() => setStep(sendEmail ? 2 : 1)}
-                >
-                  <Type variant="sm">Back</Type>
-                </Button>
-                <Button
-                  color="primary"
-                  className="w-fit border"
-                  size="sm"
-                  onPress={() => setStep(4)}
-                >
-                  <Type variant="sm">Next</Type>
-                </Button>
-              </div>
-            </CardFooter>
-          </Card>
-        </div>
-      )}
     </PageComponent>
   );
 }

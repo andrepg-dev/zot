@@ -4,6 +4,12 @@ import { Model, Types } from "mongoose";
 import { WaitList } from "../schemas/wait-list.schema";
 
 export type WaitListStats = Omit<WaitList, "owner"> & {
+  integration?: {
+    connected: boolean;
+    connectedAt?: Date;
+    lastActivityAt?: Date;
+    channel?: "api";
+  };
   users: {
     organic: number;
     referred: number;
