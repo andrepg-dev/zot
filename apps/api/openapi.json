@@ -284,6 +284,26 @@
         ]
       }
     },
+    "/v1/users/me/onboarding": {
+      "patch": {
+        "operationId": "UsersController_completeOnboarding_v1",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "Mark onboarding as complete",
+        "tags": [
+          "Users"
+        ]
+      }
+    },
     "/v1/user-quote": {
       "get": {
         "operationId": "UserQuoteController_findUserQuote_v1",
@@ -370,6 +390,20 @@
       },
       "get": {
         "operationId": "EmailTemplatesController_findAll_v1",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "EmailTemplates"
+        ]
+      }
+    },
+    "/v1/email-templates/public": {
+      "get": {
+        "operationId": "EmailTemplatesController_findPublic_v1",
         "parameters": [],
         "responses": {
           "200": {
