@@ -80,8 +80,8 @@ export default function HomePage() {
         />
       </div>
 
-      <header className="px-4 sm:px-6 md:px-8 lg:px-16 xl:px-32 text-muted-foreground absolute top-14 sm:top-16 left-0 right-0 z-20">
-        <div className="flex flex-wrap gap-3 sm:gap-4 md:gap-6 items-center">
+      <header className="px-4 sm:px-6 md:px-8 lg:px-16 xl:px-32 text-muted-foreground absolute top-6 sm:top-10 left-0 right-0 z-20">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 md:gap-6 items-start sm:items-center">
           <Image
             src="/zot-icon.png"
             alt="Zot"
@@ -90,7 +90,7 @@ export default function HomePage() {
             className="shrink-0"
             priority
           />
-          <nav className="flex flex-wrap gap-3 sm:gap-4 md:gap-6 items-center">
+          <nav className="flex w-full sm:w-auto gap-3 sm:gap-4 md:gap-6 items-center overflow-x-auto whitespace-nowrap pb-1 sm:pb-0 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
             <Link href="#integration" className="ml-0 md:ml-4 text-sm hover:text-foreground">Integrations</Link>
             <Link href="#demo" className="text-sm hover:text-foreground">Demo</Link>
             <Link href="#pricing" className="text-sm hover:text-foreground">Pricing</Link>
@@ -108,7 +108,7 @@ export default function HomePage() {
         </div>
       </header>
 
-      <HeroCascade className="relative flex justify-center items-center w-full min-h-screen flex-col pt-28 sm:pt-32 pb-32 sm:pb-28" aria-label="Hero section">
+      <HeroCascade className="relative flex justify-center items-center w-full min-h-screen flex-col pt-44 sm:pt-32 pb-20 sm:pb-28" aria-label="Hero section">
         <div className="w-full sm:max-w-[1400px] 2xl:max-w-[1600px] px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] gap-10 lg:gap-12 xl:gap-16 items-center mb-16 sm:mb-20 lg:mb-28">
           <div className="flex flex-col gap-5 sm:gap-6 items-center lg:items-start text-center lg:text-left">
             <div
@@ -179,7 +179,7 @@ export default function HomePage() {
         <div
           data-hero-bottom
           style={{ opacity: 0 }}
-          className="absolute bottom-8 sm:bottom-14 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 w-full max-w-4xl px-4"
+          className="mt-8 sm:mt-0 sm:absolute sm:bottom-14 sm:left-1/2 sm:-translate-x-1/2 flex flex-col items-center gap-3 w-full max-w-4xl px-4"
         >
           <span className="text-xs sm:text-sm text-foreground/80 text-center">
             Trusted by founders and indie hackers shipping real products
@@ -268,7 +268,7 @@ export default function HomePage() {
                 </div>
               </div>
 
-              <div className="absolute inset-x-4 sm:inset-x-6 bottom-4 sm:bottom-6 top-[42%] sm:top-[40%] border border-white/10 overflow-hidden bg-black">
+              <div className="absolute inset-x-4 sm:inset-x-6 bottom-4 sm:bottom-6 top-[50%] sm:top-[40%] border border-white/10 overflow-hidden bg-black">
                 <WebWindowCard
                   url="app.zot.so/security"
                   title="Fake user blocking"
