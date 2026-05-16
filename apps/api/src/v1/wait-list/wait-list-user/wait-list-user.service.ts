@@ -111,16 +111,14 @@ export class WaitListUserService {
       const now = new Date();
       await this.WaitListModel.updateOne(
         { _id: waitlistId },
-        [
-          {
-            $set: {
-              "integration.connected": true,
-              "integration.lastActivityAt": now,
-              "integration.channel": "api",
-              "integration.connectedAt": { $ifNull: ["$integration.connectedAt", now] },
-            },
+        {
+          $set: {
+            "integration.connected": true,
+            "integration.lastActivityAt": now,
+            "integration.channel": "api",
+            "integration.connectedAt": waitlist.integration?.connectedAt ?? now,
           },
-        ],
+        },
       );
 
       // <================== SEND WEBHOOK TO THE WEBHOOK URL ==================>
