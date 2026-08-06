@@ -18,8 +18,12 @@ export class GenerationEmail extends BasedOwnerSchema {
   @Prop({ default: "Untitled email" })
   title: string;
 
-  @Prop({ type: String, enum: ["draft", "published"], default: "draft" })
-  status: "draft" | "published";
+  @Prop({
+    type: String,
+    enum: ["draft", "generating", "ready", "failed"],
+    default: "draft",
+  })
+  status: "draft" | "generating" | "ready" | "failed";
 
   /** Variant currently shown in the editor and used for exports. */
   @Prop({ type: Types.ObjectId, ref: "GenerationEmailVariant", default: null })

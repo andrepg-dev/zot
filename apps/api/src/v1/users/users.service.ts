@@ -208,10 +208,7 @@ export class UsersService {
       return user?.suscriptionPlan === "PREMIUM";
     } catch (error) {
       if (error instanceof HttpException) throw error;
-      throw new HttpException(
-        "Error checking user plan.",
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new HttpException("Error checking user plan.", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 

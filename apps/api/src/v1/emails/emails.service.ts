@@ -315,7 +315,7 @@ export class EmailsService {
       };
     } catch (err) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      if ((err as any)?.status != 500) {
+      if (err?.status != 500) {
         // If the problem is from the server, should not be in the user quote
         await this.userquoteService.editUserQuote({
           ownerId: userId,
@@ -397,7 +397,8 @@ export class EmailsService {
       waitlistName: waitlist?.name ?? "",
     };
 
-    const fromName = (waitlist?.name ?? "Zot Waitlist").replace(/[<>"]/g, "").trim() || "Zot Waitlist";
+    const fromName =
+      (waitlist?.name ?? "Zot Waitlist").replace(/[<>"]/g, "").trim() || "Zot Waitlist";
 
     const basePayload: Omit<EmailParams, "to" | "options" | "subject"> & {
       options: Omit<ResendEmail["options"], "html">;

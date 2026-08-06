@@ -3,7 +3,7 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Types } from "mongoose";
 
 export type EmailChatRole = "USER" | "ASSISTANT";
-export type EmailChatKind = "TEXT" | "TOOL_CALL" | "ERROR";
+export type EmailChatKind = "TEXT" | "THINKING" | "TOOL_CALL" | "ERROR";
 
 /**
  * One turn in the editor chat. TOOL_CALL rows store a JSON payload rather than
@@ -17,7 +17,11 @@ export class EmailChatMessage extends BasedOwnerSchema {
   @Prop({ type: String, enum: ["USER", "ASSISTANT"], required: true })
   role: EmailChatRole;
 
-  @Prop({ type: String, enum: ["TEXT", "TOOL_CALL", "ERROR"], default: "TEXT" })
+  @Prop({
+    type: String,
+    enum: ["TEXT", "THINKING", "TOOL_CALL", "ERROR"],
+    default: "TEXT",
+  })
   kind: EmailChatKind;
 
   @Prop({ required: true })
@@ -48,6 +52,10 @@ export class EmailChatMessage extends BasedOwnerSchema {
 
   @Prop({ default: null })
   feedbackComment: string | null;
+
+  /** Set by `timestamps: true`; declared so ordering logic can read them. */
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export const EmailChatMessageSchema = SchemaFactory.createForClass(EmailChatMessage);

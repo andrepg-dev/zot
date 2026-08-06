@@ -9,8 +9,18 @@ export class GeneralStatsController {
   constructor(private readonly generalStatsService: GeneralStatsService) {}
 
   @Get()
-  @ApiQuery({ name: "from", required: false, description: "Start date (ISO 8601)", example: "2026-03-01" })
-  @ApiQuery({ name: "to", required: false, description: "End date (ISO 8601)", example: "2026-04-01" })
+  @ApiQuery({
+    name: "from",
+    required: false,
+    description: "Start date (ISO 8601)",
+    example: "2026-03-01",
+  })
+  @ApiQuery({
+    name: "to",
+    required: false,
+    description: "End date (ISO 8601)",
+    example: "2026-04-01",
+  })
   getDashboardStats(
     @UserId() userId: Types.ObjectId,
     @Query("from") from?: string,

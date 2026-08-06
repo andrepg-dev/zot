@@ -3,7 +3,11 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Types } from "mongoose";
 
 export type GenerationRunKind = "INITIAL" | "EDIT" | "REGENERATE";
-export type GenerationRunStatus = "STARTED" | "COMPLETED" | "FAILED" | "ABORTED";
+export type GenerationRunStatus =
+  | "STREAMING"
+  | "COMPLETED"
+  | "FAILED"
+  | "ABORTED";
 
 /** Token accounting and outcome for a single model run, used for cost tracking. */
 @Schema({ timestamps: true, versionKey: false, collection: "generation_runs" })
@@ -16,8 +20,8 @@ export class GenerationRun extends BasedOwnerSchema {
 
   @Prop({
     type: String,
-    enum: ["STARTED", "COMPLETED", "FAILED", "ABORTED"],
-    default: "STARTED",
+    enum: ["STREAMING", "COMPLETED", "FAILED", "ABORTED"],
+    default: "STREAMING",
   })
   status: GenerationRunStatus;
 
