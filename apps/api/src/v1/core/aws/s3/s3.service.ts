@@ -61,4 +61,26 @@ export class S3Service {
   async getFileUrl(key: string) {
     return { url: `https://${this.bucketName}.s3.amazonaws.com/${key}` };
   }
+
+  /** Public URL for an exact key, path-segment encoded. */
+  publicUrlForKey(key: string): string {
+    const encodedKey = key
+      .split("/")
+      .map((part) => encodeURIComponent(part))
+      .join("/");
+    return `https://${this.bucketName}.s3.amazonaws.com/${encodedKey}`;
+  }
+
+  /** Overwrite an object at an exact key, keeping its URL stable. */
+  async putObjectAtKey(key: string, buffer: Buffer, contentType: string): Promise<void> {
+    await this.client.send(
+      new PutObjectCommand({
+        Bucket: this.bucketName,
+        Key: key,
+        Body: buffer,
+        ContentType: contentType,
+        ACL: "public-read",
+      }),
+    );
+  }
 }
