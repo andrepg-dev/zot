@@ -1,6 +1,6 @@
 import { UserId } from "@api/src/common/decorators/user-id.decorator";
 import type { MessageEvent } from "@nestjs/common";
-import { Body, Controller, Delete, Get, Param, Post, Sse } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Sse } from "@nestjs/common";
 import { ParseObjectIdPipe } from "@nestjs/mongoose";
 import { Types } from "mongoose";
 import { Observable } from "rxjs";
@@ -47,6 +47,15 @@ export class GenerationController {
     @UserId() userId: Types.ObjectId,
   ) {
     return this.emails.versions(id, userId);
+  }
+
+  @Get("emails/:id/versions/:seq")
+  version(
+    @Param("id", ParseObjectIdPipe) id: Types.ObjectId,
+    @Param("seq", ParseIntPipe) seq: number,
+    @UserId() userId: Types.ObjectId,
+  ) {
+    return this.emails.version(id, userId, seq);
   }
 
   @Get("emails/:id/chat")

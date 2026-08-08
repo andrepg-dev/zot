@@ -77,6 +77,14 @@ export class GenerationEmailsService {
       .lean();
   }
 
+  /** One retained version in full, for previewing or restoring it. */
+  async version(emailId: Types.ObjectId, owner: Types.ObjectId, seq: number) {
+    await this.assertOwned(emailId, owner);
+    const variant = await this.variantModel.findOne({ email: emailId, seq }).lean();
+    if (!variant) throw new NotFoundException(`Version ${seq} is not retained.`);
+    return variant;
+  }
+
   async chat(emailId: Types.ObjectId, owner: Types.ObjectId) {
     await this.assertOwned(emailId, owner);
     return this.chatModel.find({ email: emailId }).sort({ createdAt: 1 }).lean();
