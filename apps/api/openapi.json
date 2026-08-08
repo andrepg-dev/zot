@@ -1954,6 +1954,37 @@
         ]
       }
     },
+    "/v1/ai/generation/emails/{id}/versions/{seq}": {
+      "get": {
+        "operationId": "GenerationController_version_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "$ref": "#/components/schemas/ObjectId"
+            }
+          },
+          {
+            "name": "seq",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Generation"
+        ]
+      }
+    },
     "/v1/ai/generation/emails/{id}/chat": {
       "get": {
         "operationId": "GenerationController_chat_v1",
