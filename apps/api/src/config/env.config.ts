@@ -22,6 +22,12 @@ export default () => ({
     // DYMO_API_KEY
     DYMO_API_KEY: joi.string().required(),
 
+    // ANTHROPIC (email generation)
+    ANTHROPIC_API_KEY: joi.string().required(),
+    ANTHROPIC_MODEL: joi.string().default("claude-sonnet-4-6"),
+    // Per-user generations per UTC day; -1 disables the cap.
+    GENERATION_DAILY_LIMIT: joi.number().default(50),
+
     // STRIPE
     STRIPE_SECRET_KEY: joi.string().required(),
     STRIPE_WEBHOOK_SECRET: joi.string().required(),
