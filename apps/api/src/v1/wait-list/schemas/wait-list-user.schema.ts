@@ -3,7 +3,13 @@ import { Types } from "mongoose";
 
 export type DocumentOfSchema = WaitListUser & Document;
 
-export const WAITLIST_USER_SOURCES = ["organic", "referral", "social", "email", "paid_ads"] as const;
+export const WAITLIST_USER_SOURCES = [
+  "organic",
+  "referral",
+  "social",
+  "email",
+  "paid_ads",
+] as const;
 export type WaitListUserSource = (typeof WAITLIST_USER_SOURCES)[number];
 
 /** Sources the user can explicitly set — organic/referral are auto-determined */

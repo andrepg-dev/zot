@@ -16,47 +16,28 @@ import { CreateEmailTemplateDto } from "./dto/create-email-template.dto";
 import { UpdateEmailTemplateDto } from "./dto/update-email-template.dto";
 import { EmailTemplate } from "./schemas/email-template.schema";
 
-const WELCOME_TEMPLATE_CODE = `const Email = ({ recipientName = "", waitlistName = "", position = "", email = "" } = {}) => {
-  const displayWaitlist = waitlistName || "the";
-  const greetingSuffix = recipientName ? \`, \${recipientName}\` : "";
-
+const WELCOME_TEMPLATE_CODE = `const Email = () => {
   return (
     <Html>
       <Head />
-      <Preview>You're on the {displayWaitlist} waitlist.</Preview>
+      <Preview>Welcome to waitlist.</Preview>
       <Tailwind>
         <Body className="bg-zinc-100 m-0 py-12 px-4 font-sans">
           <Container className="bg-white mx-auto max-w-[560px] border border-solid border-zinc-200">
             <Section className="px-10 pt-10 pb-2">
               <Text className="text-[13px] tracking-[0.18em] uppercase text-zinc-600 m-0 font-semibold">
-                {displayWaitlist} waitlist
+                Welcome
               </Text>
             </Section>
 
             <Section className="px-10 pt-5 pb-7">
               <Heading as="h1" className="text-[32px] leading-[38px] text-zinc-950 m-0 mb-3 font-semibold tracking-tight">
-                You're in{greetingSuffix}.
+                You're on list.
               </Heading>
               <Text className="text-base leading-6 text-zinc-600 m-0">
-                Thanks for joining the {displayWaitlist} waitlist. Your spot is saved and we'll be in touch as we get closer to launch.
+                Thanks for joining. Spot is saved and we will reach out soon with next steps.
               </Text>
             </Section>
-
-            {position ? (
-              <Section className="px-10 pb-8">
-                <Section className="bg-zinc-950 px-7 py-6">
-                  <Text className="text-[11px] tracking-[0.2em] uppercase text-zinc-400 m-0 mb-1.5 font-semibold">
-                    Your position
-                  </Text>
-                  <Heading as="h2" className="text-[44px] leading-[48px] text-zinc-50 m-0 font-semibold tracking-tighter">
-                    #{position}
-                  </Heading>
-                  <Text className="text-[13px] text-zinc-400 mt-2.5 mb-0">
-                    The earlier you joined, the earlier you get access.
-                  </Text>
-                </Section>
-              </Section>
-            ) : null}
 
             <Hr className="border-zinc-200 mx-10 my-3" />
 
@@ -70,7 +51,7 @@ const WELCOME_TEMPLATE_CODE = `const Email = ({ recipientName = "", waitlistName
                 We'll send updates that matter
               </Text>
               <Text className="text-sm leading-[22px] text-zinc-600 m-0">
-                Milestones from the {displayWaitlist} team, behind the scenes notes, and the occasional sneak peek. No spam, no filler.
+                Product milestones, behind-the-scenes notes, and occasional sneak peeks. No spam.
               </Text>
             </Section>
 
@@ -104,11 +85,8 @@ const WELCOME_TEMPLATE_CODE = `const Email = ({ recipientName = "", waitlistName
             </Section>
 
             <Section className="px-10 pt-6 pb-10">
-              {email ? (
-                <Text className="text-xs text-zinc-500 m-0 mb-1 font-mono">{email}</Text>
-              ) : null}
               <Text className="text-xs leading-[18px] text-zinc-400 m-0">
-                You're receiving this because you joined the {displayWaitlist} waitlist. If this wasn't you, you can safely ignore this email.
+                You are receiving this because you joined this waitlist. If this was not you, ignore this email.
               </Text>
             </Section>
           </Container>
@@ -117,6 +95,92 @@ const WELCOME_TEMPLATE_CODE = `const Email = ({ recipientName = "", waitlistName
     </Html>
   );
 };`;
+
+const EARLY_ACCESS_TEMPLATE_CODE = `const Email = () => {
+  return (
+    <Html>
+      <Head />
+      <Preview>Your early access is ready.</Preview>
+      <Tailwind>
+        <Body className="bg-zinc-100 m-0 py-12 px-4 font-sans">
+          <Container className="bg-white mx-auto max-w-[560px] border border-solid border-zinc-200">
+            <Section className="px-10 pt-10 pb-5">
+              <Text className="text-[13px] tracking-[0.18em] uppercase text-zinc-600 m-0 font-semibold">
+                Early access
+              </Text>
+              <Heading as="h1" className="text-[30px] leading-[36px] text-zinc-950 m-0 mt-3 mb-3 font-semibold tracking-tight">
+                Access is now open.
+              </Heading>
+              <Text className="text-base leading-6 text-zinc-600 m-0">
+                Great news. Your access window is now available.
+              </Text>
+            </Section>
+            <Section className="px-10 pb-8">
+              <Button
+                href="https://zot.so"
+                className="bg-zinc-950 text-zinc-50 text-sm font-semibold no-underline px-6 py-3"
+              >
+                Open product
+              </Button>
+            </Section>
+          </Container>
+        </Body>
+      </Tailwind>
+    </Html>
+  );
+};`;
+
+const PRODUCT_UPDATE_TEMPLATE_CODE = `const Email = () => {
+  return (
+    <Html>
+      <Head />
+      <Preview>Quick update from team.</Preview>
+      <Tailwind>
+        <Body className="bg-zinc-100 m-0 py-12 px-4 font-sans">
+          <Container className="bg-white mx-auto max-w-[560px] border border-solid border-zinc-200">
+            <Section className="px-10 pt-10 pb-6">
+              <Text className="text-[13px] tracking-[0.18em] uppercase text-zinc-600 m-0 font-semibold">
+                Product update
+              </Text>
+              <Heading as="h1" className="text-[30px] leading-[36px] text-zinc-950 m-0 mt-3 mb-3 font-semibold tracking-tight">
+                What is new this week
+              </Heading>
+              <Text className="text-base leading-6 text-zinc-600 m-0">
+                Here is short update on progress and upcoming milestones.
+              </Text>
+            </Section>
+            <Section className="px-10 pb-10">
+              <Text className="text-sm leading-[22px] text-zinc-700 m-0">
+                Thanks for staying with us. More updates soon.
+              </Text>
+            </Section>
+          </Container>
+        </Body>
+      </Tailwind>
+    </Html>
+  );
+};`;
+
+const DEFAULT_TEMPLATE_SEEDS: CreateEmailTemplateDto[] = [
+  {
+    alias: "Welcome email",
+    subject: "Welcome to our waitlist",
+    code: WELCOME_TEMPLATE_CODE,
+    status: "published",
+  },
+  {
+    alias: "Early access invite",
+    subject: "Your early access is now available",
+    code: EARLY_ACCESS_TEMPLATE_CODE,
+    status: "published",
+  },
+  {
+    alias: "Product update",
+    subject: "Quick product update",
+    code: PRODUCT_UPDATE_TEMPLATE_CODE,
+    status: "published",
+  },
+];
 
 const SYSTEM_OWNER_ID = new Types.ObjectId("000000000000000000000000");
 
@@ -143,12 +207,7 @@ export class EmailTemplatesService implements OnModuleInit {
     const exists = await this.EmailTemplateModel.findOne({ isPublic: true });
     if (exists) return;
 
-    await this.createPublic({
-      alias: "Welcome email",
-      subject: "You're on the {{waitlistName}} waitlist",
-      code: WELCOME_TEMPLATE_CODE,
-      status: "published",
-    });
+    await this.createPublic(DEFAULT_TEMPLATE_SEEDS[0]);
   }
 
   async createPublic(dto: CreateEmailTemplateDto) {
@@ -194,14 +253,18 @@ export class EmailTemplatesService implements OnModuleInit {
 
   async seedDefault(owner: Types.ObjectId) {
     try {
-      return await this.create(
-        {
-          alias: "Welcome email",
-          subject: "You're on the {{waitlistName}} waitlist",
-          code: WELCOME_TEMPLATE_CODE,
-          status: "published",
-        },
-        owner,
+      const existingTemplates = await this.EmailTemplateModel.find({ owner })
+        .select("alias")
+        .lean();
+      const existingAliases = new Set(existingTemplates.map((template) => template.alias));
+      const missingTemplates = DEFAULT_TEMPLATE_SEEDS.filter(
+        (template) => !existingAliases.has(template.alias),
+      );
+
+      if (missingTemplates.length === 0) return null;
+
+      return await Promise.all(
+        missingTemplates.map(async (template) => this.createTemplate(template, owner, false)),
       );
     } catch (error) {
       this.logger.warn(
@@ -235,12 +298,22 @@ export class EmailTemplatesService implements OnModuleInit {
   }
 
   async create(createEmailTemplateDto: CreateEmailTemplateDto, owner: Types.ObjectId) {
+    return await this.createTemplate(createEmailTemplateDto, owner, true);
+  }
+
+  private async createTemplate(
+    createEmailTemplateDto: CreateEmailTemplateDto,
+    owner: Types.ObjectId,
+    shouldCountQuota: boolean,
+  ) {
     try {
-      await this.userQuoteService.editUserQuote({
-        ownerId: owner,
-        service: "emailsTemplates",
-        usage: 1,
-      });
+      if (shouldCountQuota) {
+        await this.userQuoteService.editUserQuote({
+          ownerId: owner,
+          service: "emailsTemplates",
+          usage: 1,
+        });
+      }
 
       const compiledCode = await this.reactToHtmlService.compile(createEmailTemplateDto.code);
       const imageBuffer = await this.screenshotHTML(compiledCode);

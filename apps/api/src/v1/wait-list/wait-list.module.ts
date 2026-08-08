@@ -13,10 +13,7 @@ import {
   EmailTemplate,
   EmailTemplateSchema,
 } from "../email-templates/schemas/email-template.schema";
-import {
-  EmailSendRecord,
-  EmailSendRecordSchema,
-} from "../emails/schemas/email-send-record.schema";
+import { EmailSendRecord, EmailSendRecordSchema } from "../emails/schemas/email-send-record.schema";
 import { UserQuoteModule } from "../users/user-quote/user-quote.module";
 import { UsersModule } from "../users/users.module";
 import { WaitListUser, WaitListUserSchema } from "./schemas/wait-list-user.schema";

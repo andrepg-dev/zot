@@ -1,6 +1,7 @@
 import { ReactToHtmlService } from "@api/src/v1/core/react-to-html/react-to-html.service";
 import { Module } from "@nestjs/common";
 import { APP_GUARD } from "@nestjs/core";
+import { GenerationModule } from "./ai/generation/generation.module";
 import { AiServerConnectionModule } from "./ai/react-code-email/react-code-email.module";
 import { ApiKeyModule } from "./api-key/api-key.module";
 import { AuthModule } from "./auth/auth.module";
@@ -30,6 +31,7 @@ import { WaitListModule } from "./wait-list/wait-list.module";
     EmailsModule,
     ApiKeyModule,
     AiServerConnectionModule,
+    GenerationModule,
     GeneralStatsModule,
     FeedbackModule,
   ],

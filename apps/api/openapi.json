@@ -1837,6 +1837,266 @@
         ]
       }
     },
+    "/v1/ai/generation/skills": {
+      "get": {
+        "operationId": "GenerationController_skills_v1",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Generation"
+        ]
+      }
+    },
+    "/v1/ai/generation/emails": {
+      "post": {
+        "operationId": "GenerationController_create_v1",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateGenerationEmailDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Generation"
+        ]
+      },
+      "get": {
+        "operationId": "GenerationController_list_v1",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Generation"
+        ]
+      }
+    },
+    "/v1/ai/generation/emails/{id}": {
+      "get": {
+        "operationId": "GenerationController_findOne_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "$ref": "#/components/schemas/ObjectId"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Generation"
+        ]
+      },
+      "delete": {
+        "operationId": "GenerationController_remove_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "$ref": "#/components/schemas/ObjectId"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Generation"
+        ]
+      }
+    },
+    "/v1/ai/generation/emails/{id}/versions": {
+      "get": {
+        "operationId": "GenerationController_versions_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "$ref": "#/components/schemas/ObjectId"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Generation"
+        ]
+      }
+    },
+    "/v1/ai/generation/emails/{id}/versions/{seq}": {
+      "get": {
+        "operationId": "GenerationController_version_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "$ref": "#/components/schemas/ObjectId"
+            }
+          },
+          {
+            "name": "seq",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Generation"
+        ]
+      }
+    },
+    "/v1/ai/generation/emails/{id}/chat": {
+      "get": {
+        "operationId": "GenerationController_chat_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "$ref": "#/components/schemas/ObjectId"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Generation"
+        ]
+      }
+    },
+    "/v1/ai/generation/emails/{id}/generate": {
+      "post": {
+        "operationId": "GenerationController_generate_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "$ref": "#/components/schemas/ObjectId"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateEmailDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Generation"
+        ]
+      }
+    },
+    "/v1/ai/generation/emails/{id}/edit": {
+      "post": {
+        "operationId": "GenerationController_edit_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "$ref": "#/components/schemas/ObjectId"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EditEmailDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Generation"
+        ]
+      }
+    },
+    "/v1/ai/generation/emails/{id}/regenerate": {
+      "post": {
+        "operationId": "GenerationController_regenerate_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "$ref": "#/components/schemas/ObjectId"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Generation"
+        ]
+      }
+    },
     "/v1/general-stats": {
       "get": {
         "operationId": "GeneralStatsController_getDashboardStats_v1",
@@ -2757,6 +3017,18 @@
         "properties": {}
       },
       "UpdateReactCodeEmailConversation": {
+        "type": "object",
+        "properties": {}
+      },
+      "CreateGenerationEmailDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "GenerateEmailDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "EditEmailDto": {
         "type": "object",
         "properties": {}
       }

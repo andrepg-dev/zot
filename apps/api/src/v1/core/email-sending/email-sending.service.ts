@@ -34,7 +34,7 @@ export class EmailSendingService implements EmailSending {
     }
 
     const resendProvider = new ResendProvider(this.resendService);
-    return resendProvider.sendBatch(params as ResendEmail[]);
+    return resendProvider.sendBatch(params);
   }
 }
 
