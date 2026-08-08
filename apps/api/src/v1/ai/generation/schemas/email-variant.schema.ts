@@ -30,7 +30,7 @@ export class GenerationEmailVariant extends BasedOwnerSchema {
   @Prop({ type: Array, default: [] })
   variableSchema: VariableSpec[];
 
-  @Prop({ default: null })
+  @Prop({ type: String, default: null })
   previewUrl: string | null;
 }
 

@@ -25,25 +25,25 @@ export class GenerationRun extends BasedOwnerSchema {
   })
   status: GenerationRunStatus;
 
-  @Prop({ default: null })
+  @Prop({ type: Number, default: null })
   inputTokens: number | null;
 
-  @Prop({ default: null })
+  @Prop({ type: Number, default: null })
   outputTokens: number | null;
 
-  @Prop({ default: null })
+  @Prop({ type: Number, default: null })
   cacheCreationInputTokens: number | null;
 
-  @Prop({ default: null })
+  @Prop({ type: Number, default: null })
   cacheReadInputTokens: number | null;
 
-  @Prop({ default: null })
+  @Prop({ type: Number, default: null })
   latencyMs: number | null;
 
-  @Prop({ default: null })
+  @Prop({ type: String, default: null })
   errorMessage: string | null;
 
-  @Prop({ default: null })
+  @Prop({ type: Date, default: null })
   completedAt: Date | null;
 }
 

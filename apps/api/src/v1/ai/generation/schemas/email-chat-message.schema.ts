@@ -32,7 +32,7 @@ export class EmailChatMessage extends BasedOwnerSchema {
   imageUrls: string[];
 
   /** Preview element selected via the visual editor when this turn was sent. */
-  @Prop({ default: null })
+  @Prop({ type: String, default: null })
   selectedElementLabel: string | null;
 
   /** Design skill ids attached in the composer for this turn. */
@@ -44,13 +44,13 @@ export class EmailChatMessage extends BasedOwnerSchema {
    * the UI can offer version navigation and older siblings stay out of the
    * model's context.
    */
-  @Prop({ default: null, index: true })
+  @Prop({ type: String, default: null, index: true })
   groupId: string | null;
 
   @Prop({ type: String, enum: ["LIKE", "DISLIKE"], default: null })
   feedback: "LIKE" | "DISLIKE" | null;
 
-  @Prop({ default: null })
+  @Prop({ type: String, default: null })
   feedbackComment: string | null;
 
   /** Set by `timestamps: true`; declared so ordering logic can read them. */

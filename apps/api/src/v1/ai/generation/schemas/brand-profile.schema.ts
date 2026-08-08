@@ -10,10 +10,10 @@ export class BrandProfile extends BasedOwnerSchema {
   @Prop({ required: true })
   url: string;
 
-  @Prop({ default: null })
+  @Prop({ type: String, default: null })
   brandName: string | null;
 
-  @Prop({ default: null })
+  @Prop({ type: String, default: null })
   logoUrl: string | null;
 
   @Prop({ type: [String], default: [] })
@@ -22,7 +22,7 @@ export class BrandProfile extends BasedOwnerSchema {
   @Prop({ type: [String], default: [] })
   fonts: string[];
 
-  @Prop({ default: null })
+  @Prop({ type: String, default: null })
   copyTone: string | null;
 
   @Prop({ type: [String], default: [] })
