@@ -31,4 +31,6 @@ export class BrandProfile extends BasedOwnerSchema {
 
 export const BrandProfileSchema = SchemaFactory.createForClass(BrandProfile);
 
-BrandProfileSchema.index({ owner: 1 }, { unique: true });
+// `owner` is already indexed by BasedOwnerSchema. Redeclaring it here as unique
+// conflicts with that definition, so the one profile per user rule is kept by
+// always upserting on { owner } instead.
