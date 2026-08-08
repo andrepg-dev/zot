@@ -282,7 +282,25 @@ export class EmailTemplatesService implements OnModuleInit {
     const page = await browser.newPage();
 
     await page.setViewport({ width: 800, height: 600 });
-    await page.setContent(html, { waitUntil: "networkidle0" });
+    // Emails that pull external fonts or images can keep the network busy long
+    // enough that `networkidle0` never settles, and newer Puppeteer no longer
+    // accepts it for setContent. Wait for the document, then for the assets
+    // that actually affect the screenshot.
+    await page.setContent(html, { waitUntil: "domcontentloaded" });
+    await page.evaluate(async () => {
+      await document.fonts.ready;
+      await Promise.all(
+        Array.from(document.images)
+          .filter((img) => !img.complete)
+          .map(
+            (img) =>
+              new Promise((resolve) => {
+                img.addEventListener("load", resolve, { once: true });
+                img.addEventListener("error", resolve, { once: true });
+              }),
+          ),
+      );
+    });
 
     const element = await page.$("table");
 
