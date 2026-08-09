@@ -1,20 +1,5 @@
 "use client";
 
-import { createEmailTemplate } from "@/actions/email-templates/email-templates.actions";
-import MonacoEditorTemplate from "@/components/editor/monaco/monaco-editor/monaco-edito-header-template";
-import MonacoEditor from "@/components/editor/monaco/monaco-editor/monaco-editor";
-import HeaderTabulation from "@/components/editor/monaco/tabulation/header-tab";
-import EditorSidebar from "@/components/editor/sidebar";
-import PrimaryActionButton from "@/components/global/primary-action-button";
-import GlobalTooltip from "@/components/global/tooltip";
-import PageComponent from "@/components/layouts/page-component";
-import Type from "@/components/type";
-import Chip from "@/components/ui/chip";
-import InputComponent from "@/components/ui/input";
-import { useHotkey } from "@/hooks/use-hotkey";
-import { analyzeTemplateCode } from "@/lib/extract-template-variables";
-import { cn } from "@/lib/utils";
-import useReactCodeEditorStore from "@/store/emails/react-code-editor-email.store";
 import {
   ArrowDownTrayIcon,
   ArrowUturnLeftIcon,
@@ -38,10 +23,31 @@ import {
   createEmailTemplateSchema,
   type CreateEmailTemplateValues
 } from "@repo/packages/shared/schemas";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useMemo, useRef, useState } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+
+import {
+  createEmailTemplate,
+  getEmailTemplateById,
+  updateEmailTemplate
+} from "@/actions/email-templates/email-templates.actions";
+import { reactToHtml } from "@/actions/react-to-html/react-to-html.actions";
+import MonacoEditorTemplate from "@/components/editor/monaco/monaco-editor/monaco-edito-header-template";
+import MonacoEditor from "@/components/editor/monaco/monaco-editor/monaco-editor";
+import HeaderTabulation from "@/components/editor/monaco/tabulation/header-tab";
+import EditorSidebar from "@/components/editor/sidebar";
+import PrimaryActionButton from "@/components/global/primary-action-button";
+import GlobalTooltip from "@/components/global/tooltip";
+import PageComponent from "@/components/layouts/page-component";
+import Type from "@/components/type";
+import Chip from "@/components/ui/chip";
+import InputComponent from "@/components/ui/input";
+import { useHotkey } from "@/hooks/use-hotkey";
+import { analyzeTemplateCode } from "@/lib/extract-template-variables";
+import { cn } from "@/lib/utils";
+import useReactCodeEditorStore from "@/store/emails/react-code-editor-email.store";
 
 type VisualizationType = "code" | "preview";
 
@@ -61,14 +67,18 @@ function CreateEmailPageContent() {
 
   const handleIframeLoad = () => {
     const iframe = iframeRef.current;
+
     if (!iframe?.contentWindow?.document?.body) return;
     const doc = iframe.contentWindow.document;
     const update = () => {
       const height = Math.max(doc.body.scrollHeight, doc.documentElement.scrollHeight);
+
       setIframeHeight(height);
     };
+
     update();
     const ro = new ResizeObserver(update);
+
     ro.observe(doc.body);
   };
 
@@ -76,6 +86,7 @@ function CreateEmailPageContent() {
   const router = useRouter();
 
   const conversationId = searchParams.get("conversationId") ?? "";
+  const templateId = searchParams.get("id") ?? "";
   const isEdition = searchParams.get("isEdition") ?? false;
 
   const handleCodeReceived = (code: string) => {
@@ -104,10 +115,61 @@ function CreateEmailPageContent() {
     }
   });
 
+  // Opening an existing template loads its code into the editor so it can be
+  // changed and saved back, instead of starting from an empty editor.
+  const { data: template } = useQuery({
+    queryKey: ["email-template", templateId],
+    queryFn: () => getEmailTemplateById(templateId),
+    enabled: !!templateId
+  });
+
+  const { setLastCodeMessageHtmlCode } = useReactCodeEditorStore();
+
+  useEffect(() => {
+    if (!template) return;
+
+    setEditorCode(template.code);
+    reset({
+      alias: template.alias,
+      subject: template.subject ?? "",
+      status: template.status
+    });
+
+    if (template.html) setLastCodeMessageHtmlCode({ html: template.html });
+  }, [template, reset, setLastCodeMessageHtmlCode]);
+
+  // Hand edits in the code panel are only reflected in the preview if it is
+  // recompiled, so refresh it once typing settles rather than leaving the
+  // preview showing the previous version.
+  const previewedCodeRef = useRef("");
+
+  useEffect(() => {
+    const code = editorCode.trim();
+
+    if (!code || code === previewedCodeRef.current) return;
+
+    const timer = setTimeout(async () => {
+      try {
+        const compiled = await reactToHtml({ code });
+
+        previewedCodeRef.current = code;
+        setLastCodeMessageHtmlCode(compiled);
+      } catch {
+        // Mid-edit code is often not valid yet; keep the last good preview.
+      }
+    }, 900);
+
+    return () => clearTimeout(timer);
+  }, [editorCode, setLastCodeMessageHtmlCode]);
+
   const { mutate: createEmailTemplateMutate, isPending: isSaving } = useMutation({
-    mutationFn: (data: CreateEmailTemplateValues) => createEmailTemplate(data),
+    mutationFn: (data: CreateEmailTemplateValues) =>
+      templateId ? updateEmailTemplate(templateId, data) : createEmailTemplate(data),
     onSuccess: () => {
-      addToast({ description: "Template saved", color: "success" });
+      addToast({
+        description: templateId ? "Template updated" : "Template saved",
+        color: "success"
+      });
       setIsSaveOpen(false);
       reset();
       router.push("/app/emails/templates");
@@ -132,6 +194,7 @@ function CreateEmailPageContent() {
   const onSaveSubmit = (values: Omit<CreateEmailTemplateValues, "code">) => {
     if (!editorCode) {
       addToast({ description: "No code to save yet", color: "danger" });
+
       return;
     }
     createEmailTemplateMutate({ ...values, code: editorCode });
@@ -143,36 +206,37 @@ function CreateEmailPageContent() {
 
       {/* Sidebar */}
       <EditorSidebar
-        onCodeReceived={handleCodeReceived}
         conversationId={conversationId}
+        hasCode={!!editorCode}
+        onCodeReceived={handleCodeReceived}
       />
 
       {/* Main Content */}
       <div className="flex flex-col w-full">
         <MonacoEditorTemplate>
           <div className="flex items-center font-medium font-sans">
-            <Type variant="sm" className="flex items-center gap-2 text-muted-foreground">
+            <Type className="flex items-center gap-2 text-muted-foreground" variant="sm">
               <DocumentIcon className="size-4" />
               Templates
             </Type>
             <SlashIcon className="size-4 text-muted-foreground" />
 
             <Controller
-              name="alias"
               control={control}
+              name="alias"
               render={({ field }) => (
                 <input
+                  ref={field.ref}
                   className="text-xs font-semibold tracking-wide bg-transparent outline-0 px-1 w-[115px]"
                   placeholder="Untitled template"
                   value={field.value ?? ""}
-                  onChange={field.onChange}
                   onBlur={field.onBlur}
-                  ref={field.ref}
+                  onChange={field.onChange}
                 />
               )}
             />
 
-            <Chip status="neutral" className="ml-1.5 mt-0.5 bg-default-300 border rounded-sm">
+            <Chip className="ml-1.5 mt-0.5 bg-default-300 border rounded-sm" status="neutral">
               Draft
             </Chip>
           </div>
@@ -181,22 +245,22 @@ function CreateEmailPageContent() {
           <div className="border rounded-md w-max flex bg-default-100 overflow-hidden text-xs">
             <GlobalTooltip content="Vista de código">
               <button
-                onClick={() => setVisualizationType("code")}
                 className={cn(
                   "p-1 px-2 rounded !cursor-pointer text-xs",
                   visualizationType === "code" && "bg-default-50"
                 )}
+                onClick={() => setVisualizationType("code")}
               >
                 <CodeBracketIcon className="size-4" />
               </button>
             </GlobalTooltip>
             <GlobalTooltip content="Vista previa del email">
               <button
-                onClick={() => setVisualizationType("preview")}
                 className={cn(
                   "p-1 px-2 rounded !cursor-pointer text-xs",
                   visualizationType === "preview" && "bg-default-50"
                 )}
+                onClick={() => setVisualizationType("preview")}
               >
                 <EyeIcon className="size-4" />
               </button>
@@ -204,9 +268,9 @@ function CreateEmailPageContent() {
           </div>
 
           <div className="flex items-center gap-2">
-            <Dropdown className="border p-0" disableAnimation>
+            <Dropdown disableAnimation className="border p-0">
               <DropdownTrigger>
-                <Button size="sm" variant="faded" isIconOnly disableAnimation>
+                <Button disableAnimation isIconOnly size="sm" variant="faded">
                   <Bars3Icon className="size-4" />
                 </Button>
               </DropdownTrigger>
@@ -228,22 +292,22 @@ function CreateEmailPageContent() {
               </DropdownMenu>
             </Dropdown>
 
-            <Dropdown className="border p-0" disableAnimation>
+            <Dropdown disableAnimation className="border p-0">
               <DropdownTrigger>
                 <Button
-                  size="sm"
-                  variant="faded"
-                  startContent={<VariableIcon className="size-4" />}
                   disableAnimation
+                  size="sm"
+                  startContent={<VariableIcon className="size-4" />}
+                  variant="faded"
                 >
                   Variables
                   {templateVariables.length > 0 && (
-                    <Chip status="neutral" className="ml-1 bg-default-300 border rounded-sm">
+                    <Chip className="ml-1 bg-default-300 border rounded-sm" status="neutral">
                       {templateVariables.length}
                     </Chip>
                   )}
                   {missingVariables.length > 0 && (
-                    <Chip status="warning" className="ml-1 border rounded-sm">
+                    <Chip className="ml-1 border rounded-sm" status="warning">
                       {missingVariables.length} missing
                     </Chip>
                   )}
@@ -253,28 +317,28 @@ function CreateEmailPageContent() {
                 {[
                   ...(templateVariables.length === 0 && missingVariables.length === 0
                     ? [
-                      <DropdownItem key="empty" textValue="No variables" isDisabled>
-                        <Type variant="sm" className="text-muted-foreground font-normal">
-                          No variables detected yet.
-                        </Type>
-                      </DropdownItem>
-                    ]
+                        <DropdownItem key="empty" isDisabled textValue="No variables">
+                          <Type className="text-muted-foreground font-normal" variant="sm">
+                            No variables detected yet.
+                          </Type>
+                        </DropdownItem>
+                      ]
                     : []),
                   ...templateVariables.map((variable) => (
                     <DropdownItem key={`declared-${variable.name}`} textValue={variable.name}>
                       <div className="flex items-center justify-between gap-4">
-                        <Type variant="sm" className="font-mono">
+                        <Type className="font-mono" variant="sm">
                           {variable.name}
                         </Type>
                         {variable.defaultValue ? (
                           <Type
-                            variant="sm"
                             className="font-mono text-muted-foreground truncate max-w-[180px]"
+                            variant="sm"
                           >
                             {variable.defaultValue}
                           </Type>
                         ) : (
-                          <Type variant="sm" className="text-muted-foreground">
+                          <Type className="text-muted-foreground" variant="sm">
                             —
                           </Type>
                         )}
@@ -284,15 +348,15 @@ function CreateEmailPageContent() {
                   ...missingVariables.map((name) => (
                     <DropdownItem
                       key={`missing-${name}`}
-                      textValue={name}
-                      description="Used in JSX but not declared in props. Add it to the destructured props or the template will crash."
                       className="data-[hover=true]:bg-warning-50"
+                      description="Used in JSX but not declared in props. Add it to the destructured props or the template will crash."
+                      textValue={name}
                     >
                       <div className="flex items-center justify-between gap-4">
-                        <Type variant="sm" className="font-mono text-warning">
+                        <Type className="font-mono text-warning" variant="sm">
                           {name}
                         </Type>
-                        <Chip status="warning" className="rounded-sm">
+                        <Chip className="rounded-sm" status="warning">
                           missing
                         </Chip>
                       </div>
@@ -303,32 +367,32 @@ function CreateEmailPageContent() {
             </Dropdown>
 
             <Popover
-              radius="sm"
-              placement="bottom-end"
-              size="lg"
               isOpen={isSaveOpen}
+              placement="bottom-end"
+              radius="sm"
+              size="lg"
               onOpenChange={setIsSaveOpen}
             >
               <PopoverTrigger>
                 <PrimaryActionButton
-                  startContent={<FolderPlusIcon className="size-4" strokeWidth={2} />}
                   endContent={
-                    <Kbd keys={["command"]} className="text-xs">
+                    <Kbd className="text-xs" keys={["command"]}>
                       <ArrowUturnLeftIcon className="size-3" />
                     </Kbd>
                   }
+                  startContent={<FolderPlusIcon className="size-4" strokeWidth={2} />}
                 >
                   Save template
                 </PrimaryActionButton>
               </PopoverTrigger>
               <PopoverContent className="p-0 w-80">
                 <form
-                  onSubmit={handleSubmit(onSaveSubmit)}
                   className="flex flex-col gap-3 p-4 w-full"
+                  onSubmit={handleSubmit(onSaveSubmit)}
                 >
                   <div className="flex flex-col gap-1">
                     <Type className="font-medium">Save template</Type>
-                    <Type variant="sm" className="text-muted-foreground font-normal">
+                    <Type className="text-muted-foreground font-normal" variant="sm">
                       Store this email so you can reuse it later.
                     </Type>
                   </div>
@@ -336,20 +400,20 @@ function CreateEmailPageContent() {
                   <div className="flex flex-col gap-1.5">
                     <Type variant="sm">Template name</Type>
                     <Controller
-                      name="alias"
                       control={control}
+                      name="alias"
                       render={({ field }) => (
                         <InputComponent
-                          size="sm"
-                          placeholder="e.g. Welcome email"
-                          maxLength={60}
-                          isInvalid={!!errors.alias}
-                          errorMessage={errors.alias?.message}
-                          value={field.value ?? ""}
-                          onChange={field.onChange}
-                          onBlur={field.onBlur}
                           ref={field.ref}
                           autoFocus
+                          errorMessage={errors.alias?.message}
+                          isInvalid={!!errors.alias}
+                          maxLength={60}
+                          placeholder="e.g. Welcome email"
+                          size="sm"
+                          value={field.value ?? ""}
+                          onBlur={field.onBlur}
+                          onChange={field.onChange}
                         />
                       )}
                     />
@@ -358,8 +422,8 @@ function CreateEmailPageContent() {
                   <div className="flex flex-col gap-1.5">
                     <Type variant="sm">Status</Type>
                     <Controller
-                      name="status"
                       control={control}
+                      name="status"
                       render={({ field }) => (
                         <RadioGroup
                           orientation="horizontal"
@@ -376,9 +440,9 @@ function CreateEmailPageContent() {
 
                   <div className="flex justify-end gap-2 pt-1">
                     <PrimaryActionButton
-                      type="submit"
-                      isLoading={isSaving}
                       className="w-full max-h-7 min-h-7 h-7"
+                      isLoading={isSaving}
+                      type="submit"
                     >
                       Publish template
                     </PrimaryActionButton>
@@ -426,27 +490,27 @@ function CreateEmailPageContent() {
                       <div className="flex border-b items-center h-[40px] !border-muted-foreground/30">
                         <Type className="w-[60px]">From</Type>
                         <input
+                          disabled
                           className="w-full h-full outline-0 disabled:opacity-70 cursor-not-allowed"
                           placeholder="Company <x@example.com>"
                           value={"info@zot.so"}
-                          disabled
                         />
-                        <Type style={{ textWrap: "nowrap" }} className="text-black/50 font-medium">
+                        <Type className="text-black/50 font-medium" style={{ textWrap: "nowrap" }}>
                           Require domain configuration
                         </Type>
                       </div>
                       <div className="flex border-b items-center h-[40px] !border-muted-foreground/30">
                         <Controller
-                          name="subject"
                           control={control}
+                          name="subject"
                           render={({ field }) => (
                             <input
+                              ref={field.ref}
                               className="w-full h-full outline-0"
                               placeholder="Subject"
                               value={field.value ?? ""}
-                              onChange={field.onChange}
                               onBlur={field.onBlur}
-                              ref={field.ref}
+                              onChange={field.onChange}
                             />
                           )}
                         />
@@ -455,11 +519,11 @@ function CreateEmailPageContent() {
                   </div>
                   <iframe
                     ref={iframeRef}
-                    srcDoc={lastCodeMessageHtmlCode.html}
-                    onLoad={handleIframeLoad}
-                    style={{ height: iframeHeight ? `${iframeHeight}px` : undefined }}
                     className="w-full block border-0"
                     scrolling="no"
+                    srcDoc={lastCodeMessageHtmlCode.html}
+                    style={{ height: iframeHeight ? `${iframeHeight}px` : undefined }}
+                    onLoad={handleIframeLoad}
                   />
                 </div>
               </div>

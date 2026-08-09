@@ -1,17 +1,7 @@
 "use client";
 
-import {
-  deleteEmailTemplate,
-  getEmailTemplates
-} from "@/actions/email-templates/email-templates.actions";
-import GlobalButton from "@/components/global/button";
-import GlobalDrawer from "@/components/global/drawer";
-import PageActions from "@/components/global/page-actions";
-import PageComponent from "@/components/layouts/page-component";
-import EmailTemplateCardSkeleton from "@/components/skeletons/email-template/card";
-import Type from "@/components/type";
-import Chip from "@/components/ui/chip";
-import { formatDateTime } from "@/lib/format-date";
+import type { EmailTemplate } from "@repo/packages/shared/schemas";
+
 import {
   EllipsisHorizontalIcon,
   EyeIcon,
@@ -31,11 +21,23 @@ import {
   useDisclosure
 } from "@heroui/react";
 import { addToast } from "@heroui/toast";
-import type { EmailTemplate } from "@repo/packages/shared/schemas";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+
+import {
+  deleteEmailTemplate,
+  getEmailTemplates
+} from "@/actions/email-templates/email-templates.actions";
+import GlobalButton from "@/components/global/button";
+import GlobalDrawer from "@/components/global/drawer";
+import PageActions from "@/components/global/page-actions";
+import PageComponent from "@/components/layouts/page-component";
+import EmailTemplateCardSkeleton from "@/components/skeletons/email-template/card";
+import Type from "@/components/type";
+import Chip from "@/components/ui/chip";
+import { formatDateTime } from "@/lib/format-date";
 
 export default function EmailTemplatesPage() {
   const [search, setSearch] = useState("");
@@ -91,36 +93,41 @@ export default function EmailTemplatesPage() {
         <div className="flex flex-col items-center justify-center py-16 text-muted-foreground gap-2">
           <SparklesIcon className="size-5" />
           <Type>No templates yet</Type>
-          <Type variant="sm" className="text-muted-foreground">
+          <Type className="text-muted-foreground" variant="sm">
             Start creating email templates with AI
           </Type>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6 mt-4">
           {templates.map((template) => (
-            <div className="flex flex-col gap-2 relative group" key={template._id}>
-              <div className="bg-white/90 w-full aspect-video flex justify-center relative overflow-hidden cursor-pointer">
+            <div key={template._id} className="flex flex-col gap-2 relative group">
+              <div className="bg-white/90 w-full aspect-video flex justify-center relative overflow-hidden">
+                {/* Covers the card so the whole preview opens the editor, while
+                    leaving the actions menu above it clickable on its own. */}
+                <button
+                  aria-label={`Open ${template.alias}`}
+                  className="absolute inset-0 z-10 cursor-pointer"
+                  type="button"
+                  onClick={() => router.push(`/app/new/email/template?id=${template._id}`)}
+                />
                 <div className="group-hover:scale-[1.02] w-3/4 h-3/4 bottom-0 absolute rounded-sm overflow-hidden transition">
                   <Image
-                    src={template.preview}
                     alt={`Preview of ${template.alias} template`}
-                    width={700}
-                    height={700}
                     className="object-cover"
+                    height={700}
+                    src={template.preview}
+                    width={700}
                   />
                 </div>
 
-                <div
-                  className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <Dropdown radius="sm" placement="bottom-end">
+                <div className="absolute top-2 right-2 z-20 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <Dropdown placement="bottom-end" radius="sm">
                     <DropdownTrigger>
                       <GlobalButton
                         isIconOnly
+                        className="backdrop-blur-sm border hover:bg-default-50"
                         size="sm"
                         variant="solid"
-                        className="backdrop-blur-sm border hover:bg-default-50"
                       >
                         <EllipsisHorizontalIcon className="size-4" />
                       </GlobalButton>
@@ -159,14 +166,14 @@ export default function EmailTemplatesPage() {
 
               <div className="flex justify-between">
                 <div className="flex flex-col">
-                  <Type variant="h6" className="text-medium">
+                  <Type className="text-medium" variant="h6">
                     {template.alias}
                   </Type>
                   <Type className="text-muted-foreground">{template._id}</Type>
                 </div>
 
                 {template.status == "published" && (
-                  <Chip status="neutral" className="capitalize">
+                  <Chip className="capitalize" status="neutral">
                     {template.status}
                   </Chip>
                 )}
@@ -178,13 +185,13 @@ export default function EmailTemplatesPage() {
 
       <Modal
         isOpen={deleteModal.isOpen}
+        radius="sm"
         onOpenChange={(open) => {
           if (!open) {
             setSelectedTemplate(null);
             deleteModal.onClose();
           }
         }}
-        radius="sm"
       >
         <ModalContent>
           {(onClose) => (
@@ -238,8 +245,8 @@ export default function EmailTemplatesPage() {
                 <div className="flex justify-between items-center">
                   <Type className="text-muted-foreground">Status</Type>
                   <Chip
-                    status={selectedTemplate.status === "published" ? "active" : "neutral"}
                     className="capitalize"
+                    status={selectedTemplate.status === "published" ? "active" : "neutral"}
                   >
                     {selectedTemplate.status}
                   </Chip>
@@ -262,11 +269,11 @@ export default function EmailTemplatesPage() {
                 <Type variant="h6">Preview</Type>
                 <div className="rounded-sm border overflow-hidden bg-white">
                   <Image
-                    src={selectedTemplate.preview}
                     alt={selectedTemplate.alias}
-                    width={800}
-                    height={600}
                     className="w-full h-auto object-contain"
+                    height={600}
+                    src={selectedTemplate.preview}
+                    width={800}
                   />
                 </div>
               </div>

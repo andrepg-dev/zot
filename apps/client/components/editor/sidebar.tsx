@@ -1,5 +1,13 @@
 "use client";
 
+import { PencilSquareIcon, SlashIcon } from "@heroicons/react/24/outline";
+import { addToast } from "@heroui/toast";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import Link from "next/link";
+import { useRef, useState } from "react";
+
+import HeaderNavigation from "../navigation/header.navigation";
+
 import { editAiConversation } from "@/actions/ai/ai-email.actions";
 import ChatInput from "@/components/ai-chat/chat-input";
 import ChatMessageList from "@/components/ai-chat/chat-message-list";
@@ -7,21 +15,19 @@ import SidebarNavigation from "@/components/navigation/sidebar.navigation";
 import { useAiChat } from "@/hooks/use-ai-chat";
 import { cn } from "@/lib/utils";
 import { useLandingPageState } from "@/store/landing-page/landing-page.store";
-import { PencilSquareIcon, SlashIcon } from "@heroicons/react/24/outline";
-import { addToast } from "@heroui/toast";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import Link from "next/link";
-import { useRef, useState } from "react";
-import HeaderNavigation from "../navigation/header.navigation";
 
 interface EditorSidebarProps {
   onCodeReceived?: (code: string) => void;
   conversationId?: string;
+  /** Code is already loaded (for example an existing template), so the editor
+   * and preview panes should be shown even with no chat history. */
+  hasCode?: boolean;
 }
 
 export default function EditorSidebar({
   onCodeReceived,
   conversationId,
+  hasCode = false
 }: EditorSidebarProps) {
   const { editionType } = useLandingPageState();
   const {
@@ -60,7 +66,7 @@ export default function EditorSidebar({
     setIsEditingTitle(false);
   }
 
-  const isCode = messages.some((message) => message.operation_type == "code");
+  const isCode = hasCode || messages.some((message) => message.operation_type == "code");
   const displayTitle = title ?? messages?.[0]?.message ?? "Create template";
 
   const navigationItems = [
@@ -81,6 +87,7 @@ export default function EditorSidebar({
   return (
     <>
       <HeaderNavigation
+        hidden={isCode}
         navigationItems={[
           { label: "Emails", pathname: "/app/emails/templates" },
           {
@@ -92,17 +99,9 @@ export default function EditorSidebar({
             pathname: ""
           }
         ]}
-        hidden={isCode}
       />
 
       <SidebarNavigation
-        resizable={isCode}
-        maxWidth={900}
-        storageKey="sidebar-width:email-template"
-        className={cn(
-          "overflow-y-auto z-50 duration-0",
-          editionType === "ai" ? (isCode ? "" : "min-w-full") : "min-w-0 w-0"
-        )}
         children={
           <div
             className={cn(
@@ -136,14 +135,14 @@ export default function EditorSidebar({
                       {isEditable && isEditingTitle ? (
                         <input
                           ref={inputRef}
-                          defaultValue={displayTitle}
                           autoFocus
+                          className="bg-transparent outline-none border-b border-muted-foreground !text-[13px] w-40"
+                          defaultValue={displayTitle}
                           onBlur={handleTitleSubmit}
                           onKeyDown={(e) => {
                             if (e.key === "Enter") handleTitleSubmit();
                             if (e.key === "Escape") setIsEditingTitle(false);
                           }}
-                          className="bg-transparent outline-none border-b border-muted-foreground !text-[13px] w-40"
                         />
                       ) : isEditable ? (
                         <span
@@ -157,11 +156,11 @@ export default function EditorSidebar({
                         </span>
                       ) : (
                         <Link
-                          href={value.pathname}
                           className={cn(
                             "hover:underline-2 hover:underline decoration-2 rounded-md !text-[13px] max-w-[16ch] truncate",
                             "transition-all"
                           )}
+                          href={value.pathname}
                         >
                           {value.label}
                         </Link>
@@ -172,13 +171,20 @@ export default function EditorSidebar({
             </div>
 
             <ChatMessageList
-              messages={messages}
-              isPending={isPending}
               isLoadingMessages={isLoadingConversation}
+              isPending={isPending}
+              messages={messages}
             />
             <ChatInput isPending={isPending} onSend={sendMessage} />
           </div>
         }
+        className={cn(
+          "overflow-y-auto z-50 duration-0",
+          editionType === "ai" ? (isCode ? "" : "min-w-full") : "min-w-0 w-0"
+        )}
+        maxWidth={900}
+        resizable={isCode}
+        storageKey="sidebar-width:email-template"
       />
     </>
   );

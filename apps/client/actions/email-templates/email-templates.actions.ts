@@ -1,10 +1,12 @@
 "use server";
 
-import { FetchWrapper } from "@/lib/api/fetch-wrapper";
 import type {
   CreateEmailTemplateValues,
+  EmailTemplate,
   UpdateEmailTemplateValues
 } from "@repo/packages/shared/schemas";
+
+import { FetchWrapper } from "@/lib/api/fetch-wrapper";
 
 export async function createEmailTemplate(data: CreateEmailTemplateValues) {
   return await FetchWrapper("/email-templates", {
@@ -18,11 +20,13 @@ export async function getEmailTemplates() {
 }
 
 export async function getPublicEmailTemplates() {
-  return await FetchWrapper<Array<{ _id: string; alias: string; preview: string; subject: string }>>("/email-templates/public");
+  return await FetchWrapper<
+    Array<{ _id: string; alias: string; preview: string; subject: string }>
+  >("/email-templates/public");
 }
 
 export async function getEmailTemplateById(id: string) {
-  return await FetchWrapper(`/email-templates/${id}`);
+  return await FetchWrapper<EmailTemplate>(`/email-templates/${id}`);
 }
 
 export async function updateEmailTemplate(id: string, data: UpdateEmailTemplateValues) {
