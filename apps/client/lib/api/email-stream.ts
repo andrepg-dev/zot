@@ -52,12 +52,15 @@ export type StreamEmailEvent =
 const STREAM_IDLE_TIMEOUT_MS = 120_000;
 
 /**
- * Consume one generation SSE stream from the API.
+ * Consume one generation SSE stream.
  *
- * Called from the browser rather than a server action: the stream has to reach
- * the UI event by event, which a server action's single return value cannot do.
- * Cookies ride along via `credentials: "include"`. The API whitelists the app
- * origin with credentials, and the auth cookie is same-site with it.
+ * Called from the browser rather than a server action, because the stream has
+ * to reach the UI event by event and a server action returns a single value.
+ * It goes to this app's own /api/generation proxy rather than straight to the
+ * API host: the auth cookies belong to this domain, so a cross-origin request
+ * would not carry them.
+ *
+ * `path` is the API path, for example `/ai/generation/emails/<id>/generate`.
  */
 export async function consumeEmailSseStream(
   path: string,
@@ -89,9 +92,9 @@ export async function consumeEmailSseStream(
 
   try {
     armIdleTimer();
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}${path}`, {
+    const res = await fetch(`/api/generation${path.replace(/^\/ai\/generation/, "")}`, {
       method: "POST",
-      credentials: "include",
+      credentials: "same-origin",
       headers: {
         Accept: "text/event-stream",
         "Content-Type": "application/json"

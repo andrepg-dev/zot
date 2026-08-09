@@ -39,6 +39,11 @@ export function useAiChat({
   // keep going through generate, since the model may spend the first turns
   // asking clarifying questions before it emits anything.
   const hasDraftRef = useRef(false);
+  // Restoring a conversation replaces the whole message list, so it must not
+  // run while a turn is streaming or it would wipe the live reply. It also only
+  // needs to happen once per conversation, not on every refetch.
+  const isPendingRef = useRef(false);
+  const restoredIdRef = useRef<string | null>(null);
 
   const router = useRouter();
 
@@ -61,7 +66,10 @@ export function useAiChat({
   // newest variant into the editor and preview.
   useEffect(() => {
     if (!data) return;
+    if (isPendingRef.current) return;
+    if (restoredIdRef.current === data.email._id) return;
 
+    restoredIdRef.current = data.email._id;
     conversationIdRef.current = data.email._id;
     setMessages(
       data.chat
@@ -95,8 +103,9 @@ export function useAiChat({
     async (message: string) => {
       const trimmed = message.trim();
 
-      if (!trimmed || isPending) return;
+      if (!trimmed || isPendingRef.current) return;
 
+      isPendingRef.current = true;
       setIsPending(true);
       appendMessage({
         _id: crypto.randomUUID(),
@@ -130,6 +139,10 @@ export function useAiChat({
 
           emailId = created._id;
           conversationIdRef.current = emailId;
+          // The brief is already on screen optimistically and the server stored
+          // its own copy, so mark this conversation restored to stop the effect
+          // from seeding it a second time.
+          restoredIdRef.current = emailId;
           router.replace(`?conversationId=${emailId}`);
         }
 
@@ -191,10 +204,11 @@ export function useAiChat({
         patchAssistant({ response: description });
         addToast({ description, color: "danger" });
       } finally {
+        isPendingRef.current = false;
         setIsPending(false);
       }
     },
-    [appendMessage, isPending, onCodeReceived, router, setLastCodeMessageHtmlCode]
+    [appendMessage, onCodeReceived, router, setLastCodeMessageHtmlCode]
   );
 
   return {
