@@ -114,23 +114,9 @@ export function useAiChat({
         created_at: new Date().toISOString()
       });
 
-      // Placeholder assistant row that fills in as the stream reports progress.
-      const assistantId = crypto.randomUUID();
-
-      appendMessage({
-        _id: assistantId,
-        role: "assistant",
-        response: "Starting generation...",
-        operation_type: "text",
-        created_at: new Date().toISOString()
-      });
-
-      const patchAssistant = (patch: Partial<AiMessage>) => {
-        setMessages((prev) =>
-          prev.map((row) => (row._id === assistantId ? { ...row, ...patch } : row))
-        );
-      };
-
+      // No placeholder row while the turn runs: ChatMessageList already shows a
+      // "Generating" indicator off isPending, and a second one read as
+      // duplicate progress. The reply is appended once, when it is ready.
       try {
         let emailId = conversationIdRef.current;
 
@@ -154,23 +140,8 @@ export function useAiChat({
         await consumeEmailSseStream(
           `/ai/generation/emails/${emailId}/${isEdit ? "edit" : "generate"}`,
           (event) => {
-            switch (event.type) {
-              case "step":
-                patchAssistant({ response: event.message });
-                break;
-              case "tool_call":
-                patchAssistant({ response: event.title });
-                break;
-              case "assistant-chunk":
-                assistantText += event.value;
-                patchAssistant({ response: assistantText });
-                break;
-              case "error":
-                streamError = event.message;
-                break;
-              default:
-                break;
-            }
+            if (event.type === "assistant-chunk") assistantText += event.value;
+            if (event.type === "error") streamError = event.message;
           },
           undefined,
           isEdit ? { instruction: trimmed } : { prompt: trimmed }
@@ -183,14 +154,17 @@ export function useAiChat({
         const detail = await getGenerationEmail(emailId);
         const variant = detail.variant;
 
-        patchAssistant({
+        appendMessage({
+          _id: crypto.randomUUID(),
+          role: "assistant",
           response:
             assistantText.trim() ||
             (variant
               ? "I drafted your email. Review the preview and tell me what to adjust."
               : "I need a bit more detail before drafting."),
           code: variant?.componentCode ?? null,
-          operation_type: variant ? "code" : "text"
+          operation_type: variant ? "code" : "text",
+          created_at: new Date().toISOString()
         });
 
         if (variant) {
@@ -201,7 +175,13 @@ export function useAiChat({
       } catch (err) {
         const description = err instanceof Error ? err.message : "Failed to send message";
 
-        patchAssistant({ response: description });
+        appendMessage({
+          _id: crypto.randomUUID(),
+          role: "assistant",
+          response: description,
+          operation_type: "text",
+          created_at: new Date().toISOString()
+        });
         addToast({ description, color: "danger" });
       } finally {
         isPendingRef.current = false;
