@@ -1,9 +1,10 @@
 "use client";
 
+import type { GenerationChatMessage } from "@repo/packages/shared/schemas";
+
 import ToolCalls, { type ToolCallEntry } from "@/components/email-generation/tool-calls";
 import Type from "@/components/type";
 import { cn } from "@/lib/utils";
-import type { GenerationChatMessage } from "@repo/packages/shared/schemas";
 
 /**
  * Persisted chat history plus whatever the in-flight turn has produced so far.
@@ -14,7 +15,7 @@ export default function ChatTimeline({
   messages,
   liveToolCalls,
   liveAssistantText,
-  step,
+  step
 }: {
   messages: GenerationChatMessage[];
   liveToolCalls: ToolCallEntry[];
@@ -29,13 +30,9 @@ export default function ChatTimeline({
 
       {liveToolCalls.length > 0 ? <ToolCalls calls={liveToolCalls} /> : null}
 
-      {liveAssistantText ? (
-        <Type className="whitespace-pre-wrap">{liveAssistantText}</Type>
-      ) : null}
+      {liveAssistantText ? <Type className="whitespace-pre-wrap">{liveAssistantText}</Type> : null}
 
-      {step ? (
-        <Type className="text-muted-foreground animate-pulse">{step}</Type>
-      ) : null}
+      {step ? <Type className="text-muted-foreground animate-pulse">{step}</Type> : null}
     </div>
   );
 }
@@ -43,6 +40,7 @@ export default function ChatTimeline({
 function ChatRow({ message }: { message: GenerationChatMessage }) {
   if (message.kind === "TOOL_CALL") {
     const call = parseToolCall(message);
+
     return call ? <ToolCalls calls={[call]} /> : null;
   }
 
@@ -56,7 +54,7 @@ function ChatRow({ message }: { message: GenerationChatMessage }) {
           <Type className="whitespace-pre-wrap">{message.content}</Type>
         </div>
         {message.skills.length > 0 ? (
-          <Type variant="sm" className="text-muted-foreground">
+          <Type className="text-muted-foreground" variant="sm">
             {message.skills.length} skill{message.skills.length === 1 ? "" : "s"} applied
           </Type>
         ) : null}
@@ -65,12 +63,7 @@ function ChatRow({ message }: { message: GenerationChatMessage }) {
   }
 
   return (
-    <Type
-      className={cn(
-        "whitespace-pre-wrap",
-        message.kind === "ERROR" && "text-danger",
-      )}
-    >
+    <Type className={cn("whitespace-pre-wrap", message.kind === "ERROR" && "text-danger")}>
       {message.content}
     </Type>
   );
@@ -79,7 +72,9 @@ function ChatRow({ message }: { message: GenerationChatMessage }) {
 function parseToolCall(message: GenerationChatMessage): ToolCallEntry | null {
   try {
     const parsed = JSON.parse(message.content) as Partial<ToolCallEntry>;
+
     if (!parsed.name || !parsed.title) return null;
+
     return {
       id: parsed.id ?? message._id,
       name: parsed.name,
@@ -87,7 +82,7 @@ function parseToolCall(message: GenerationChatMessage): ToolCallEntry | null {
       title: parsed.title,
       detail: parsed.detail,
       summary: parsed.summary,
-      images: parsed.images,
+      images: parsed.images
     };
   } catch {
     return null;

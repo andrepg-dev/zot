@@ -1,9 +1,10 @@
 "use client";
 
-import Type from "@/components/type";
-import { cn } from "@/lib/utils";
 import { CheckCircleIcon } from "@heroicons/react/24/solid";
 import { Spinner } from "@heroui/react";
+
+import Type from "@/components/type";
+import { cn } from "@/lib/utils";
 
 export interface ToolCallEntry {
   id: string;
@@ -36,7 +37,7 @@ export default function ToolCalls({ calls }: { calls: ToolCallEntry[] }) {
             <Type
               className={cn(
                 "text-muted-foreground",
-                call.status === "running" && "text-foreground",
+                call.status === "running" && "text-foreground"
               )}
             >
               {call.title}
@@ -44,13 +45,13 @@ export default function ToolCalls({ calls }: { calls: ToolCallEntry[] }) {
           </div>
 
           {call.detail ? (
-            <Type variant="sm" className="text-muted-foreground pl-6 truncate">
+            <Type className="text-muted-foreground pl-6 truncate" variant="sm">
               {call.detail}
             </Type>
           ) : null}
 
           {call.summary ? (
-            <Type variant="sm" className="text-muted-foreground pl-6">
+            <Type className="text-muted-foreground pl-6" variant="sm">
               {call.summary}
             </Type>
           ) : null}
@@ -63,9 +64,9 @@ export default function ToolCalls({ calls }: { calls: ToolCallEntry[] }) {
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
                   key={src}
-                  src={src}
                   alt=""
                   className="size-12 object-cover border border-default-200"
+                  src={src}
                 />
               ))}
             </div>

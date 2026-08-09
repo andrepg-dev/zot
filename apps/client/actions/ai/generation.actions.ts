@@ -1,6 +1,5 @@
 "use server";
 
-import { FetchWrapper } from "@/lib/api/fetch-wrapper";
 import type {
   CreateGenerationEmailValues,
   GenerationChatMessage,
@@ -8,13 +7,15 @@ import type {
   GenerationEmailDetail,
   GenerationSkill,
   GenerationVariant,
-  GenerationVersion,
+  GenerationVersion
 } from "@repo/packages/shared/schemas";
+
+import { FetchWrapper } from "@/lib/api/fetch-wrapper";
 
 export async function createGenerationEmail(data: CreateGenerationEmailValues) {
   return await FetchWrapper<GenerationEmail>("/ai/generation/emails", {
     method: "POST",
-    body: JSON.stringify(data),
+    body: JSON.stringify(data)
   });
 }
 
@@ -40,7 +41,7 @@ export async function getGenerationChat(id: string) {
 
 export async function deleteGenerationEmail(id: string) {
   return await FetchWrapper<{ deleted: boolean }>(`/ai/generation/emails/${id}`, {
-    method: "DELETE",
+    method: "DELETE"
   });
 }
 

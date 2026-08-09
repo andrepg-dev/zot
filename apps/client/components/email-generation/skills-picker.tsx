@@ -1,17 +1,14 @@
 "use client";
 
-import { getGenerationSkills } from "@/actions/ai/generation.actions";
-import Type from "@/components/type";
-import { SparklesIcon } from "@heroicons/react/24/outline";
-import {
-  Button,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-  Tooltip,
-} from "@heroui/react";
 import type { GenerationSkill } from "@repo/packages/shared/schemas";
+
+import { SparklesIcon } from "@heroicons/react/24/outline";
+import { Popover, PopoverContent, PopoverTrigger, Tooltip } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
+
+import { getGenerationSkills } from "@/actions/ai/generation.actions";
+import GlobalButton from "@/components/global/button";
+import Type from "@/components/type";
 
 const MAX_SKILLS = 4;
 
@@ -23,7 +20,7 @@ const MAX_SKILLS = 4;
 export default function SkillsPicker({
   selected,
   onChange,
-  isDisabled,
+  isDisabled
 }: {
   selected: string[];
   onChange: (next: string[]) => void;
@@ -32,7 +29,7 @@ export default function SkillsPicker({
   const { data, isPending } = useQuery({
     queryKey: ["generation-skills"],
     queryFn: getGenerationSkills,
-    staleTime: 60 * 60 * 1000,
+    staleTime: 60 * 60 * 1000
   });
 
   const skills = data ?? [];
@@ -40,6 +37,7 @@ export default function SkillsPicker({
   const toggle = (skill: GenerationSkill) => {
     if (selected.includes(skill.name)) {
       onChange(selected.filter((name) => name !== skill.name));
+
       return;
     }
     if (selected.length >= MAX_SKILLS) return;
@@ -50,26 +48,24 @@ export default function SkillsPicker({
   const fonts = skills.filter((skill) => skill.kind === "font");
 
   return (
-    <Popover radius="none" placement="top-start">
+    <Popover placement="top-start" radius="none">
       <PopoverTrigger>
-        <Button
-          size="sm"
-          radius="sm"
-          variant={selected.length > 0 ? "flat" : "light"}
+        <GlobalButton
           color={selected.length > 0 ? "primary" : "default"}
-          startContent={<SparklesIcon className="size-4" />}
           isDisabled={isDisabled}
           isLoading={isPending}
+          startContent={<SparklesIcon className="size-4" />}
+          variant={selected.length > 0 ? "flat" : "light"}
         >
           {selected.length > 0 ? `${selected.length} skills` : "Skills"}
-        </Button>
+        </GlobalButton>
       </PopoverTrigger>
 
       <PopoverContent className="p-0 max-w-sm">
         <div className="flex flex-col gap-3 p-3 w-full">
           <div className="flex flex-col gap-0.5">
             <Type variant="h6">Design skills</Type>
-            <Type variant="sm" className="text-muted-foreground font-normal">
+            <Type className="text-muted-foreground font-normal" variant="sm">
               Attach up to {MAX_SKILLS}. Each one is applied to this turn.
             </Type>
           </div>
@@ -78,15 +74,25 @@ export default function SkillsPicker({
             <Type className="text-muted-foreground">No skills available</Type>
           ) : (
             <>
-              <SkillGroup label="Techniques" skills={techniques} selected={selected} onToggle={toggle} />
-              <SkillGroup label="Font pairings" skills={fonts} selected={selected} onToggle={toggle} />
+              <SkillGroup
+                label="Techniques"
+                selected={selected}
+                skills={techniques}
+                onToggle={toggle}
+              />
+              <SkillGroup
+                label="Font pairings"
+                selected={selected}
+                skills={fonts}
+                onToggle={toggle}
+              />
             </>
           )}
 
           {selected.length > 0 ? (
-            <Button size="sm" radius="sm" variant="light" onPress={() => onChange([])}>
+            <GlobalButton radius="sm" size="sm" variant="light" onPress={() => onChange([])}>
               Clear all
-            </Button>
+            </GlobalButton>
           ) : null}
         </div>
       </PopoverContent>
@@ -98,7 +104,7 @@ function SkillGroup({
   label,
   skills,
   selected,
-  onToggle,
+  onToggle
 }: {
   label: string;
   skills: GenerationSkill[];
@@ -109,34 +115,33 @@ function SkillGroup({
 
   return (
     <div className="flex flex-col gap-1.5">
-      <Type variant="sm" className="text-muted-foreground uppercase tracking-wide">
+      <Type className="text-muted-foreground uppercase tracking-wide" variant="sm">
         {label}
       </Type>
       <div className="flex flex-wrap gap-1.5">
         {skills.map((skill) => {
           const isActive = selected.includes(skill.name);
+
           return (
             <Tooltip
               key={skill.name}
-              radius="none"
               content={
                 <div className="max-w-xs p-1">
                   <Type variant="h6">{skill.label}</Type>
-                  <Type variant="sm" className="text-muted-foreground font-normal">
+                  <Type className="text-muted-foreground font-normal" variant="sm">
                     {skill.summary}
                   </Type>
                 </div>
               }
+              radius="none"
             >
-              <Button
-                size="sm"
-                radius="sm"
-                variant={isActive ? "solid" : "bordered"}
+              <GlobalButton
                 color={isActive ? "primary" : "default"}
+                variant={isActive ? "solid" : "bordered"}
                 onPress={() => onToggle(skill)}
               >
                 {skill.label}
-              </Button>
+              </GlobalButton>
             </Tooltip>
           );
         })}

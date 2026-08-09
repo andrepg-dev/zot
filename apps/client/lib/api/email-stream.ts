@@ -63,12 +63,13 @@ export async function consumeEmailSseStream(
   path: string,
   onEvent: (ev: StreamEmailEvent) => void,
   signal?: AbortSignal,
-  body?: unknown,
+  body?: unknown
 ): Promise<void> {
   // Internal controller so the idle watchdog can abort; chained to the caller's
   // signal so an external abort still tears the request down.
   const controller = new AbortController();
   const onExternalAbort = () => controller.abort(signal?.reason);
+
   if (signal) {
     if (signal.aborted) controller.abort(signal.reason);
     else signal.addEventListener("abort", onExternalAbort, { once: true });
@@ -93,10 +94,10 @@ export async function consumeEmailSseStream(
       credentials: "include",
       headers: {
         Accept: "text/event-stream",
-        "Content-Type": "application/json",
+        "Content-Type": "application/json"
       },
       signal: controller.signal,
-      body: JSON.stringify(body ?? {}),
+      body: JSON.stringify(body ?? {})
     });
 
     if (!res.ok) {
@@ -104,6 +105,7 @@ export async function consumeEmailSseStream(
     }
 
     const reader = res.body?.getReader();
+
     if (!reader) throw new Error("No response body");
 
     const decoder = new TextDecoder();
@@ -111,18 +113,21 @@ export async function consumeEmailSseStream(
 
     while (true) {
       const { done, value } = await reader.read();
+
       // Reset the silence watchdog every time bytes (or a close) arrive.
       armIdleTimer();
       if (done) break;
       buffer += decoder.decode(value, { stream: true });
 
       const parts = buffer.split(/\r?\n\r?\n/);
+
       buffer = parts.pop() ?? "";
 
       for (const chunk of parts) {
         for (const line of chunk.split(/\r?\n/).filter(Boolean)) {
           if (!line.startsWith("data:")) continue;
           const payload = line.slice(5).trimStart();
+
           if (!payload) continue;
           try {
             onEvent(JSON.parse(payload) as StreamEmailEvent);
@@ -146,6 +151,7 @@ async function readErrorMessage(res: Response): Promise<string> {
   if (contentType.includes("application/json")) {
     try {
       const parsed = JSON.parse(raw) as { message?: unknown };
+
       if (typeof parsed.message === "string" && parsed.message.trim()) {
         return parsed.message.trim();
       }
@@ -158,6 +164,7 @@ async function readErrorMessage(res: Response): Promise<string> {
     .replace(/<[^>]+>/g, " ")
     .replace(/\s+/g, " ")
     .trim();
+
   if (cleaned) return cleaned;
 
   return res.status === 502

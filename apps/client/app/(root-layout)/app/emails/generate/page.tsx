@@ -1,17 +1,7 @@
 "use client";
 
-import {
-  createGenerationEmail,
-  deleteGenerationEmail,
-  getGenerationEmails,
-} from "@/actions/ai/generation.actions";
-import SkillsPicker from "@/components/email-generation/skills-picker";
-import PageComponent from "@/components/layouts/page-component";
-import Type from "@/components/type";
-import { formatDateTime } from "@/lib/format-date";
 import { SparklesIcon, TrashIcon } from "@heroicons/react/24/outline";
 import {
-  Button,
   Card,
   CardBody,
   Modal,
@@ -21,19 +11,39 @@ import {
   ModalHeader,
   Spinner,
   Textarea,
-  useDisclosure,
+  useDisclosure
 } from "@heroui/react";
 import { addToast } from "@heroui/toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   createGenerationEmailSchema,
   type CreateGenerationEmailValues,
-  type GenerationEmail,
+  type GenerationEmail
 } from "@repo/packages/shared/schemas";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+
+import { formatDate } from "@/lib/format-date";
+import Chip from "@/components/ui/chip";
+import Type from "@/components/type";
+import PageComponent from "@/components/layouts/page-component";
+import Title from "@/components/global/title";
+import GlobalButton from "@/components/global/button";
+import SkillsPicker from "@/components/email-generation/skills-picker";
+import {
+  createGenerationEmail,
+  deleteGenerationEmail,
+  getGenerationEmails
+} from "@/actions/ai/generation.actions";
+
+const STATUS_CHIP = {
+  draft: "neutral",
+  generating: "warning",
+  ready: "active",
+  failed: "danger"
+} as const;
 
 export default function GenerateEmailsPage() {
   const router = useRouter();
@@ -44,17 +54,17 @@ export default function GenerateEmailsPage() {
 
   const { data, isPending } = useQuery({
     queryKey: ["generation-emails"],
-    queryFn: getGenerationEmails,
+    queryFn: getGenerationEmails
   });
 
   const {
     control,
     handleSubmit,
     reset,
-    formState: { errors },
+    formState: { errors }
   } = useForm<CreateGenerationEmailValues>({
     resolver: zodResolver(createGenerationEmailSchema),
-    defaultValues: { prompt: "" },
+    defaultValues: { prompt: "" }
   });
 
   const createMutation = useMutation({
@@ -68,7 +78,7 @@ export default function GenerateEmailsPage() {
     },
     onError: (err) => {
       addToast({ title: "Error", description: err.message, color: "danger" });
-    },
+    }
   });
 
   const deleteMutation = useMutation({
@@ -81,7 +91,7 @@ export default function GenerateEmailsPage() {
     },
     onError: (err) => {
       addToast({ title: "Error", description: err.message, color: "danger" });
-    },
+    }
   });
 
   const emails = data ?? [];
@@ -92,53 +102,48 @@ export default function GenerateEmailsPage() {
 
   return (
     <PageComponent className="pt-0">
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3 max-w-3xl">
-        <div className="flex flex-col gap-0.5">
-          <Type variant="h2">Generate an email</Type>
-          <Type className="text-muted-foreground">
-            Describe the campaign. Name the goal, audience and main call to action for a
-            stronger first draft.
-          </Type>
-        </div>
+      <form className="flex flex-col gap-3 max-w-3xl" onSubmit={handleSubmit(onSubmit)}>
+        <Title description="Describe the campaign. Name the goal, audience and main call to action for a stronger first draft.">
+          Generate an email
+        </Title>
 
         <Controller
-          name="prompt"
           control={control}
+          name="prompt"
           render={({ field }) => (
             <Textarea
               {...field}
-              radius="sm"
-              minRows={3}
-              maxRows={10}
-              placeholder="A launch announcement for our new pricing, aimed at trial users, with a clear upgrade CTA"
+              errorMessage={errors.prompt?.message}
               isDisabled={createMutation.isPending}
               isInvalid={!!errors.prompt}
-              errorMessage={errors.prompt?.message}
+              maxRows={10}
+              minRows={3}
+              placeholder="A launch announcement for our new pricing, aimed at trial users, with a clear upgrade CTA"
+              radius="sm"
             />
           )}
         />
 
         <div className="flex items-center justify-between gap-2">
           <SkillsPicker
+            isDisabled={createMutation.isPending}
             selected={skills}
             onChange={setSkills}
-            isDisabled={createMutation.isPending}
           />
 
-          <Button
-            type="submit"
-            radius="sm"
+          <GlobalButton
             color="primary"
-            startContent={<SparklesIcon className="size-4" />}
             isLoading={createMutation.isPending}
+            startContent={<SparklesIcon className="size-4" />}
+            type="submit"
           >
             Generate
-          </Button>
+          </GlobalButton>
         </div>
       </form>
 
       <div className="mt-10 flex flex-col gap-3">
-        <Type variant="h3">Your generated emails</Type>
+        <Type variant="h4">Your generated emails</Type>
 
         {isPending ? (
           <div className="flex justify-center py-16">
@@ -154,43 +159,39 @@ export default function GenerateEmailsPage() {
             {emails.map((email) => (
               <Card
                 key={email._id}
-                radius="none"
                 isPressable
-                onPress={() => router.push(`/app/emails/generate/${email._id}`)}
                 className="border border-default-200"
+                radius="none"
+                onPress={() => router.push(`/app/emails/generate/${email._id}`)}
               >
-                <CardBody className="flex flex-col gap-2">
+                <CardBody className="flex flex-col gap-2 p-5">
                   <div className="flex items-start justify-between gap-2">
-                    <Type variant="h6" className="truncate">
+                    <Type className="truncate" variant="h6">
                       {email.title}
                     </Type>
-                    <Button
-                      size="sm"
-                      radius="sm"
-                      variant="light"
-                      color="danger"
+                    <GlobalButton
                       isIconOnly
                       aria-label={`Delete ${email.title}`}
+                      color="danger"
+                      variant="light"
                       onPress={() => {
                         setSelected(email);
                         deleteModal.onOpen();
                       }}
                     >
                       <TrashIcon className="size-4" />
-                    </Button>
+                    </GlobalButton>
                   </div>
 
-                  <Type variant="sm" className="text-muted-foreground line-clamp-2">
+                  <Type className="text-muted-foreground line-clamp-2" variant="sm">
                     {email.prompt}
                   </Type>
 
                   <div className="flex items-center gap-2">
-                    <Type variant="sm" className="text-muted-foreground">
-                      {email.status}
-                    </Type>
+                    <Chip status={STATUS_CHIP[email.status]}>{email.status}</Chip>
                     {email.updatedAt ? (
-                      <Type variant="sm" className="text-muted-foreground">
-                        · {formatDateTime(email.updatedAt)}
+                      <Type className="text-muted-foreground" variant="sm">
+                        {formatDate(email.updatedAt)}
                       </Type>
                     ) : null}
                   </div>
@@ -201,7 +202,7 @@ export default function GenerateEmailsPage() {
         )}
       </div>
 
-      <Modal isOpen={deleteModal.isOpen} onClose={deleteModal.onClose} radius="none">
+      <Modal isOpen={deleteModal.isOpen} radius="none" onClose={deleteModal.onClose}>
         <ModalContent>
           <ModalHeader>Delete generated email</ModalHeader>
           <ModalBody>
@@ -210,17 +211,16 @@ export default function GenerateEmailsPage() {
             </Type>
           </ModalBody>
           <ModalFooter>
-            <Button radius="sm" variant="light" onPress={deleteModal.onClose}>
+            <GlobalButton variant="light" onPress={deleteModal.onClose}>
               Cancel
-            </Button>
-            <Button
-              radius="sm"
+            </GlobalButton>
+            <GlobalButton
               color="danger"
               isLoading={deleteMutation.isPending}
               onPress={() => selected && deleteMutation.mutate(selected._id)}
             >
               Delete
-            </Button>
+            </GlobalButton>
           </ModalFooter>
         </ModalContent>
       </Modal>

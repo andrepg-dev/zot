@@ -1,10 +1,12 @@
 "use client";
 
 import type { ToolCallEntry } from "@/components/email-generation/tool-calls";
-import { consumeEmailSseStream, type StreamEmailEvent } from "@/lib/api/email-stream";
+
 import { addToast } from "@heroui/toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useRef, useState } from "react";
+
+import { consumeEmailSseStream, type StreamEmailEvent } from "@/lib/api/email-stream";
 
 export interface GenerationRunState {
   /** Latest progress line from the backend, shown under the composer. */
@@ -24,7 +26,7 @@ const EMPTY_RUN: GenerationRunState = {
   compiledHtml: null,
   subject: null,
   previewUrl: null,
-  seq: null,
+  seq: null
 };
 
 /**
@@ -58,12 +60,13 @@ export function useEmailGeneration(emailId: string) {
             title: event.title,
             detail: event.detail,
             summary: event.summary,
-            images: event.images,
+            images: event.images
           };
           const toolCalls =
             existing >= 0
               ? prev.toolCalls.map((call, i) => (i === existing ? entry : call))
               : [...prev.toolCalls, entry];
+
           return { ...prev, toolCalls };
         }
         case "done":
@@ -72,7 +75,7 @@ export function useEmailGeneration(emailId: string) {
             step: null,
             compiledHtml: event.compiledHtml ?? prev.compiledHtml,
             subject: event.subject ?? prev.subject,
-            seq: event.seq ?? prev.seq,
+            seq: event.seq ?? prev.seq
           };
         default:
           return prev;
@@ -85,6 +88,7 @@ export function useEmailGeneration(emailId: string) {
       if (isRunning) return;
 
       const controller = new AbortController();
+
       abortRef.current = controller;
       setIsRunning(true);
       setRun({ ...EMPTY_RUN, step: "Preparing generation..." });
@@ -99,7 +103,7 @@ export function useEmailGeneration(emailId: string) {
             applyEvent(event);
           },
           controller.signal,
-          body,
+          body
         );
 
         if (streamError) throw new Error(streamError);
@@ -107,7 +111,7 @@ export function useEmailGeneration(emailId: string) {
         await Promise.all([
           queryClient.invalidateQueries({ queryKey: ["generation-email", emailId] }),
           queryClient.invalidateQueries({ queryKey: ["generation-chat", emailId] }),
-          queryClient.invalidateQueries({ queryKey: ["generation-versions", emailId] }),
+          queryClient.invalidateQueries({ queryKey: ["generation-versions", emailId] })
         ]);
       } catch (err) {
         // A user-initiated stop is not a failure worth a toast.
@@ -127,24 +131,24 @@ export function useEmailGeneration(emailId: string) {
         abortRef.current = null;
       }
     },
-    [applyEvent, emailId, isRunning, queryClient],
+    [applyEvent, emailId, isRunning, queryClient]
   );
 
   const generate = useCallback(
     (body?: { prompt?: string; skills?: string[] }) =>
       start(`/ai/generation/emails/${emailId}/generate`, body ?? {}),
-    [emailId, start],
+    [emailId, start]
   );
 
   const edit = useCallback(
     (body: { instruction: string; skills?: string[] }) =>
       start(`/ai/generation/emails/${emailId}/edit`, body),
-    [emailId, start],
+    [emailId, start]
   );
 
   const regenerate = useCallback(
     () => start(`/ai/generation/emails/${emailId}/regenerate`),
-    [emailId, start],
+    [emailId, start]
   );
 
   const stop = useCallback(() => {
