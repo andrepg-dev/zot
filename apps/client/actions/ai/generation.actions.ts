@@ -39,6 +39,13 @@ export async function getGenerationChat(id: string) {
   return await FetchWrapper<GenerationChatMessage[]>(`/ai/generation/emails/${id}/chat`);
 }
 
+export async function updateGenerationEmail(id: string, data: { title?: string }) {
+  return await FetchWrapper<GenerationEmail>(`/ai/generation/emails/${id}`, {
+    method: "PATCH",
+    body: JSON.stringify(data)
+  });
+}
+
 export async function deleteGenerationEmail(id: string) {
   return await FetchWrapper<{ deleted: boolean }>(`/ai/generation/emails/${id}`, {
     method: "DELETE"

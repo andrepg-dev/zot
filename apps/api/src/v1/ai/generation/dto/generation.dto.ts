@@ -39,6 +39,14 @@ export class CreateGenerationEmailDto {
   skills?: string[];
 }
 
+export class UpdateGenerationEmailDto {
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(120)
+  title?: string;
+}
+
 export class GenerateEmailDto {
   @IsOptional()
   @IsString()

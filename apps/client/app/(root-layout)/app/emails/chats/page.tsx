@@ -1,16 +1,5 @@
 "use client";
 
-import {
-  deleteAiConversation,
-  editAiConversation,
-  getAiConversations,
-  type AiConversation
-} from "@/actions/ai/ai-email.actions";
-import GlobalButton from "@/components/global/button";
-import PageActions from "@/components/global/page-actions";
-import PageComponent from "@/components/layouts/page-component";
-import Type from "@/components/type";
-import InputComponent from "@/components/ui/input";
 import { PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline";
 import {
   Modal,
@@ -25,12 +14,24 @@ import { addToast } from "@heroui/toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   updateAiConversationSchema,
+  type GenerationEmail,
   type UpdateAiConversationValues
 } from "@repo/packages/shared/schemas";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+
+import InputComponent from "@/components/ui/input";
+import Type from "@/components/type";
+import PageComponent from "@/components/layouts/page-component";
+import PageActions from "@/components/global/page-actions";
+import GlobalButton from "@/components/global/button";
+import {
+  deleteGenerationEmail,
+  getGenerationEmails,
+  updateGenerationEmail
+} from "@/actions/ai/generation.actions";
 
 function timeAgo(dateStr: string) {
   const diff = Date.now() - new Date(dateStr).getTime();
@@ -51,24 +52,24 @@ function timeAgo(dateStr: string) {
 export default function EmailChatsPage() {
   const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
-  const [selectedConversation, setSelectedConversation] = useState<AiConversation | null>(null);
+  const [selectedConversation, setSelectedConversation] = useState<GenerationEmail | null>(null);
 
   const deleteModal = useDisclosure();
   const editModal = useDisclosure();
 
   const { data, isPending } = useQuery({
-    queryKey: ["ai-conversations"],
-    queryFn: getAiConversations
+    queryKey: ["generation-emails"],
+    queryFn: getGenerationEmails
   });
 
-  const conversations = ((data ?? []) as AiConversation[]).filter((c) =>
+  const conversations = ((data ?? []) as GenerationEmail[]).filter((c) =>
     (c.title ?? "").toLowerCase().includes(search.toLowerCase())
   );
 
   const deleteMutation = useMutation({
-    mutationFn: (id: string) => deleteAiConversation(id),
+    mutationFn: (id: string) => deleteGenerationEmail(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["ai-conversations"] });
+      queryClient.invalidateQueries({ queryKey: ["generation-emails"] });
       addToast({ description: "Conversation deleted", color: "success" });
     },
     onError: (err) => addToast({ title: "Error", description: err.message, color: "danger" })
@@ -76,9 +77,9 @@ export default function EmailChatsPage() {
 
   const editMutation = useMutation({
     mutationFn: ({ id, data }: { id: string; data: UpdateAiConversationValues }) =>
-      editAiConversation(id, data),
+      updateGenerationEmail(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["ai-conversations"] });
+      queryClient.invalidateQueries({ queryKey: ["generation-emails"] });
       addToast({ description: "Conversation updated", color: "success" });
     },
     onError: (err) => addToast({ title: "Error", description: err.message, color: "danger" })
@@ -88,13 +89,13 @@ export default function EmailChatsPage() {
     resolver: zodResolver(updateAiConversationSchema)
   });
 
-  function handleEditOpen(conversation: AiConversation) {
+  function handleEditOpen(conversation: GenerationEmail) {
     setSelectedConversation(conversation);
     reset({ title: conversation.title });
     editModal.onOpen();
   }
 
-  function handleDeleteOpen(conversation: AiConversation) {
+  function handleDeleteOpen(conversation: GenerationEmail) {
     setSelectedConversation(conversation);
     deleteModal.onOpen();
   }
@@ -119,9 +120,9 @@ export default function EmailChatsPage() {
   return (
     <PageComponent className="pt-0">
       <PageActions
+        className="w-full"
         searchPlaceholder="Search chats..."
         onSearchChange={setSearch}
-        className="w-full"
       />
 
       {isPending ? (
@@ -131,7 +132,7 @@ export default function EmailChatsPage() {
       ) : conversations.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16 gap-2">
           <Type>No chats yet</Type>
-          <Type variant="sm" className="text-muted-foreground">
+          <Type className="text-muted-foreground" variant="sm">
             Start a new email conversation to see it here
           </Type>
         </div>
@@ -149,33 +150,33 @@ export default function EmailChatsPage() {
               className="grid grid-cols-[1fr_200px_120px_auto] gap-4 items-center px-4 py-4 hover:bg-default-50"
             >
               <Link
-                href={`/app/new/email/template?conversationId=${c._id}&isEdition=true`}
                 className="truncate cursor-pointer"
+                href={`/app/new/email/template?conversationId=${c._id}&isEdition=true`}
               >
                 <Type className="truncate">{c.title || "Untitled chat"}</Type>
               </Link>
-              <Type variant="sm" className="text-muted-foreground text-center">
-                Draft
+              <Type className="text-muted-foreground text-center capitalize" variant="sm">
+                {c.status}
               </Type>
-              <Type variant="sm" className="text-muted-foreground text-right">
-                {timeAgo(c.updatedAt)}
+              <Type className="text-muted-foreground text-right" variant="sm">
+                {c.updatedAt ? timeAgo(c.updatedAt) : ""}
               </Type>
               <div className="flex items-center gap-3">
                 <GlobalButton
-                  size="sm"
-                  radius="sm"
-                  variant="light"
                   isIconOnly
+                  radius="sm"
+                  size="sm"
+                  variant="light"
                   onPress={() => handleEditOpen(c)}
                 >
                   <PencilSquareIcon className="size-4" />
                 </GlobalButton>
                 <GlobalButton
-                  size="sm"
-                  radius="sm"
-                  variant="light"
-                  color="danger"
                   isIconOnly
+                  color="danger"
+                  radius="sm"
+                  size="sm"
+                  variant="light"
                   onPress={() => handleDeleteOpen(c)}
                 >
                   <TrashIcon className="size-4" />
@@ -186,7 +187,7 @@ export default function EmailChatsPage() {
         </div>
       )}
 
-      <Modal isOpen={deleteModal.isOpen} onOpenChange={deleteModal.onOpenChange} radius="sm">
+      <Modal isOpen={deleteModal.isOpen} radius="sm" onOpenChange={deleteModal.onOpenChange}>
         <ModalContent>
           {(onClose) => (
             <>
@@ -202,8 +203,8 @@ export default function EmailChatsPage() {
                 </GlobalButton>
                 <GlobalButton
                   color="danger"
-                  onPress={() => handleConfirmDelete(onClose)}
                   isLoading={deleteMutation.isPending}
+                  onPress={() => handleConfirmDelete(onClose)}
                 >
                   Delete
                 </GlobalButton>
@@ -213,16 +214,16 @@ export default function EmailChatsPage() {
         </ModalContent>
       </Modal>
 
-      <Modal isOpen={editModal.isOpen} onOpenChange={editModal.onOpenChange} radius="sm">
+      <Modal isOpen={editModal.isOpen} radius="sm" onOpenChange={editModal.onOpenChange}>
         <ModalContent>
           {(onClose) => (
             <form onSubmit={handleSubmit((values) => onEditSubmit(values, onClose))}>
               <ModalHeader>Rename Conversation</ModalHeader>
               <ModalBody>
                 <InputComponent
-                  radius="sm"
                   label="Title"
                   placeholder="Conversation title"
+                  radius="sm"
                   {...register("title")}
                 />
               </ModalBody>
@@ -230,7 +231,7 @@ export default function EmailChatsPage() {
                 <GlobalButton variant="light" onPress={onClose}>
                   Cancel
                 </GlobalButton>
-                <GlobalButton type="submit" color="primary" isLoading={editMutation.isPending}>
+                <GlobalButton color="primary" isLoading={editMutation.isPending} type="submit">
                   Save
                 </GlobalButton>
               </ModalFooter>

@@ -1,10 +1,25 @@
 import { UserId } from "@api/src/common/decorators/user-id.decorator";
 import type { MessageEvent } from "@nestjs/common";
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Sse } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
+  Sse,
+} from "@nestjs/common";
 import { ParseObjectIdPipe } from "@nestjs/mongoose";
 import { Types } from "mongoose";
 import { Observable } from "rxjs";
-import { CreateGenerationEmailDto, EditEmailDto, GenerateEmailDto } from "./dto/generation.dto";
+import {
+  CreateGenerationEmailDto,
+  EditEmailDto,
+  GenerateEmailDto,
+  UpdateGenerationEmailDto,
+} from "./dto/generation.dto";
 import { GenerationEmailsService } from "./generation-emails.service";
 import { GenerationService } from "./generation.service";
 import { listSkills } from "./skills.catalog";
@@ -64,6 +79,15 @@ export class GenerationController {
     @UserId() userId: Types.ObjectId,
   ) {
     return this.emails.chat(id, userId);
+  }
+
+  @Patch("emails/:id")
+  update(
+    @Param("id", ParseObjectIdPipe) id: Types.ObjectId,
+    @UserId() userId: Types.ObjectId,
+    @Body() data: UpdateGenerationEmailDto
+  ) {
+    return this.emails.update(id, userId, data);
   }
 
   @Delete("emails/:id")

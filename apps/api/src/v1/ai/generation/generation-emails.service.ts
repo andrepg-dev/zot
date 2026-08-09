@@ -90,6 +90,19 @@ export class GenerationEmailsService {
     return this.chatModel.find({ email: emailId }).sort({ createdAt: 1 }).lean();
   }
 
+  /** Rename a project from the chats list. */
+  async update(emailId: Types.ObjectId, owner: Types.ObjectId, data: { title?: string }) {
+    const email = await this.emailModel.findOneAndUpdate(
+      { _id: emailId, owner },
+      { $set: data },
+      { new: true }
+    );
+
+    if (!email) throw new NotFoundException("Email not found.");
+
+    return email;
+  }
+
   async remove(emailId: Types.ObjectId, owner: Types.ObjectId) {
     const email = await this.emailModel.findOneAndDelete({ _id: emailId, owner });
     if (!email) throw new NotFoundException("Email not found.");
