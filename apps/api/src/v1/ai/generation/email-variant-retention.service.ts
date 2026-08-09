@@ -7,7 +7,7 @@ import { GenerationEmailVariant } from "./schemas/email-variant.schema";
 export const MAX_EMAIL_VERSIONS = 20;
 /**
  * Preview screenshots we keep per email. Only the newest variant's preview is
- * ever rendered, so anything older is dead weight in S3 — we keep one spare for
+ * ever rendered, so anything older is dead weight in S3. We keep one spare for
  * the in-flight/just-superseded case.
  */
 export const MAX_EMAIL_PREVIEWS = 2;

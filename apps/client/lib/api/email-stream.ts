@@ -56,7 +56,7 @@ const STREAM_IDLE_TIMEOUT_MS = 120_000;
  *
  * Called from the browser rather than a server action: the stream has to reach
  * the UI event by event, which a server action's single return value cannot do.
- * Cookies ride along via `credentials: "include"` — the API whitelists the app
+ * Cookies ride along via `credentials: "include"`. The API whitelists the app
  * origin with credentials, and the auth cookie is same-site with it.
  */
 export async function consumeEmailSseStream(
