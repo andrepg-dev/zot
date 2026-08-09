@@ -392,10 +392,44 @@ export class EmailTemplatesService implements OnModuleInit {
     owner: Types.ObjectId,
   ) {
     try {
-      return await this.EmailTemplateModel.findOneAndUpdate(
-        { _id: id, owner },
-        updateEmailTemplateDto,
-      );
+      const changes: Record<string, unknown> = { ...updateEmailTemplateDto };
+
+      // The stored html and preview are derived from the code, so editing the
+      // code without rebuilding them would leave the template rendering and
+      // previewing its previous version.
+      if (updateEmailTemplateDto.code) {
+        const compiledCode = await this.reactToHtmlService.compile(updateEmailTemplateDto.code);
+        const imageBuffer = await this.screenshotHTML(compiledCode);
+
+        const { url } = await this.s3Service.uploadSingleFile({
+          file: {
+            buffer: imageBuffer,
+            mimetype: "image/png",
+            originalname: `email-template-${Date.now()}.png`,
+          },
+        });
+        const image = await url;
+
+        if (!image.url) {
+          throw new InternalServerErrorException("Cannot upload image to S3 service");
+        }
+
+        changes.html = compiledCode;
+        changes.preview = image.url;
+      }
+
+      const template = await this.EmailTemplateModel.findOneAndUpdate({ _id: id, owner }, changes, {
+        new: true,
+      });
+
+      if (!template) {
+        throw new HttpException(
+          `Template ${id.toString()} not found or you don't have permission to access it.`,
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
+      return template;
     } catch (error) {
       if (error instanceof HttpException) throw error;
       throw new HttpException("Error updating email template.", HttpStatus.INTERNAL_SERVER_ERROR);
