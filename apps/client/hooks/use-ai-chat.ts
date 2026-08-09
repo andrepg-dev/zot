@@ -71,20 +71,47 @@ export function useAiChat({
 
     restoredIdRef.current = data.email._id;
     conversationIdRef.current = data.email._id;
-    setMessages(
-      data.chat
-        .filter((row) => row.kind === "TEXT")
-        .map((row) => ({
-          _id: row._id,
-          role: row.role === "USER" ? ("user" as const) : ("assistant" as const),
-          message: row.role === "USER" ? row.content : undefined,
-          response: row.role === "ASSISTANT" ? row.content : undefined,
-          operation_type: "text" as const,
-          created_at: row.createdAt ?? new Date().toISOString()
-        }))
-    );
 
     const variant = data.email.variant;
+    const restored: AiMessage[] = data.chat
+      .filter((row) => row.kind === "TEXT")
+      .map((row) => ({
+        _id: row._id,
+        role: row.role === "USER" ? ("user" as const) : ("assistant" as const),
+        message: row.role === "USER" ? row.content : undefined,
+        response: row.role === "ASSISTANT" ? row.content : undefined,
+        operation_type: "text" as const,
+        created_at: row.createdAt ?? new Date().toISOString()
+      }));
+
+    // The editor decides whether to reveal the code and preview panes by
+    // looking for a message of type "code", so the turn that produced the saved
+    // draft has to carry it. Without this the chat stays full width on reload
+    // and the email is invisible.
+    if (variant) {
+      const lastAssistant = restored.findLastIndex((row) => row.role === "assistant");
+
+      if (lastAssistant !== -1) {
+        restored[lastAssistant] = {
+          ...restored[lastAssistant],
+          code: variant.componentCode,
+          operation_type: "code"
+        };
+      } else {
+        // A draft can exist with no assistant text saved against it, so add the
+        // row rather than leave the panes hidden.
+        restored.push({
+          _id: `restored-${variant._id}`,
+          role: "assistant",
+          response: "Here is your saved draft.",
+          code: variant.componentCode,
+          operation_type: "code",
+          created_at: variant.createdAt ?? new Date().toISOString()
+        });
+      }
+    }
+
+    setMessages(restored);
 
     if (variant) {
       hasDraftRef.current = true;
