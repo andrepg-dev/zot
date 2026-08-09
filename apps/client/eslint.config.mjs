@@ -12,6 +12,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import js from "@eslint/js";
 import { FlatCompat } from "@eslint/eslintrc";
+import nextPlugin from "@next/eslint-plugin-next";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -45,15 +46,19 @@ export default defineConfig([
     "!**/tsup.config.ts"
   ]),
   {
-    extends: fixupConfigRules(
-      compat.extends(
-        "plugin:react/recommended",
-        "plugin:prettier/recommended",
-        "plugin:react-hooks/recommended",
-        "plugin:jsx-a11y/recommended",
-        "plugin:@next/next/recommended"
-      )
-    ),
+    // @next/eslint-plugin-next no longer ships an eslintrc-compatible config, so
+    // it is applied as a flat config instead of through FlatCompat.
+    extends: [
+      ...fixupConfigRules(
+        compat.extends(
+          "plugin:react/recommended",
+          "plugin:prettier/recommended",
+          "plugin:react-hooks/recommended",
+          "plugin:jsx-a11y/recommended"
+        )
+      ),
+      nextPlugin.configs.recommended
+    ],
 
     plugins: {
       react: fixupPluginRules(react),
