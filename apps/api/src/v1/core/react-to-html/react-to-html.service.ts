@@ -31,8 +31,13 @@ export class ReactToHtmlService {
   compileComponent(code: string): React.ComponentType<Record<string, unknown>> {
     this.validateCode(code);
 
+    // The sandbox runs the output as a plain script, so ESM syntax is a parse
+    // error there. Generated templates end with `export default Email`, so the
+    // module transform is what lets them compile at all.
     const transpiled = Babel.transformSync(code, {
       presets: ["@babel/preset-react"],
+      plugins: ["@babel/plugin-transform-modules-commonjs"],
+      sourceType: "module",
     });
 
     if (!transpiled?.code) {
@@ -47,10 +52,13 @@ export class ReactToHtmlService {
 
     vm.createContext(sandbox);
 
+    // A real `export default` already populates exports.default, including for
+    // anonymous components, so keep it and only fall back to resolving the
+    // component by name for templates written without an export.
     const wrappedCode = `
       const { ${this.componentNames} } = Components;
       ${transpiled.code}
-      exports.default = typeof Email !== "undefined" ? Email : (typeof Default !== "undefined" ? Default : null);
+      exports.default = exports.default || (typeof Email !== "undefined" ? Email : (typeof Default !== "undefined" ? Default : null));
     `;
 
     try {
