@@ -10,6 +10,10 @@ import { type NextRequest, NextResponse } from "next/server";
  * cannot go through FetchWrapper because the UI needs the events as they
  * arrive, so it proxies through here instead and the body is piped back
  * untouched.
+ *
+ * This deliberately sits outside /api. next.config.js rewrites /api/:path* to
+ * the backend, and an array-form rewrite is applied after static files but
+ * before dynamic routes, so a catch-all route under /api would be shadowed.
  */
 export async function POST(
   request: NextRequest,

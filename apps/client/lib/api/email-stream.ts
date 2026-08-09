@@ -56,9 +56,10 @@ const STREAM_IDLE_TIMEOUT_MS = 120_000;
  *
  * Called from the browser rather than a server action, because the stream has
  * to reach the UI event by event and a server action returns a single value.
- * It goes to this app's own /api/generation proxy rather than straight to the
- * API host: the auth cookies belong to this domain, so a cross-origin request
- * would not carry them.
+ * It goes to this app's own /generation-stream proxy rather than straight to
+ * the API host: the auth cookies belong to this domain, so a cross-origin
+ * request would not carry them. The proxy deliberately sits outside /api,
+ * which next.config.js rewrites wholesale to the backend.
  *
  * `path` is the API path, for example `/ai/generation/emails/<id>/generate`.
  */
@@ -92,7 +93,7 @@ export async function consumeEmailSseStream(
 
   try {
     armIdleTimer();
-    const res = await fetch(`/api/generation${path.replace(/^\/ai\/generation/, "")}`, {
+    const res = await fetch(`/generation-stream${path.replace(/^\/ai\/generation/, "")}`, {
       method: "POST",
       credentials: "same-origin",
       headers: {
